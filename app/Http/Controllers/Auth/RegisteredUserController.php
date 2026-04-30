@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
@@ -23,10 +22,10 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(Request $request): Response
+    public function create(Request $request, ResolveSelectedRole $resolveSelectedRole): Response
     {
         return Inertia::render('Auth/Register', [
-            'selectedRole' => $this->resolveSelectedRole($request),
+            'selectedRole' => $resolveSelectedRole($request),
         ]);
     }
 
@@ -55,22 +54,5 @@ class RegisteredUserController extends Controller
         ]);
 
         return redirect()->route('verification.notice');
-    }
-
-    private function resolveSelectedRole(Request $request): ?string
-    {
-        $role = $request->query('role');
-
-        if (! is_string($role)) {
-            return null;
-        }
-
-        $userRole = UserRole::tryFrom($role);
-
-        if ($userRole === null) {
-            return null;
-        }
-
-        return $userRole->value;
     }
 }
