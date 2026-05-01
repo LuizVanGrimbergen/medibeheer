@@ -3,15 +3,25 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PasswordResetLinkRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\RateLimiter;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
+    private const int THROTTLE_MAX_ATTEMPTS = 3;
+
+    private const int THROTTLE_DECAY_SECONDS = 60;
+
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Display the password reset link request view.
      */
@@ -24,28 +34,50 @@ class PasswordResetLinkController extends Controller
 
     /**
      * Handle an incoming password reset link request.
-     *
-     * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(PasswordResetLinkRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        $validated = $request->validated();
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $throttleKey = $this->throttleKey($request);
 
-        if ($status == Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+        if (RateLimiter::tooManyAttempts($throttleKey, self::THROTTLE_MAX_ATTEMPTS)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return back()
+                ->withInput($validated)
+                ->with('error', trans('auth.throttle', ['seconds' => $seconds]))
+                ->with('rate_limit_seconds', $seconds);
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans($status)],
-        ]);
+        $email = $validated['email'];
+        $user = User::findByEmail($email);
+        $emailHash = $user?->email_hash ?? User::hashEmail($email);
+
+        RateLimiter::hit($throttleKey, self::THROTTLE_DECAY_SECONDS);
+
+        $status = Password::sendResetLink(
+            ['email_hash' => $emailHash]
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            Log::notice('auth.password_reset_link.sent', [
+                'email_hash' => $emailHash,
+                'ip' => $request->ip(),
+            ]);
+        } else {
+            Log::warning('auth.password_reset_link.failed', [
+                'status' => $status,
+                'email_hash' => $emailHash,
+                'ip' => $request->ip(),
+            ]);
+        }
+
+        return back()->with('status', trans('passwords.sent'));
+    }
+
+    private function throttleKey(PasswordResetLinkRequest $request): string
+    {
+        return User::hashEmail($request->string('email')->toString()).'|'.$request->ip();
     }
 }

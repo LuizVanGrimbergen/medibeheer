@@ -20,8 +20,8 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255',
-                //check if email is unique
+            'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255',
+                // check if email is unique
                 function (string $attribute, mixed $value, Closure $fail): void {
                     if (! is_string($value)) {
                         return;
@@ -41,7 +41,8 @@ class RegisterRequest extends FormRequest
             'password_confirmation' => ['required', 'string'],
         ];
     }
-    //normalize email
+
+    // normalize email
     protected function prepareForValidation(): void
     {
         $this->merge([
