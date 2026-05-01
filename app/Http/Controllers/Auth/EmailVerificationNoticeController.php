@@ -5,17 +5,19 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
-class EmailVerificationNotificationController extends Controller
+class EmailVerificationNoticeController extends Controller
 {
     /**************************************/
     /*              Actions */
     /**************************************/
 
     /**
-     * Send a new email verification notification.
+     * Display the email verification notice.
      */
-    public function store(Request $request): RedirectResponse
+    public function __invoke(Request $request): RedirectResponse|Response
     {
         $authenticatedUser = $request->user();
 
@@ -23,12 +25,8 @@ class EmailVerificationNotificationController extends Controller
             return redirect()->route('login');
         }
 
-        if ($authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
-        }
-
-        $authenticatedUser->sendEmailVerificationNotification();
-
-        return back()->with('status', 'verification-link-sent');
+        return $authenticatedUser->hasVerifiedEmail()
+            ? redirect()->intended(route('dashboard', absolute: false))
+            : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
     }
 }
