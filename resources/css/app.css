@@ -1,3 +1,103 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@import './fonts.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.{js,ts,vue}';
+
+@plugin '@tailwindcss/forms';
+
+@theme {
+
+    /* Fonts */
+    --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+    --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+
+    /* Colors */
+    --color-*: initial;
+    --color-white: #ffffff;
+    --color-bg: #f7f9fc;
+    --color-surface: #ffffff;
+    --color-surface-2: #eef3f8;
+    --color-text: #1f334a;
+    --color-text-muted: #667d94;
+    --color-primary: #2f6fae;
+    --color-role-patient: #2f6fae;
+    --color-role-doctor: #10b981;
+    --color-role-family: #ec4899;
+    --color-role-patient-active: color-mix(in srgb, var(--color-role-patient) 58%, black);
+    --color-role-doctor-active: color-mix(in srgb, var(--color-role-doctor) 58%, black);
+    --color-role-family-active: color-mix(in srgb, var(--color-role-family) 58%, black);
+    --color-success: #10b981;
+    --color-warning: #f4b740;
+    --color-warning-text: #5b3a1a;
+    --color-danger: #c65a58;
+    --color-focus: #2f6fae;
+    --color-border: #d7e1ec;
+    --color-disabled-bg: #ebf0f6;
+    --color-disabled-text: #8a9caf;
+    --color-surface-hover: #e6edf5;
+
+    /* Text colors */
+    --color-text-heading: #1a2b40;
+    --color-text-body: #1f334a;
+    --color-text-placeholder: #8aa0b5;
+
+    /* Form elements */
+    --color-input-bg: #ffffff;
+    --color-input-border: #d7e1ec;
+    --color-input-border-focus: #2f6fae;
+    --color-input-text: #1f334a;
+    --color-input-placeholder: #8aa0b5;
+
+}
+
+:root {
+    --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+    --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-lexend {
+    --font-body: 'Lexend', sans-serif;
+    --font-headers: 'Lexend', sans-serif;
+    font-family: var(--font-body);
+}
+
+@layer base {
+    body {
+        @apply bg-bg text-text antialiased;
+        font-family: var(--font-body);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-headers);
+        line-height: 1;
+    }
+
+    p,
+    a,
+    li,
+    label,
+    input,
+    textarea,
+    select,
+    button,
+    span,
+    fieldset,
+    legend,
+    option {
+        font-family: var(--font-body);
+    }
+}
+
+#nprogress,
+#nprogress .bar {
+    z-index: 99999 !important;
+}

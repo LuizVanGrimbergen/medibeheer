@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { useI18n } from 'vue-i18n';
+import { AuthPageContainer } from '@/Components/ui/auth-page';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
 
-defineProps<{
+const props = defineProps<{
     status?: string;
 }>();
 
@@ -14,53 +15,50 @@ const form = useForm({
     email: '',
 });
 
+const { t } = useI18n();
+
 const submit = () => {
     form.post(route('password.email'));
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Forgot Password" />
+    <Head>
+        <title>{{ t('auth.forgotPwd.metaTitle') }}</title>
+    </Head>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Forgot your password? No problem. Just let us know your email
-            address and we will email you a password reset link that will allow
-            you to choose a new one.
+    <AuthPageContainer
+        title-key="auth.forgotPwd.title"
+        subtitle-key="auth.forgotPwd.intro"
+    >
+        <div v-if="props.status" class="mb-4 rounded-lg bg-success/10 px-4 py-3 text-sm font-medium text-success">
+            {{ props.status }}
         </div>
 
-        <div
-            v-if="status"
-            class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
-        >
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
+        <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
+                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">{{ t('auth.forgotPwd.emailLabel') }}</Label>
+                <Input
                     id="email"
-                    type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
+                    type="email"
+                    :placeholder="t('auth.forgotPwd.emailPlaceholder')"
                     required
                     autofocus
-                    autocomplete="username"
+                    autocomplete="email"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                 />
-
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Email Password Reset Link
-                </PrimaryButton>
-            </div>
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                size="lg"
+                class="w-full text-xl"
+            >
+                {{ t('auth.forgotPwd.submit') }}
+            </Button>
         </form>
-    </GuestLayout>
+    </AuthPageContainer>
 </template>

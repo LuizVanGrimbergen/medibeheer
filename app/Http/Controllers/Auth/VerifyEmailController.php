@@ -9,17 +9,27 @@ use Illuminate\Http\RedirectResponse;
 
 class VerifyEmailController extends Controller
 {
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Mark the authenticated user's email address as verified.
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
+        $authenticatedUser = $request->user();
+
+        if ($authenticatedUser === null) {
+            return redirect()->route('login');
+        }
+
+        if ($authenticatedUser->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        if ($authenticatedUser->markEmailAsVerified()) {
+            event(new Verified($authenticatedUser));
         }
 
         return redirect()->intended(route('dashboard', absolute: false).'?verified=1');

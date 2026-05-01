@@ -8,16 +8,26 @@ use Illuminate\Http\Request;
 
 class EmailVerificationNotificationController extends Controller
 {
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Send a new email verification notification.
      */
     public function store(Request $request): RedirectResponse
     {
-        if ($request->user()->hasVerifiedEmail()) {
+        $authenticatedUser = $request->user();
+
+        if ($authenticatedUser === null) {
+            return redirect()->route('login');
+        }
+
+        if ($authenticatedUser->hasVerifiedEmail()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        $authenticatedUser->sendEmailVerificationNotification();
 
         return back()->with('status', 'verification-link-sent');
     }
