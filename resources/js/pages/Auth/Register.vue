@@ -1,19 +1,102 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { Eye, EyeOff, Stethoscope, UserRound, Users } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { AuthPageContainer } from '@/Components/ui/auth-page';
+import { AuthRoleSelectorWidget } from '@/Components/ui/auth-role-selector';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
+import { PasswordRequirementsCard } from '@/Components/ui/password-requirements-card';
+import type { RoleKey, RoleOption } from '@/lib/types';
+const minimumPasswordLength = 12;
+const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
 
 const form = useForm({
     name: '',
     email: '',
+    role: '' as RoleKey | '',
     password: '',
     password_confirmation: '',
 });
 
+const props = defineProps<{
+    selectedRole?: RoleKey | null;
+}>();
+
+const { t } = useI18n();
+
+const roles = computed(() => {
+    return [
+        {
+            key: 'patient',
+            label: t('auth.common.roles.patient'),
+            icon: UserRound,
+            ringClass:
+                'border-role-patient/60 bg-role-patient/10 text-role-patient hover:bg-role-patient/15',
+        },
+        {
+            key: 'doctor',
+            label: t('auth.common.roles.doctor'),
+            icon: Stethoscope,
+            ringClass:
+                'border-role-doctor/50 bg-role-doctor/10 text-role-doctor hover:bg-role-doctor/15',
+        },
+        {
+            key: 'family_member',
+            label: t('auth.common.roles.family_member'),
+            icon: Users,
+            ringClass:
+                'border-role-family/60 bg-role-family/10 text-role-family hover:bg-role-family/15',
+        },
+    ] satisfies readonly RoleOption[];
+});
+
+const selectedRole = computed(() => {
+    return props.selectedRole ?? null;
+});
+
+const selectedRoleLabel = computed(() => {
+    if (selectedRole.value === null) {
+        return null;
+    }
+
+    return t(`auth.common.roles.${selectedRole.value}`);
+});
+
+const selectedRoleNoticeClass = computed(() => {
+    if (selectedRole.value === 'patient') {
+        return 'text-role-patient';
+    }
+
+    if (selectedRole.value === 'doctor') {
+        return 'text-role-doctor';
+    }
+
+    if (selectedRole.value === 'family_member') {
+        return 'text-role-family';
+    }
+
+    return 'text-text-muted';
+});
+
+const bannerErrorMessage = computed(() => {
+    return form.errors.role ?? '';
+});
+
 const submit = () => {
+    form.email = form.email.trim().toLowerCase();
+    form.clearErrors();
+
+    if (selectedRole.value === null) {
+        form.role = '';
+    } else {
+        form.role = selectedRole.value as RoleKey;
+    }
+
     form.post(route('register'), {
         onFinish: () => {
             form.reset('password', 'password_confirmation');
@@ -23,93 +106,152 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
+    <Head>
+        <title>{{ t('auth.register.metaTitle') }}</title>
+    </Head>
 
-        <form @submit.prevent="submit">
+    <AuthPageContainer
+        title-key="auth.register.title"
+        subtitle-key="auth.register.subtitle"
+    >
+        <AuthRoleSelectorWidget
+            :roles="roles"
+            :selected-role="selectedRole"
+            :get-href="
+                (role) => route('register', { role })
+            "
+        />
+        <p
+            v-if="bannerErrorMessage !== ''"
+            class="mb-4 rounded-lg border border-danger/40 bg-danger/10 px-4 py-3 text-center text-base font-semibold text-danger"
+        >
+            {{ bannerErrorMessage }}
+        </p>
+
+        <div
+            v-if="selectedRoleLabel"
+            class="mb-4 text-center text-sm font-semibold"
+            :class="selectedRoleNoticeClass"
+        >
+            {{ t('auth.register.roleNotice', { role: selectedRoleLabel }) }}
+        </div>
+
+        <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
+                <Label for="name" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.register.nameLabel') }}
+                </Label>
+                <Input
                     id="name"
-                    type="text"
-                    class="mt-1 block w-full"
                     v-model="form.name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    :placeholder="t('auth.register.namePlaceholder')"
                     required
                     autofocus
-                    autocomplete="name"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                 />
-
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
+            <div>
+                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.register.emailLabel') }}
+                </Label>
+                <Input
                     id="email"
-                    type="email"
-                    class="mt-1 block w-full"
                     v-model="form.email"
+                    type="email"
+                    autocomplete="email"
+                    :placeholder="t('auth.register.emailPlaceholder')"
                     required
-                    autocomplete="username"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                 />
-
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
+            <PasswordRequirementsCard
+                :password="form.password"
+                :minimum-length="minimumPasswordLength"
+            />
 
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
+            <div>
+                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.register.pwdLabel') }}
+                </Label>
+                <div class="relative">
+                    <Input
+                        id="password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        :autocomplete="showPassword ? 'off' : 'new-password'"
+                        :placeholder="t('auth.register.pwdPlaceholder')"
+                        required
+                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
+                        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                        @click="showPassword = !showPassword"
+                    >
+                        <EyeOff v-if="showPassword" :size="20" />
+                        <Eye v-else :size="20" />
+                    </button>
+                </div>
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+            <div>
+                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.register.pwdConfirmLabel') }}
+                </Label>
+                <div class="relative">
+                    <Input
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        :type="showPasswordConfirmation ? 'text' : 'password'"
+                        :autocomplete="showPasswordConfirmation ? 'off' : 'new-password'"
+                        :placeholder="t('auth.register.pwdConfirmPlaceholder')"
+                        required
+                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
+                        :aria-label="showPasswordConfirmation ? 'Hide password confirmation' : 'Show password confirmation'"
+                        @click="showPasswordConfirmation = !showPasswordConfirmation"
+                    >
+                        <EyeOff v-if="showPasswordConfirmation" :size="20" />
+                        <Eye v-else :size="20" />
+                    </button>
+                </div>
+                <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                size="lg"
+                class="w-full text-xl"
+            >
+                {{ t('auth.register.submit') }}
+            </Button>
         </form>
-    </GuestLayout>
+
+        <p class="mt-7 text-center text-lg text-text-muted">
+            {{ t('auth.register.loginPrompt') }}
+            <Link
+                :href="
+                    selectedRole
+                        ? route('login', { role: selectedRole })
+                        : route('login')
+                "
+                class="font-semibold text-primary hover:opacity-80"
+            >
+                {{ t('auth.register.loginAction') }}
+            </Link>
+        </p>
+    </AuthPageContainer>
 </template>

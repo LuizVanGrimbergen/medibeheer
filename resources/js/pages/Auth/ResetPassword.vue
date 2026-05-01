@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { Eye, EyeOff } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { AuthPageContainer } from '@/Components/ui/auth-page';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
+import { PasswordRequirementsCard } from '@/Components/ui/password-requirements-card';
 
 const props = defineProps<{
     email: string;
@@ -17,6 +21,11 @@ const form = useForm({
     password: '',
     password_confirmation: '',
 });
+const minimumPasswordLength = 12;
+const showPassword = ref(false);
+const showPasswordConfirmation = ref(false);
+
+const { t } = useI18n();
 
 const submit = () => {
     form.post(route('password.store'), {
@@ -28,70 +37,84 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Reset Password" />
+    <Head>
+        <title>{{ t('auth.resetPwd.metaTitle') }}</title>
+    </Head>
 
-        <form @submit.prevent="submit">
+    <AuthPageContainer
+        title-key="auth.resetPwd.title"
+        subtitle-key="auth.resetPwd.subtitle"
+    >
+        <form class="space-y-5" novalidate @submit.prevent="submit">
+            <PasswordRequirementsCard
+                :password="form.password"
+                :minimum-length="minimumPasswordLength"
+            />
+
             <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
+                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.resetPwd.pwdLabel') }}
+                </Label>
+                <div class="relative">
+                    <Input
+                        id="password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        :autocomplete="showPassword ? 'off' : 'new-password'"
+                        required
+                        autofocus
+                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
+                        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                        @click="showPassword = !showPassword"
+                    >
+                        <EyeOff v-if="showPassword" :size="20" />
+                        <Eye v-else :size="20" />
+                    </button>
+                </div>
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>
 
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
+            <div>
+                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.resetPwd.pwdConfirmLabel') }}
+                </Label>
+                <div class="relative">
+                    <Input
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        :type="showPasswordConfirmation ? 'text' : 'password'"
+                        :autocomplete="showPasswordConfirmation ? 'off' : 'new-password'"
+                        required
+                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
+                        :aria-label="showPasswordConfirmation ? 'Hide password confirmation' : 'Show password confirmation'"
+                        @click="showPasswordConfirmation = !showPasswordConfirmation"
+                    >
+                        <EyeOff v-if="showPasswordConfirmation" :size="20" />
+                        <Eye v-else :size="20" />
+                    </button>
+                </div>
+                <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Reset Password
-                </PrimaryButton>
-            </div>
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                size="lg"
+                class="w-full text-xl"
+            >
+                {{ t('auth.resetPwd.submit') }}
+            </Button>
+
+            <input v-model="form.email" type="hidden" />
+            <InputError class="mt-2" :message="form.errors.email" />
         </form>
-    </GuestLayout>
+    </AuthPageContainer>
 </template>
