@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+import { useI18n } from 'vue-i18n';
+import { Button } from '@/Components/ui/button';
+import { Input } from '@/Components/ui/input';
+import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
+import { PasswordRequirementsCard } from '@/Components/ui/password-requirements-card';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
+const minimumPasswordLength = 12;
+const { t } = useI18n();
 
 const form = useForm({
     current_password: '',
@@ -39,26 +43,32 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Update Password
+            <h2 class="text-lg font-medium text-text">
+                {{ t('profile.password.title') }}
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Ensure your account is using a long, random password to stay
-                secure.
+            <p class="mt-1 text-sm text-text-muted">
+                {{ t('profile.password.description') }}
             </p>
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="current_password" value="Current Password" />
+            <PasswordRequirementsCard
+                :password="form.password"
+                :minimum-length="minimumPasswordLength"
+            />
 
-                <TextInput
+            <div>
+                <Label for="current_password" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('profile.password.currentPassword') }}
+                </Label>
+
+                <Input
                     id="current_password"
                     ref="currentPasswordInput"
                     v-model="form.current_password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                     autocomplete="current-password"
                 />
 
@@ -69,14 +79,16 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <InputLabel for="password" value="New Password" />
+                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('profile.password.newPassword') }}
+                </Label>
 
-                <TextInput
+                <Input
                     id="password"
                     ref="passwordInput"
                     v-model="form.password"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                     autocomplete="new-password"
                 />
 
@@ -84,16 +96,15 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
+                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('profile.password.confirmPassword') }}
+                </Label>
 
-                <TextInput
+                <Input
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 block w-full"
+                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
                     autocomplete="new-password"
                 />
 
@@ -104,7 +115,12 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <Button
+                    type="submit"
+                    :disabled="form.processing"
+                >
+                    {{ t('profile.password.save') }}
+                </Button>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
@@ -114,9 +130,9 @@ const updatePassword = () => {
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-gray-600 dark:text-gray-400"
+                        class="text-sm text-text-muted"
                     >
-                        Saved.
+                        {{ t('profile.password.saved') }}
                     </p>
                 </Transition>
             </div>
