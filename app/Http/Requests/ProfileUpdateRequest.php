@@ -3,29 +3,59 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    /**************************************/
+    /*           Authorization */
+    /**************************************/
+
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**************************************/
+    /*          Validation Rules */
+    /**************************************/
+
     public function rules(): array
     {
+        $email = $this->string('email')->toString();
+        $emailChanged = $this->user()?->email !== $email;
+
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! is_string($value)) {
+                        return;
+                    }
+
+                    $emailHashExists = User::query()
+                        ->whereIn('email_hash', User::emailHashCandidates($value))
+                        ->where('id', '!=', $this->user()->id)
+                        ->exists();
+
+                    if ($emailHashExists) {
+                        $fail(trans('validation.unique', ['attribute' => $attribute]));
+                    }
+                },
             ],
+            'current_password' => Rule::when(
+                $emailChanged,
+                ['required', 'current_password'],
+                ['nullable'],
+            ),
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'email' => User::normalizeEmail($this->string('email')->toString()),
+        ]);
     }
 }
