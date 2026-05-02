@@ -1,0 +1,18 @@
+---
+description: Laravel backend PHP must align with project stubs/ templates and Artisan generators
+alwaysApply: true
+---
+
+# Backend stubs (`stubs/`)
+
+When adding or materially changing PHP under `app/`, `database/`, `routes/`, or `tests/`:
+
+1. **Generate first** — Prefer `php artisan make:*` with `--no-interaction` and the right flags (`--pest`, `-m`, `--invokable`, `--resource`, `-R`, `--api`, `--observer`, etc.). Laravel loads templates from the repo-root `stubs/` directory when those files exist.
+
+2. **Read the stub** — Before writing scaffolding by hand, open the matching file in `stubs/` (e.g. `model.stub`, `controller.model.stub`, `policy.stub`, `request.stub`, `migration.create.stub`, `job.stub`, `observer.stub`, `factory.stub`, `pest.stub`). Match namespace layout, imports, method shape, and typing conventions from that stub.
+
+3. **Patient Inertia invokable controllers** — Canonical layout is `stubs/controller.patient-invokable.stub` (`AuthorizesPatientProfile`, `Inertia::render`, `Response`). After `php artisan make:controller … --invokable`, align the body with that stub and replace `Patient/DummyPage` with the real page component path.
+
+4. **Tests** — Create with `php artisan make:test Name --pest --no-interaction`. For patient HTTP examples, mirror `stubs/pest.patient-route.stub` alongside `stubs/pest.stub`.
+
+5. **Do not** introduce one-off class layouts that contradict the stub for that artifact unless the user explicitly asks.

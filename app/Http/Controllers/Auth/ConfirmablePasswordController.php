@@ -21,16 +21,21 @@ class ConfirmablePasswordController extends Controller
      */
     public function show(Request $request): Response
     {
+        $authenticatedUser = $request->user();
+        $fallbackHome = $authenticatedUser !== null
+            ? route($authenticatedUser->defaultAuthenticatedHomeRoute())
+            : route('dashboard');
+
         $backUrl = url()->previous();
         $applicationHost = parse_url(config('app.url'), PHP_URL_HOST);
         $backUrlHost = parse_url($backUrl, PHP_URL_HOST);
 
         if ($backUrl === $request->url()) {
-            $backUrl = route('dashboard');
+            $backUrl = $fallbackHome;
         }
 
         if ($applicationHost !== null && $backUrlHost !== null && $applicationHost !== $backUrlHost) {
-            $backUrl = route('dashboard');
+            $backUrl = $fallbackHome;
         }
 
         return Inertia::render('Auth/ConfirmPassword', [
@@ -53,6 +58,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());
     }
 }

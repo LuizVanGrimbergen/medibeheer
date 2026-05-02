@@ -19,7 +19,7 @@ test('users can authenticate using the login screen', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('patient.dashboard', absolute: false));
 });
 
 test('unverified users are redirected to email verification notice after login', function () {
@@ -69,7 +69,7 @@ test('users can authenticate with uppercase and padded email input', function ()
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('patient.dashboard', absolute: false));
 });
 
 test('users can logout', function () {
@@ -99,7 +99,7 @@ test('users can authenticate when email hash was generated with previous key', f
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('patient.dashboard', absolute: false));
 });
 
 test('authenticated users can switch account via login endpoint', function () {
