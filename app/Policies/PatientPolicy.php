@@ -18,7 +18,21 @@ class PatientPolicy
 
     public function view(User $user, Patient $patient): bool
     {
-        return $user->id === $patient->user_id;
+        if ($user->id === $patient->user_id) {
+            return true;
+        }
+
+        if (! $user->isDoctor()) {
+            return false;
+        }
+
+        $doctor = $user->doctor;
+
+        if ($doctor === null) {
+            return false;
+        }
+
+        return $doctor->patients()->whereKey($patient->getKey())->exists();
     }
 
     public function create(): bool

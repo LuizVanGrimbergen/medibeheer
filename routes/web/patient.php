@@ -5,9 +5,18 @@ use App\Http\Controllers\Patient\PatientDashboardController;
 use App\Http\Controllers\Patient\PatientFamilyController;
 use App\Http\Controllers\Patient\PatientInventoryController;
 use App\Http\Controllers\Patient\PatientMedicationController;
+use App\Http\Middleware\EnsurePatient;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified', 'patient'])
+Route::middleware([
+    Authenticate::class,
+    EnsureEmailIsVerified::class,
+    EnsurePatient::class,
+    ThrottleRequests::using('authenticated-area'),
+])
     ->prefix('patient')
     ->name('patient.')
     ->group(function (): void {

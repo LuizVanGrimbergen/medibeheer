@@ -24,7 +24,7 @@ class ConfirmablePasswordController extends Controller
         $authenticatedUser = $request->user();
         $fallbackHome = $authenticatedUser !== null
             ? route($authenticatedUser->defaultAuthenticatedHomeRoute())
-            : route('dashboard');
+            : route('home');
 
         $backUrl = url()->previous();
         $applicationHost = parse_url(config('app.url'), PHP_URL_HOST);

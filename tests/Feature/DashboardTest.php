@@ -2,14 +2,6 @@
 
 use App\Models\User;
 
-test('patients visiting the dashboard route are redirected to the patient dashboard', function () {
-    $user = User::factory()->create(['role' => 'patient']);
-
-    $response = $this->actingAs($user)->get(route('dashboard'));
-
-    $response->assertRedirect(route('patient.dashboard'));
-});
-
 test('patients receive the patient dashboard inertia page from the patient route', function () {
     $user = User::factory()->create(['role' => 'patient']);
 
@@ -19,21 +11,13 @@ test('patients receive the patient dashboard inertia page from the patient route
     assertInertiaRootComponent($response, 'Patient/Dashboard');
 });
 
-test('doctors receive the default dashboard inertia page from the dashboard route', function () {
+test('doctors receive the doctor dashboard inertia page from the doctor dashboard route', function () {
     $user = User::factory()->create(['role' => 'doctor']);
 
-    $response = $this->actingAs($user)->get(route('dashboard'));
+    $response = $this->actingAs($user)->get(route('doctor.dashboard'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Dashboard');
-});
-
-test('family members visiting the dashboard route are redirected to the family overview', function () {
-    $user = User::factory()->familyMember()->create();
-
-    $response = $this->actingAs($user)->get(route('dashboard'));
-
-    $response->assertRedirect(route('family.overview'));
+    assertInertiaRootComponent($response, 'Doctor/Dashboard');
 });
 
 test('family members receive the family overview inertia page from the family overview route', function () {

@@ -23,7 +23,11 @@ const homeHref = computed(() => {
         return route('family.overview');
     }
 
-    return route('dashboard');
+    if (role === 'doctor') {
+        return route('doctor.dashboard');
+    }
+
+    return route('settings.edit');
 });
 
 const { t } = useI18n();

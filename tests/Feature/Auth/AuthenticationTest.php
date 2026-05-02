@@ -9,6 +9,19 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
+test('doctors are redirected to the doctor dashboard after login', function () {
+    $user = User::factory()->create(['role' => 'doctor']);
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+        'role' => 'doctor',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('doctor.dashboard', absolute: false));
+});
+
 test('family members are redirected to the family overview after login', function () {
     $user = User::factory()->familyMember()->create();
 
@@ -128,7 +141,7 @@ test('authenticated users can switch account via login endpoint', function () {
         ]);
 
     $this->assertAuthenticatedAs($secondUser);
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('doctor.dashboard', absolute: false));
 });
 
 test('failed re-login logs out the previous authenticated user', function () {

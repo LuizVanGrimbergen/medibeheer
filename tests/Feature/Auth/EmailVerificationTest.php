@@ -31,6 +31,24 @@ test('email can be verified', function () {
     $response->assertRedirect(route('patient.dashboard', absolute: false).'?verified=1');
 });
 
+test('email can be verified for doctors', function () {
+    $user = User::factory()->unverified()->create(['role' => 'doctor']);
+
+    Event::fake();
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
+
+    $response = $this->actingAs($user)->get($verificationUrl);
+
+    Event::assertDispatched(Verified::class);
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $response->assertRedirect(route('doctor.dashboard', absolute: false).'?verified=1');
+});
+
 test('email can be verified for family members', function () {
     $user = User::factory()->unverified()->create(['role' => 'family_member']);
 
