@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Patient;
+use App\Models\User;
 use App\Notifications\Auth\VerifyEmailNotification;
 use Illuminate\Support\Facades\Notification;
 
@@ -23,6 +25,10 @@ test('new users can register', function () {
     $this->assertAuthenticated();
     $response->assertRedirect(route('verification.notice'));
     Notification::assertSentTo(auth()->user(), VerifyEmailNotification::class);
+
+    /** @var User $registeredUser */
+    $registeredUser = auth()->user();
+    expect(Patient::query()->where('user_id', $registeredUser->id)->exists())->toBeTrue();
 });
 
 test('new users can register with uppercase and padded email input', function () {
@@ -59,4 +65,22 @@ test('new users can not register with duplicate email ignoring case and whitespa
 
     $response->assertSessionHasErrors('email');
     $this->assertGuest();
+});
+
+test('registering as doctor does not create a patient profile', function () {
+    Notification::fake();
+
+    $this->post('/register', [
+        'name' => 'Doctor User',
+        'email' => 'doctor.profile@example.com',
+        'role' => 'doctor',
+        'password' => 'Qw7!mR2#xP9@tL4$',
+        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
+    ]);
+
+    $this->assertAuthenticated();
+
+    /** @var User $registeredUser */
+    $registeredUser = auth()->user();
+    expect(Patient::query()->where('user_id', $registeredUser->id)->exists())->toBeFalse();
 });
