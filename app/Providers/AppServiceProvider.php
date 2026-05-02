@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Patient;
 use App\Models\User;
+use App\Policies\PatientPolicy;
 use App\Policies\UserPolicy;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -48,6 +51,17 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('update-password', $this->passwordActionRateLimiter());
 
         Gate::policy(User::class, UserPolicy::class);
+        Gate::policy(Patient::class, PatientPolicy::class);
+
+        RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
+            $user = $request->user();
+
+            if ($user instanceof User) {
+                return $user->defaultAuthenticatedHomeUrl();
+            }
+
+            return route('dashboard', absolute: false);
+        });
 
         Vite::prefetch(concurrency: 3);
     }

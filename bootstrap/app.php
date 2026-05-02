@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => Authenticate::class,
             'guest' => RedirectIfAuthenticated::class,
+            'patient' => EnsurePatient::class,
         ]);
 
         $middleware->web(append: [
