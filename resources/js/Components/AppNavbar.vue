@@ -13,8 +13,14 @@ const props = defineProps<{
 const page = usePage<PageProps>();
 
 const homeHref = computed(() => {
-    if (page.props.auth.user?.role === 'patient') {
+    const role = page.props.auth.user?.role;
+
+    if (role === 'patient') {
         return route('patient.dashboard');
+    }
+
+    if (role === 'family_member') {
+        return route('family.overview');
     }
 
     return route('dashboard');

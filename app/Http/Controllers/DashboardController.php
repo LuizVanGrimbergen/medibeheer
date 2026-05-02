@@ -19,6 +19,10 @@ class DashboardController extends Controller
             return redirect()->route('patient.dashboard');
         }
 
+        if ($user->isFamilyMember()) {
+            return redirect()->route('family.overview');
+        }
+
         return Inertia::render('Dashboard');
     }
 }
