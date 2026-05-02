@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureFamilyMember;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => Authenticate::class,
             'guest' => RedirectIfAuthenticated::class,
             'patient' => EnsurePatient::class,
+            'family_member' => EnsureFamilyMember::class,
         ]);
 
         $middleware->web(append: [
