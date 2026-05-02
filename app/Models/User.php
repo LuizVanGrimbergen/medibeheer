@@ -57,6 +57,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Patient::class);
     }
 
+    public function family(): HasOne
+    {
+        return $this->hasOne(Family::class);
+    }
+
     /**************************************/
     /*       Accessors / Mutators */
     /**************************************/
@@ -170,9 +175,15 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function defaultAuthenticatedHomeRoute(): string
     {
-        return $this->isPatient()
-            ? 'patient.dashboard'
-            : 'dashboard';
+        if ($this->isPatient()) {
+            return 'patient.dashboard';
+        }
+
+        if ($this->isFamilyMember()) {
+            return 'family.overview';
+        }
+
+        return 'dashboard';
     }
 
     public function defaultAuthenticatedHomeUrl(): string
