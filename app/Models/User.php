@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Crypt;
@@ -50,6 +51,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /**************************************/
     /*           Relationships */
     /**************************************/
+
+    public function patient(): HasOne
+    {
+        return $this->hasOne(Patient::class);
+    }
 
     /**************************************/
     /*       Accessors / Mutators */
@@ -160,6 +166,18 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isFamilyMember(): bool
     {
         return $this->role === UserRole::FAMILY_MEMBER;
+    }
+
+    public function defaultAuthenticatedHomeRoute(): string
+    {
+        return $this->isPatient()
+            ? 'patient.dashboard'
+            : 'dashboard';
+    }
+
+    public function defaultAuthenticatedHomeUrl(): string
+    {
+        return route($this->defaultAuthenticatedHomeRoute(), absolute: false);
     }
 
     public function sendEmailVerificationNotification(): void
