@@ -41,4 +41,11 @@ class UserFactory extends Factory
             'role' => UserRole::PATIENT,
         ]);
     }
+
+    public function familyMember(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::FAMILY_MEMBER,
+        ]);
+    }
 }

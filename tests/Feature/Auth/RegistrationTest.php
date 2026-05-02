@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
 use App\Notifications\Auth\VerifyEmailNotification;
@@ -65,6 +66,25 @@ test('new users can not register with duplicate email ignoring case and whitespa
 
     $response->assertSessionHasErrors('email');
     $this->assertGuest();
+});
+
+test('registering as family member creates a family profile and not a patient profile', function () {
+    Notification::fake();
+
+    $this->post('/register', [
+        'name' => 'Family User',
+        'email' => 'family.profile@example.com',
+        'role' => 'family_member',
+        'password' => 'Qw7!mR2#xP9@tL4$',
+        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
+    ]);
+
+    $this->assertAuthenticated();
+
+    /** @var User $registeredUser */
+    $registeredUser = auth()->user();
+    expect(Patient::query()->where('user_id', $registeredUser->id)->exists())->toBeFalse();
+    expect(Family::query()->where('user_id', $registeredUser->id)->exists())->toBeTrue();
 });
 
 test('registering as doctor does not create a patient profile', function () {

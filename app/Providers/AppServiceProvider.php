@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
+use App\Policies\FamilyPolicy;
 use App\Policies\PatientPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
@@ -52,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Patient::class, PatientPolicy::class);
+        Gate::policy(Family::class, FamilyPolicy::class);
 
         RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
             $user = $request->user();
