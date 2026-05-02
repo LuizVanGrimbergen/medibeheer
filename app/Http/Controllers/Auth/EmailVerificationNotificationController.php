@@ -24,7 +24,7 @@ class EmailVerificationNotificationController extends Controller
         }
 
         if ($authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());
         }
 
         $authenticatedUser->sendEmailVerificationNotification();

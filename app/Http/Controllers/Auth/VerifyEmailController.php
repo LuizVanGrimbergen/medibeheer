@@ -25,13 +25,13 @@ class VerifyEmailController extends Controller
         }
 
         if ($authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl().'?verified=1');
         }
 
         if ($authenticatedUser->markEmailAsVerified()) {
             event(new Verified($authenticatedUser));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl().'?verified=1');
     }
 }
