@@ -28,11 +28,19 @@ test('doctors receive the default dashboard inertia page from the dashboard rout
     assertInertiaRootComponent($response, 'Dashboard');
 });
 
-test('family members receive the default dashboard inertia page from the dashboard route', function () {
-    $user = User::factory()->create(['role' => 'family_member']);
+test('family members visiting the dashboard route are redirected to the family overview', function () {
+    $user = User::factory()->familyMember()->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 
+    $response->assertRedirect(route('family.overview'));
+});
+
+test('family members receive the family overview inertia page from the family overview route', function () {
+    $user = User::factory()->familyMember()->create();
+
+    $response = $this->actingAs($user)->get(route('family.overview'));
+
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Dashboard');
+    assertInertiaRootComponent($response, 'Family/Overview');
 });

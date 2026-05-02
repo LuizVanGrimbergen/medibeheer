@@ -9,6 +9,19 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
+test('family members are redirected to the family overview after login', function () {
+    $user = User::factory()->familyMember()->create();
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+        'role' => 'family_member',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('family.overview', absolute: false));
+});
+
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create(['role' => 'patient']);
 
