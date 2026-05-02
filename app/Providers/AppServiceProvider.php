@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Doctor;
 use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
+use App\Policies\DoctorPolicy;
 use App\Policies\FamilyPolicy;
 use App\Policies\PatientPolicy;
 use App\Policies\UserPolicy;
@@ -52,9 +54,17 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('confirm-password', $this->passwordActionRateLimiter());
         RateLimiter::for('update-password', $this->passwordActionRateLimiter());
 
+        RateLimiter::for('authenticated-area', function (Request $request): Limit {
+            $user = $request->user();
+            $key = $user !== null ? "user:{$user->id}" : $request->ip();
+
+            return Limit::perMinute(120)->by($key);
+        });
+
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(Family::class, FamilyPolicy::class);
+        Gate::policy(Doctor::class, DoctorPolicy::class);
 
         RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
             $user = $request->user();
@@ -63,7 +73,7 @@ class AppServiceProvider extends ServiceProvider
                 return $user->defaultAuthenticatedHomeUrl();
             }
 
-            return route('dashboard', absolute: false);
+            return route('home', absolute: false);
         });
 
         Vite::prefetch(concurrency: 3);
