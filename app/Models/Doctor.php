@@ -7,29 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Patient extends Model
+class Doctor extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'streak_count',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'streak_count' => 'integer',
-        ];
-    }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function doctors(): BelongsToMany
+    public function patients(): BelongsToMany
     {
-        return $this->belongsToMany(Doctor::class);
+        return $this->belongsToMany(Patient::class);
     }
 }
