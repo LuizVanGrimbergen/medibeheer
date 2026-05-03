@@ -101,3 +101,10 @@
 #nprogress .bar {
     z-index: 99999 !important;
 }
+
+@layer components {
+    .native-picker-input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        margin-inline-end: 0.125rem;
+    }
+}
