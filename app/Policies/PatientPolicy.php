@@ -7,10 +7,6 @@ use App\Models\User;
 
 class PatientPolicy
 {
-    /**************************************/
-    /*             Abilities */
-    /**************************************/
-
     public function viewAny(): bool
     {
         return false;
