@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
+use App\Policies\AppointmentPolicy;
 use App\Policies\DoctorPolicy;
 use App\Policies\FamilyPolicy;
 use App\Policies\PatientPolicy;
@@ -65,6 +67,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(Family::class, FamilyPolicy::class);
         Gate::policy(Doctor::class, DoctorPolicy::class);
+        Gate::policy(Appointment::class, AppointmentPolicy::class);
 
         RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
             $user = $request->user();

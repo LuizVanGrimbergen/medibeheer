@@ -17,6 +17,8 @@ export type User = {
     email_verified_at: string | null;
 };
 
+
+
 export type Auth = {
     user: User | null;
 };
@@ -29,4 +31,35 @@ export type PageProps<
         error: string | null;
         rateLimitSeconds: number | null;
     };
+};
+
+export type AppointmentDoctorType =
+    | 'dentist'
+    | 'hospital'
+    | 'general_practitioner'
+    | 'specialist'
+
+export type AppointmentStatusValue = 
+    | 'scheduled'
+    | 'done'
+    | 'cancelled';
+
+export type AppointmentDoneCommitPayload = {
+    doctor_visit_summary: string | null;
+};
+
+export type AppointmentCancelledCommitPayload = {
+    cancellation_reason: string | null;
+};
+
+export type Appointment = {
+    id: number;
+    doctor_type: AppointmentDoctorType;
+    provider_name: string;
+    address: string;
+    starts_at: string;
+    notes: string | null;
+    doctor_visit_summary: string | null;
+    cancellation_reason: string | null;
+    status: AppointmentStatusValue;
 };
