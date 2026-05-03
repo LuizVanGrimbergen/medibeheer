@@ -1,5 +1,6 @@
 <?php
 
+// navigation controllers
 use App\Http\Controllers\Patient\PatientAppointmentController;
 use App\Http\Controllers\Patient\PatientDashboardController;
 use App\Http\Controllers\Patient\PatientFamilyController;
@@ -9,6 +10,7 @@ use App\Http\Middleware\EnsurePatient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+// appointments controller
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -19,10 +21,18 @@ Route::middleware([
 ])
     ->prefix('patient')
     ->name('patient.')
+
     ->group(function (): void {
+
+        // navigation routes
         Route::get('/', PatientDashboardController::class)->name('dashboard');
         Route::get('medications', PatientMedicationController::class)->name('medications');
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
-        Route::get('appointments', PatientAppointmentController::class)->name('appointments');
         Route::get('family', PatientFamilyController::class)->name('family');
+
+        // Appointments routes
+        Route::get('appointments', [PatientAppointmentController::class, 'index'])->name('appointments');
+        Route::post('appointments', [PatientAppointmentController::class, 'store'])->name('appointments.store');
+        Route::patch('appointments/{appointment}', [PatientAppointmentController::class, 'update'])->name('appointments.update');
+        Route::delete('appointments/{appointment}', [PatientAppointmentController::class, 'destroy'])->name('appointments.destroy');
     });
