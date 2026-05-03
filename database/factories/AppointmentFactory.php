@@ -1,0 +1,30 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\AppointmentStatus;
+use App\Enums\DoctorType;
+use App\Models\Appointment;
+use App\Models\Patient;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Appointment>
+ */
+class AppointmentFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'patient_id' => Patient::factory(),
+            'doctor_type' => fake()->randomElement(DoctorType::cases()),
+            'provider_name' => fake()->company(),
+            'address' => fake()->address(),
+            'starts_at' => fake()->dateTimeBetween('now', '+3 months'),
+            'notes' => fake()->optional(0.4)->paragraph(),
+            'doctor_visit_summary' => null,
+            'cancellation_reason' => null,
+            'status' => fake()->randomElement(AppointmentStatus::cases()),
+        ];
+    }
+}
