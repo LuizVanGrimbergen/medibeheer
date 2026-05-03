@@ -10,12 +10,37 @@ class Family extends Model
 {
     use HasFactory;
 
+    /**************************************/
+    /*             Attributes */
+    /**************************************/
+
     protected $fillable = [
         'user_id',
+        'patient_id',
     ];
+
+    /**************************************/
+    /*           Relationships */
+    /**************************************/
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
+
+    public function patient(): BelongsTo
+    {
+        return $this->belongsTo(Patient::class);
+    }
+    /**************************************/
+    /*       Accessors / Mutators */
+    /**************************************/
+
+    /**************************************/
+    /*              Scopes */
+    /**************************************/
+
+    /**************************************/
+    /*              Helpers */
+    /**************************************/
 }

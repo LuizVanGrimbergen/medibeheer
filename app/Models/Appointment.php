@@ -2,29 +2,43 @@
 
 namespace App\Models;
 
+use App\Enums\AppointmentStatus;
+use App\Enums\DoctorType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Patient extends Model
+class Appointment extends Model
 {
-    use HasFactory;
     /**************************************/
     /*             Attributes */
     /**************************************/
 
-    protected $fillable = [
-        'user_id',
-        'streak_count',
-    ];
+    use HasFactory;
 
+    protected $fillable = [
+        'patient_id',
+        'doctor_type',
+        'provider_name',
+        'address',
+        'starts_at',
+        'notes',
+        'doctor_visit_summary',
+        'cancellation_reason',
+        'status',
+    ];
 
     protected function casts(): array
     {
         return [
-            'streak_count' => 'integer',
+            'doctor_type' => DoctorType::class,
+            'provider_name' => 'encrypted',
+            'address' => 'encrypted',
+            'notes' => 'encrypted',
+            'doctor_visit_summary' => 'encrypted',
+            'cancellation_reason' => 'encrypted',
+            'starts_at' => 'datetime',
+            'status' => AppointmentStatus::class,
         ];
     }
 
@@ -32,20 +46,11 @@ class Patient extends Model
     /*           Relationships */
     /**************************************/
 
-    public function user(): BelongsTo
+    public function patient(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Patient::class);
     }
-
-    public function doctors(): BelongsToMany
-    {
-        return $this->belongsToMany(Doctor::class);
-    }
-
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class);
-    }
+    
     /**************************************/
     /*       Accessors / Mutators */
     /**************************************/
