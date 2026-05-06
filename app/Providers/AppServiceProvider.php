@@ -63,6 +63,27 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(120)->by($key);
         });
 
+        RateLimiter::for('family-invitation-accept', function (Request $request): Limit {
+            $user = $request->user();
+            $key = $user !== null ? "user:{$user->id}" : $request->ip();
+
+            return Limit::perMinute(10)->by($key);
+        });
+
+        RateLimiter::for('family-invitation-send', function (Request $request): Limit {
+            $user = $request->user();
+            $key = $user !== null ? "user:{$user->id}" : $request->ip();
+
+            return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('family-invitation-revoke', function (Request $request): Limit {
+            $user = $request->user();
+            $key = $user !== null ? "user:{$user->id}" : $request->ip();
+
+            return Limit::perMinute(30)->by($key);
+        });
+
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Patient::class, PatientPolicy::class);
         Gate::policy(Family::class, FamilyPolicy::class);

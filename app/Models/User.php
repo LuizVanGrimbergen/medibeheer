@@ -178,6 +178,21 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === UserRole::FAMILY_MEMBER;
     }
 
+    public function isFamilyLinkedToPatient(Patient $patient): bool
+    {
+        if (! $this->isFamilyMember()) {
+            return false;
+        }
+
+        $family = $this->family;
+
+        if ($family === null) {
+            return false;
+        }
+
+        return $family->patients()->whereKey($patient->getKey())->exists();
+    }
+
     public function defaultAuthenticatedHomeRoute(): string
     {
         if ($this->isPatient()) {

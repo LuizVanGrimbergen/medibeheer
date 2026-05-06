@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'family_invitation' => [
+        'expiry_days' => (int) env('FAMILY_INVITATION_EXPIRY_DAYS', 14),
+    ],
+
 ];

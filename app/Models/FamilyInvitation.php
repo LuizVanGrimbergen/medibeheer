@@ -5,25 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Patient extends Model
+class FamilyInvitation extends Model
 {
     use HasFactory;
+
     /**************************************/
     /*             Attributes */
     /**************************************/
 
     protected $fillable = [
-        'user_id',
-        'streak_count',
+        'patient_id',
+        'invited_email',
+        'invited_email_hash',
+        'token_hash',
+        'expires_at',
+        'accepted_at',
+        'revoked_at',
     ];
 
     protected function casts(): array
     {
         return [
-            'streak_count' => 'integer',
+            'invited_email' => 'encrypted',
+            'expires_at' => 'datetime',
+            'accepted_at' => 'datetime',
+            'revoked_at' => 'datetime',
         ];
     }
 
@@ -31,30 +38,9 @@ class Patient extends Model
     /*           Relationships */
     /**************************************/
 
-    public function user(): BelongsTo
+    public function patient(): BelongsTo
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function doctors(): BelongsToMany
-    {
-        return $this->belongsToMany(Doctor::class);
-    }
-
-    public function appointments(): HasMany
-    {
-        return $this->hasMany(Appointment::class);
-    }
-
-    public function familyInvitations(): HasMany
-    {
-        return $this->hasMany(FamilyInvitation::class);
-    }
-
-    public function families(): BelongsToMany
-    {
-        return $this->belongsToMany(Family::class, 'family_patient')
-            ->withTimestamps();
+        return $this->belongsTo(Patient::class);
     }
     /**************************************/
     /*       Accessors / Mutators */
@@ -67,4 +53,13 @@ class Patient extends Model
     /**************************************/
     /*              Helpers */
     /**************************************/
+
+    public function isPending(): bool
+    {
+        if ($this->accepted_at !== null || $this->revoked_at !== null) {
+            return false;
+        }
+
+        return $this->expires_at->isFuture();
+    }
 }

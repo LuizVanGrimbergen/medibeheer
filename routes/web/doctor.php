@@ -3,14 +3,14 @@
 use App\Http\Controllers\Doctor\DoctorDashboardController;
 use App\Http\Controllers\Doctor\DoctorPatientsController;
 use App\Http\Middleware\EnsureDoctor;
+use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
-use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
     Authenticate::class,
-    EnsureEmailIsVerified::class,
+    RedirectIfEmailUnverified::class,
     EnsureDoctor::class,
     ThrottleRequests::using('authenticated-area'),
 ])

@@ -15,4 +15,12 @@ return [
         'action' => 'Reset password',
         'footer' => 'If you did not request a password reset, no further action is required.',
     ],
+    'family_invitation' => [
+        'subject' => 'Invitation to follow along in Medibeheer',
+        'greeting' => 'Hello!',
+        'line' => 'Someone you know invited you to join as a family member. Enter the code below in the Medibeheer app after signing in with this email address.',
+        'expires' => 'This code is valid until :datetime.',
+        'footer' => 'If you did not expect this invitation, you can ignore this email.',
+        'salutation' => 'Kind regards,',
+    ],
 ];

@@ -8,6 +8,7 @@ import type { PageProps } from '@/lib/types';
 const page = usePage<PageProps>();
 const authenticatedUserName = computed(() => page.props.auth.user?.name ?? '');
 const flashError = computed(() => page.props.flash?.error ?? null);
+const flashSuccess = computed(() => page.props.flash?.success ?? null);
 const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds ?? null);
 </script>
 
@@ -33,6 +34,16 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
                     :message="flashError"
                     :rate-limit-seconds="flashRateLimitSeconds"
                 />
+            </div>
+            <div
+                v-if="flashSuccess"
+                class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8"
+            >
+                <output
+                    class="rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-text"
+                >
+                    {{ flashSuccess }}
+                </output>
             </div>
             <slot />
         </main>

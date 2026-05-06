@@ -1,21 +1,24 @@
 <?php
 
 // navigation controllers
+use App\Http\Controllers\Patient\DestroyPatientFamilyInvitationController;
 use App\Http\Controllers\Patient\PatientAppointmentController;
 use App\Http\Controllers\Patient\PatientDashboardController;
 use App\Http\Controllers\Patient\PatientFamilyController;
 use App\Http\Controllers\Patient\PatientInventoryController;
 use App\Http\Controllers\Patient\PatientMedicationController;
+use App\Http\Controllers\Patient\StorePatientFamilyInvitationController;
 use App\Http\Middleware\EnsurePatient;
+use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
-use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+/* invitation routes */
 use Illuminate\Routing\Middleware\ThrottleRequests;
 // appointments controller
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
     Authenticate::class,
-    EnsureEmailIsVerified::class,
+    RedirectIfEmailUnverified::class,
     EnsurePatient::class,
     ThrottleRequests::using('authenticated-area'),
 ])
@@ -24,15 +27,29 @@ Route::middleware([
 
     ->group(function (): void {
 
-        // navigation routes
+        /* navigation routes */
         Route::get('/', PatientDashboardController::class)->name('dashboard');
         Route::get('medications', PatientMedicationController::class)->name('medications');
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
         Route::get('family', PatientFamilyController::class)->name('family');
 
-        // Appointments routes
-        Route::get('appointments', [PatientAppointmentController::class, 'index'])->name('appointments');
-        Route::post('appointments', [PatientAppointmentController::class, 'store'])->name('appointments.store');
-        Route::patch('appointments/{appointment}', [PatientAppointmentController::class, 'update'])->name('appointments.update');
-        Route::delete('appointments/{appointment}', [PatientAppointmentController::class, 'destroy'])->name('appointments.destroy');
+        /* Family Invitations routes */
+        Route::post('family/invitations', StorePatientFamilyInvitationController::class)
+            ->middleware('throttle:family-invitation-send')
+            ->name('family.invitations.store');
+
+        Route::delete('family/invitations/{invitation}', DestroyPatientFamilyInvitationController::class)
+            ->middleware('throttle:family-invitation-revoke')
+            ->name('family.invitations.destroy');
+
+        /* Appointments routes */
+        Route::resource('appointments', PatientAppointmentController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names([
+            'index' => 'appointments',
+            'store' => 'appointments.store',
+            'update' => 'appointments.update',
+            'destroy' => 'appointments.destroy',
+        ]);
+
     });

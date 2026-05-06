@@ -15,4 +15,12 @@ return [
         'action' => 'Wachtwoord resetten',
         'footer' => 'Als je geen reset hebt aangevraagd, hoef je niets te doen.',
     ],
+    'family_invitation' => [
+        'subject' => 'Uitnodiging om mee te kijken in Medibeheer',
+        'greeting' => 'Hallo!',
+        'line' => 'Iemand die je kent nodigt je uit om als familielid mee te kijken. Gebruik onderstaande code in de Medibeheer-app nadat je bent ingelogd met dit e-mailadres.',
+        'expires' => 'Deze code is geldig tot :datetime.',
+        'footer' => 'Als je deze uitnodiging niet verwacht, kun je deze e-mail negeren.',
+        'salutation' => 'Met vriendelijke groet,',
+    ],
 ];

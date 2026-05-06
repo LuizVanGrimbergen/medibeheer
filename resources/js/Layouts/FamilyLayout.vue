@@ -7,10 +7,12 @@ import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { PageProps } from '@/lib/types';
+import type { FamilyDashboardProps, PageProps } from '@/lib/types';
+
+type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
 
 const { t } = useI18n();
-const page = usePage<PageProps>();
+const page = usePage<PageWithFamily>();
 const { smAndUp, lgAndUp } = useTailwindBreakpoints();
 
 function horizontalPaddingX(
@@ -52,7 +54,7 @@ function pathOnly(urlOrPath: string): string {
     return raw;
 }
 
-const familyNavItems: readonly FamilyNavItem[] = [
+const allFamilyNavItems: readonly FamilyNavItem[] = [
     {
         routeName: 'family.overview',
         labelKey: 'family.navigation.overview',
@@ -65,10 +67,26 @@ const familyNavItems: readonly FamilyNavItem[] = [
     },
 ];
 
+const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
+    const f = page.props.family;
+
+    if (f === undefined || f === null) {
+        return allFamilyNavItems;
+    }
+
+    const showUpdatesNav = Boolean(f.has_linked_patient);
+
+    if (!showUpdatesNav) {
+        return allFamilyNavItems.filter((item) => item.routeName !== 'family.updates');
+    }
+
+    return allFamilyNavItems;
+});
+
 const activeFamilyNavRoute = computed((): FamilyNavItem['routeName'] | undefined => {
     const pathname = pathOnly(page.url);
 
-    return familyNavItems.find(
+    return visibleFamilyNavItems.value.find(
         (item) => pathname === pathOnly(route(item.routeName) as string),
     )?.routeName;
 });
@@ -118,7 +136,7 @@ const footerLabelClass = computed(() =>
                     :class="footerPaddingX"
                 >
                     <Link
-                        v-for="item in familyNavItems"
+                        v-for="item in visibleFamilyNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
                         :class="footerNavClass(item.routeName)"

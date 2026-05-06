@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Appointment;
-use App\Models\Patient;
 use App\Models\User;
 
 class AppointmentPolicy
@@ -19,7 +18,7 @@ class AppointmentPolicy
             return true;
         }
 
-        return $this->familyLinkedToPatient($user, $appointment->patient);
+        return $user->isFamilyLinkedToPatient($appointment->patient);
     }
 
     public function update(User $user, Appointment $appointment): bool
@@ -45,24 +44,5 @@ class AppointmentPolicy
         }
 
         return $patient->is($appointment->patient);
-    }
-
-    private function familyLinkedToPatient(User $user, Patient $patient): bool
-    {
-        if (! $user->isFamilyMember()) {
-            return false;
-        }
-
-        $family = $user->family;
-
-        if ($family === null) {
-            return false;
-        }
-
-        if ($family->patient_id === null) {
-            return false;
-        }
-
-        return $family->patient_id === $patient->getKey();
     }
 }

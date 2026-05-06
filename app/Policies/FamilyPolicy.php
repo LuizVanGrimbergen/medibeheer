@@ -22,9 +22,9 @@ class FamilyPolicy
         return false;
     }
 
-    public function update(User $user, Family $family): bool
+    public function update(): bool
     {
-        return $user->id === $family->user_id;
+        return false;
     }
 
     public function delete(): bool

@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Support\FamilyDashboardState;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -13,7 +15,7 @@ class HandleInertiaRequests extends Middleware
     {
         $user = $request->user();
 
-        return [
+        $shared = [
             ...parent::share($request),
             'auth' => [
                 'user' => function () use ($request, $user): ?array {
@@ -38,8 +40,15 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'error' => fn () => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
                 'rateLimitSeconds' => fn () => $request->session()->get('rate_limit_seconds'),
             ],
         ];
+
+        if ($user instanceof User && $user->isFamilyMember()) {
+            $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
+        }
+
+        return $shared;
     }
 }

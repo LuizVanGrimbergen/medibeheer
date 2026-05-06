@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Family extends Model
 {
@@ -16,7 +17,6 @@ class Family extends Model
 
     protected $fillable = [
         'user_id',
-        'patient_id',
     ];
 
     /**************************************/
@@ -28,9 +28,15 @@ class Family extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function patient(): BelongsTo
+    public function patients(): BelongsToMany
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsToMany(Patient::class, 'family_patient')
+            ->withTimestamps();
+    }
+
+    public function hasLinkedPatient(): bool
+    {
+        return $this->patients()->exists();
     }
     /**************************************/
     /*       Accessors / Mutators */

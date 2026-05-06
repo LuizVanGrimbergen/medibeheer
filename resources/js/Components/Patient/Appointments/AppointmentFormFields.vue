@@ -1,13 +1,13 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props -- Inertia useForm() proxy; parent owns mutable form state. */
 import { useI18n } from 'vue-i18n';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import { resolveAppointmentDoctorTypeLabel } from '@/Components/Patient/Appointments/useAppointmentDisplay';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { cn } from '@/lib/utils';
-import { resolveAppointmentDoctorTypeLabel } from '@/Components/Patient/Appointments/useAppointmentDisplay';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
 import type { AppointmentDoctorType } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 defineProps<{
     form: AppointmentFormWithErrors;

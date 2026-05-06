@@ -3,15 +3,22 @@ import { Circle, CircleCheck } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const props = defineProps<{
-    password: string;
-    minimumLength: number;
-}>();
+const props = withDefaults(
+    defineProps<{
+        password?: string;
+        minimumLength: number;
+    }>(),
+    {
+        password: '',
+    },
+);
 
 const { t } = useI18n();
 
+const password = computed(() => props.password ?? '');
+
 const remainingPasswordCharacters = computed(() => {
-    const currentLength = props.password.length;
+    const currentLength = password.value.length;
 
     if (currentLength >= props.minimumLength) {
         return 0;
@@ -25,19 +32,19 @@ const hasMinimumPasswordLength = computed(() => {
 });
 
 const hasUppercaseLetter = computed(() => {
-    return /[A-Z]/.test(props.password);
+    return /[A-Z]/.test(password.value);
 });
 
 const hasLowercaseLetter = computed(() => {
-    return /[a-z]/.test(props.password);
+    return /[a-z]/.test(password.value);
 });
 
 const hasDigit = computed(() => {
-    return /\d/.test(props.password);
+    return /\d/.test(password.value);
 });
 
 const hasSpecialCharacter = computed(() => {
-    return /[^A-Za-z0-9]/.test(props.password);
+    return /[^A-Za-z0-9]/.test(password.value);
 });
 </script>
 
