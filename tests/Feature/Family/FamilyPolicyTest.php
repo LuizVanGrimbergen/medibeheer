@@ -15,3 +15,10 @@ test('family members cannot view another users family profile', function () {
 
     expect($firstUser->can('view', $secondUser->family))->toBeFalse();
 });
+
+test('family members cannot update their family profile through authorization', function () {
+    $user = User::factory()->familyMember()->create();
+
+    expect($user->family)->not->toBeNull();
+    expect($user->can('update', $user->family))->toBeFalse();
+});
