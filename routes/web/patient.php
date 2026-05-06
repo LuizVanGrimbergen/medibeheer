@@ -46,10 +46,10 @@ Route::middleware([
         Route::resource('appointments', PatientAppointmentController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names([
-            'index' => 'appointments.index',
+            'index' => 'appointments',
             'store' => 'appointments.store',
             'update' => 'appointments.update',
             'destroy' => 'appointments.destroy',
         ]);
-        
+
     });
