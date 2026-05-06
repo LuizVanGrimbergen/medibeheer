@@ -23,12 +23,31 @@ export type Auth = {
     user: User | null;
 };
 
+export type FamilyDashboardProps = {
+    has_linked_patient: boolean;
+    active_patient_id: number | null;
+    patients: {
+        id: number;
+        name: string;
+        switch_url: string;
+        is_active: boolean;
+    }[];
+};
+
+export type PendingFamilyInvitation = {
+    id: number;
+    invited_email: string;
+    expires_at: string;
+    revoke_url: string;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: Auth;
     flash: {
         error: string | null;
+        success: string | null;
         rateLimitSeconds: number | null;
     };
 };
