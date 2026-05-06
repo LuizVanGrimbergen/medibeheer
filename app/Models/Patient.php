@@ -20,7 +20,6 @@ class Patient extends Model
         'streak_count',
     ];
 
-
     protected function casts(): array
     {
         return [
@@ -45,6 +44,17 @@ class Patient extends Model
     public function appointments(): HasMany
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function familyInvitations(): HasMany
+    {
+        return $this->hasMany(FamilyInvitation::class);
+    }
+
+    public function families(): BelongsToMany
+    {
+        return $this->belongsToMany(Family::class, 'family_patient')
+            ->withTimestamps();
     }
     /**************************************/
     /*       Accessors / Mutators */
