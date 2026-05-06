@@ -14,7 +14,11 @@ class PatientPolicy
 
     public function view(User $user, Patient $patient): bool
     {
-        if ($user->id === $patient->user_id) {
+        if ($this->patientProfileOwnedByUser($user, $patient)) {
+            return true;
+        }
+
+        if ($user->isFamilyLinkedToPatient($patient)) {
             return true;
         }
 
@@ -38,11 +42,16 @@ class PatientPolicy
 
     public function update(User $user, Patient $patient): bool
     {
-        return $user->id === $patient->user_id;
+        return $this->patientProfileOwnedByUser($user, $patient);
     }
 
     public function delete(): bool
     {
         return false;
+    }
+
+    private function patientProfileOwnedByUser(User $user, Patient $patient): bool
+    {
+        return (int) $user->getAuthIdentifier() === (int) $patient->user_id;
     }
 }
