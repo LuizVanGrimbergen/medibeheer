@@ -148,6 +148,26 @@ test('patients cannot invite their own email address', function () {
     Mail::assertNothingSent();
 });
 
+test('patients cannot revoke another patients family invitation', function () {
+    $patientUserA = User::factory()->patient()->create();
+    $patientA = $patientUserA->patient;
+    expect($patientA)->not->toBeNull();
+
+    $patientUserB = User::factory()->patient()->create();
+    $patientB = $patientUserB->patient;
+    expect($patientB)->not->toBeNull();
+
+    $invitation = FamilyInvitation::factory()->create([
+        'patient_id' => $patientA->id,
+    ]);
+
+    $this->actingAs($patientUserB)
+        ->delete(route('patient.family.invitations.destroy', $invitation))
+        ->assertNotFound();
+
+    expect($invitation->fresh()->revoked_at)->toBeNull();
+});
+
 test('patients can revoke a pending invitation', function () {
     Mail::fake();
 
