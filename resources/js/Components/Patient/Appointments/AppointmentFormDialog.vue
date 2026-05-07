@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentFormFields from '@/Components/Patient/Appointments/AppointmentFormFields.vue';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
@@ -13,7 +14,7 @@ import {
 } from '@/Components/ui/dialog';
 import type { AppointmentDoctorType } from '@/lib/types';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     title: string;
     description: string;
@@ -22,7 +23,12 @@ defineProps<{
     doctorTypeValues: AppointmentDoctorType[];
     showDoctorTypePlaceholder: boolean;
     form: AppointmentFormWithErrors;
+    transportFamilies: {
+        id: number;
+        name: string;
+    }[];
     dialogContentClass: string;
+    submitDisabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -32,37 +38,41 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const scrollArea = ref<HTMLElement | null>(null);
 </script>
 
 <template>
     <Dialog
-        :open="open"
+        :open="props.open"
         @update:open="emit('update:open', $event)"
     >
-        <DialogContent :class="dialogContentClass">
+        <DialogContent :class="props.dialogContentClass">
             <DialogHeader class="shrink-0 space-y-3 text-left sm:space-y-2">
                 <DialogTitle class="pr-14 text-2xl font-bold leading-tight text-text-heading">
-                    {{ title }}
+                    {{ props.title }}
                 </DialogTitle>
                 <DialogDescription class="text-base leading-relaxed text-text-muted">
-                    {{ description }}
+                    {{ props.description }}
                 </DialogDescription>
             </DialogHeader>
 
             <form
-                :id="formId"
-                class="flex min-h-0 flex-1 flex-col gap-6 overflow-hidden"
+                :id="props.formId"
+                class="flex min-h-0 flex-1 flex-col gap-6"
                 novalidate
                 @submit.prevent="emit('submit')"
             >
                 <div
-                    class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
+                    class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-24 [-webkit-overflow-scrolling:touch]"
+                    ref="scrollArea"
                 >
                     <AppointmentFormFields
-                        :form="form"
-                        :id-prefix="idPrefix"
-                        :doctor-type-values="doctorTypeValues"
-                        :show-doctor-type-placeholder="showDoctorTypePlaceholder"
+                        :form="props.form"
+                        :id-prefix="props.idPrefix"
+                        :doctor-type-values="props.doctorTypeValues"
+                        :show-doctor-type-placeholder="props.showDoctorTypePlaceholder"
+                        :transport-families="props.transportFamilies"
                     />
                 </div>
 
@@ -82,7 +92,7 @@ const { t } = useI18n();
                         type="submit"
                         size="lg"
                         class="min-h-14 w-full touch-manipulation text-lg sm:w-auto sm:min-w-40"
-                        :disabled="form.processing"
+                        :disabled="props.form.processing || props.submitDisabled === true"
                     >
                         {{ t('patient.appointments.actions.save') }}
                     </Button>

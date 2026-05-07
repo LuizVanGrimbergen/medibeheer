@@ -58,10 +58,25 @@ export type AppointmentDoctorType =
     | 'general_practitioner'
     | 'specialist'
 
-export type AppointmentStatusValue = 
-    | 'scheduled'
-    | 'done'
-    | 'cancelled';
+export const APPOINTMENT_DOCTOR_TYPE_VALUES = [
+    'dentist',
+    'hospital',
+    'general_practitioner',
+    'specialist',
+] as const;
+
+export const APPOINTMENT_STATUS_VALUES = [
+    'scheduled',
+    'done',
+    'cancelled',
+] as const;
+
+export type AppointmentStatusValue = (typeof APPOINTMENT_STATUS_VALUES)[number];
+
+export type AppointmentTransportStatusValue =
+    | 'requested'
+    | 'accepted'
+    | 'declined';
 
 export type AppointmentDoneCommitPayload = {
     doctor_visit_summary: string | null;
@@ -71,12 +86,33 @@ export type AppointmentCancelledCommitPayload = {
     cancellation_reason: string | null;
 };
 
+export type PaginationMeta = {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+};
+
+export type Paginated<T> = {
+    data: T[];
+    meta: PaginationMeta;
+};
+
 export type Appointment = {
     id: number;
     doctor_type: AppointmentDoctorType;
     provider_name: string;
     address: string;
     starts_at: string;
+    needs_transport: boolean;
+    transport_status: AppointmentTransportStatusValue | null;
+    transport_invited_family_ids: number[];
+    transport_family: {
+        id: number;
+        name: string;
+    } | null;
     notes: string | null;
     doctor_visit_summary: string | null;
     cancellation_reason: string | null;
