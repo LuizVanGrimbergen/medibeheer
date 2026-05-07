@@ -38,7 +38,7 @@ Route::middleware([
             ->middleware('throttle:family-invitation-send')
             ->name('family.invitations.store');
 
-        Route::delete('family/invitations/{invitation}', DestroyPatientFamilyInvitationController::class)
+        Route::delete('family/invitations/{familyInvitation}', DestroyPatientFamilyInvitationController::class)
             ->middleware('throttle:family-invitation-revoke')
             ->name('family.invitations.destroy');
 
