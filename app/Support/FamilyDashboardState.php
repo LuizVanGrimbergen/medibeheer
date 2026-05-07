@@ -10,6 +10,33 @@ use Illuminate\Http\Request;
 
 final class FamilyDashboardState
 {
+    public static function activePatientId(Request $request): ?int
+    {
+        $user = $request->user();
+
+        if (! $user instanceof User || ! $user->isFamilyMember()) {
+            return null;
+        }
+
+        $family = $user->family;
+
+        if ($family === null) {
+            return null;
+        }
+
+        $patientIds = $family->patients()
+            ->orderBy('patients.id')
+            ->pluck('patients.id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        if ($patientIds === []) {
+            return null;
+        }
+
+        return self::syncedActivePatientIdFromIds($request, $patientIds);
+    }
+
     public static function inertiaPayload(Request $request): array
     {
         $user = $request->user();
@@ -27,31 +54,13 @@ final class FamilyDashboardState
         $patients = $family
             ->patients()
             ->with('user')
-            ->orderBy('id')
+            ->orderBy('patients.id')
             ->get();
 
-        $activePatientId = $request->session()->get('family.active_patient_id');
-
-        if (is_string($activePatientId) && is_numeric($activePatientId)) {
-            $activePatientId = (int) $activePatientId;
-        }
-
-        if (! is_int($activePatientId)) {
-            $activePatientId = null;
-        }
-
-        if ($activePatientId !== null && $patients->where('id', $activePatientId)->isEmpty()) {
-            $activePatientId = null;
-        }
-
-        if ($activePatientId === null) {
-            $firstPatient = $patients->first();
-
-            if ($firstPatient !== null) {
-                $activePatientId = (int) $firstPatient->id;
-                $request->session()->put('family.active_patient_id', $activePatientId);
-            }
-        }
+        $activePatientId = self::syncedActivePatientIdFromIds(
+            $request,
+            $patients->pluck('id')->map(fn ($id) => (int) $id)->all(),
+        );
 
         return [
             'has_linked_patient' => $patients->isNotEmpty(),
@@ -70,6 +79,37 @@ final class FamilyDashboardState
                 ->values()
                 ->all(),
         ];
+    }
+
+    /**
+     * @param  list<int>  $patientIds
+     */
+    private static function syncedActivePatientIdFromIds(Request $request, array $patientIds): ?int
+    {
+        if ($patientIds === []) {
+            return null;
+        }
+
+        $activePatientId = $request->session()->get('family.active_patient_id');
+
+        if (is_string($activePatientId) && is_numeric($activePatientId)) {
+            $activePatientId = (int) $activePatientId;
+        }
+
+        if (! is_int($activePatientId)) {
+            $activePatientId = null;
+        }
+
+        if ($activePatientId !== null && ! in_array($activePatientId, $patientIds, true)) {
+            $activePatientId = null;
+        }
+
+        if ($activePatientId === null) {
+            $activePatientId = $patientIds[0];
+            $request->session()->put('family.active_patient_id', $activePatientId);
+        }
+
+        return $activePatientId;
     }
 
     private static function emptyPayload(): array
