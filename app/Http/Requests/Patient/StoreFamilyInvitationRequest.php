@@ -8,16 +8,26 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreFamilyInvitationRequest extends FormRequest
 {
+    /**************************************/
+    /*           Authorization */
+    /**************************************/
     public function authorize(): bool
     {
         return $this->user() !== null && $this->user()->isPatient();
     }
 
+    /**************************************/
+    /*          Validation Rules */
+    /**************************************/
     public function rules(): array
     {
         return [
             'email' => ['required', 'email', 'max:255',
-                function (mixed $value, Closure $fail): void {
+                function (string $attribute, mixed $value, Closure $fail): void {
+                    if ($attribute === '') {
+                        return;
+                    }
+
                     $normalized = User::normalizeEmail((string) $value);
                     $self = User::normalizeEmail($this->user()->email);
 

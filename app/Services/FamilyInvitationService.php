@@ -73,7 +73,7 @@ final class FamilyInvitationService
 
     public function accept(User $user, string $plainCode): void
     {
-        $tokenHash = $this->resolveAcceptTokenHash($user, $plainCode);
+        $tokenHash = $this->validatedAcceptTokenHash($user, $plainCode);
 
         DB::transaction(function () use ($user, $tokenHash): void {
             $invitation = $this->findLockablePendingInvitation($tokenHash);
@@ -93,7 +93,7 @@ final class FamilyInvitationService
         ]);
     }
 
-    private function resolveAcceptTokenHash(User $user, string $plainCode): string
+    private function validatedAcceptTokenHash(User $user, string $plainCode): string
     {
         if (! $user->isFamilyMember()) {
             throw $this->invalidCodeException();
