@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Com
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
+import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyDashboardProps } from '@/lib/types';
 
@@ -54,12 +55,10 @@ function submitAccept(): void {
                 <CardHeader>
                     <CardTitle>{{ t('family.overview.linkedPatientsHeading') }}</CardTitle>
                     <CardDescription v-if="props.family.active_patient_id !== null">
-                        {{ t('family.overview.activePatientLabel') }}:
-                        <span class="font-medium text-text">
-                            {{
-                                props.family.patients.find((p) => p.is_active)?.name
-                            }}
-                        </span>
+                        <ActivePatientBadge
+                            :family="props.family"
+                            variant="inline"
+                        />
                     </CardDescription>
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">

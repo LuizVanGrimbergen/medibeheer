@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyDashboardProps } from '@/lib/types';
 
@@ -21,15 +22,7 @@ const { t } = useI18n();
             <h1 class="text-2xl font-semibold text-text-heading">
                 {{ t('family.updates.heading') }}
             </h1>
-            <p
-                v-if="props.family.patients.length > 0 && props.family.active_patient_id !== null"
-                class="text-sm text-text-muted"
-            >
-                {{ t('family.overview.activePatientLabel') }}:
-                <span class="font-medium text-text">
-                    {{ props.family.patients.find((p) => p.is_active)?.name }}
-                </span>
-            </p>
+            <ActivePatientBadge :family="props.family" />
             <p
                 v-if="!props.family.has_linked_patient"
                 class="max-w-prose text-sm leading-relaxed text-text-muted"
