@@ -81,9 +81,6 @@ final class FamilyDashboardState
         ];
     }
 
-    /**
-     * @param  list<int>  $patientIds
-     */
     private static function syncedActivePatientIdFromIds(Request $request, array $patientIds): ?int
     {
         if ($patientIds === []) {

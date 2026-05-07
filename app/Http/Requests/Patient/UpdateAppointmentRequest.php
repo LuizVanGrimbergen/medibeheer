@@ -10,7 +10,6 @@ use Illuminate\Validation\Rule;
 
 class UpdateAppointmentRequest extends FormRequest
 {
-
     /**************************************/
     /*           Authorization */
     /**************************************/
