@@ -2,23 +2,11 @@
 
 namespace App\Providers;
 
-use App\Models\Appointment;
-use App\Models\Doctor;
-use App\Models\Family;
-use App\Models\Patient;
 use App\Models\User;
-use App\Policies\AppointmentPolicy;
-use App\Policies\DoctorPolicy;
-use App\Policies\FamilyPolicy;
-use App\Policies\PatientPolicy;
-use App\Policies\UserPolicy;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -53,43 +41,6 @@ class AppServiceProvider extends ServiceProvider
             DB::prohibitDestructiveCommands();
         }
 
-        RateLimiter::for('confirm-password', $this->passwordActionRateLimiter());
-        RateLimiter::for('update-password', $this->passwordActionRateLimiter());
-
-        RateLimiter::for('authenticated-area', function (Request $request): Limit {
-            $user = $request->user();
-            $key = $user !== null ? "user:{$user->id}" : $request->ip();
-
-            return Limit::perMinute(120)->by($key);
-        });
-
-        RateLimiter::for('family-invitation-accept', function (Request $request): Limit {
-            $user = $request->user();
-            $key = $user !== null ? "user:{$user->id}" : $request->ip();
-
-            return Limit::perMinute(10)->by($key);
-        });
-
-        RateLimiter::for('family-invitation-send', function (Request $request): Limit {
-            $user = $request->user();
-            $key = $user !== null ? "user:{$user->id}" : $request->ip();
-
-            return Limit::perMinute(5)->by($key);
-        });
-
-        RateLimiter::for('family-invitation-revoke', function (Request $request): Limit {
-            $user = $request->user();
-            $key = $user !== null ? "user:{$user->id}" : $request->ip();
-
-            return Limit::perMinute(30)->by($key);
-        });
-
-        Gate::policy(User::class, UserPolicy::class);
-        Gate::policy(Patient::class, PatientPolicy::class);
-        Gate::policy(Family::class, FamilyPolicy::class);
-        Gate::policy(Doctor::class, DoctorPolicy::class);
-        Gate::policy(Appointment::class, AppointmentPolicy::class);
-
         RedirectIfAuthenticated::redirectUsing(function (Request $request): string {
             $user = $request->user();
 
@@ -101,14 +52,5 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Vite::prefetch(concurrency: 3);
-    }
-
-    private function passwordActionRateLimiter(): \Closure
-    {
-        return function (Request $request): Limit {
-            $key = $request->user()?->id ?? $request->ip();
-
-            return Limit::perMinute(5)->by($key);
-        };
     }
 }
