@@ -13,13 +13,7 @@ trait AuthorizesFamilyProfile
 
         abort_unless($user !== null && $user->isFamilyMember(), 403);
 
-        $family = $user->family;
-
-        if ($family === null) {
-            $family = Family::query()->firstOrCreate(
-                ['user_id' => $user->id],
-            );
-        }
+        $family = $user->familyOrCreate();
 
         $this->authorize('view', $family);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Family;
+namespace App\Http\Controllers\Family\Invitations;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Family\AcceptFamilyInvitationRequest;
