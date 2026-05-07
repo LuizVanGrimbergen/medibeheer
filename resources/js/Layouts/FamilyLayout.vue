@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Bell, LayoutGrid } from 'lucide-vue-next';
+import { Bell, CalendarDays, LayoutGrid } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -37,8 +37,8 @@ const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
 const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
 
 type FamilyNavItem = {
-    routeName: 'family.overview' | 'family.updates';
-    labelKey: 'family.navigation.overview' | 'family.navigation.updates';
+    routeName: 'family.overview' | 'family.appointments' | 'family.updates';
+    labelKey: 'family.navigation.overview' | 'family.navigation.appointments' | 'family.navigation.updates';
     icon: LucideIcon;
 };
 
@@ -61,6 +61,11 @@ const allFamilyNavItems: readonly FamilyNavItem[] = [
         icon: LayoutGrid,
     },
     {
+        routeName: 'family.appointments',
+        labelKey: 'family.navigation.appointments',
+        icon: CalendarDays,
+    },
+    {
         routeName: 'family.updates',
         labelKey: 'family.navigation.updates',
         icon: Bell,
@@ -77,7 +82,11 @@ const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
     const showUpdatesNav = Boolean(f.has_linked_patient);
 
     if (!showUpdatesNav) {
-        return allFamilyNavItems.filter((item) => item.routeName !== 'family.updates');
+        return allFamilyNavItems.filter(
+            (item) =>
+                item.routeName !== 'family.updates' &&
+                item.routeName !== 'family.appointments',
+        );
     }
 
     return allFamilyNavItems;

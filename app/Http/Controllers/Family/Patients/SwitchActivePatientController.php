@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Family;
+namespace App\Http\Controllers\Family\Patients;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Family\Concerns\AuthorizesFamilyProfile;
@@ -23,4 +23,3 @@ final class SwitchActivePatientController extends Controller
         return back();
     }
 }
-

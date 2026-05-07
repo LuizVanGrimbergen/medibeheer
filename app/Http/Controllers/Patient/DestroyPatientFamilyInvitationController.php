@@ -15,14 +15,14 @@ class DestroyPatientFamilyInvitationController extends Controller
 
     public function __invoke(
         Request $request,
-        FamilyInvitation $invitation,
+        FamilyInvitation $familyInvitation,
         FamilyInvitationService $service,
     ): RedirectResponse {
         $patient = $this->authorizePatientProfile($request);
 
-        abort_unless((int) $invitation->patient_id === (int) $patient->id, 403);
+        abort_unless((int) $familyInvitation->patient_id === (int) $patient->id, 404);
 
-        $service->revoke($invitation);
+        $service->revoke($familyInvitation);
 
         return redirect()
             ->route('patient.family')

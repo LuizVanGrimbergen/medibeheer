@@ -7,11 +7,18 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class AcceptFamilyInvitationRequest extends FormRequest
 {
+    /**************************************/
+    /*           Authorization */
+    /**************************************/
     public function authorize(): bool
     {
         return $this->user() !== null && $this->user()->isFamilyMember();
     }
 
+    /**************************************/
+    /*          Validation Rules */
+    /**************************************/
+    
     public function rules(): array
     {
         return [

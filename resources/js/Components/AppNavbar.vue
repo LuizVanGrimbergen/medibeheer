@@ -40,7 +40,7 @@ const { t } = useI18n();
                 :href="homeHref"
                 class="text-base font-semibold text-primary transition hover:opacity-80"
             >
-                Medibeheer
+                
             </Link>
 
             <div class="flex items-center gap-5">

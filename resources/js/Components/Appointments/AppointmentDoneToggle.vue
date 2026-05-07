@@ -2,8 +2,9 @@
 import { CheckCircle2, CircleX } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { appointmentOptionalNoteDialogContentClass } from '@/Components/Patient/Appointments/appointmentDialogContentClass';
-import OptionalNoteDialog from '@/Components/Patient/Appointments/OptionalNoteDialog.vue';
+import { appointmentOptionalNoteDialogContentClass } from '@/Components/Appointments/appointmentDialogContentClass';
+import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
+import OptionalNoteDialog from '@/Components/Appointments/OptionalNoteDialog.vue';
 import { Button } from '@/Components/ui/button';
 import type {
     AppointmentCancelledCommitPayload,
@@ -92,47 +93,33 @@ function revert(): void {
         </legend>
 
         <div v-if="!modelValue">
-            <div class="flex flex-col gap-3 sm:flex-row sm:gap-3">
-                <Button
-                    type="button"
-                    variant="default"
-                    size="lg"
-                    :disabled="disabled"
-                    :class="
-                        cn(
-                            'min-h-14 min-w-0 flex-1 touch-manipulation gap-2.5 px-4 text-lg font-semibold',
-                            completeDialogOpen &&
-                                'border-2 border-success bg-success text-white shadow-sm hover:bg-success hover:text-white',
-                        )
-                    "
-                    @click="openCompleteDialog"
-                >
+            <AppointmentPairActionButtons
+                :disabled="disabled"
+                :primary-class="
+                    cn(
+                        completeDialogOpen &&
+                            'border-2 border-success bg-success text-white shadow-sm hover:bg-success hover:text-white',
+                    )
+                "
+                :secondary-class="cn(cancelDialogOpen && 'border-danger bg-danger/10')"
+                @primary-click="openCompleteDialog"
+                @secondary-click="openCancelDialog"
+            >
+                <template #primary>
                     <CheckCircle2
                         class="size-6 shrink-0"
                         aria-hidden="true"
                     />
                     {{ t('patient.appointments.doneToggle.markDone') }}
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="lg"
-                    :disabled="disabled"
-                    :class="
-                        cn(
-                            'min-h-14 min-w-0 flex-1 touch-manipulation gap-2.5 border-2 border-danger/50 px-4 text-lg font-semibold text-danger hover:border-danger hover:bg-danger/10 hover:text-danger',
-                            cancelDialogOpen && 'border-danger bg-danger/10',
-                        )
-                    "
-                    @click="openCancelDialog"
-                >
+                </template>
+                <template #secondary>
                     <CircleX
                         class="size-6 shrink-0"
                         aria-hidden="true"
                     />
                     {{ t('patient.appointments.doneToggle.markCancelled') }}
-                </Button>
-            </div>
+                </template>
+            </AppointmentPairActionButtons>
         </div>
 
         <div

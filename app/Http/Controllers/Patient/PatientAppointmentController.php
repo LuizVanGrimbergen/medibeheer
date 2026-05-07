@@ -6,8 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\StoreAppointmentRequest;
 use App\Http\Requests\Patient\UpdateAppointmentRequest;
-use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
+use App\Services\AppointmentTransportInvitationService;
+use App\Services\PatientAppointmentsScreenService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,17 +18,19 @@ class PatientAppointmentController extends Controller
 {
     use AuthorizesPatientProfile;
 
+    public function __construct(
+        private readonly AppointmentTransportInvitationService $appointmentTransportInvitationService,
+        private readonly PatientAppointmentsScreenService $patientAppointmentsScreenService,
+    ) {}
+
     public function index(Request $request): Response
     {
         $patient = $this->authorizePatientProfile($request);
 
-        $appointments = $patient->appointments()
-            ->orderBy('starts_at')
-            ->get();
-
-        return Inertia::render('Patient/Appointments', [
-            'appointments' => AppointmentResource::collection($appointments)->resolve(),
-        ]);
+        return Inertia::render(
+            'Patient/Appointments',
+            $this->patientAppointmentsScreenService->buildProps($patient),
+        );
     }
 
     public function store(StoreAppointmentRequest $request): RedirectResponse
@@ -36,7 +39,16 @@ class PatientAppointmentController extends Controller
 
         $this->authorize('create', Appointment::class);
 
-        $patient->appointments()->create($request->validated());
+        $validated = $request->validated();
+        $requestedFamilyIds = $validated['transport_family_ids'] ?? null;
+        unset($validated['transport_family_ids']);
+
+        $appointment = $patient->appointments()->create($validated);
+
+        $this->appointmentTransportInvitationService->syncForAppointment(
+            $appointment,
+            is_array($requestedFamilyIds) ? $requestedFamilyIds : null,
+        );
 
         return redirect()->route('patient.appointments');
     }
@@ -47,7 +59,16 @@ class PatientAppointmentController extends Controller
 
         $this->authorize('update', $appointment);
 
-        $appointment->update($request->validated());
+        $validated = $request->validated();
+        $requestedFamilyIds = $validated['transport_family_ids'] ?? null;
+        unset($validated['transport_family_ids']);
+
+        $appointment->update($validated);
+
+        $this->appointmentTransportInvitationService->syncForAppointment(
+            $appointment,
+            is_array($requestedFamilyIds) ? $requestedFamilyIds : null,
+        );
 
         return redirect()->route('patient.appointments');
     }

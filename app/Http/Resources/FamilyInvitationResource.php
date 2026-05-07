@@ -15,7 +15,7 @@ class FamilyInvitationResource extends JsonResource
             'id' => $this->id,
             'invited_email' => $this->invited_email,
             'expires_at' => $this->expires_at->toISOString(),
-            'revoke_url' => route('patient.family.invitations.destroy', ['invitation' => $this->id], absolute: false),
+            'revoke_url' => route('patient.family.invitations.destroy', ['familyInvitation' => $this->id], absolute: false),
         ];
     }
 }

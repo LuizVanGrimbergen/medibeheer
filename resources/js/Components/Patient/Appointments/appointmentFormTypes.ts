@@ -12,6 +12,8 @@ type AppointmentFormState = {
     starts_at_date: string;
     starts_at_time: string;
     notes: string;
+    needs_transport: boolean;
+    transport_family_ids: number[];
     status: AppointmentStatusValue;
 };
 

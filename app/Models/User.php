@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\Crypt;
 #[ObservedBy(UserObserver::class)]
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
 
     /**************************************/
     /*             Attributes */
@@ -178,6 +179,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === UserRole::FAMILY_MEMBER;
     }
 
+    public function familyOrCreate(): Family
+    {
+        return $this->family ?? $this->family()->firstOrCreate([
+            'user_id' => $this->id,
+        ]);
+    }
+
     public function isFamilyLinkedToPatient(Patient $patient): bool
     {
         if (! $this->isFamilyMember()) {
@@ -222,6 +230,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendPasswordResetNotification($token): void
     {
-        $this->notify(new ResetPasswordNotification($token));
+        $this->notify(new ResetPasswordNotification((string) $token));
     }
 }
