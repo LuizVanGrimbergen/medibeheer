@@ -17,10 +17,12 @@ class AppointmentFactory extends Factory
     {
         return [
             'patient_id' => Patient::factory(),
+            'family_id' => null,
             'doctor_type' => fake()->randomElement(DoctorType::cases()),
             'provider_name' => fake()->company(),
             'address' => fake()->address(),
             'starts_at' => fake()->dateTimeBetween('now', '+3 months'),
+            'needs_transport' => false,
             'notes' => fake()->optional(0.4)->paragraph(),
             'doctor_visit_summary' => null,
             'cancellation_reason' => null,

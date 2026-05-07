@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('doctor_type');
             $table->text('provider_name');
             $table->text('address');
+            $table->boolean('needs_transport')->default(false);
             $table->dateTime('starts_at');
             $table->text('notes')->nullable();
             $table->string('status')->default('scheduled');
