@@ -27,6 +27,12 @@ export default {
         startsAtHint: 'Eerst de dag, daarna het uur.',
         notes: 'Notities (optioneel)',
         notesPlaceholder: 'Bijv. meenemen: verwijsbrief, ID',
+        needsTransport: 'Transport nodig?',
+        transportNotify: 'Wie wilt u uitnodigen?',
+        transportNoFamilies: 'U heeft nog geen familie gekoppeld om uit te nodigen.',
+        transportNotes: 'Transport (optioneel)',
+        transportNotesPlaceholder:
+            'Bijv. ophalen om 09:15, rolstoel, of extra info voor familie',
         status: 'Status',
     },
     doctorTypes: {
@@ -46,6 +52,7 @@ export default {
         cancel: 'Annuleren',
         delete: 'Verwijderen',
         edit: 'Wijzigen',
+        scrollToSave: 'Scroll naar beneden om op te slaan.',
     },
     deleteConfirm:
         'Weet je zeker dat je deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
@@ -55,6 +62,14 @@ export default {
         where: 'Waar',
         type: 'Type',
         notes: 'Notities',
+        transport: 'Transport',
+        afterVisit: 'Na uw bezoek',
+    },
+    transport: {
+        requested: 'Aangevraagd',
+        acceptedBy: 'Geaccepteerd door {name}',
+        declined: 'Afgewezen',
+        notNeeded: 'Niet nodig',
     },
     doneToggle: {
         groupLabel: 'Afronden of annuleren',
