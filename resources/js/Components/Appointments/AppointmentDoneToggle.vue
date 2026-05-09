@@ -2,9 +2,8 @@
 import { CheckCircle2, CircleX } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { appointmentOptionalNoteDialogContentClass } from '@/Components/Appointments/appointmentDialogContentClass';
 import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
-import OptionalNoteDialog from '@/Components/Appointments/OptionalNoteDialog.vue';
+import OptionalNotePanel from '@/Components/Appointments/OptionalNotePanel.vue';
 import { Button } from '@/Components/ui/button';
 import type {
     AppointmentCancelledCommitPayload,
@@ -148,14 +147,13 @@ function revert(): void {
         </div>
     </fieldset>
 
-    <OptionalNoteDialog
+    <OptionalNotePanel
         :open="completeDialogOpen"
         :title="t('patient.appointments.doneDialog.title')"
         :description="t('patient.appointments.doneDialog.description')"
         :field-label="t('patient.appointments.doneDialog.visitSummaryLabel')"
         :placeholder="t('patient.appointments.doneDialog.visitSummaryPlaceholder')"
         :textarea-id="doneTextareaId"
-        :dialog-content-class="appointmentOptionalNoteDialogContentClass"
         :cancel-label="t('patient.appointments.actions.cancel')"
         :confirm-label="t('patient.appointments.doneDialog.confirm')"
         tone="success"
@@ -164,14 +162,13 @@ function revert(): void {
         @submit="onDoneSubmit"
     />
 
-    <OptionalNoteDialog
+    <OptionalNotePanel
         :open="cancelDialogOpen"
         :title="t('patient.appointments.cancelDialog.title')"
         :description="t('patient.appointments.cancelDialog.description')"
         :field-label="t('patient.appointments.cancelDialog.reasonLabel')"
         :placeholder="t('patient.appointments.cancelDialog.reasonPlaceholder')"
         :textarea-id="cancelTextareaId"
-        :dialog-content-class="appointmentOptionalNoteDialogContentClass"
         :cancel-label="t('patient.appointments.actions.cancel')"
         :confirm-label="t('patient.appointments.cancelDialog.confirm')"
         tone="danger"

@@ -18,22 +18,26 @@ const { t } = useI18n();
     </Head>
 
     <FamilyLayout>
-        <div class="flex flex-col gap-6">
-            <h1 class="text-2xl font-semibold text-text-heading">
-                {{ t('family.updates.heading') }}
-            </h1>
-            <ActivePatientBadge :family="props.family" />
+        <div class="flex min-w-0 flex-col gap-6">
+            <div class="space-y-2">
+                <h1 class="text-2xl font-semibold text-text-heading">
+                    {{ t('family.updates.heading') }}
+                </h1>
+                <ActivePatientBadge :family="props.family" />
+            </div>
+
             <p
                 v-if="!props.family.has_linked_patient"
                 class="max-w-prose text-sm leading-relaxed text-text-muted"
             >
                 {{ t('family.updates.notLinked') }}
             </p>
+
             <p
                 v-else
-                class="text-sm text-text-muted"
+                class="max-w-prose text-sm leading-relaxed text-text-muted"
             >
-                {{ t('family.updates.empty') }}
+                {{ t('family.updates.linkedEmpty') }}
             </p>
         </div>
     </FamilyLayout>

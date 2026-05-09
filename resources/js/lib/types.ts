@@ -23,22 +23,31 @@ export type Auth = {
     user: User | null;
 };
 
+export type PendingFamilyInvitation = {
+    id: number;
+    invited_email: string;
+    expires_at: string;
+    revoke_url: string;
+};
+
+export const DAILY_MOOD_SCORE_VALUES = [
+    'bad',
+    'ok',
+    'good',
+] as const;
+
+export type DailyMoodScoreValue = (typeof DAILY_MOOD_SCORE_VALUES)[number];
+
 export type FamilyDashboardProps = {
     has_linked_patient: boolean;
     active_patient_id: number | null;
+    active_patient_today_mood: DailyMoodScoreValue | null;
     patients: {
         id: number;
         name: string;
         switch_url: string;
         is_active: boolean;
     }[];
-};
-
-export type PendingFamilyInvitation = {
-    id: number;
-    invited_email: string;
-    expires_at: string;
-    revoke_url: string;
 };
 
 export type PageProps<
@@ -49,6 +58,7 @@ export type PageProps<
         error: string | null;
         success: string | null;
         rateLimitSeconds: number | null;
+        daily_checkin_mood: DailyMoodScoreValue | null;
     };
 };
 
@@ -84,6 +94,31 @@ export type AppointmentDoneCommitPayload = {
 
 export type AppointmentCancelledCommitPayload = {
     cancellation_reason: string | null;
+};
+
+export const DAILY_CHECKIN_SYMPTOM_VALUES = [
+    'pain',
+    'fatigue',
+    'dizziness',
+    'shortness_of_breath',
+    'nausea',
+    'poor_sleep',
+    'loneliness',
+    'anxiety_or_worry',
+    'poor_appetite',
+    'stiff_or_joint_pain',
+] as const;
+
+export type DailyCheckinSymptomValue =
+    (typeof DAILY_CHECKIN_SYMPTOM_VALUES)[number];
+
+export type DailyCheckin = {
+    id: number;
+    checkin_date: string;
+    mood_score: DailyMoodScoreValue;
+    symptoms: DailyCheckinSymptomValue[] | null;
+    note: string | null;
+    created_at: string;
 };
 
 export type PaginationMeta = {

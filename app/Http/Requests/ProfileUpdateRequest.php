@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -29,13 +30,13 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255',
-                function (string $attribute, mixed $value, \Closure $fail): void {
+                function (string $attribute, mixed $value, \Closure $fail, Validator $_): void {
                     if (! is_string($value)) {
                         return;
                     }
 
                     $emailHashExists = User::query()
-                        ->whereIn('email_hash', User::emailHashCandidates($value))
+                        ->whereIn('email_hash', User::emailHashCandidates($value), 'and', false)
                         ->where('id', '!=', $this->user()->id)
                         ->exists();
 

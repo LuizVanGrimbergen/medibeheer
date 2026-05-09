@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Bell, CalendarDays, LayoutGrid } from 'lucide-vue-next';
+import { Bell, CalendarDays, LayoutGrid, Smile } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -37,8 +37,16 @@ const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
 const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
 
 type FamilyNavItem = {
-    routeName: 'family.overview' | 'family.appointments' | 'family.updates';
-    labelKey: 'family.navigation.overview' | 'family.navigation.appointments' | 'family.navigation.updates';
+    routeName:
+        | 'family.overview'
+        | 'family.appointments'
+        | 'family.wellbeing'
+        | 'family.updates';
+    labelKey:
+        | 'family.navigation.overview'
+        | 'family.navigation.appointments'
+        | 'family.navigation.wellbeing'
+        | 'family.navigation.updates';
     icon: LucideIcon;
 };
 
@@ -66,6 +74,11 @@ const allFamilyNavItems: readonly FamilyNavItem[] = [
         icon: CalendarDays,
     },
     {
+        routeName: 'family.wellbeing',
+        labelKey: 'family.navigation.wellbeing',
+        icon: Smile,
+    },
+    {
         routeName: 'family.updates',
         labelKey: 'family.navigation.updates',
         icon: Bell,
@@ -85,7 +98,8 @@ const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
         return allFamilyNavItems.filter(
             (item) =>
                 item.routeName !== 'family.updates' &&
-                item.routeName !== 'family.appointments',
+                item.routeName !== 'family.appointments' &&
+                item.routeName !== 'family.wellbeing',
         );
     }
 
@@ -113,7 +127,7 @@ function footerNavClass(routeName: FamilyNavItem['routeName']): string {
     return `${base} text-text-muted`;
 }
 
-const footerIconClass = computed(() =>
+const footerIconSizeClass = computed(() =>
     smAndUp.value
         ? 'size-6 shrink-0 stroke-[1.75]'
         : 'size-[22px] shrink-0 stroke-[1.75]',
@@ -124,15 +138,44 @@ const footerLabelClass = computed(() =>
         ? 'max-w-full truncate text-center text-xs font-semibold leading-tight tracking-tight'
         : 'max-w-full truncate text-center text-[11px] font-semibold leading-tight tracking-tight',
 );
+
+function navItemAriaLabel(item: FamilyNavItem): string | undefined {
+    if (item.routeName !== 'family.wellbeing') {
+        return undefined;
+    }
+
+    const family = page.props.family;
+
+    if (!family?.has_linked_patient) {
+        return undefined;
+    }
+
+    const mood = family.active_patient_today_mood ?? null;
+
+    if (mood === null) {
+        return t('family.navigation.wellbeingAriaNoCheckin');
+    }
+
+    return t('family.navigation.wellbeingAriaMood', {
+        mood: t(`family.navigation.moodShort.${mood}`),
+    });
+}
+
+function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
+    return (
+        item.routeName === 'family.wellbeing' &&
+        Boolean(page.props.family?.has_linked_patient)
+    );
+}
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div
-            class="relative mx-auto flex w-full max-w-7xl flex-1 flex-col py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))]"
+            class="relative mx-auto flex w-full min-w-0 max-w-7xl flex-1 flex-col overflow-x-hidden py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))]"
             :class="shellPaddingX"
         >
-            <div class="min-h-[calc(100dvh-5rem)] min-w-0 flex-1">
+            <div class="min-w-0 flex-1">
                 <slot />
             </div>
 
@@ -141,7 +184,7 @@ const footerLabelClass = computed(() =>
                 :aria-label="t('family.navigation.mobileFooterAriaLabel')"
             >
                 <div
-                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] shadow-[0_-6px_24px_rgba(31,51,74,0.08)]"
+                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
                     :class="footerPaddingX"
                 >
                     <Link
@@ -149,13 +192,17 @@ const footerLabelClass = computed(() =>
                         :key="item.routeName"
                         :href="route(item.routeName)"
                         :class="footerNavClass(item.routeName)"
+                        :aria-label="navItemAriaLabel(item)"
                     >
                         <component
                             :is="item.icon"
-                            :class="footerIconClass"
+                            :class="footerIconSizeClass"
                             aria-hidden="true"
                         />
-                        <span :class="footerLabelClass">
+                        <span
+                            :class="footerLabelClass"
+                            :aria-hidden="wellbeingNavUsesDetailedAria(item) ? true : undefined"
+                        >
                             {{ t(item.labelKey) }}
                         </span>
                     </Link>

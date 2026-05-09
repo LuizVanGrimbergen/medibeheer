@@ -83,7 +83,7 @@ const scrollArea = ref<HTMLElement | null>(null);
                         type="button"
                         variant="outline"
                         size="lg"
-                        class="min-h-14 w-full touch-manipulation border-2 text-lg sm:w-auto sm:min-w-40"
+                        class="min-h-14 w-full touch-manipulation border-2 border-danger/50 px-4 text-lg font-semibold text-danger hover:border-danger hover:bg-danger/10 hover:text-danger sm:w-auto sm:min-w-40"
                         @click="emit('cancel')"
                     >
                         {{ t('patient.appointments.actions.cancel') }}
@@ -91,7 +91,7 @@ const scrollArea = ref<HTMLElement | null>(null);
                     <Button
                         type="submit"
                         size="lg"
-                        class="min-h-14 w-full touch-manipulation text-lg sm:w-auto sm:min-w-40"
+                        class="min-h-14 w-full touch-manipulation px-4 text-lg font-semibold sm:w-auto sm:min-w-40"
                         :disabled="props.form.processing || props.submitDisabled === true"
                     >
                         {{ t('patient.appointments.actions.save') }}

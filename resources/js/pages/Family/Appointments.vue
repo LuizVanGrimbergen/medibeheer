@@ -7,12 +7,12 @@ import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
-import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import {
     acceptTransport,
     declineTransport,
     setAppointmentViewFromToggle,
 } from '@/composables/useFamilyAppointmentsActions';
+import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type {
     FamilyAppointmentsScreenProps,
 } from '@/lib/family/appointments/familyAppointmentsScreenProps';

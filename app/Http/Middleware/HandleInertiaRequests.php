@@ -42,6 +42,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => fn () => $request->session()->get('error'),
                 'success' => fn () => $request->session()->get('success'),
                 'rateLimitSeconds' => fn () => $request->session()->get('rate_limit_seconds'),
+                'daily_checkin_mood' => fn () => $request->session()->get('daily_checkin_mood'),
             ],
         ];
 

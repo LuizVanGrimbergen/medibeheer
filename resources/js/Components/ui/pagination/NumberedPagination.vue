@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import type { PaginationMeta } from '@/lib/types';
 
 const props = defineProps<{
@@ -13,6 +14,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
+const { smAndUp } = useTailwindBreakpoints();
 
 const extraQuery = computed((): Record<string, string | number> => {
     const out: Record<string, string | number> = {};
@@ -29,14 +31,7 @@ const extraQuery = computed((): Record<string, string | number> => {
     return out;
 });
 
-const pageItems = computed((): (number | 'ellipsis')[] => {
-    const last = props.meta.last_page;
-    const current = props.meta.current_page;
-
-    if (last <= 1) {
-        return [];
-    }
-
+function desktopPageItems(last: number, current: number): (number | 'ellipsis')[] {
     if (last <= 7) {
         return Array.from({ length: last }, (_, index) => index + 1);
     }
@@ -56,6 +51,42 @@ const pageItems = computed((): (number | 'ellipsis')[] => {
     }
 
     return out;
+}
+
+function mobilePageItems(last: number, current: number): number[] {
+    if (last <= 3) {
+        return Array.from({ length: last }, (_, index) => index + 1);
+    }
+
+    let start = current - 1;
+    let end = current + 1;
+
+    if (start < 1) {
+        start = 1;
+        end = 3;
+    }
+
+    if (end > last) {
+        end = last;
+        start = last - 2;
+    }
+
+    return [start, start + 1, end];
+}
+
+const pageItems = computed((): (number | 'ellipsis')[] => {
+    const last = props.meta.last_page;
+    const current = props.meta.current_page;
+
+    if (last <= 1) {
+        return [];
+    }
+
+    if (smAndUp.value) {
+        return desktopPageItems(last, current);
+    }
+
+    return mobilePageItems(last, current);
 });
 
 function visitPage(page: number): void {
@@ -84,12 +115,12 @@ function visitPage(page: number): void {
             </span>
         </p>
 
-        <div class="flex min-w-0 items-center gap-2">
+        <div class="flex min-w-0 items-center gap-1 sm:gap-2">
             <Button
                 type="button"
                 variant="outline"
                 size="lg"
-                class="shrink-0 touch-manipulation gap-2 px-3 text-sm font-semibold sm:px-5 sm:text-base [&_svg]:size-5 sm:[&_svg]:size-6"
+                class="shrink-0 touch-manipulation gap-1.5 px-2.5 text-sm font-semibold sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6"
                 :disabled="meta.current_page <= 1"
                 @click="visitPage(meta.current_page - 1)"
             >
@@ -101,7 +132,7 @@ function visitPage(page: number): void {
             </Button>
 
             <ul
-                class="flex min-w-0 flex-1 list-none flex-nowrap items-center gap-2 overflow-x-auto overscroll-x-contain p-0 [-webkit-overflow-scrolling:touch] sm:flex-wrap sm:justify-center sm:overflow-visible sm:py-0"
+                class="flex min-w-0 flex-1 list-none flex-nowrap items-center justify-center gap-1 p-0 sm:gap-2"
             >
                 <template
                     v-for="(item, index) in pageItems"
@@ -109,7 +140,7 @@ function visitPage(page: number): void {
                 >
                     <li
                         v-if="item === 'ellipsis'"
-                        class="flex shrink-0 items-center px-0.5 text-sm font-semibold text-text-muted"
+                        class="flex shrink-0 items-center px-0 text-xs font-semibold text-text-muted sm:px-0.5 sm:text-sm"
                         aria-hidden="true"
                     >
                         …
@@ -122,10 +153,8 @@ function visitPage(page: number): void {
                             type="button"
                             :variant="item === meta.current_page ? 'default' : 'outline'"
                             size="lg"
-                            class="min-h-11 min-w-11 touch-manipulation px-0 text-sm font-semibold sm:min-h-12 sm:min-w-12 sm:text-base"
-                            :aria-label="
-                                t('app.pagination.goToPage', { page: item })
-                            "
+                            class="min-h-9 min-w-9 touch-manipulation px-0 text-xs font-semibold sm:min-h-12 sm:min-w-12 sm:text-base"
+                            :aria-label="t('app.pagination.goToPage', { page: item })"
                             :aria-current="item === meta.current_page ? 'page' : undefined"
                             @click="visitPage(item)"
                         >
@@ -139,7 +168,7 @@ function visitPage(page: number): void {
                 type="button"
                 variant="outline"
                 size="lg"
-                class="shrink-0 touch-manipulation gap-2 px-3 text-sm font-semibold sm:px-5 sm:text-base [&_svg]:size-5 sm:[&_svg]:size-6"
+                class="shrink-0 touch-manipulation gap-1.5 px-2.5 text-sm font-semibold sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6"
                 :disabled="meta.current_page >= meta.last_page"
                 @click="visitPage(meta.current_page + 1)"
             >

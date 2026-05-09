@@ -3,6 +3,7 @@
 // navigation controllers
 use App\Http\Controllers\Patient\DestroyPatientFamilyInvitationController;
 use App\Http\Controllers\Patient\PatientAppointmentController;
+use App\Http\Controllers\Patient\PatientDailyCheckinController;
 use App\Http\Controllers\Patient\PatientDashboardController;
 use App\Http\Controllers\Patient\PatientFamilyController;
 use App\Http\Controllers\Patient\PatientInventoryController;
@@ -44,12 +45,16 @@ Route::middleware([
 
         /* Appointments routes */
         Route::resource('appointments', PatientAppointmentController::class)
-        ->only(['index', 'store', 'update', 'destroy'])
-        ->names([
-            'index' => 'appointments',
-            'store' => 'appointments.store',
-            'update' => 'appointments.update',
-            'destroy' => 'appointments.destroy',
-        ]);
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->names([
+                'index' => 'appointments',
+                'store' => 'appointments.store',
+                'update' => 'appointments.update',
+                'destroy' => 'appointments.destroy',
+            ]);
+
+        /* Daily check-ins routes */
+        Route::post('daily-checkins', [PatientDailyCheckinController::class, 'store'])
+            ->name('daily-checkins.store');
 
     });

@@ -46,6 +46,11 @@ class Patient extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function dailyCheckins(): HasMany
+    {
+        return $this->hasMany(DailyCheckin::class);
+    }
+
     public function familyInvitations(): HasMany
     {
         return $this->hasMany(FamilyInvitation::class);

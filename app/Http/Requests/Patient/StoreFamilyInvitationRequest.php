@@ -5,6 +5,7 @@ namespace App\Http\Requests\Patient;
 use App\Models\User;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreFamilyInvitationRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class StoreFamilyInvitationRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email', 'max:255',
-                function (string $attribute, mixed $value, Closure $fail): void {
+                function (string $attribute, mixed $value, Closure $fail, Validator $_): void {
                     if ($attribute === '') {
                         return;
                     }

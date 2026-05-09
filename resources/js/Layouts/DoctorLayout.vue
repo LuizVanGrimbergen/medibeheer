@@ -114,7 +114,7 @@ const footerLabelClass = computed(() =>
                 :aria-label="t('doctor.navigation.mobileFooterAriaLabel')"
             >
                 <div
-                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] shadow-[0_-6px_24px_rgba(31,51,74,0.08)]"
+                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
                     :class="footerPaddingX"
                 >
                     <Link
