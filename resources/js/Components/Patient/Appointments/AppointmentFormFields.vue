@@ -1,12 +1,13 @@
 <script setup lang="ts">
+/* eslint-disable vue/no-mutating-props */
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
 import { resolveAppointmentDoctorTypeLabel } from '@/Components/Appointments/useAppointmentDisplay';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import { Checkbox } from '@/Components/ui/checkbox';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { Checkbox } from '@/Components/ui/checkbox';
 import { Switch } from '@/Components/ui/switch';
 import type { AppointmentDoctorType } from '@/lib/types';
 import { cn } from '@/lib/utils';
