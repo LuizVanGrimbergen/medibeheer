@@ -18,5 +18,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call(AppointmentSeeder::class);
+
+        // $this->call(DailyCheckinDemoSeeder::class); // php artisan db:seed --class=DailyCheckinDemoSeeder
     }
 }
