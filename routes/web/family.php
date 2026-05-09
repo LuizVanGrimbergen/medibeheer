@@ -26,6 +26,7 @@ Route::middleware([
         Route::get('/', FamilyOverviewController::class)->name('overview');
         Route::get('appointments', FamilyAppointmentsController::class)->name('appointments');
         Route::get('updates', FamilyUpdatesController::class)->name('updates');
+        Route::get('wellbeing', FamilyUpdatesController::class)->name('wellbeing');
 
         /* Family Invitations */
         Route::post('invitations/accept', AcceptFamilyInvitationController::class)

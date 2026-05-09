@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Support;
 
+use App\Models\DailyCheckin;
 use App\Models\Patient;
 use App\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 
 final class FamilyDashboardState
@@ -62,9 +64,23 @@ final class FamilyDashboardState
             $patients->pluck('id')->map(fn ($id) => (int) $id)->all(),
         );
 
+        $activePatientTodayMood = null;
+
+        if ($activePatientId !== null) {
+            $today = CarbonImmutable::today()->toDateString();
+
+            $todayCheckin = DailyCheckin::query()
+                ->where('patient_id', $activePatientId)
+                ->whereDate('checkin_date', '=', $today, 'and')
+                ->first();
+
+            $activePatientTodayMood = $todayCheckin?->mood_score?->value;
+        }
+
         return [
             'has_linked_patient' => $patients->isNotEmpty(),
             'active_patient_id' => $activePatientId,
+            'active_patient_today_mood' => $activePatientTodayMood,
             'patients' => $patients
                 ->map(function (Patient $patient) use ($activePatientId): array {
                     $name = $patient->user?->name ?? 'Patient';
@@ -114,6 +130,7 @@ final class FamilyDashboardState
         return [
             'has_linked_patient' => false,
             'active_patient_id' => null,
+            'active_patient_today_mood' => null,
             'patients' => [],
         ];
     }
