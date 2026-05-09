@@ -39,17 +39,17 @@ const moodPresentation = computed((): MoodPresentation => {
         bad: {
             icon: Frown,
             faceClass: 'text-danger',
-            labelKey: 'family.updates.wellbeing.mood.bad',
+            labelKey: 'family.wellbeing.mood.bad',
         },
         ok: {
             icon: Meh,
             faceClass: 'text-warning',
-            labelKey: 'family.updates.wellbeing.mood.ok',
+            labelKey: 'family.wellbeing.mood.ok',
         },
         good: {
             icon: Smile,
             faceClass: 'text-success',
-            labelKey: 'family.updates.wellbeing.mood.good',
+            labelKey: 'family.wellbeing.mood.good',
         },
     };
 

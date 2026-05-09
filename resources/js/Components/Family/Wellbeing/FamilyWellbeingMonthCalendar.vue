@@ -13,7 +13,6 @@ const props = withDefaults(
     defineProps<{
         calendarMonth: string;
         calendarCheckins: DailyCheckin[];
-        listRouteName: 'family.updates' | 'family.wellbeing';
         selectedDate?: string | null;
     }>(),
     { selectedDate: null },
@@ -134,7 +133,7 @@ function visitMonth(delta: number): void {
     const ym = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}`;
 
     router.get(
-        route(props.listRouteName),
+        route('family.wellbeing'),
         { calendar_month: ym },
         { preserveScroll: true },
     );
@@ -191,12 +190,12 @@ function cellAriaLabel(cell: GridCell): string {
     }).format(parseLocalDate(cell.dateKey));
 
     if (cell.mood === null) {
-        return t('family.updates.calendar.dayNoCheckin', { date: longDate });
+        return t('family.wellbeing.calendar.dayNoCheckin', { date: longDate });
     }
 
-    return t('family.updates.calendar.dayWithMood', {
+    return t('family.wellbeing.calendar.dayWithMood', {
         date: longDate,
-        mood: t(`family.updates.wellbeing.mood.${cell.mood}`),
+        mood: t(`family.wellbeing.mood.${cell.mood}`),
     });
 }
 
@@ -229,7 +228,7 @@ function dayButtonClass(cell: GridCell): string {
                     variant="outline"
                     size="icon-sm"
                     class="justify-self-start"
-                    :aria-label="t('family.updates.calendar.prevMonth')"
+                    :aria-label="t('family.wellbeing.calendar.prevMonth')"
                     @click="visitMonth(-1)"
                 >
                     <ChevronLeft
@@ -245,7 +244,7 @@ function dayButtonClass(cell: GridCell): string {
                     variant="outline"
                     size="icon-sm"
                     class="justify-self-end"
-                    :aria-label="t('family.updates.calendar.nextMonth')"
+                    :aria-label="t('family.wellbeing.calendar.nextMonth')"
                     @click="visitMonth(1)"
                 >
                     <ChevronRight
@@ -259,7 +258,7 @@ function dayButtonClass(cell: GridCell): string {
             <div class="min-w-0 rounded-xl border border-border bg-bg px-1 py-2 sm:px-3 sm:py-3">
                 <table class="w-full table-fixed border-collapse">
                     <caption class="sr-only">
-                        {{ t('family.updates.calendar.gridAria', { month: monthTitle }) }}
+                        {{ t('family.wellbeing.calendar.gridAria', { month: monthTitle }) }}
                     </caption>
                     <thead>
                         <tr>
@@ -288,7 +287,7 @@ function dayButtonClass(cell: GridCell): string {
                                     v-if="cell.dayNum !== null && cell.dateKey !== null"
                                     type="button"
                                     :class="dayButtonClass(cell)"
-                                    :aria-label="`${cellAriaLabel(cell)}. ${t('family.updates.calendar.openDayDetails')}`"
+                                    :aria-label="`${cellAriaLabel(cell)}. ${t('family.wellbeing.calendar.openDayDetails')}`"
                                     :aria-pressed="selectedDate === cell.dateKey"
                                     @click="onDayActivate(cell)"
                                 >
@@ -329,21 +328,21 @@ function dayButtonClass(cell: GridCell): string {
                         class="size-4 shrink-0 stroke-2 text-danger"
                         aria-hidden="true"
                     />
-                    {{ t('family.updates.wellbeing.mood.bad') }}
+                    {{ t('family.wellbeing.mood.bad') }}
                 </span>
                 <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
                     <Meh
                         class="size-4 shrink-0 stroke-2 text-warning"
                         aria-hidden="true"
                     />
-                    {{ t('family.updates.wellbeing.mood.ok') }}
+                    {{ t('family.wellbeing.mood.ok') }}
                 </span>
                 <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
                     <Smile
                         class="size-4 shrink-0 stroke-2 text-success"
                         aria-hidden="true"
                     />
-                    {{ t('family.updates.wellbeing.mood.good') }}
+                    {{ t('family.wellbeing.mood.good') }}
                 </span>
             </div>
         </CardContent>
