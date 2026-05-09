@@ -25,7 +25,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
             </div>
         </header>
 
-        <main>
+        <main class="min-w-0 overflow-x-hidden">
             <div
                 v-if="flashError"
                 class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8"

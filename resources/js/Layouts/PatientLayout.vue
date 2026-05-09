@@ -127,7 +127,7 @@ const footerLabelClass = computed(() =>
 <template>
     <AuthenticatedLayout>
         <div
-            class="relative mx-auto flex w-full max-w-7xl flex-1 flex-col py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))]"
+            class="relative mx-auto flex w-full max-w-7xl flex-1 flex-col py-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))] sm:py-6"
             :class="shellPaddingX"
         >
             <div class="min-h-[calc(100dvh-5rem)] min-w-0 flex-1">
@@ -139,7 +139,7 @@ const footerLabelClass = computed(() =>
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div
-                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))] shadow-[0_-6px_24px_rgba(31,51,74,0.08)]"
+                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
                     :class="footerPaddingX"
                 >
                     <Link
