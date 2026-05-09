@@ -1,5 +1,7 @@
 <?php
 
+// (ai generated)
+
 use App\Enums\DailyCheckinSymptom;
 use App\Enums\DailyMoodScore;
 use App\Models\DailyCheckin;
