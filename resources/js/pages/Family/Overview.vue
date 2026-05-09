@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyDashboardProps } from '@/lib/types';
 
