@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 use App\Models\DailyCheckin;
+use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\CarbonImmutable;
@@ -14,23 +15,13 @@ final class FamilyDashboardState
 {
     public static function activePatientId(Request $request): ?int
     {
-        $user = $request->user();
-
-        if (! $user instanceof User || ! $user->isFamilyMember()) {
-            return null;
-        }
-
-        $family = $user->family;
+        $family = self::resolveFamily($request);
 
         if ($family === null) {
             return null;
         }
 
-        $patientIds = $family->patients()
-            ->orderBy('patients.id')
-            ->pluck('patients.id')
-            ->map(fn ($id) => (int) $id)
-            ->all();
+        $patientIds = self::patientIdsForFamily($family);
 
         if ($patientIds === []) {
             return null;
@@ -39,15 +30,33 @@ final class FamilyDashboardState
         return self::syncedActivePatientIdFromIds($request, $patientIds);
     }
 
-    public static function inertiaPayload(Request $request): array
+    public static function activePatient(Request $request): ?Patient
     {
-        $user = $request->user();
+        $family = self::resolveFamily($request);
 
-        if (! $user instanceof User || ! $user->isFamilyMember()) {
-            return self::emptyPayload();
+        if ($family === null) {
+            return null;
         }
 
-        $family = $user->family;
+        $patients = $family->patients()
+            ->orderBy('patients.id')
+            ->get();
+
+        $activePatientId = self::syncedActivePatientIdFromIds(
+            $request,
+            $patients->pluck('id')->map(fn ($id): int => (int) $id)->all(),
+        );
+
+        if ($activePatientId === null) {
+            return null;
+        }
+
+        return $patients->firstWhere('id', $activePatientId);
+    }
+
+    public static function inertiaPayload(Request $request): array
+    {
+        $family = self::resolveFamily($request);
 
         if ($family === null) {
             return self::emptyPayload();
@@ -61,7 +70,7 @@ final class FamilyDashboardState
 
         $activePatientId = self::syncedActivePatientIdFromIds(
             $request,
-            $patients->pluck('id')->map(fn ($id) => (int) $id)->all(),
+            $patients->pluck('id')->map(fn ($id): int => (int) $id)->all(),
         );
 
         $activePatientTodayMood = null;
@@ -95,6 +104,26 @@ final class FamilyDashboardState
                 ->values()
                 ->all(),
         ];
+    }
+
+    private static function resolveFamily(Request $request): ?Family
+    {
+        $user = $request->user();
+
+        if (! $user instanceof User || ! $user->isFamilyMember()) {
+            return null;
+        }
+
+        return $user->family;
+    }
+
+    private static function patientIdsForFamily(Family $family): array
+    {
+        return $family->patients()
+            ->orderBy('patients.id')
+            ->pluck('patients.id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
     }
 
     private static function syncedActivePatientIdFromIds(Request $request, array $patientIds): ?int

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Family\Dashboard\FamilyAppointmentsController;
 use App\Http\Controllers\Family\Dashboard\FamilyOverviewController;
 use App\Http\Controllers\Family\Dashboard\FamilyUpdatesController;
+use App\Http\Controllers\Family\Dashboard\FamilyWellbeingController;
 use App\Http\Controllers\Family\Invitations\AcceptAppointmentTransportInvitationController;
 use App\Http\Controllers\Family\Invitations\AcceptFamilyInvitationController;
 use App\Http\Controllers\Family\Invitations\DeclineAppointmentTransportInvitationController;
@@ -26,7 +27,7 @@ Route::middleware([
         Route::get('/', FamilyOverviewController::class)->name('overview');
         Route::get('appointments', FamilyAppointmentsController::class)->name('appointments');
         Route::get('updates', FamilyUpdatesController::class)->name('updates');
-        Route::get('wellbeing', FamilyUpdatesController::class)->name('wellbeing');
+        Route::get('wellbeing', FamilyWellbeingController::class)->name('wellbeing');
 
         /* Family Invitations */
         Route::post('invitations/accept', AcceptFamilyInvitationController::class)
