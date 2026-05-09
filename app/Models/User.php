@@ -138,7 +138,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public static function findByEmail(string $email): ?self
     {
         return static::query()
-            ->whereIn('email_hash', static::emailHashCandidates($email))
+            ->whereIn('email_hash', static::emailHashCandidates($email), 'and', false)
             ->first();
     }
 

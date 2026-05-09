@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Validator;
 
 class RegisterRequest extends FormRequest
 {
@@ -22,13 +23,13 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email:rfc', 'max:255',
                 // check if email is unique
-                function (string $attribute, mixed $value, Closure $fail): void {
+                function (string $attribute, mixed $value, Closure $fail, Validator $_): void {
                     if (! is_string($value)) {
                         return;
                     }
 
                     $emailHashExists = User::query()
-                        ->whereIn('email_hash', User::emailHashCandidates($value))
+                        ->whereIn('email_hash', User::emailHashCandidates($value), 'and', false)
                         ->exists();
 
                     if ($emailHashExists) {
