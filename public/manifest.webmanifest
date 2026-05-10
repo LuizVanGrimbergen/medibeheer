@@ -1,0 +1,21 @@
+{
+    "name": "Medibeheer",
+    "short_name": "Medibeheer",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#f7f9fc",
+    "theme_color": "#f7f9fc",
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "166x166",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/Medibeheer.png",
+            "sizes": "2250x2250",
+            "type": "image/png"
+        }
+    ]
+}

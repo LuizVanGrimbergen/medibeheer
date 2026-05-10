@@ -1,4 +1,3 @@
-import '../css/fonts.css';
 import '../css/app.css';
 import './bootstrap';
 
