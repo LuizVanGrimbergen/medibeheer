@@ -17,15 +17,15 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="space-y-3 sm:space-y-5">
-        <p class="text-base font-bold leading-snug text-text-heading sm:text-lg lg:text-xl">
+    <div class="space-y-4 sm:space-y-6">
+        <p class="daily-checkin-step-title">
             {{ t('patient.dashboard.dailyCheckins.symptoms.title') }}
         </p>
-        <p class="text-sm leading-snug text-text-muted sm:text-base sm:leading-relaxed">
+        <p class="daily-checkin-step-description">
             {{ t('patient.dashboard.dailyCheckins.symptoms.hint') }}
         </p>
 
-        <div class="flex flex-wrap gap-1.5 sm:gap-2">
+        <div class="flex flex-wrap gap-2 sm:gap-3">
             <Button
                 v-for="symptom in DAILY_CHECKIN_SYMPTOM_VALUES"
                 :key="symptom"

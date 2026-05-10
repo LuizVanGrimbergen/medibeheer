@@ -9,87 +9,54 @@ use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
 use Carbon\CarbonImmutable;
+use Closure;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
 
 final class FamilyDashboardState
 {
     public static function activePatientId(Request $request): ?int
     {
-        $family = self::resolveFamily($request);
+        $context = self::familyContext($request);
 
-        if ($family === null) {
+        if ($context === null) {
             return null;
         }
 
-        $patientIds = self::patientIdsForFamily($family);
-
-        if ($patientIds === []) {
-            return null;
-        }
-
-        return self::syncedActivePatientIdFromIds($request, $patientIds);
+        return $context['activePatientId'];
     }
 
     public static function activePatient(Request $request): ?Patient
     {
-        $family = self::resolveFamily($request);
+        $context = self::familyContext($request);
 
-        if ($family === null) {
+        if ($context === null) {
             return null;
         }
 
-        $patients = $family->patients()
-            ->orderBy('patients.id')
-            ->get();
-
-        $activePatientId = self::syncedActivePatientIdFromIds(
-            $request,
-            $patients->pluck('id')->map(fn ($id): int => (int) $id)->all(),
-        );
-
-        if ($activePatientId === null) {
+        if (! $context['activePatient'] instanceof Patient) {
             return null;
         }
 
-        return $patients->firstWhere('id', $activePatientId);
+        return $context['activePatient'];
     }
 
     public static function inertiaPayload(Request $request): array
     {
-        $family = self::resolveFamily($request);
+        $context = self::familyContext($request);
 
-        if ($family === null) {
+        if ($context === null) {
             return self::emptyPayload();
         }
 
-        $patients = $family
-            ->patients()
-            ->with('user')
-            ->orderBy('patients.id')
-            ->get();
-
-        $activePatientId = self::syncedActivePatientIdFromIds(
-            $request,
-            $patients->pluck('id')->map(fn ($id): int => (int) $id)->all(),
-        );
-
-        $activePatientTodayMood = null;
-
-        if ($activePatientId !== null) {
-            $today = CarbonImmutable::today()->toDateString();
-
-            $todayCheckin = DailyCheckin::query()
-                ->where('patient_id', $activePatientId)
-                ->whereDate('checkin_date', '=', $today, 'and')
-                ->first();
-
-            $activePatientTodayMood = $todayCheckin?->mood_score?->value;
-        }
+        /** @var EloquentCollection<int, Patient> $patients */
+        $patients = $context['patients'];
+        $activePatientId = $context['activePatientId'];
 
         return [
             'has_linked_patient' => $patients->isNotEmpty(),
             'active_patient_id' => $activePatientId,
-            'active_patient_today_mood' => $activePatientTodayMood,
+            'active_patient_today_mood' => $context['activePatientTodayMood'],
             'patients' => $patients
                 ->map(function (Patient $patient) use ($activePatientId): array {
                     $name = $patient->user?->name ?? 'Patient';
@@ -108,22 +75,65 @@ final class FamilyDashboardState
 
     private static function resolveFamily(Request $request): ?Family
     {
-        $user = $request->user();
+        return self::requestCached(
+            $request,
+            'family.dashboard.family',
+            function () use ($request): ?Family {
+                $user = $request->user();
 
-        if (! $user instanceof User || ! $user->isFamilyMember()) {
-            return null;
-        }
+                if (! $user instanceof User || ! $user->isFamilyMember()) {
+                    return null;
+                }
 
-        return $user->family;
+                return $user->family;
+            },
+        );
     }
 
-    private static function patientIdsForFamily(Family $family): array
+    private static function familyContext(Request $request): ?array
     {
-        return $family->patients()
-            ->orderBy('patients.id')
-            ->pluck('patients.id')
-            ->map(fn ($id): int => (int) $id)
-            ->all();
+        return self::requestCached(
+            $request,
+            'family.dashboard.context',
+            function () use ($request): ?array {
+                $family = self::resolveFamily($request);
+
+                if (! $family instanceof Family) {
+                    return null;
+                }
+
+                $patients = $family
+                    ->patients()
+                    ->with('user')
+                    ->orderBy('patients.id')
+                    ->get();
+
+                $patientIds = $patients->pluck('id')->map(fn ($id): int => (int) $id)->all();
+                $activePatientId = self::syncedActivePatientIdFromIds($request, $patientIds);
+                $activePatient = $activePatientId === null
+                    ? null
+                    : $patients->firstWhere('id', $activePatientId);
+                $activePatientTodayMood = null;
+
+                if ($activePatientId !== null) {
+                    $today = CarbonImmutable::today()->toDateString();
+
+                    $todayCheckin = DailyCheckin::query()
+                        ->where('patient_id', $activePatientId)
+                        ->whereDate('checkin_date', '=', $today, 'and')
+                        ->first();
+
+                    $activePatientTodayMood = $todayCheckin?->mood_score?->value;
+                }
+
+                return [
+                    'patients' => $patients,
+                    'activePatientId' => $activePatientId,
+                    'activePatient' => $activePatient,
+                    'activePatientTodayMood' => $activePatientTodayMood,
+                ];
+            },
+        );
     }
 
     private static function syncedActivePatientIdFromIds(Request $request, array $patientIds): ?int
@@ -162,5 +172,17 @@ final class FamilyDashboardState
             'active_patient_today_mood' => null,
             'patients' => [],
         ];
+    }
+
+    private static function requestCached(Request $request, string $key, Closure $resolver): mixed
+    {
+        if ($request->attributes->has($key)) {
+            return $request->attributes->get($key);
+        }
+
+        $resolved = $resolver();
+        $request->attributes->set($key, $resolved);
+
+        return $resolved;
     }
 }

@@ -266,7 +266,7 @@ function dayButtonClass(cell: GridCell): string {
                                 v-for="label in weekdayLabels"
                                 :key="label"
                                 scope="col"
-                                class="truncate px-0.5 py-1 text-center text-[11px] font-semibold uppercase tracking-wide text-text-muted sm:text-xs"
+                                class="truncate px-0.5 py-1 text-center text-2xs font-semibold uppercase tracking-wide text-text-muted sm:text-xs"
                             >
                                 {{ label }}
                             </th>
@@ -291,7 +291,7 @@ function dayButtonClass(cell: GridCell): string {
                                     :aria-pressed="selectedDate === cell.dateKey"
                                     @click="onDayActivate(cell)"
                                 >
-                                    <span class="text-[11px] font-semibold leading-none text-text-heading sm:text-xs">
+                                    <span class="text-2xs font-semibold leading-none text-text-heading sm:text-xs">
                                         {{ cell.dayNum }}
                                     </span>
                                     <span class="mt-auto flex flex-1 flex-col items-center justify-center pb-0.5 pt-1">

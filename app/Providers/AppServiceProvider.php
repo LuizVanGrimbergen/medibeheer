@@ -34,14 +34,5 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::prefetch(concurrency: 3);
 
-        Vite::usePreloadTagAttributes(function (string $src, string $url): array|false {
-            $path = parse_url($url, PHP_URL_PATH) ?? '';
-
-            if (str_ends_with($path, '.css')) {
-                return false;
-            }
-
-            return [];
-        });
     }
 }

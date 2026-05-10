@@ -31,7 +31,7 @@ function horizontalPaddingX(
     });
 }
 
-const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
+const shellPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-4');
 const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
 
 type PatientNavItem = {
@@ -120,17 +120,17 @@ const footerIconClass = computed(() =>
 const footerLabelClass = computed(() =>
     smAndUp.value
         ? 'max-w-full truncate text-center text-xs font-semibold leading-tight tracking-tight'
-        : 'max-w-full truncate text-center text-[11px] font-semibold leading-tight tracking-tight',
+        : 'max-w-full truncate text-center text-2xs font-semibold leading-tight tracking-tight',
 );
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div
-            class="relative mx-auto flex w-full max-w-7xl flex-1 flex-col py-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))] sm:py-6"
+            class="relative mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))] sm:pt-6"
             :class="shellPaddingX"
         >
-            <div class="min-h-[calc(100dvh-5rem)] min-w-0 flex-1">
+            <div class="min-h-0 min-w-0 flex-1">
                 <slot />
             </div>
 
@@ -146,6 +146,7 @@ const footerLabelClass = computed(() =>
                         v-for="item in patientNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
+                        prefetch
                         :class="footerNavClass(item.routeName)"
                     >
                         <component

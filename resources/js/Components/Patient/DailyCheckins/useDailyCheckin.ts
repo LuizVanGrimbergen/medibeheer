@@ -62,7 +62,7 @@ export function useDailyCheckin(todayDate: string, todayCheckin: DailyCheckin | 
         const on = selectedSymptomsSet.value.has(symptom);
 
         return cn(
-            'min-h-10 touch-manipulation rounded-lg border-2 px-2.5 py-1.5 text-xs font-medium transition-colors sm:min-h-11 sm:rounded-xl sm:px-3 sm:py-2 sm:text-sm lg:text-base',
+            'daily-checkin-symptom-chip touch-manipulation border-2 !text-base !leading-snug transition-colors sm:!text-lg',
             on
                 ? 'border-primary bg-primary/12 text-text-heading'
                 : 'border-border bg-surface text-text-heading hover:bg-surface-hover',

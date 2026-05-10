@@ -46,7 +46,7 @@ class HandleInertiaRequests extends Middleware
             ],
         ];
 
-        if ($user instanceof User && $user->isFamilyMember()) {
+        if ($user instanceof User && $user->isFamilyMember() && $request->routeIs('family.*')) {
             $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
         }
 

@@ -2,6 +2,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import AppNavbar from '@/Components/AppNavbar.vue';
+import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
 import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
 import type { PageProps } from '@/lib/types';
 
@@ -13,8 +14,13 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
 </script>
 
 <template>
-    <div class="min-h-screen bg-bg">
+    <div
+        class="flex h-svh min-h-svh flex-col overflow-hidden bg-bg"
+    >
         <AppNavbar :user-name="authenticatedUserName" />
+        <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+            <PwaIosInstallBanner />
+        </div>
 
         <header
             v-if="$slots.header"
@@ -25,7 +31,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
             </div>
         </header>
 
-        <main class="min-w-0 overflow-x-hidden">
+        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain">
             <div
                 v-if="flashError"
                 class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8"

@@ -15,6 +15,26 @@
     --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
     --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
 
+    /* Typography scale */
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1rem;
+    --text-xs: 0.75rem;
+    --text-xs--line-height: 1rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: 1.25rem;
+    --text-base: 1rem;
+    --text-base--line-height: 1.5rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: 1.75rem;
+    --text-xl: 1.25rem;
+    --text-xl--line-height: 1.75rem;
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: 2rem;
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: 2.25rem;
+    --text-4xl: 2.25rem;
+    --text-4xl--line-height: 2.5rem;
+
     /* Colors */
     --color-*: initial;
     --color-white: #ffffff;
@@ -23,6 +43,8 @@
     --color-surface-2: #eef3f8;
     --color-text: #1f334a;
     --color-text-muted: #667d94;
+    --color-text-default: var(--color-text);
+    --color-text-subtle: var(--color-text-muted);
     --color-primary: #2f6fae;
     --color-role-patient: #2f6fae;
     --color-role-doctor: #10b981;
@@ -43,6 +65,7 @@
     /* Text colors */
     --color-text-heading: #1a2b40;
     --color-text-body: #1f334a;
+    --color-text-strong: var(--color-text-heading);
     --color-text-placeholder: #8aa0b5;
 
     /* Form elements */
@@ -50,13 +73,8 @@
     --color-input-border: #d7e1ec;
     --color-input-border-focus: #2f6fae;
     --color-input-text: #1f334a;
-    --color-input-placeholder: #8aa0b5;
+    --color-input-placeholder: #2f6fae;
 
-}
-
-:root {
-    --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
-    --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
 }
 
 .font-lexend {
@@ -81,19 +99,12 @@
         line-height: 1;
     }
 
-    p,
-    a,
-    li,
-    label,
-    input,
-    textarea,
-    select,
     button,
-    span,
-    fieldset,
-    legend,
+    input,
+    select,
+    textarea,
     option {
-        font-family: var(--font-body);
+        font: inherit;
     }
 }
 
@@ -106,5 +117,29 @@
     .native-picker-input::-webkit-calendar-picker-indicator {
         cursor: pointer;
         margin-inline-end: 0.125rem;
+    }
+
+    .daily-checkin-mood-step-title {
+        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+    }
+
+    .daily-checkin-mood-step-description {
+        @apply text-base leading-relaxed text-text sm:text-lg;
+    }
+
+    .daily-checkin-step-title {
+        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+    }
+
+    .daily-checkin-step-description {
+        @apply text-base leading-relaxed text-text sm:text-lg;
+    }
+
+    .daily-checkin-step-label {
+        @apply text-base font-semibold leading-snug text-text-heading sm:text-lg;
+    }
+
+    .daily-checkin-symptom-chip {
+        @apply min-h-14 w-full justify-start rounded-xl px-4 py-3 text-left font-semibold whitespace-normal sm:min-h-16 sm:w-auto sm:justify-center sm:rounded-2xl sm:px-5 sm:py-3 sm:text-center;
     }
 }
