@@ -95,17 +95,17 @@ const footerIconClass = computed(() =>
 const footerLabelClass = computed(() =>
     smAndUp.value
         ? 'max-w-full truncate text-center text-xs font-semibold leading-tight tracking-tight'
-        : 'max-w-full truncate text-center text-[11px] font-semibold leading-tight tracking-tight',
+        : 'max-w-full truncate text-center text-2xs font-semibold leading-tight tracking-tight',
 );
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div
-            class="relative mx-auto flex w-full max-w-7xl flex-1 flex-col py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))]"
+            class="relative mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col pt-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))]"
             :class="shellPaddingX"
         >
-            <div class="min-h-[calc(100dvh-5rem)] min-w-0 flex-1">
+            <div class="min-h-0 min-w-0 flex-1">
                 <slot />
             </div>
 
@@ -121,6 +121,7 @@ const footerLabelClass = computed(() =>
                         v-for="item in doctorNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
+                        prefetch
                         :class="footerNavClass(item.routeName)"
                     >
                         <component
