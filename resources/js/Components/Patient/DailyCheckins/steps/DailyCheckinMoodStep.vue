@@ -16,12 +16,12 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="space-y-4 sm:space-y-6">
+    <div class="space-y-5 sm:space-y-7">
         <div class="space-y-1 sm:space-y-1.5">
-            <p class="text-base font-bold leading-snug text-text-heading sm:text-lg lg:text-xl">
+            <p class="daily-checkin-mood-step-title">
                 {{ t('patient.dashboard.dailyCheckins.title') }}
             </p>
-            <p class="text-sm leading-snug text-text-muted sm:text-base sm:leading-relaxed">
+            <p class="daily-checkin-mood-step-description">
                 {{ t('patient.dashboard.dailyCheckins.description') }}
             </p>
         </div>

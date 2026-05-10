@@ -60,7 +60,7 @@ const optionsForTemplate = computed(() => moodOptions);
     <fieldset
         :class="
             cn(
-                'mx-auto grid w-full max-w-md grid-cols-3 items-stretch justify-items-center gap-1.5 rounded-xl px-1 py-1.5 sm:gap-2 sm:rounded-2xl sm:px-2 sm:py-2 md:max-w-none md:flex md:w-auto md:items-center md:justify-center md:gap-10 md:px-4 md:py-3',
+                'mx-auto grid w-full max-w-xl grid-cols-3 items-stretch justify-items-center gap-2.5 rounded-2xl px-2 py-2 sm:gap-3 sm:rounded-3xl sm:px-3 sm:py-3 md:max-w-none md:flex md:w-auto md:items-center md:justify-center md:gap-12 md:px-6 md:py-4',
                 props.class,
             )
         "
@@ -72,7 +72,7 @@ const optionsForTemplate = computed(() => moodOptions);
             :key="mood.value"
             :class="
                 cn(
-                    'group flex w-full cursor-pointer flex-col items-center gap-1 rounded-xl px-1.5 py-2 text-center transition-colors focus-within:ring-2 focus-within:ring-focus/25 sm:gap-1.5 sm:rounded-2xl sm:px-2 sm:py-3 md:w-auto md:gap-2 md:px-5 md:py-4',
+                    'group flex min-h-28 w-full cursor-pointer flex-col items-center gap-2 rounded-2xl px-2.5 py-3 text-center transition-colors focus-within:ring-2 focus-within:ring-focus/25 sm:min-h-32 sm:gap-2.5 sm:px-3 sm:py-4 md:min-h-36 md:w-auto md:gap-3 md:px-6 md:py-5',
                     disabled && 'cursor-not-allowed opacity-60',
                     isSelected(mood.value) && 'bg-surface-hover',
                 )
@@ -89,11 +89,11 @@ const optionsForTemplate = computed(() => moodOptions);
             />
             <component
                 :is="mood.icon"
-                :class="cn('size-9 stroke-[1.75] sm:size-11 md:size-14', mood.faceClass)"
+                :class="cn('size-12 stroke-[1.75] sm:size-14 md:size-16', mood.faceClass)"
                 aria-hidden="true"
             />
             <span
-                class="text-[11px] font-medium leading-tight text-text-muted sm:text-xs md:text-sm"
+                class="text-sm font-semibold leading-snug text-text-muted sm:text-base md:text-lg"
                 :class="isSelected(mood.value) && 'text-text'"
             >
                 {{ mood.label }}
