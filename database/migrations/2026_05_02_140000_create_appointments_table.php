@@ -12,9 +12,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
             $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->string('doctor_type');
+            $table->text('doctor_type');
             $table->text('provider_name');
-            $table->text('address');
+            $table->text('street');
+            $table->text('house_number');
+            $table->text('postal_code');
+            $table->text('city');
             $table->boolean('needs_transport')->default(false);
             $table->dateTime('starts_at');
             $table->text('notes')->nullable();
