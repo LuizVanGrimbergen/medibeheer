@@ -126,16 +126,20 @@ const footerLabelClass = computed(() =>
 
 <template>
     <AuthenticatedLayout>
-        <div
-            class="relative mx-auto flex min-h-full w-full max-w-7xl flex-1 flex-col pt-4 pb-[calc(5.5rem+env(safe-area-inset-bottom,0))] sm:pt-6"
-            :class="shellPaddingX"
-        >
-            <div class="min-h-0 min-w-0 flex-1">
-                <slot />
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+            <div
+                class="relative mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col overflow-x-hidden pt-4 sm:pt-6"
+                :class="shellPaddingX"
+            >
+                <div
+                    class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+                >
+                    <slot />
+                </div>
             </div>
 
             <nav
-                class="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface"
+                class="z-40 shrink-0 border-t border-border bg-surface"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div
