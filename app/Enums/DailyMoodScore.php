@@ -2,12 +2,12 @@
 
 namespace App\Enums;
 
-use App\Enums\Concerns\CastsEncryptedInDatabase;
+use App\Enums\Concerns\EncryptEnum;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 
 enum DailyMoodScore: string implements Castable
 {
-    use CastsEncryptedInDatabase;
+    use EncryptEnum;
 
     case BAD = 'bad';
     case OK = 'ok';

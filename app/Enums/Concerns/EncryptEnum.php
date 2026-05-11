@@ -11,13 +11,13 @@ use LogicException;
 use UnexpectedValueException;
 use ValueError;
 
-trait CastsEncryptedInDatabase
+trait EncryptEnum
 {
     public static function castUsing(array $arguments): CastsAttributes
     {
         if (! is_a(static::class, BackedEnum::class, true)) {
             throw new LogicException(
-                sprintf('CastsEncryptedInDatabase can only be used on BackedEnum classes, [%s] is not a BackedEnum.', static::class),
+                sprintf('EncryptEnum can only be used on BackedEnum classes, [%s] is not a BackedEnum.', static::class),
             );
         }
 
@@ -32,7 +32,7 @@ trait CastsEncryptedInDatabase
                 }
 
                 if ($value === '') {
-                    Log::warning('CastsEncryptedInDatabase: empty string found in DB column, expected null or ciphertext.', [
+                    Log::warning('EncryptEnum: empty string found in DB column, expected null or ciphertext.', [
                         'model' => $model::class,
                         'key' => $key,
                     ]);
@@ -43,7 +43,7 @@ trait CastsEncryptedInDatabase
                 try {
                     $plain = Model::currentEncrypter()->decrypt($value, false);
                 } catch (DecryptException $e) {
-                    Log::error('CastsEncryptedInDatabase: failed to decrypt value.', [
+                    Log::error('EncryptEnum: failed to decrypt value.', [
                         'model' => $model::class,
                         'key' => $key,
                         'exception' => $e->getMessage(),
@@ -57,7 +57,7 @@ trait CastsEncryptedInDatabase
                 } catch (ValueError) {
                     throw new UnexpectedValueException(
                         sprintf(
-                            'CastsEncryptedInDatabase: decrypted value is not a valid case of [%s] on [%s::$%s].',
+                            'EncryptEnum: decrypted value is not a valid case of [%s] on [%s::$%s].',
                             $this->enumClass,
                             $model::class,
                             $key,
@@ -82,7 +82,7 @@ trait CastsEncryptedInDatabase
                     } catch (ValueError) {
                         throw new UnexpectedValueException(
                             sprintf(
-                                'CastsEncryptedInDatabase: value is not a valid case of [%s] for [%s::$%s].',
+                                'EncryptEnum: value is not a valid case of [%s] for [%s::$%s].',
                                 $this->enumClass,
                                 $model::class,
                                 $key,
