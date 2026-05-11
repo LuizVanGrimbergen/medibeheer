@@ -1,9 +1,42 @@
-import { utcIsoToLocalDatetimeCompositeForForm } from '@/lib/patient/appointments/patientAppointmentStartsAtForFormInputs';
 import type { Appointment as PatientAppointment } from '@/lib/types';
 
 type LinkedFamily = {
     id: number;
 };
+
+function utcIsoToLocalDateAndTime(isoInstant: string): { date: string; time: string } {
+    const parsed = new Date(isoInstant);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return { date: '', time: '' };
+    }
+
+    const pad = (n: number) => String(n).padStart(2, '0');
+
+    return {
+        date: `${parsed.getFullYear()}-${pad(parsed.getMonth() + 1)}-${pad(parsed.getDate())}`,
+        time: `${pad(parsed.getHours())}:${pad(parsed.getMinutes())}`,
+    };
+}
+
+function resolveTransportFamilyIdsForEdit(
+    appointment: PatientAppointment,
+    linkedFamilies: LinkedFamily[],
+): number[] {
+    if (linkedFamilies.length === 0) {
+        return [];
+    }
+
+    if (appointment.transport_invited_family_ids.length > 0) {
+        return [...appointment.transport_invited_family_ids];
+    }
+
+    if (appointment.transport_family === null) {
+        return linkedFamilies.map((f) => f.id);
+    }
+
+    return [appointment.transport_family.id];
+}
 
 export function patientAppointmentToEditFormState(
     appointment: PatientAppointment,
@@ -11,7 +44,10 @@ export function patientAppointmentToEditFormState(
 ): {
     doctor_type: PatientAppointment['doctor_type'];
     provider_name: string;
-    address: string;
+    street: string;
+    house_number: string;
+    postal_code: string;
+    city: string;
     starts_at_date: string;
     starts_at_time: string;
     notes: string;
@@ -19,29 +55,24 @@ export function patientAppointmentToEditFormState(
     transport_family_ids: number[];
     status: PatientAppointment['status'];
 } {
-    const startsLocal = utcIsoToLocalDatetimeCompositeForForm(appointment.starts_at);
-    const [startsDate, startsTimeRaw] = startsLocal.split('T');
+    const { date: startsAtDate, time: startsAtTime } = utcIsoToLocalDateAndTime(appointment.starts_at);
 
-    let transportFamilyIds: number[] = [];
-
-    if (appointment.transport_invited_family_ids.length > 0) {
-        transportFamilyIds = [...appointment.transport_invited_family_ids];
-    } else if (appointment.transport_family === null) {
-        transportFamilyIds = linkedFamilies.map((f) => f.id);
-    } else {
-        transportFamilyIds = [appointment.transport_family.id];
-    }
+    const needsTransport = linkedFamilies.length === 0
+        ? false
+        : (appointment.needs_transport ?? false);
 
     return {
         doctor_type: appointment.doctor_type,
         provider_name: appointment.provider_name,
-        address: appointment.address,
-        starts_at_date: startsDate ?? '',
-        starts_at_time: startsTimeRaw ? startsTimeRaw.slice(0, 5) : '',
+        street: appointment.street,
+        house_number: appointment.house_number,
+        postal_code: appointment.postal_code,
+        city: appointment.city,
+        starts_at_date: startsAtDate,
+        starts_at_time: startsAtTime,
         notes: appointment.notes ?? '',
-        needs_transport: appointment.needs_transport ?? false,
-        transport_family_ids: transportFamilyIds,
+        needs_transport: needsTransport,
+        transport_family_ids: resolveTransportFamilyIdsForEdit(appointment, linkedFamilies),
         status: appointment.status,
     };
 }
-

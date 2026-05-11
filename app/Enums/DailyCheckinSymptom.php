@@ -2,12 +2,12 @@
 
 namespace App\Enums;
 
-use App\Enums\Concerns\CastsEncryptedInDatabase;
+use App\Enums\Concerns\EncryptEnum;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 
 enum DailyCheckinSymptom: string implements Castable
 {
-    use CastsEncryptedInDatabase;
+    use EncryptEnum;
 
     case PAIN = 'pain';
     case FATIGUE = 'fatigue';

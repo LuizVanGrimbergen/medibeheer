@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { reactiveOmit } from '@vueuse/core';
-import { X } from 'lucide-vue-next';
 import {
-    DialogClose,
     DialogContent,
     DialogOverlay,
     DialogPortal,
@@ -34,13 +32,6 @@ const forwarded = useForwardPropsEmits(delegatedProps, emits);
                 )"
         >
             <slot />
-
-            <DialogClose
-                class="absolute right-3 top-3 flex size-12 items-center justify-center rounded-xl text-text-muted opacity-90 transition hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-focus/30 disabled:pointer-events-none touch-manipulation sm:right-4 sm:top-4"
-            >
-                <X class="size-6" />
-                <span class="sr-only">Close</span>
-            </DialogClose>
         </DialogContent>
     </DialogPortal>
 </template>

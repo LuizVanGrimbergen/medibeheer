@@ -17,8 +17,6 @@ export type User = {
     email_verified_at: string | null;
 };
 
-
-
 export type Auth = {
     user: User | null;
 };
@@ -88,14 +86,6 @@ export type AppointmentTransportStatusValue =
     | 'accepted'
     | 'declined';
 
-export type AppointmentDoneCommitPayload = {
-    doctor_visit_summary: string | null;
-};
-
-export type AppointmentCancelledCommitPayload = {
-    cancellation_reason: string | null;
-};
-
 export const DAILY_CHECKIN_SYMPTOM_VALUES = [
     'pain',
     'fatigue',
@@ -139,7 +129,10 @@ export type Appointment = {
     id: number;
     doctor_type: AppointmentDoctorType;
     provider_name: string;
-    address: string;
+    street: string;
+    house_number: string;
+    postal_code: string;
+    city: string;
     starts_at: string;
     needs_transport: boolean;
     transport_status: AppointmentTransportStatusValue | null;

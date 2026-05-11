@@ -1,8 +1,7 @@
 import { useForm } from '@inertiajs/vue3';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import {
     PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
-    patientAppointmentDialogFormIsSubmittable,
     patientAppointmentFormValuesToRequestPayload,
 } from '@/lib/patient/appointments/patientAppointmentDialogFormSchema';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/patientAppointmentsScreenProps';
@@ -12,19 +11,31 @@ import type {
     AppointmentDoctorType,
     AppointmentStatusValue,
 } from '@/lib/types';
+import { localCalendarDateIsoToday } from '../lib/patient/appointments/appointmentStartsAtLocalValidation';
 
 const appointmentFormDialogLayoutClass =
-    'flex min-h-0 w-[min(36rem,calc(100vw-2rem))] max-w-none flex-col gap-5 overflow-hidden overscroll-contain rounded-2xl border-2 border-border bg-surface p-5 text-text shadow-lg touch-manipulation max-h-[min(92dvh,calc(100dvh-env(safe-area-inset-bottom)-env(safe-area-inset-top)))] sm:gap-6 sm:p-6 sm:max-h-[min(90vh,44rem)]';
+    'fixed inset-0 z-50 !left-0 !top-0 flex h-[100dvh] min-h-0 !w-screen !max-w-none !translate-x-0 !translate-y-0 flex-col gap-4 overflow-hidden overscroll-contain rounded-none border-0 bg-surface p-4 text-text shadow-lg touch-manipulation sm:inset-auto sm:!left-1/2 sm:!top-1/2 sm:h-auto sm:!w-[min(36rem,calc(100vw-2rem))] sm:!translate-x-[-50%] sm:!translate-y-[-50%] sm:gap-6 sm:rounded-2xl sm:border-2 sm:border-border sm:p-6 sm:max-h-[min(90vh,44rem)]';
 
 export function usePatientAppointmentFormDialogs(
-    props: Pick<PatientAppointmentsScreenProps, 'linked_families'>,
+    props: Pick<PatientAppointmentsScreenProps, 'linked_families' | 'open_create_dialog'>,
 ) {
     const createDialogOpen = ref(false);
+
+    onMounted(() => {
+        if (!props.open_create_dialog) {
+            return;
+        }
+
+        createDialogOpen.value = true;
+    });
 
     function blankCreateForm(): {
         doctor_type: AppointmentDoctorType | '';
         provider_name: string;
-        address: string;
+        street: string;
+        house_number: string;
+        postal_code: string;
+        city: string;
         starts_at_date: string;
         starts_at_time: string;
         notes: string;
@@ -35,7 +46,10 @@ export function usePatientAppointmentFormDialogs(
         return {
             doctor_type: '',
             provider_name: '',
-            address: '',
+            street: '',
+            house_number: '',
+            postal_code: '',
+            city: '',
             starts_at_date: '',
             starts_at_time: '',
             notes: '',
@@ -56,7 +70,10 @@ export function usePatientAppointmentFormDialogs(
     const editForm = useForm({
         doctor_type: '' as AppointmentDoctorType | '',
         provider_name: '',
-        address: '',
+        street: '',
+        house_number: '',
+        postal_code: '',
+        city: '',
         starts_at_date: '',
         starts_at_time: '',
         notes: '',
@@ -80,35 +97,23 @@ export function usePatientAppointmentFormDialogs(
         },
     });
 
-    const createSubmitDisabled = computed(
-        () =>
-            !patientAppointmentDialogFormIsSubmittable({
-                doctor_type: createForm.doctor_type,
-                provider_name: createForm.provider_name,
-                address: createForm.address,
-                starts_at_date: createForm.starts_at_date,
-                starts_at_time: createForm.starts_at_time,
-                notes: createForm.notes,
-                needs_transport: createForm.needs_transport,
-                transport_family_ids: createForm.transport_family_ids,
-                status: createForm.status,
-            }),
-    );
+    const createStartsAtDateMinIso = computed(() => localCalendarDateIsoToday());
 
-    const editSubmitDisabled = computed(
-        () =>
-            !patientAppointmentDialogFormIsSubmittable({
-                doctor_type: editForm.doctor_type,
-                provider_name: editForm.provider_name,
-                address: editForm.address,
-                starts_at_date: editForm.starts_at_date,
-                starts_at_time: editForm.starts_at_time,
-                notes: editForm.notes,
-                needs_transport: editForm.needs_transport,
-                transport_family_ids: editForm.transport_family_ids,
-                status: editForm.status,
-            }),
-    );
+    const editSchedulePermitPastStartsAtIfSameInstantMs = computed(() => {
+        const a = appointmentBeingEdited.value;
+
+        if (a === null) {
+            return null;
+        }
+
+        const parsedMs = Date.parse(a.starts_at);
+
+        if (Number.isNaN(parsedMs)) {
+            return null;
+        }
+
+        return parsedMs;
+    });
 
     watch(createDialogOpen, (open) => {
         if (!open) {
@@ -120,7 +125,7 @@ export function usePatientAppointmentFormDialogs(
         editForm.clearErrors();
         resetCreateDialogToFreshDefaults();
         void nextTick(() => {
-            const el = document.getElementById('appointment-create-provider-name');
+            const el = document.getElementById('appointment-create-doctor-type');
             el?.focus();
         });
     });
@@ -138,7 +143,7 @@ export function usePatientAppointmentFormDialogs(
             patientAppointmentToEditFormState(appointment, props.linked_families),
         );
         void nextTick(() => {
-            const el = document.getElementById('appointment-edit-provider-name');
+            const el = document.getElementById('appointment-edit-doctor-type');
             el?.focus();
         });
     }
@@ -163,7 +168,15 @@ export function usePatientAppointmentFormDialogs(
         }
 
         editForm
-            .transform((data) => patientAppointmentFormValuesToRequestPayload({ ...data }))
+            .transform((data) =>
+                patientAppointmentFormValuesToRequestPayload(
+                    { ...data },
+                    {
+                        permitPastStartsAtIfSameInstantMs:
+                            editSchedulePermitPastStartsAtIfSameInstantMs.value ?? undefined,
+                    },
+                ),
+            )
             .patch(route('patient.appointments.update', appointment.id), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -176,12 +189,12 @@ export function usePatientAppointmentFormDialogs(
     return {
         doctorTypeOptions: PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
         appointmentFormDialogLayoutClass,
+        createStartsAtDateMinIso,
+        editSchedulePermitPastStartsAtIfSameInstantMs,
         createDialogOpen,
         createForm,
         editForm,
         editDialogOpen,
-        createSubmitDisabled,
-        editSubmitDisabled,
         openAppointmentEditor,
         submitNewAppointment,
         submitAppointmentRevision,

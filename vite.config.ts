@@ -19,6 +19,9 @@ export default defineConfig(({ mode }) => {
         env.VITE_DEV_SERVER_HOST
         ?? hostnameFromAppUrl(env.APP_URL ?? '')
         ?? 'localhost';
+    const appOrigin = env.APP_URL || `http://${devServerHost}:8000`;
+    const useHttps = false;
+    const devServerOrigin = `${useHttps ? 'https' : 'http'}://${devServerHost}:5173`;
 
     return {
         plugins: [
@@ -26,7 +29,7 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: ['resources/js/app.ts'],
                 refresh: true,
-                https: true
+                https: useHttps,
             }),
             inertia(),
             vue({
@@ -42,8 +45,14 @@ export default defineConfig(({ mode }) => {
             host: true,
             port: 5173,
             strictPort: true,
+            https: useHttps,
+            origin: devServerOrigin,
+            cors: {
+                origin: appOrigin,
+            },
             hmr: {
                 host: devServerHost,
+                protocol: useHttps ? 'wss' : 'ws',
             },
         },
         ssr: {

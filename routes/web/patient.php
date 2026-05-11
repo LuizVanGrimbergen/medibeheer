@@ -1,14 +1,17 @@
 <?php
 
 // navigation controllers
-use App\Http\Controllers\Patient\DestroyPatientFamilyInvitationController;
-use App\Http\Controllers\Patient\PatientAppointmentController;
-use App\Http\Controllers\Patient\PatientDailyCheckinController;
-use App\Http\Controllers\Patient\PatientDashboardController;
-use App\Http\Controllers\Patient\PatientFamilyController;
-use App\Http\Controllers\Patient\PatientInventoryController;
-use App\Http\Controllers\Patient\PatientMedicationController;
-use App\Http\Controllers\Patient\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Appointments\PatientAppointmentController;
+use App\Http\Controllers\Patient\Appointments\ShowPatientAppointmentCancelPageController;
+use App\Http\Controllers\Patient\Appointments\ShowPatientAppointmentCompletePageController;
+use App\Http\Controllers\Patient\Appointments\ShowPatientAppointmentScheduleNextPageController;
+use App\Http\Controllers\Patient\DailyCheckins\PatientDailyCheckinController;
+use App\Http\Controllers\Patient\Dashboard\PatientDashboardController;
+use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Family\PatientFamilyController;
+use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -44,6 +47,14 @@ Route::middleware([
             ->name('family.invitations.destroy');
 
         /* Appointments routes */
+        Route::get('appointments/{appointment}/complete', ShowPatientAppointmentCompletePageController::class)
+            ->name('appointments.complete');
+        Route::get('appointments/{appointment}/cancel', ShowPatientAppointmentCancelPageController::class)
+            ->name('appointments.cancel');
+
+        Route::get('appointments/schedule-next', ShowPatientAppointmentScheduleNextPageController::class)
+            ->name('appointments.schedule-next');
+
         Route::resource('appointments', PatientAppointmentController::class)
             ->only(['index', 'store', 'update', 'destroy'])
             ->names([

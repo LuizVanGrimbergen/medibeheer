@@ -4,8 +4,6 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type {
     Appointment as PatientAppointment,
-    AppointmentCancelledCommitPayload,
-    AppointmentDoneCommitPayload,
     AppointmentStatusValue,
 } from '@/lib/types';
 
@@ -71,47 +69,6 @@ export function usePatientAppointmentRemoteActions() {
         });
     }
 
-    function submitAppointmentCancellation(
-        appointment: PatientAppointment,
-        payload: AppointmentCancelledCommitPayload,
-    ): void {
-        if (isAppointmentUpdateInFlight(appointment.id)) {
-            return;
-        }
-
-        dispatchAppointmentUpdate(appointment.id, {
-            status: 'cancelled' as AppointmentStatusValue,
-            cancellation_reason: payload.cancellation_reason,
-        });
-    }
-
-    function submitAppointmentCompletion(
-        appointment: PatientAppointment,
-        payload: AppointmentDoneCommitPayload,
-    ): void {
-        if (isAppointmentUpdateInFlight(appointment.id)) {
-            return;
-        }
-
-        if (isAppointmentMarkedDoneInUi(appointment)) {
-            return;
-        }
-
-        optimisticDoneUiByAppointmentId.value = {
-            ...optimisticDoneUiByAppointmentId.value,
-            [appointment.id]: true,
-        };
-
-        dispatchAppointmentUpdate(
-            appointment.id,
-            {
-                status: 'done' as AppointmentStatusValue,
-                doctor_visit_summary: payload.doctor_visit_summary,
-            },
-            { clearOptimisticDoneStateWhenFinished: true },
-        );
-    }
-
     function reopenScheduledAppointmentAfterCompletion(appointment: PatientAppointment): void {
         if (isAppointmentUpdateInFlight(appointment.id)) {
             return;
@@ -140,8 +97,6 @@ export function usePatientAppointmentRemoteActions() {
         isAppointmentUpdateInFlight,
         isAppointmentMarkedDoneInUi,
         confirmAndDeleteAppointment,
-        submitAppointmentCancellation,
-        submitAppointmentCompletion,
         reopenScheduledAppointmentAfterCompletion,
     };
 }

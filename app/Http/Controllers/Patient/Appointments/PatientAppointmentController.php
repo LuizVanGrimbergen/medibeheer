@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Patient;
+namespace App\Http\Controllers\Patient\Appointments;
 
+use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\StoreAppointmentRequest;
@@ -29,7 +30,10 @@ class PatientAppointmentController extends Controller
 
         return Inertia::render(
             'Patient/Appointments',
-            $this->patientAppointmentsScreenService->buildProps($patient),
+            [
+                ...$this->patientAppointmentsScreenService->buildProps($request, $patient),
+                'open_create_dialog' => $request->boolean('open_create'),
+            ],
         );
     }
 
@@ -59,6 +63,10 @@ class PatientAppointmentController extends Controller
 
         $this->authorize('update', $appointment);
 
+        if ($appointment->status === AppointmentStatus::CANCELLED) {
+            return redirect()->route('patient.appointments');
+        }
+
         $validated = $request->validated();
         $requestedFamilyIds = $validated['transport_family_ids'] ?? null;
         unset($validated['transport_family_ids']);
@@ -69,6 +77,27 @@ class PatientAppointmentController extends Controller
             $appointment,
             is_array($requestedFamilyIds) ? $requestedFamilyIds : null,
         );
+
+        $followUp = $request->query('outcome_follow_up');
+        $status = $validated['status'] ?? null;
+        $statusEnum = match (true) {
+            $status instanceof AppointmentStatus => $status,
+            is_string($status) => AppointmentStatus::tryFrom($status),
+            default => null,
+        };
+
+        if (
+            is_string($followUp)
+            && $statusEnum !== null
+            && (
+                ($followUp === 'done' && $statusEnum === AppointmentStatus::DONE)
+                || ($followUp === 'cancelled' && $statusEnum === AppointmentStatus::CANCELLED)
+            )
+        ) {
+            return redirect()->route('patient.appointments.schedule-next', [
+                'outcome' => $followUp,
+            ]);
+        }
 
         return redirect()->route('patient.appointments');
     }

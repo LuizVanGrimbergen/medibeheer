@@ -34,7 +34,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
         <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain">
             <div
                 v-if="flashError"
-                class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8"
+                class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
             >
                 <FlashErrorBanner
                     :message="flashError"
@@ -43,7 +43,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
             </div>
             <div
                 v-if="flashSuccess"
-                class="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8"
+                class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
             >
                 <output
                     class="rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-text"

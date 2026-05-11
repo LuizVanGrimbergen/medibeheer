@@ -7,6 +7,10 @@ import DailyCheckinSymptomsStep from '@/Components/Patient/DailyCheckins/steps/D
 import { useDailyCheckin } from '@/Components/Patient/DailyCheckins/useDailyCheckin';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import {
+    patientAppointmentFormPrimaryPairButtonClass,
+    patientSoftDangerActionButtonClass,
+} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
 import type { DailyCheckin, DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -136,15 +140,17 @@ watch(
 
         <Card
             v-if="showActionBar"
-            class="mb-[calc(5.5rem+env(safe-area-inset-bottom,0))] rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] sm:mb-0 sm:rounded-3xl"
+            class="rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] sm:rounded-3xl"
         >
             <CardContent class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8">
-                <div class="flex flex-col gap-2 sm:flex-row sm:gap-3">
+                <div
+                    class="flex min-w-0 w-full flex-col-reverse gap-2 sm:flex-row sm:gap-3"
+                >
                     <Button
                         type="button"
                         variant="secondary"
                         size="lg"
-                        class="min-h-12 w-full touch-manipulation rounded-2xl border-2 border-danger/40 bg-danger/10 px-3 text-base font-semibold text-danger hover:border-danger hover:bg-danger/20 hover:text-danger sm:min-h-14 sm:flex-1 sm:px-4 sm:text-base md:w-auto md:min-w-40 md:flex-initial md:text-lg"
+                        :class="patientSoftDangerActionButtonClass"
                         :disabled="form.processing"
                         @click="step === 'symptoms' ? backToMoodStep() : backFromNote()"
                     >
@@ -160,7 +166,7 @@ watch(
                         type="button"
                         variant="default"
                         size="lg"
-                        class="min-h-12 w-full touch-manipulation rounded-2xl bg-primary px-3 text-base font-semibold text-white sm:min-h-14 sm:flex-1 sm:px-4 sm:text-base md:w-auto md:min-w-40 md:flex-initial md:text-lg"
+                        :class="patientAppointmentFormPrimaryPairButtonClass"
                         :disabled="form.processing"
                         @click="openNoteStep"
                     >
@@ -172,7 +178,7 @@ watch(
                         type="button"
                         variant="default"
                         size="lg"
-                        class="min-h-12 w-full touch-manipulation rounded-2xl bg-primary px-3 text-base font-semibold text-white sm:min-h-14 sm:flex-1 sm:px-4 sm:text-base md:w-auto md:min-w-40 md:flex-initial md:text-lg"
+                        :class="patientAppointmentFormPrimaryPairButtonClass"
                         :disabled="submitDisabled"
                         @click="submitCheckin"
                     >

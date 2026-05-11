@@ -11,7 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class FamilyAppointmentResource extends JsonResource
 {
     public function __construct(
-        $resource,
+        Appointment $resource,
         private readonly Family $family,
     ) {
         parent::__construct($resource);
@@ -45,7 +45,10 @@ class FamilyAppointmentResource extends JsonResource
             'id' => (int) $appointment->id,
             'doctor_type' => $appointment->doctor_type->value,
             'provider_name' => (string) $appointment->provider_name,
-            'address' => (string) $appointment->address,
+            'street' => (string) $appointment->street,
+            'house_number' => (string) $appointment->house_number,
+            'postal_code' => (string) $appointment->postal_code,
+            'city' => (string) $appointment->city,
             'starts_at' => $appointment->starts_at->toIso8601String(),
             'needs_transport' => (bool) $appointment->needs_transport,
             'transport_status' => $appointment->transportStatus($pendingInvitation !== null)?->value,

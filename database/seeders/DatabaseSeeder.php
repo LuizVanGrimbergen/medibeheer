@@ -7,18 +7,29 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Test User',
+        $patientUser = User::factory()->patient()->create([
+            'name' => 'Test Patient',
             'email' => 'test@example.com',
         ]);
 
+        $familyUser = User::factory()->familyMember()->create([
+            'name' => 'Test Family',
+            'email' => 'family@example.com',
+        ]);
+
+        $patient = $patientUser->patient;
+        $family = $familyUser->familyOrCreate();
+
+        if ($patient !== null) {
+            $patient->families()->syncWithoutDetaching([$family->id]);
+        }
+
         $this->call(AppointmentSeeder::class);
 
-        // $this->call(DailyCheckinDemoSeeder::class); // php artisan db:seed --class=DailyCheckinDemoSeeder
+        if ($this->command !== null) {
+            $this->command->info('Demo data: patient test@example.com, family family@example.com (password: password).');
+        }
     }
 }

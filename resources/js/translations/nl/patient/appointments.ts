@@ -2,25 +2,62 @@ export default {
     title: 'Afspraken',
     heading: 'Afspraken',
     newAppointment: 'Nieuwe afspraak',
+    plannedToggle: 'Gepland',
+    completedToggle: 'Afgerond of geannuleerd',
     plannedHeading: 'Geplande afspraken',
+    completedHeading: 'Eerdere afspraken',
     plannedDescription:
-        'Hier ziet u alleen geplande afspraken, op volgorde van datum. Afgeronde en geannuleerde afspraken verdwijnen uit dit overzicht.',
+        'Geplande afspraken staan op volgorde van datum. Schakel naar het tabblad “Afgerond of geannuleerd” om eerdere afspraken te bekijken of te verwijderen.',
+    completedDescription:
+        'Hier vindt u afgeronde en geannuleerde afspraken. U kunt ze nog verwijderen als u ze uit uw overzicht wilt halen.',
     empty: 'U heeft nog geen afspraken. Tik op de knop “Nieuwe afspraak” om te beginnen.',
     emptyPlanned:
-        'Er zijn geen geplande afspraken. Afgeronde en geannuleerde afspraken worden hier niet getoond.',
+        'Er zijn geen geplande afspraken. Kijk op het tabblad “Afgerond of geannuleerd” of u daar eerdere afspraken vindt.',
+    emptyCompleted: 'Er zijn nog geen afgeronde of geannuleerde afspraken.',
     dialogTitle: 'Nieuwe afspraak',
     dialogEditTitle: 'Afspraak wijzigen',
-    dialogDescription:
-        'Vul de velden zo volledig mogelijk in. U kunt dit later nog wijzigen.',
-    dialogEditDescription:
-        'Pas de gegevens aan en tik op Opslaan om ze bij te werken.',
+    steps: {
+        progress: 'Stap {current} van {total}',
+        continue: 'Volgende',
+        back: 'Terug',
+        provider: {
+            title: 'Zorgverlener',
+            description:
+                'Kies het type zorg en vul de naam van de praktijk of zorgverlener in.',
+        },
+        address: {
+            title: 'Adres',
+            description: 'Waar vindt de afspraak plaats?',
+        },
+        schedule: {
+            title: 'Datum en tijd',
+            description: 'Kies eerst de dag, daarna het uur.',
+        },
+        transport: {
+            title: 'Transport',
+            description:
+                'Laat weten of familie een uitnodiging voor transport moet ontvangen.',
+        },
+        notes: {
+            title: 'Notities',
+            description:
+                'Optioneel: extra informatie voor uzelf of uw familie.',
+        },
+    },
     fields: {
         doctorType: 'Soort zorgverlener',
         doctorTypePlaceholder: 'Kies een type',
         providerName: 'Naam (praktijk of zorgverlener)',
         providerNamePlaceholder: 'Bijv. Huisartsenpraktijk De Linde',
-        address: 'Adres',
-        addressPlaceholder: 'Straat, postcode, plaats',
+        addressGroupLegend: 'Adres',
+        street: 'Straat',
+        streetPlaceholder: 'Bijv. Joossenlei',
+        houseNumber: 'Huisnummer (optioneel)',
+        houseNumberPlaceholder: 'Bijv. 29 of 29a',
+        postalCode: 'Postcode',
+        postalCodePlaceholder: 'Bijv. 2970',
+        city: 'Plaats',
+        cityPlaceholder: 'Bijv. schilde',
         startsAtGroupLegend: 'Wanneer is de afspraak?',
         startsAtDate: 'Dag',
         startsAtTime: 'Uur',
@@ -29,10 +66,7 @@ export default {
         notesPlaceholder: 'Bijv. meenemen: verwijsbrief, ID',
         needsTransport: 'Transport nodig?',
         transportNotify: 'Wie wilt u uitnodigen?',
-        transportNoFamilies: 'U heeft nog geen familie gekoppeld om uit te nodigen.',
         transportNotes: 'Transport (optioneel)',
-        transportNotesPlaceholder:
-            'Bijv. ophalen om 09:15, rolstoel, of extra info voor familie',
         status: 'Status',
     },
     doctorTypes: {
@@ -52,7 +86,6 @@ export default {
         cancel: 'Annuleren',
         delete: 'Verwijderen',
         edit: 'Wijzigen',
-        scrollToSave: 'Scroll naar beneden om op te slaan.',
     },
     deleteConfirm:
         'Weet je zeker dat je deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
@@ -60,8 +93,6 @@ export default {
         when: 'Wanneer',
         time: 'Tijd',
         where: 'Waar',
-        type: 'Type',
-        notes: 'Notities',
         transport: 'Transport',
         afterVisit: 'Na uw bezoek',
     },
@@ -97,5 +128,35 @@ export default {
         visitSummaryPlaceholder:
             'Bijvoorbeeld: uitleg van de dokter, vervolgafspraak, of een korte boodschap voor thuis',
         confirm: 'Opslaan',
+    },
+    outcomePages: {
+        backToAppointments: 'Terug naar afspraken',
+    },
+    validation: {
+        startsAtDateInvalid: 'Kies een geldige dag.',
+        startsAtTimeInvalid: 'Kies een geldig uur.',
+        startsAtMustNotBeInPast:
+            'Kies een datum en tijd vanaf nu. Een afspraak kan niet in het verleden liggen.',
+        postalCodeMinLength: 'De postcode moet minstens 4 tekens bevatten.',
+    },
+    stepValidation: {
+        doctorTypeRequired: 'Kies een soort zorgverlener.',
+        providerNameRequired: 'Vul de naam van de praktijk of zorgverlener in.',
+        streetRequired: 'Vul de straat in.',
+        postalCodeRequired: 'Vul de postcode in.',
+        cityRequired: 'Vul de plaats in.',
+        startsAtDateRequired: 'Kies een dag voor de afspraak.',
+        startsAtTimeRequired: 'Kies een uur voor de afspraak.',
+        transportRecipientsRequired:
+            'Kies minstens één familie om uit te nodigen voor transport.',
+    },
+    scheduleNext: {
+        title: 'Nog een afspraak inplannen?',
+        descriptionDone:
+            'Wilt u meteen een volgende afspraak in uw overzicht zetten?',
+        descriptionCancelled:
+            'Wilt u meteen een nieuwe afspraak in uw overzicht zetten?',
+        yes: 'Ja, nieuwe afspraak',
+        no: 'Nee, naar overzicht',
     },
 };
