@@ -15,9 +15,8 @@ import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneTogg
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type {
-    AppointmentCancelledCommitPayload,
-    AppointmentDoneCommitPayload,
     AppointmentTransportStatusValue,
     AppointmentStatusValue,
 } from '@/lib/types';
@@ -26,7 +25,10 @@ type AppointmentCardAppointment = {
     id: number;
     doctor_type?: string;
     provider_name: string;
-    address: string;
+    street: string;
+    house_number: string;
+    postal_code: string;
+    city: string;
     starts_at: string;
     needs_transport?: boolean;
     transport_status?: AppointmentTransportStatusValue | null;
@@ -43,15 +45,16 @@ defineProps<{
     isPatching: boolean;
     showActions?: boolean;
     showDoneToggle?: boolean;
+    showTransportSection?: boolean;
     doneSummaryLabel?: string;
+    completeFormHref?: string;
+    cancelFormHref?: string;
 }>();
 
 const emit = defineEmits<{
     edit: [];
     delete: [];
     'update:done': [done: boolean];
-    'commit-done': [payload: AppointmentDoneCommitPayload];
-    'commit-cancelled': [payload: AppointmentCancelledCommitPayload];
 }>();
 
 const { t } = useI18n();
@@ -61,7 +64,7 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
 
 <template>
     <Card
-        class="rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="min-w-0 w-full rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
     >
         <CardContent class="space-y-6 p-6 sm:p-7">
             <div class="flex items-start gap-4">
@@ -206,11 +209,14 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
                         <p
                             class="text-lg font-medium leading-relaxed text-text wrap-break-word text-pretty sm:text-xl sm:leading-snug"
                         >
-                            {{ appointment.address }}
+                            {{ formatAppointmentAddress(appointment) }}
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-4 sm:gap-5">
+                <div
+                    v-if="showTransportSection ?? true"
+                    class="flex gap-4 sm:gap-5"
+                >
                     <Car
                         class="mt-1 size-6 shrink-0 self-start text-primary"
                         :stroke-width="2"
@@ -269,13 +275,17 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
             </div>
 
             <AppointmentDoneToggle
-                v-if="(showDoneToggle ?? true) && appointment.status !== 'cancelled'"
-                :instance-key="appointment.id"
+                v-if="
+                    (showDoneToggle ?? true) &&
+                        appointment.status !== 'cancelled' &&
+                        completeFormHref &&
+                        cancelFormHref
+                "
                 :model-value="doneDisplayed"
                 :disabled="isPatching"
+                :complete-form-href="completeFormHref"
+                :cancel-form-href="cancelFormHref"
                 @update:model-value="emit('update:done', $event)"
-                @commit-done="emit('commit-done', $event)"
-                @commit-cancelled="emit('commit-cancelled', $event)"
             />
 
             <div

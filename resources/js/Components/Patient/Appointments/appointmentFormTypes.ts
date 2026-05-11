@@ -5,10 +5,13 @@ import type {
     AppointmentStatusValue,
 } from '@/lib/types';
 
-type AppointmentFormState = {
+export type AppointmentFormState = {
     doctor_type: AppointmentDoctorType | '';
     provider_name: string;
-    address: string;
+    street: string;
+    house_number: string;
+    postal_code: string;
+    city: string;
     starts_at_date: string;
     starts_at_time: string;
     notes: string;
