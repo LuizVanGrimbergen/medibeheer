@@ -19,8 +19,11 @@ class PatientAppointmentResource extends JsonResource
         return [
             'id' => $this->id,
             'doctor_type' => $this->doctor_type->value,
-            'provider_name' => $this->provider_name,
-            'address' => $this->address,
+            'provider_name' => (string) $this->provider_name,
+            'street' => (string) $this->street,
+            'house_number' => (string) $this->house_number,
+            'postal_code' => (string) $this->postal_code,
+            'city' => (string) $this->city,
             'starts_at' => $this->starts_at->toIso8601String(),
             'needs_transport' => (bool) $this->needs_transport,
             'transport_status' => $this->resource->transportStatus(
