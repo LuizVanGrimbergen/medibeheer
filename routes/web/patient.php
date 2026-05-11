@@ -1,14 +1,14 @@
 <?php
 
 // navigation controllers
-use App\Http\Controllers\Patient\DestroyPatientFamilyInvitationController;
-use App\Http\Controllers\Patient\PatientAppointmentController;
-use App\Http\Controllers\Patient\PatientDailyCheckinController;
-use App\Http\Controllers\Patient\PatientDashboardController;
-use App\Http\Controllers\Patient\PatientFamilyController;
-use App\Http\Controllers\Patient\PatientInventoryController;
-use App\Http\Controllers\Patient\PatientMedicationController;
-use App\Http\Controllers\Patient\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Appointments\PatientAppointmentController;
+use App\Http\Controllers\Patient\DailyCheckins\PatientDailyCheckinController;
+use App\Http\Controllers\Patient\Dashboard\PatientDashboardController;
+use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Family\PatientFamilyController;
+use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;

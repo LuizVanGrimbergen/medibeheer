@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Patient;
+namespace App\Http\Controllers\Patient\Medications;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class PatientInventoryController extends Controller
+class PatientMedicationController extends Controller
 {
     use AuthorizesPatientProfile;
 
@@ -16,6 +16,6 @@ class PatientInventoryController extends Controller
     {
         $this->authorizePatientProfile($request);
 
-        return Inertia::render('Patient/Inventory');
+        return Inertia::render('Patient/Medications');
     }
 }
