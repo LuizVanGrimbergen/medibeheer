@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { CalendarPlus } from 'lucide-vue-next';
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/AppointmentFormDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/patientAppointmentsScreenProps';
@@ -16,8 +14,6 @@ import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/
 const props = defineProps<PatientAppointmentsScreenProps>();
 
 const { t } = useI18n();
-
-const isPlannedView = computed(() => props.appointment_view === 'planned');
 
 const {
     doctorTypeOptions,
@@ -31,7 +27,6 @@ const {
     openAppointmentEditor,
     plannedAppointments,
     hasNoAppointmentsAtAll,
-    setAppointmentViewFromToggle,
     submitNewAppointment,
     submitAppointmentRevision,
     confirmAndDeleteAppointment,
@@ -39,10 +34,6 @@ const {
     isAppointmentMarkedDoneInUi,
     reopenScheduledAppointmentAfterCompletion,
 } = usePatientAppointmentsPage(props);
-
-function onAppointmentViewUpdate(next: string): void {
-    setAppointmentViewFromToggle(next, props.appointment_view);
-}
 </script>
 
 <template>
@@ -60,11 +51,7 @@ function onAppointmentViewUpdate(next: string): void {
                         {{ t('patient.appointments.heading') }}
                     </h1>
                     <p class="mt-3 max-w-2xl text-base leading-relaxed text-text-muted">
-                        {{
-                            isPlannedView
-                                ? t('patient.appointments.plannedDescription')
-                                : t('patient.appointments.completedDescription')
-                        }}
+                        {{ t('patient.appointments.plannedDescription') }}
                     </p>
                 </div>
 
@@ -82,29 +69,8 @@ function onAppointmentViewUpdate(next: string): void {
             </div>
 
             <section class="space-y-5">
-                <SegmentedToggle
-                    :model-value="props.appointment_view"
-                    :options="[
-                        {
-                            value: 'planned',
-                            label: t('patient.appointments.plannedToggle'),
-                            count: props.appointment_tab_totals.planned,
-                        },
-                        {
-                            value: 'completed',
-                            label: t('patient.appointments.completedToggle'),
-                            count: props.appointment_tab_totals.completed,
-                        },
-                    ]"
-                    @update:model-value="onAppointmentViewUpdate"
-                />
-
                 <h2 class="text-2xl font-bold leading-tight text-text-heading">
-                    {{
-                        isPlannedView
-                            ? t('patient.appointments.plannedHeading')
-                            : t('patient.appointments.completedHeading')
-                    }}
+                    {{ t('patient.appointments.plannedHeading') }}
                 </h2>
 
                 <ul
@@ -121,18 +87,10 @@ function onAppointmentViewUpdate(next: string): void {
                             :done-displayed="isAppointmentMarkedDoneInUi(appointment)"
                             :is-patching="isAppointmentUpdateInFlight(appointment.id)"
                             :show-actions="true"
-                            :show-transport-section="props.linked_families.length > 0"
-                            :show-done-toggle="isPlannedView"
-                            :complete-form-href="
-                                isPlannedView
-                                    ? route('patient.appointments.complete', appointment.id)
-                                    : undefined
-                            "
-                            :cancel-form-href="
-                                isPlannedView
-                                    ? route('patient.appointments.cancel', appointment.id)
-                                    : undefined
-                            "
+                            :show-transport-section="true"
+                            :show-done-toggle="true"
+                            :complete-form-href="route('patient.appointments.complete', appointment.id)"
+                            :cancel-form-href="route('patient.appointments.cancel', appointment.id)"
                             @edit="openAppointmentEditor(appointment)"
                             @delete="confirmAndDeleteAppointment(appointment)"
                             @update:done="
@@ -155,7 +113,6 @@ function onAppointmentViewUpdate(next: string): void {
                     "
                     route-name="patient.appointments"
                     :meta="props.appointments.meta"
-                    :query="{ view: props.appointment_view }"
                 />
 
                 <Card
@@ -166,9 +123,7 @@ function onAppointmentViewUpdate(next: string): void {
                         {{
                             hasNoAppointmentsAtAll
                                 ? t('patient.appointments.empty')
-                                : isPlannedView
-                                  ? t('patient.appointments.emptyPlanned')
-                                  : t('patient.appointments.emptyCompleted')
+                                : t('patient.appointments.emptyPlanned')
                         }}
                     </CardContent>
                 </Card>

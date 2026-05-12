@@ -30,7 +30,15 @@ final class ShowPatientAppointmentCancelPageController extends Controller
 
         $appointment->load([
             'transportFamily.user',
-            'transportInvitations' => static fn ($query) => $query->select('id', 'appointment_id', 'family_id'),
+            'transportInvitations' => static fn ($query) => $query->select(
+                'id',
+                'appointment_id',
+                'family_id',
+                'invited_at',
+                'accepted_at',
+                'declined_at',
+                'cancelled_at',
+            ),
         ]);
         $appointment->loadExists([
             'transportInvitations as has_pending_transport_invitation' => static fn ($query) => $query->pending(),

@@ -31,7 +31,7 @@ class PatientAppointmentController extends Controller
         return Inertia::render(
             'Patient/Appointments',
             [
-                ...$this->patientAppointmentsScreenService->buildProps($request, $patient),
+                ...$this->patientAppointmentsScreenService->buildProps($patient),
                 'open_create_dialog' => $request->boolean('open_create'),
             ],
         );

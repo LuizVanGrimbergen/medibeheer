@@ -111,6 +111,7 @@ function onAppointmentViewUpdate(next: string): void {
                         :is-patching="false"
                         :show-actions="false"
                         :show-done-toggle="false"
+                        :show-transport-section="true"
                         :done-summary-label="t('family.appointments.doneSummaryLabel')"
                     >
                         <template #transport-actions>

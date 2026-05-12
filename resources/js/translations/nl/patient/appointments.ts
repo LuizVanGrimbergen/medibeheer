@@ -2,18 +2,12 @@ export default {
     title: 'Afspraken',
     heading: 'Afspraken',
     newAppointment: 'Nieuwe afspraak',
-    plannedToggle: 'Gepland',
-    completedToggle: 'Afgerond of geannuleerd',
     plannedHeading: 'Geplande afspraken',
-    completedHeading: 'Eerdere afspraken',
     plannedDescription:
-        'Geplande afspraken staan op volgorde van datum. Schakel naar het tabblad “Afgerond of geannuleerd” om eerdere afspraken te bekijken of te verwijderen.',
-    completedDescription:
-        'Hier vindt u afgeronde en geannuleerde afspraken. U kunt ze nog verwijderen als u ze uit uw overzicht wilt halen.',
+        'Geplande afspraken staan op volgorde van datum. Als een afspraak is afgerond of geannuleerd, verdwijnt deze uit dit overzicht.',
     empty: 'U heeft nog geen afspraken. Tik op de knop “Nieuwe afspraak” om te beginnen.',
     emptyPlanned:
-        'Er zijn geen geplande afspraken. Kijk op het tabblad “Afgerond of geannuleerd” of u daar eerdere afspraken vindt.',
-    emptyCompleted: 'Er zijn nog geen afgeronde of geannuleerde afspraken.',
+        'Er zijn momenteel geen geplande afspraken. Nieuwe afspraken verschijnen hier zodra u ze toevoegt.',
     dialogTitle: 'Nieuwe afspraak',
     dialogEditTitle: 'Afspraak wijzigen',
     steps: {
