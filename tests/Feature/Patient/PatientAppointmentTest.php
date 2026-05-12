@@ -505,14 +505,14 @@ test('patients can delete a done appointment from the completed tab', function (
     $this->assertDatabaseMissing('appointments', ['id' => $appointment->id]);
 });
 
-test('patient appointments completed view lists finished appointments', function () {
+test('patient appointments index ignores completed view query', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
 
     Appointment::factory()->for($patient)->create([
         'status' => AppointmentStatus::SCHEDULED,
     ]);
-    $done = Appointment::factory()->for($patient)->create([
+    Appointment::factory()->for($patient)->create([
         'status' => AppointmentStatus::DONE,
         'starts_at' => now()->subDays(2),
     ]);
@@ -525,12 +525,11 @@ test('patient appointments completed view lists finished appointments', function
         ->get(route('patient.appointments', ['view' => 'completed']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('appointments.data', 2)
-            ->where('appointments.meta.total', 2)
-            ->where('appointment_view', 'completed')
+            ->has('appointments.data', 1)
+            ->where('appointments.meta.total', 1)
+            ->where('appointment_view', 'planned')
             ->where('appointment_tab_totals.planned', 1)
-            ->where('appointment_tab_totals.completed', 2)
-            ->where('appointments.data.0.id', $done->id));
+            ->where('appointment_tab_totals.completed', 2));
 });
 
 test('patients cannot update another patients appointment', function () {

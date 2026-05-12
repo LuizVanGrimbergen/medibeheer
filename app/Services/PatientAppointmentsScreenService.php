@@ -8,14 +8,11 @@ use App\Enums\AppointmentStatus;
 use App\Http\Resources\PatientAppointmentResource;
 use App\Models\Patient;
 use App\Support\InertiaPagination;
-use Illuminate\Http\Request;
 
 final class PatientAppointmentsScreenService
 {
-    public function buildProps(Request $request, Patient $patient): array
+    public function buildProps(Patient $patient): array
     {
-        $view = $this->normalizedView($request);
-
         $plannedTotal = $patient->appointments()
             ->where('status', AppointmentStatus::SCHEDULED)
             ->count();
@@ -29,26 +26,21 @@ final class PatientAppointmentsScreenService
         $query = $patient->appointments()
             ->with('transportFamily.user')
             ->with([
-                'transportInvitations' => fn ($q) => $q->select('id', 'appointment_id', 'family_id'),
+                'transportInvitations' => fn ($q) => $q->select(
+                    'id',
+                    'appointment_id',
+                    'family_id',
+                    'invited_at',
+                    'accepted_at',
+                    'declined_at',
+                    'cancelled_at',
+                ),
             ])
             ->withExists([
                 'transportInvitations as has_pending_transport_invitation' => fn ($q) => $q->pending(),
-            ]);
-
-        if ($view === 'planned') {
-            $query
-                ->where('status', AppointmentStatus::SCHEDULED)
-                ->orderBy('starts_at');
-        }
-
-        if ($view === 'completed') {
-            $query
-                ->whereIn('status', [
-                    AppointmentStatus::DONE,
-                    AppointmentStatus::CANCELLED,
-                ])
-                ->orderByDesc('starts_at');
-        }
+            ])
+            ->where('status', AppointmentStatus::SCHEDULED)
+            ->orderBy('starts_at');
 
         $paginator = $query->paginate(InertiaPagination::PER_PAGE)->withQueryString();
 
@@ -57,7 +49,7 @@ final class PatientAppointmentsScreenService
                 $paginator,
                 PatientAppointmentResource::collectForInertia($paginator->getCollection()),
             ),
-            'appointment_view' => $view,
+            'appointment_view' => 'planned',
             'appointment_tab_totals' => [
                 'planned' => $plannedTotal,
                 'completed' => $completedTotal,
@@ -73,20 +65,5 @@ final class PatientAppointmentsScreenService
                 ->values()
                 ->all(),
         ];
-    }
-
-    private function normalizedView(Request $request): string
-    {
-        $raw = $request->query('view', 'planned');
-
-        if (! is_string($raw)) {
-            return 'planned';
-        }
-
-        if (! in_array($raw, ['planned', 'completed'], true)) {
-            return 'planned';
-        }
-
-        return $raw;
     }
 }

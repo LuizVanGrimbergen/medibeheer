@@ -1,6 +1,6 @@
 import type { Appointment as PatientAppointment, Paginated } from '@/lib/types';
 
-export type PatientAppointmentView = 'planned' | 'completed';
+export type PatientAppointmentView = 'planned';
 
 export type PatientAppointmentsScreenProps = {
     appointments: Paginated<PatientAppointment>;
