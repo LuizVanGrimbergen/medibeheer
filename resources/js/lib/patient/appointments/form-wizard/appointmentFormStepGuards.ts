@@ -1,5 +1,5 @@
 import appointmentsNl from '@/translations/nl/patient/appointments';
-import { parseLocalAppointmentDateTime } from './appointmentStartsAtLocalValidation';
+import { parseLocalAppointmentDateTime } from '../validation/appointmentStartsAtLocalValidation';
 
 export type AppointmentFormStepId =
     | 'provider'

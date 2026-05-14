@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { APPOINTMENT_DOCTOR_TYPE_VALUES, APPOINTMENT_STATUS_VALUES } from '@/lib/types';
 import type { AppointmentDoctorType } from '@/lib/types';
 import appointmentsNl from '@/translations/nl/patient/appointments';
-import { parseLocalAppointmentDateTime } from './appointmentStartsAtLocalValidation';
+import { parseLocalAppointmentDateTime } from '../validation/appointmentStartsAtLocalValidation';
 
 export const PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS: AppointmentDoctorType[] = [
     ...APPOINTMENT_DOCTOR_TYPE_VALUES,
