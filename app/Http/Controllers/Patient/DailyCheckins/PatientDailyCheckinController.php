@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Patient\DailyCheckins;
 use App\Enums\DailyMoodScore;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Http\Requests\Patient\StoreDailyCheckinRequest;
+use App\Http\Requests\Patient\DailyCheckins\StoreDailyCheckinRequest;
 use App\Models\DailyCheckin;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
