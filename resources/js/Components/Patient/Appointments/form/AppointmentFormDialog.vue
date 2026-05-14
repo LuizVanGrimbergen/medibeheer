@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import AppointmentAddressStep from '@/Components/Patient/Appointments/steps/AppointmentAddressStep.vue';
 import AppointmentNotesStep from '@/Components/Patient/Appointments/steps/AppointmentNotesStep.vue';
 import AppointmentProviderStep from '@/Components/Patient/Appointments/steps/AppointmentProviderStep.vue';
@@ -21,14 +21,15 @@ import {
     appointmentFormStepClientValidatedFieldKeys,
     collectAppointmentFormStepValidationFieldErrors,
     firstAppointmentFormStepContainingFieldErrors,
-} from '@/lib/patient/appointments/appointmentFormStepGuards';
-import type { AppointmentFormStepId } from '@/lib/patient/appointments/appointmentFormStepGuards';
-import { getPatientAppointmentDialogFormFieldErrors } from '@/lib/patient/appointments/patientAppointmentDialogFormSchema';
-import type { PatientAppointmentFormPermitPastStartsAtOptions } from '@/lib/patient/appointments/patientAppointmentDialogFormSchema';
+} from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
+import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
+import { getPatientAppointmentDialogFormFieldErrors } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
+import type { PatientAppointmentFormPermitPastStartsAtOptions } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
+} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -336,7 +337,10 @@ watch(
         :open="props.open"
         @update:open="emit('update:open', $event)"
     >
-        <DialogContent :class="props.dialogContentClass">
+        <DialogContent
+            :class="props.dialogContentClass"
+            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('sm')"
+        >
             <DialogHeader class="shrink-0 space-y-2 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1.5 sm:pt-0">
                 <DialogTitle class="text-2xl font-bold leading-tight text-text-heading">
                     {{ props.title }}
