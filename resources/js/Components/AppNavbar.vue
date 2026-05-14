@@ -34,13 +34,13 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <nav class="sticky top-0 z-50 border-b border-border bg-surface">
+    <nav class="sticky top-0 z-100 border-b border-border bg-surface">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
             <Link
                 :href="homeHref"
                 class="text-base font-semibold text-primary transition hover:opacity-80"
             >
-                
+                {{ t('app.name') }}
             </Link>
 
             <div class="flex items-center gap-5">

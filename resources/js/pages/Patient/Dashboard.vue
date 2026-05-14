@@ -3,8 +3,8 @@ import { Head, router, usePage } from '@inertiajs/vue3';
 import { useDocumentVisibility } from '@vueuse/core';
 import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import DailyCheckinCard from '@/Components/Patient/DailyCheckins/DailyCheckinCard.vue';
-import DailyCheckinSuccessScreen from '@/Components/Patient/DailyCheckins/DailyCheckinSuccessScreen.vue';
+import DailyCheckinCard from '@/Components/Patient/DailyCheckins/form/DailyCheckinCard.vue';
+import DailyCheckinSuccessScreen from '@/Components/Patient/DailyCheckins/form/DailyCheckinSuccessScreen.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { DailyCheckin, DailyMoodScoreValue, PageProps } from '@/lib/types';
 
