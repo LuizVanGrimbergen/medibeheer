@@ -195,7 +195,11 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
                         v-for="item in visibleFamilyNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
-                        prefetch
+                        :prefetch="
+                            activeFamilyNavRoute === item.routeName
+                                ? false
+                                : (['mount', 'hover'] as const)
+                        "
                         :class="footerNavClass(item.routeName)"
                         :aria-label="navItemAriaLabel(item)"
                     >

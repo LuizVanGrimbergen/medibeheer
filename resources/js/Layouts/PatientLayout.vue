@@ -139,7 +139,7 @@ const footerLabelClass = computed(() =>
             </div>
 
             <nav
-                class="z-40 shrink-0 border-t border-border bg-surface"
+                class="z-100 shrink-0 border-t border-border bg-surface"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div
@@ -150,7 +150,11 @@ const footerLabelClass = computed(() =>
                         v-for="item in patientNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
-                        prefetch
+                        :prefetch="
+                            activePatientNavRoute === item.routeName
+                                ? false
+                                : (['mount', 'hover'] as const)
+                        "
                         :class="footerNavClass(item.routeName)"
                     >
                         <component

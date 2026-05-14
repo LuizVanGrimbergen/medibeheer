@@ -125,7 +125,11 @@ const footerLabelClass = computed(() =>
                         v-for="item in doctorNavItems"
                         :key="item.routeName"
                         :href="route(item.routeName)"
-                        prefetch
+                        :prefetch="
+                            activeDoctorNavRoute === item.routeName
+                                ? false
+                                : (['mount', 'hover'] as const)
+                        "
                         :class="footerNavClass(item.routeName)"
                     >
                         <component
