@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Family\Invitations;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Family\AcceptFamilyInvitationRequest;
-use App\Services\FamilyInvitationService;
+use App\Services\Family\FamilyInvitationService;
 use Illuminate\Http\RedirectResponse;
 
 class AcceptFamilyInvitationController extends Controller

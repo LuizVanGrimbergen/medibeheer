@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Patient\Family;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Models\FamilyInvitation;
-use App\Services\FamilyInvitationService;
+use App\Services\Family\FamilyInvitationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
