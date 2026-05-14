@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Patient;
+namespace App\Http\Requests\Patient\DailyCheckins;
 
 use App\Enums\DailyCheckinSymptom;
 use App\Enums\DailyMoodScore;
