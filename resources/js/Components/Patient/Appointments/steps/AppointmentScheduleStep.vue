@@ -2,17 +2,15 @@
 /* eslint-disable vue/no-mutating-props */
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    appointmentFormFieldInvalidClass,
-    appointmentFormNativeDateTimeInputClass,
-} from '@/Components/Patient/Appointments/appointmentFormFieldClasses';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { cn } from '@/lib/utils';
+import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
 import {
-    localCalendarDateIsoToday,
-} from '../../../../lib/patient/appointments/appointmentStartsAtLocalValidation';
+    patientFormFieldInvalidClass,
+    patientFormNativeDateTimeInputClass,
+} from '@/lib/patient/patientFormFieldClasses';
+import { cn } from '@/lib/utils';
 
 const { form, idPrefix, startsAtDateInputMinIso } = defineProps<{
     form: AppointmentFormWithErrors;
@@ -77,9 +75,9 @@ const minStartsAtTimeHm = computed(() => {
                         autocomplete="off"
                         :class="
                             cn(
-                                appointmentFormNativeDateTimeInputClass,
+                                patientFormNativeDateTimeInputClass,
                                 form.errors.starts_at
-                                    ? appointmentFormFieldInvalidClass
+                                    ? patientFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -108,9 +106,9 @@ const minStartsAtTimeHm = computed(() => {
                         autocomplete="off"
                         :class="
                             cn(
-                                appointmentFormNativeDateTimeInputClass,
+                                patientFormNativeDateTimeInputClass,
                                 form.errors.starts_at
-                                    ? appointmentFormFieldInvalidClass
+                                    ? patientFormFieldInvalidClass
                                     : null,
                             )
                         "

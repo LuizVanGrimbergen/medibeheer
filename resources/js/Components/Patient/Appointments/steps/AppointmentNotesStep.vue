@@ -1,13 +1,13 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
 import { useI18n } from 'vue-i18n';
-import {
-    appointmentFormFieldInputClass,
-    appointmentFormFieldInvalidClass,
-} from '@/Components/Patient/Appointments/appointmentFormFieldClasses';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
+import {
+    patientFormFieldInputClass,
+    patientFormFieldInvalidClass,
+} from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix } = defineProps<{
@@ -42,8 +42,8 @@ const { t } = useI18n();
                 rows="4"
                 :class="
                     cn(
-                        appointmentFormFieldInputClass,
-                        form.errors.notes ? appointmentFormFieldInvalidClass : null,
+                        patientFormFieldInputClass,
+                        form.errors.notes ? patientFormFieldInvalidClass : null,
                     )
                 "
                 :placeholder="

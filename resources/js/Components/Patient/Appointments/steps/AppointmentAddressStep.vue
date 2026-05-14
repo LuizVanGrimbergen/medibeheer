@@ -1,15 +1,15 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
 import { useI18n } from 'vue-i18n';
-import {
-    appointmentFormFieldInputClass,
-    appointmentFormFieldInvalidClass,
-    appointmentFormLabelClass,
-} from '@/Components/Patient/Appointments/appointmentFormFieldClasses';
-import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/appointmentFormTypes';
+import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
+import {
+    patientFormFieldInputClass,
+    patientFormFieldInvalidClass,
+    patientFormLabelClass,
+} from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix } = defineProps<{
@@ -41,7 +41,7 @@ const { t } = useI18n();
                 <div>
                     <Label
                         :for="`${idPrefix}-street`"
-                        :class="appointmentFormLabelClass"
+                        :class="patientFormLabelClass"
                     >
                         {{ t('patient.appointments.fields.street') }}
                     </Label>
@@ -53,9 +53,9 @@ const { t } = useI18n();
                         autocomplete="address-line1"
                         :class="
                             cn(
-                                appointmentFormFieldInputClass,
+                                patientFormFieldInputClass,
                                 form.errors.street
-                                    ? appointmentFormFieldInvalidClass
+                                    ? patientFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -77,7 +77,7 @@ const { t } = useI18n();
                 <div>
                     <Label
                         :for="`${idPrefix}-house-number`"
-                        :class="appointmentFormLabelClass"
+                        :class="patientFormLabelClass"
                     >
                         {{ t('patient.appointments.fields.houseNumber') }}
                     </Label>
@@ -88,9 +88,9 @@ const { t } = useI18n();
                         autocomplete="off"
                         :class="
                             cn(
-                                appointmentFormFieldInputClass,
+                                patientFormFieldInputClass,
                                 form.errors.house_number
-                                    ? appointmentFormFieldInvalidClass
+                                    ? patientFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -113,7 +113,7 @@ const { t } = useI18n();
                     <div>
                         <Label
                             :for="`${idPrefix}-postal-code`"
-                            :class="appointmentFormLabelClass"
+                            :class="patientFormLabelClass"
                         >
                             {{ t('patient.appointments.fields.postalCode') }}
                         </Label>
@@ -126,9 +126,9 @@ const { t } = useI18n();
                             autocomplete="postal-code"
                             :class="
                                 cn(
-                                    appointmentFormFieldInputClass,
+                                    patientFormFieldInputClass,
                                     form.errors.postal_code
-                                        ? appointmentFormFieldInvalidClass
+                                        ? patientFormFieldInvalidClass
                                         : null,
                                 )
                             "
@@ -150,7 +150,7 @@ const { t } = useI18n();
                     <div>
                         <Label
                             :for="`${idPrefix}-city`"
-                            :class="appointmentFormLabelClass"
+                            :class="patientFormLabelClass"
                         >
                             {{ t('patient.appointments.fields.city') }}
                         </Label>
@@ -162,9 +162,9 @@ const { t } = useI18n();
                             autocomplete="address-level2"
                             :class="
                                 cn(
-                                    appointmentFormFieldInputClass,
+                                    patientFormFieldInputClass,
                                     form.errors.city
-                                        ? appointmentFormFieldInvalidClass
+                                        ? patientFormFieldInvalidClass
                                         : null,
                                 )
                             "
