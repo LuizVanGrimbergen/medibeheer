@@ -7,11 +7,11 @@ import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import type { PatientAppointmentOutcomePageProps } from '@/lib/patient/appointments/screen/patientAppointmentOutcomePageProps';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
-import type { PatientAppointmentOutcomePageProps } from '@/lib/patient/appointments/patientAppointmentOutcomePageProps';
+} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 
 const props = defineProps<PatientAppointmentOutcomePageProps>();
 

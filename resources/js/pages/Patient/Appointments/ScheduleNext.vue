@@ -3,11 +3,11 @@ import { Head, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
+import type { PatientAppointmentScheduleNextPageProps } from '@/lib/patient/appointments/screen/patientAppointmentScheduleNextPageProps';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
-import type { PatientAppointmentScheduleNextPageProps } from '@/lib/patient/appointments/patientAppointmentScheduleNextPageProps';
+} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 
 const props = defineProps<PatientAppointmentScheduleNextPageProps>();
 
