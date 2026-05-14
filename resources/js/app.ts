@@ -5,20 +5,10 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
-import { createI18n } from 'vue-i18n';
-import nl from '@/translations/nl';
+import { i18n } from '@/i18n';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-const defaultLocale = 'nl';
-const i18n = createI18n({
-    legacy: false,
-    locale: defaultLocale,
-    fallbackLocale: defaultLocale,
-    messages: {
-        [defaultLocale]: nl,
-    },
-});
 const pageComponents = import.meta.glob<DefineComponent>('./pages/**/*.vue');
 
 const bootstrapApp = () => {
