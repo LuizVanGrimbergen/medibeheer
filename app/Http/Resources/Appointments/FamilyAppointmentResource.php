@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Appointments;
 
 use App\Models\Appointment;
 use App\Models\Family;
