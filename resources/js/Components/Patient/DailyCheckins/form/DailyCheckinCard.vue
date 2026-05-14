@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useDailyCheckin } from '@/Components/Patient/DailyCheckins/form/useDailyCheckin';
 import DailyCheckinMoodStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinMoodStep.vue';
 import DailyCheckinNoteStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinNoteStep.vue';
 import DailyCheckinSymptomsStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinSymptomsStep.vue';
-import { useDailyCheckin } from '@/Components/Patient/DailyCheckins/useDailyCheckin';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
+} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 import type { DailyCheckin, DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<{
