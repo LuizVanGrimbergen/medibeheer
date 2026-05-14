@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Services;
+declare(strict_types=1);
 
-use Carbon\CarbonInterface;
+namespace App\Services\Appointments;
+
 use App\Models\Appointment;
 use App\Models\AppointmentTransportInvitation;
 use App\Models\Family;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -13,7 +15,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class AppointmentTransportInvitationService
 {
-
     public function syncForAppointment(Appointment $appointment, ?array $requestedFamilyIds = null): void
     {
         if (! $appointment->needs_transport) {

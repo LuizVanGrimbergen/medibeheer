@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Family\Invitations;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Family\Concerns\AuthorizesFamilyProfile;
 use App\Models\AppointmentTransportInvitation;
-use App\Services\AppointmentTransportInvitationService;
+use App\Services\Appointments\AppointmentTransportInvitationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
