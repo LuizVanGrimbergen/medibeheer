@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services;
+namespace App\Services\Patient;
 
 use App\Http\Resources\Medications\MedicationResource;
 use App\Models\Patient;
@@ -12,8 +12,18 @@ final class PatientMedicationsScreenService
 {
     public function buildProps(Patient $patient): array
     {
+        return $this->paginatedMedicationsForScreen($patient, ['schedules', 'stocks']);
+    }
+
+    public function buildInventoryProps(Patient $patient): array
+    {
+        return $this->paginatedMedicationsForScreen($patient, ['stocks', 'schedules']);
+    }
+
+    private function paginatedMedicationsForScreen(Patient $patient, array $with): array
+    {
         $paginator = $patient->medications()
-            ->with(['schedules', 'stocks'])
+            ->with($with)
             ->orderByDesc('id')
             ->paginate(InertiaPagination::PER_PAGE)
             ->withQueryString();
