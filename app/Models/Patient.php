@@ -61,6 +61,12 @@ class Patient extends Model
         return $this->belongsToMany(Family::class, 'family_patient')
             ->withTimestamps();
     }
+
+    public function medications(): HasMany
+    {
+        return $this->hasMany(Medication::class);
+    }
+
     /**************************************/
     /*       Accessors / Mutators */
     /**************************************/
@@ -72,4 +78,11 @@ class Patient extends Model
     /**************************************/
     /*              Helpers */
     /**************************************/
+
+    public function defaultMedicationFamilyId(): ?int
+    {
+        $id = $this->families()->orderBy('families.id')->value('families.id');
+
+        return $id !== null ? (int) $id : null;
+    }
 }

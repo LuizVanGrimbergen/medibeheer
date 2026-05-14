@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\AppointmentStatus;
-use App\Http\Resources\PatientAppointmentResource;
+use App\Http\Resources\Appointments\PatientAppointmentResource;
 use App\Models\Patient;
 use App\Support\InertiaPagination;
 

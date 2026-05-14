@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Enums\AppointmentStatus;
-use App\Http\Resources\FamilyAppointmentResource;
+use App\Http\Resources\Appointments\FamilyAppointmentResource;
 use App\Models\Appointment;
 use App\Models\Family;
 use App\Support\InertiaPagination;
@@ -30,11 +30,11 @@ final class FamilyAppointmentsScreenService
         }
 
         $baseQuery = Appointment::query()->where('patient_id', $patientId);
-        $plannedTotal = (clone $baseQuery)->where('status', AppointmentStatus::SCHEDULED)->count();
+        $plannedTotal = (clone $baseQuery)->where('status', AppointmentStatus::SCHEDULED)->count('*');
         $completedTotal = (clone $baseQuery)->whereIn('status', [
             AppointmentStatus::DONE,
             AppointmentStatus::CANCELLED,
-        ])->count();
+        ], 'and', false)->count('*');
 
         $query = Appointment::query()
             ->where('patient_id', $patientId)
@@ -54,7 +54,7 @@ final class FamilyAppointmentsScreenService
                 ->whereIn('status', [
                     AppointmentStatus::DONE,
                     AppointmentStatus::CANCELLED,
-                ])
+                ], 'and', false)
                 ->orderByDesc('starts_at');
         }
 

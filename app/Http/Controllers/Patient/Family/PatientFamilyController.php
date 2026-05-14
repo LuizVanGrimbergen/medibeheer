@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Patient\Family;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Http\Resources\FamilyInvitationResource;
+use App\Http\Resources\Family\FamilyInvitationResource;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;

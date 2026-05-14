@@ -3,18 +3,20 @@ import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import {
     PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
     patientAppointmentFormValuesToRequestPayload,
-} from '@/lib/patient/appointments/patientAppointmentDialogFormSchema';
-import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/patientAppointmentsScreenProps';
-import { patientAppointmentToEditFormState } from '@/lib/patient/appointments/patientAppointmentToEditFormState';
+} from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
+import { patientAppointmentToEditFormState } from '@/lib/patient/appointments/form-wizard/patientAppointmentToEditFormState';
+import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
+import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
+import {
+    patientShellDialogContentClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type {
     Appointment as PatientAppointment,
     AppointmentDoctorType,
     AppointmentStatusValue,
 } from '@/lib/types';
-import { localCalendarDateIsoToday } from '../lib/patient/appointments/appointmentStartsAtLocalValidation';
 
-const appointmentFormDialogLayoutClass =
-    'fixed inset-0 z-50 !left-0 !top-0 flex h-[100dvh] min-h-0 !w-screen !max-w-none !translate-x-0 !translate-y-0 flex-col gap-4 overflow-hidden overscroll-contain rounded-none border-0 bg-surface p-4 text-text shadow-lg touch-manipulation sm:inset-auto sm:!left-1/2 sm:!top-1/2 sm:h-auto sm:!w-[min(36rem,calc(100vw-2rem))] sm:!translate-x-[-50%] sm:!translate-y-[-50%] sm:gap-6 sm:rounded-2xl sm:border-2 sm:border-border sm:p-6 sm:max-h-[min(90vh,44rem)]';
+const appointmentFormDialogLayoutClass = patientShellDialogContentClass('sm');
 
 export function usePatientAppointmentFormDialogs(
     props: Pick<PatientAppointmentsScreenProps, 'linked_families' | 'open_create_dialog'>,

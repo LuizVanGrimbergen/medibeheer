@@ -2,11 +2,11 @@
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { Button, buttonVariants } from '@/Components/ui/button';
-import { cn } from '@/lib/utils';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/patientSoftDangerActionButtonClass';
+} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{

@@ -3,13 +3,13 @@ import { Head } from '@inertiajs/vue3';
 import { CalendarPlus } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
-import AppointmentFormDialog from '@/Components/Patient/Appointments/AppointmentFormDialog.vue';
+import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/patientAppointmentsScreenProps';
+import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 

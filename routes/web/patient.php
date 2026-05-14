@@ -12,6 +12,8 @@ use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -33,7 +35,22 @@ Route::middleware([
 
         /* navigation routes */
         Route::get('/', PatientDashboardController::class)->name('dashboard');
-        Route::get('medications', PatientMedicationController::class)->name('medications');
+        Route::resource('medications', PatientMedicationController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->names([
+                'index' => 'medications',
+                'store' => 'medications.store',
+                'update' => 'medications.update',
+                'destroy' => 'medications.destroy',
+            ]);
+
+        Route::resource('medications.schedules', PatientMedicationScheduleController::class)
+            ->only(['store', 'update', 'destroy'])
+            ->scoped();
+
+        Route::resource('medications.stocks', PatientMedicationStockController::class)
+            ->only(['store', 'update', 'destroy'])
+            ->scoped();
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
         Route::get('family', PatientFamilyController::class)->name('family');
 

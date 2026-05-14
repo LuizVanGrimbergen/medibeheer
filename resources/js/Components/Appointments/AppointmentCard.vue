@@ -13,8 +13,8 @@ import {
 import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
-import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type {
     AppointmentTransportStatusValue,
@@ -67,59 +67,57 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
         class="min-w-0 w-full rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
     >
         <CardContent class="space-y-6 p-6 sm:p-7">
-            <div class="flex items-start gap-4">
-                <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
-                    aria-hidden="true"
-                >
-                    <Stethoscope class="size-6 text-primary" />
-                </div>
-                <div class="min-w-0 flex-1 space-y-1">
-                    <p
-                        class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+            <div class="space-y-4">
+                <div class="flex min-w-0 items-start gap-4">
+                    <div
+                        class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
+                        aria-hidden="true"
                     >
-                        {{
-                            appointment.doctor_type
-                                ? doctorTypeLabel(appointment.doctor_type)
-                                : appointment.provider_name
-                        }}
-                    </p>
-                    <p
-                        v-if="appointment.doctor_type"
-                        class="text-base font-normal leading-snug text-text-muted"
-                    >
-                        {{ appointment.provider_name }}
-                    </p>
+                        <Stethoscope class="size-6 text-primary" />
+                    </div>
+                    <div class="min-w-0 flex-1 overflow-hidden space-y-1">
+                        <p
+                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                        >
+                            {{
+                                appointment.doctor_type
+                                    ? doctorTypeLabel(appointment.doctor_type)
+                                    : appointment.provider_name
+                            }}
+                        </p>
+                        <p
+                            v-if="appointment.doctor_type"
+                            class="text-base font-normal leading-snug text-text-muted"
+                        >
+                            {{ appointment.provider_name }}
+                        </p>
+                    </div>
                 </div>
+
                 <div
                     v-if="showActions ?? true"
-                    class="-mr-1 -mt-1 flex shrink-0 items-start gap-0.5"
+                    class="flex justify-end gap-0.5 pt-1"
                 >
-                    <Button
+                    <IconActionButton
                         v-if="appointment.status !== 'cancelled'"
-                        variant="ghost"
-                        size="icon"
-                        class="text-text-muted hover:bg-surface-hover hover:text-text-heading"
-                        :aria-label="t('patient.appointments.actions.edit')"
+                        :ariaLabel="t('patient.appointments.actions.edit')"
                         @click="emit('edit')"
                     >
                         <Pencil
                             class="size-5"
                             aria-hidden="true"
                         />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        class="text-text-muted hover:bg-danger/10 hover:text-danger"
-                        :aria-label="t('patient.appointments.actions.delete')"
+                    </IconActionButton>
+                    <IconActionButton
+                        tone="danger"
+                        :ariaLabel="t('patient.appointments.actions.delete')"
                         @click="emit('delete')"
                     >
                         <Trash2
                             class="size-5"
                             aria-hidden="true"
                         />
-                    </Button>
+                    </IconActionButton>
                 </div>
             </div>
 
