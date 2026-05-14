@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Patient;
+namespace App\Http\Requests\Patient\Appointments;
 
 use App\Enums\AppointmentStatus;
 use App\Enums\DoctorType;
