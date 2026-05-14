@@ -1,0 +1,177 @@
+import { router, useForm } from '@inertiajs/vue3';
+import { nextTick, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
+import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
+import { medicationListItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationListItemToCreateFormState';
+import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
+import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
+import {
+    patientShellDialogContentClass,
+} from '@/lib/patient/patientShellDialogLayout';
+import type { MedicationListItem } from '@/lib/types';
+
+const medicationFormDialogLayoutClass = patientShellDialogContentClass('md');
+
+function attachMedicationScheduleTimeSlotWatcher(
+    form: ReturnType<typeof useForm<MedicationCreateFormState>>,
+): void {
+    watch(
+        () => form.schedule.times_per_day,
+        () => {
+            const count = parseMedicationTimesPerDayCount(form.schedule.times_per_day);
+
+            if (count === null) {
+                return;
+            }
+
+            const slots = form.schedule.dose_time_slots;
+
+            if (slots.length === count) {
+                return;
+            }
+
+            if (slots.length < count) {
+                form.schedule.dose_time_slots = [
+                    ...slots,
+                    ...Array.from({ length: count - slots.length }, () => ''),
+                ];
+
+                return;
+            }
+
+            form.schedule.dose_time_slots = slots.slice(0, count);
+        },
+    );
+}
+
+function attachMedicationScheduleDateOrderWatcher(
+    form: ReturnType<typeof useForm<MedicationCreateFormState>>,
+): void {
+    watch(
+        () => form.schedule.start_date,
+        () => {
+            const start = form.schedule.start_date.trim();
+            const end = form.schedule.end_date.trim();
+
+            if (start.length < 1 || end.length < 1) {
+                return;
+            }
+
+            if (end < start) {
+                form.schedule.end_date = start;
+            }
+        },
+    );
+}
+
+export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) {
+    const { t } = useI18n();
+    const createDialogOpen = ref(false);
+    const editDialogOpen = ref(false);
+    const editMedicationId = ref<number | null>(null);
+
+    function resetCreateDialogToFreshDefaults(): void {
+        createForm.defaults(blankMedicationCreateForm());
+        createForm.reset();
+        createForm.clearErrors();
+    }
+
+    const createForm = useForm(blankMedicationCreateForm());
+    attachMedicationScheduleTimeSlotWatcher(createForm);
+    attachMedicationScheduleDateOrderWatcher(createForm);
+
+    const editForm = useForm(blankMedicationCreateForm());
+    attachMedicationScheduleTimeSlotWatcher(editForm);
+    attachMedicationScheduleDateOrderWatcher(editForm);
+
+    watch(createDialogOpen, (open) => {
+        if (!open) {
+            return;
+        }
+
+        resetCreateDialogToFreshDefaults();
+        void nextTick(() => {
+            document.getElementById('patient-medication-create-name')?.focus();
+        });
+    });
+
+    watch(editDialogOpen, (open) => {
+        if (!open) {
+            editMedicationId.value = null;
+
+            return;
+        }
+
+        void nextTick(() => {
+            document.getElementById('patient-medication-edit-create-summary-title')?.focus();
+        });
+    });
+
+    function openEditMedication(medication: MedicationListItem): void {
+        editMedicationId.value = medication.id;
+        editForm.defaults(medicationListItemToCreateFormState(medication));
+        editForm.reset();
+        editForm.clearErrors();
+        editDialogOpen.value = true;
+    }
+
+    function closeEditMedicationDialog(): void {
+        editDialogOpen.value = false;
+    }
+
+    function submitNewMedication(): void {
+        createForm
+            .transform((data) => medicationCreateFormStateToRequestPayload(data))
+            .post(route('patient.medications.store'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    resetCreateDialogToFreshDefaults();
+                    createDialogOpen.value = false;
+                },
+            });
+    }
+
+    function submitEditMedication(): void {
+        if (editMedicationId.value === null) {
+            return;
+        }
+
+        const id = editMedicationId.value;
+
+        editForm
+            .transform((data) => medicationCreateFormStateToRequestPayload(data))
+            .put(route('patient.medications.update', id), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    closeEditMedicationDialog();
+                },
+            });
+    }
+
+    function confirmAndDeleteMedication(medication: MedicationListItem): void {
+        if (!confirm(t('patient.medications.deleteConfirm'))) {
+            return;
+        }
+
+        router.delete(route('patient.medications.destroy', medication.id), {
+            preserveScroll: true,
+        });
+    }
+
+    return {
+        medicationFormDialogLayoutClass,
+        createDialogOpen,
+        createForm,
+        resetCreateDialogToFreshDefaults,
+        submitNewMedication,
+        canCreateMedication: props.can_create_medication,
+        editDialogOpen,
+        editForm,
+        openEditMedication,
+        closeEditMedicationDialog,
+        submitEditMedication,
+        confirmAndDeleteMedication,
+    };
+}
