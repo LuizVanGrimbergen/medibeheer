@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Patient\Family;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Http\Requests\Patient\StoreFamilyInvitationRequest;
+use App\Http\Requests\Patient\Family\StoreFamilyInvitationRequest;
 use App\Services\FamilyInvitationService;
 use Illuminate\Http\RedirectResponse;
 
