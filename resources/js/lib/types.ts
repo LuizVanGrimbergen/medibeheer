@@ -1,5 +1,7 @@
 import type { Component } from 'vue';
 
+import type { MedicationColorHex } from '@/lib/patient/medications/options/medicationColorOptions';
+
 export type RoleKey = 'patient' | 'doctor' | 'family_member';
 
 export type RoleOption = {
@@ -123,6 +125,147 @@ export type PaginationMeta = {
 export type Paginated<T> = {
     data: T[];
     meta: PaginationMeta;
+};
+
+export const MEDICATION_TYPE_VALUES = [
+    'pill',
+    'liquid',
+    'injection',
+    'cream',
+    'sachets',
+    'other',
+] as const;
+
+export type MedicationTypeValue = (typeof MEDICATION_TYPE_VALUES)[number];
+
+export const MEDICATION_DOSE_UNIT_VALUES = [
+    'milligram',
+    'gram',
+    'milliliter',
+    'piece',
+    'drop',
+    'injection',
+    'unit',
+    'sachet',
+    'other',
+] as const;
+
+export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
+
+export type { MedicationColorHex };
+export { MEDICATION_COLOR_HEX_VALUES } from '@/lib/patient/medications/options/medicationColorOptions';
+
+export const MEDICATION_MEAL_TIMING_VALUES = [
+    'before_food',
+    'after_food',
+    'with_food',
+    'unrelated',
+] as const;
+
+export type MedicationMealTimingValue = (typeof MEDICATION_MEAL_TIMING_VALUES)[number];
+
+export type MedicationIntakeFrequencyEveryNDaysValue = `every_${
+    | 2
+    | 3
+    | 4
+    | 5
+    | 6
+    | 7
+    | 8
+    | 9
+    | 10
+    | 11
+    | 12
+    | 13
+    | 14
+    | 15
+    | 16
+    | 17
+    | 18
+    | 19
+    | 20
+    | 21
+    | 22
+    | 23
+    | 24
+    | 25
+    | 26
+    | 27
+    | 28
+    | 29
+    | 30
+    | 31
+    | 32
+    | 33
+    | 34
+    | 35
+    | 36
+    | 37
+    | 38
+    | 39
+    | 40
+    | 41
+    | 42
+    | 43
+    | 44
+    | 45
+    | 46
+    | 47
+    | 48
+    | 49
+    | 50
+    | 51
+    | 52
+    | 53
+    | 54
+    | 55
+    | 56
+    | 57
+    | 58
+    | 59
+    | 60
+}_days`;
+
+export const MEDICATION_INTAKE_FREQUENCY_VALUES = [
+    'daily',
+    ...(Array.from({ length: 59 }, (_, index) => `every_${index + 2}_days`) as readonly MedicationIntakeFrequencyEveryNDaysValue[]),
+    'weekdays',
+] as const;
+
+export type MedicationIntakeFrequencyValue = (typeof MEDICATION_INTAKE_FREQUENCY_VALUES)[number];
+
+export type MedicationScheduleListItem = {
+    id: number;
+    medication_id: number;
+    meal_timing: MedicationMealTimingValue;
+    intake_frequency: MedicationIntakeFrequencyValue;
+    intake_weekdays: number[] | null;
+    times_per_day: string;
+    dose_quantity: string;
+    dose_time: string;
+    start_date: string | null;
+    end_date: string | null;
+};
+
+export type MedicationStockListItem = {
+    id: number;
+    medication_id: number;
+    current_stock: string;
+    low_stock: string;
+};
+
+export type MedicationListItem = {
+    id: number;
+    patient_id: number;
+    family_id: number | null;
+    name: string;
+    dose: string | null;
+    dose_unit: MedicationDoseUnitValue | null;
+    type_medication: MedicationTypeValue;
+    color: MedicationColorHex | null;
+    note: string | null;
+    schedules: MedicationScheduleListItem[];
+    stocks: MedicationStockListItem[];
 };
 
 export type Appointment = {
