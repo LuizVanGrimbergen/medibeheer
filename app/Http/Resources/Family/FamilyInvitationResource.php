@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Family;
 
 use App\Models\FamilyInvitation;
 use Illuminate\Http\Request;
