@@ -254,6 +254,8 @@ export type MedicationStockListItem = {
     low_stock: string;
 };
 
+export type MedicationSupplyEstimateQuality = 'approx' | 'unknown';
+
 export type MedicationListItem = {
     id: number;
     patient_id: number;
@@ -266,6 +268,8 @@ export type MedicationListItem = {
     note: string | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];
+    supply_estimate_days: number | null;
+    supply_estimate_quality: MedicationSupplyEstimateQuality;
 };
 
 export type Appointment = {
