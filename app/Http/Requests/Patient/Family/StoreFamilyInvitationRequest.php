@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Patient;
+namespace App\Http\Requests\Patient\Family;
 
 use App\Models\User;
 use Closure;
