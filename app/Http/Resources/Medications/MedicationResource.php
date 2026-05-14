@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Medications;
 
 use App\Models\Medication;
+use App\Services\Medications\MedicationSupplyEstimateService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,6 +19,15 @@ class MedicationResource extends JsonResource
 
     public function toArray(Request $request): array
     {
+        $supplyEstimateDays = null;
+        $supplyEstimateQuality = 'unknown';
+
+        if ($this->relationLoaded('stocks') && $this->relationLoaded('schedules')) {
+            $estimate = app(MedicationSupplyEstimateService::class)->estimate($this->resource);
+            $supplyEstimateDays = $estimate['days'];
+            $supplyEstimateQuality = $estimate['quality'];
+        }
+
         return [
             'id' => $this->id,
             'patient_id' => $this->patient_id,
@@ -34,6 +44,8 @@ class MedicationResource extends JsonResource
             'stocks' => $this->relationLoaded('stocks')
                 ? MedicationStockResource::collection($this->stocks)->resolve()
                 : [],
+            'supply_estimate_days' => $supplyEstimateDays,
+            'supply_estimate_quality' => $supplyEstimateQuality,
         ];
     }
 }
