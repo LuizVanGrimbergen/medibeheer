@@ -1,10 +1,6 @@
 import { z } from 'zod';
 
-import {
-    MEDICATION_COLOR_HEX_VALUES,
-    MEDICATION_DOSE_UNIT_VALUES,
-    MEDICATION_TYPE_VALUES,
-} from '@/lib/types';
+import { MEDICATION_DOSE_UNIT_VALUES, MEDICATION_TYPE_VALUES } from '@/lib/types';
 import { isMemberOf } from '../validation/medicationFormValidationPrimitives';
 import { medicationWizardStepValidation } from './wizardStepMessages';
 import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
@@ -25,16 +21,6 @@ export const medicationWizardDetailsSchema = z.object({
             ctx.addIssue({
                 code: 'custom',
                 message: medicationWizardStepValidation('typeRequired'),
-            });
-        }
-    }),
-    color: z.string().superRefine((val, ctx) => {
-        const trimmed = val.trim();
-
-        if (trimmed.length < 1 || !isMemberOf(MEDICATION_COLOR_HEX_VALUES, trimmed)) {
-            ctx.addIssue({
-                code: 'custom',
-                message: medicationWizardStepValidation('colorInvalid'),
             });
         }
     }),

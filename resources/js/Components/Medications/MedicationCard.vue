@@ -180,14 +180,6 @@ const notePreview = computed((): string | null => {
 
     return trimmed;
 });
-
-const pillIconStyle = computed((): Record<string, string> | undefined => {
-    if (props.medication.color === null) {
-        return undefined;
-    }
-
-    return { color: props.medication.color };
-});
 </script>
 
 <template>
@@ -227,10 +219,8 @@ const pillIconStyle = computed((): Record<string, string> | undefined => {
                 >
                     <span class="sr-only">{{ typeLabel }}</span>
                     <Pill
-                        class="size-6 shrink-0"
-                        :class="medication.color === null ? 'text-primary' : null"
+                        class="size-6 shrink-0 text-primary"
                         aria-hidden="true"
-                        :style="pillIconStyle"
                     />
                 </div>
                 <div class="min-w-0 flex-1 overflow-hidden space-y-3.5">

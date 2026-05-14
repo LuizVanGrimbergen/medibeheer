@@ -21,7 +21,6 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     dose: string;
     dose_unit: MedicationCreateFormState['dose_unit'];
     type_medication: MedicationCreateFormState['type_medication'];
-    color: MedicationCreateFormState['color'];
     current_stock: string;
     low_stock: string;
     note: string | null;
@@ -43,7 +42,6 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         dose: data.dose.trim(),
         dose_unit: data.dose_unit,
         type_medication: data.type_medication,
-        color: data.color,
         current_stock: data.current_stock.trim(),
         low_stock: data.low_stock.trim(),
         note: noteTrimmed === '' ? null : noteTrimmed,

@@ -7,7 +7,6 @@ import type {
     MedicationFormWizardStep,
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
-import { MEDICATION_COLOR_OPTIONS } from '@/lib/patient/medications/options/medicationColorOptions';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
@@ -125,16 +124,6 @@ const typeLabel = computed(() => {
     return t(`patient.medications.types.${value}`);
 });
 
-const colorLabel = computed(() => {
-    const option = MEDICATION_COLOR_OPTIONS.find((item) => item.value === props.form.color);
-
-    if (option === undefined) {
-        return '—';
-    }
-
-    return t(`patient.medications.colors.${option.labelKey}`);
-});
-
 const doseTimesJoined = computed(() => {
     const count = parseMedicationTimesPerDayCount(props.form.schedule.times_per_day);
 
@@ -206,16 +195,6 @@ const summaryTypeFocusSuffix = computed(() => {
     }
 
     return `type-option-${v}`;
-});
-
-const summaryColorFocusSuffix = computed(() => {
-    const option = MEDICATION_COLOR_OPTIONS.find((item) => item.value === props.form.color);
-
-    if (option === undefined) {
-        return 'color';
-    }
-
-    return `color-${option.labelKey}`;
 });
 
 const overviewSectionHeadingClass = cn(
@@ -290,22 +269,6 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             :ariaLabel="summaryRowAria('fields.type')"
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(1, summaryTypeFocusSuffix)"
-                        >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
-                        </IconActionButton>
-                    </dd>
-                </div>
-                <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.color') }}</dt>
-                    <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ colorLabel }}</span>
-                        <IconActionButton v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.color')"
-                            :disabled="props.form.processing"
-                            @click="activateSummaryRow(1, summaryColorFocusSuffix)"
                         >
                             <Pencil
                                 class="size-5"

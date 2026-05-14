@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,7 +26,6 @@ class Medication extends Model
         'dose',
         'dose_unit',
         'type_medication',
-        'color',
         'note',
     ];
 
@@ -38,7 +36,6 @@ class Medication extends Model
             'dose' => 'encrypted',
             'dose_unit' => MedicationDoseUnit::class,
             'type_medication' => MedicationType::class,
-            'color' => MedicationColor::class,
             'note' => 'encrypted',
         ];
     }

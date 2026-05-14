@@ -26,7 +26,7 @@ import { medicationWizardStepValidation } from './wizardStepMessages';
 import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
 
 export function tryMedicationWizardDetailsStep(
-    data: Pick<MedicationCreateFormState, 'name' | 'dose' | 'dose_unit' | 'type_medication' | 'color'>,
+    data: Pick<MedicationCreateFormState, 'name' | 'dose' | 'dose_unit' | 'type_medication'>,
 ): MedicationWizardClientParseResult {
     const parsed = medicationWizardDetailsSchema.safeParse(data);
 

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Patient\Medications;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
@@ -62,7 +61,6 @@ class StoreMedicationRequest extends FormRequest
             'dose' => ['required', 'string', 'max:500'],
             'dose_unit' => ['required', Rule::enum(MedicationDoseUnit::class)],
             'type_medication' => ['required', Rule::enum(MedicationType::class)],
-            'color' => ['nullable', Rule::enum(MedicationColor::class)],
             'note' => ['nullable', 'string', 'max:2000'],
             'current_stock' => ['required', 'string', 'max:500'],
             'low_stock' => ['required', 'string', 'max:64'],

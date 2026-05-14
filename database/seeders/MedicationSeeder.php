@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
@@ -33,7 +32,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::BLUE,
                 'note' => 'Maximaal 6 tabletten per 24 uur. Bij aanhoudende koorts contact opnemen met de huisarts.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -55,7 +53,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '500',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => null,
                 'note' => 'Inname tijdens of vlak na de maaltijd om maag-darmklachten te beperken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
@@ -77,7 +74,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '40',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::PURPLE,
                 'note' => null,
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,
@@ -99,7 +95,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '20',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::BLACK,
                 'note' => 'Capsule heel doorslikken, niet kauwen of openmaken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
@@ -121,7 +116,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '2.5',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::RED,
                 'note' => 'Niet zomaar stoppen; overleg bij klachten met de behandelend arts.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -143,7 +137,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '75',
                 'dose_unit' => MedicationDoseUnit::OTHER,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::PINK,
                 'note' => 'Tablet op nuchtere maag met water; minstens een half uur voor het ontbijt geen calcium- of ijzerpreparaten.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
@@ -165,7 +158,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '2',
                 'dose_unit' => MedicationDoseUnit::UNIT,
                 'type_medication' => MedicationType::OTHER,
-                'color' => MedicationColor::BLUE,
                 'note' => 'Bij benauwdheid maximaal 4 pufjes per keer; bij verergering 112 of huisarts.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -187,7 +179,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'color' => null,
                 'note' => 'Eén tablet per week, bij voorkeur op dezelfde dag.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
@@ -209,7 +200,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '24',
                 'dose_unit' => MedicationDoseUnit::INJECTION,
                 'type_medication' => MedicationType::INJECTION,
-                'color' => null,
                 'note' => 'Injectie op een vaste plek in de buik of bovenbeen; roteer injectieplaatsen.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -231,7 +221,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::OTHER,
                 'type_medication' => MedicationType::CREAM,
-                'color' => MedicationColor::PINK,
                 'note' => 'Dun laagje op de aangedane huid; niet op gezicht of grote oppervlakken zonder overleg.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -253,7 +242,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '15',
                 'dose_unit' => MedicationDoseUnit::MILLILITER,
                 'type_medication' => MedicationType::LIQUID,
-                'color' => MedicationColor::PURPLE,
                 'note' => 'Goed schudden voor gebruik; eventueel verdund met water of sap.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,
@@ -275,7 +263,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '13.5',
                 'dose_unit' => MedicationDoseUnit::GRAM,
                 'type_medication' => MedicationType::SACHETS,
-                'color' => MedicationColor::BLACK,
                 'note' => 'Zakje oplossen in een half glas water; direct drinken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -297,7 +284,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::DROP,
                 'type_medication' => MedicationType::LIQUID,
-                'color' => null,
                 'note' => 'Eén druppel in het aangedane oog; druk een minuut zachtjes op de traanbuis om systemische opname te beperken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
@@ -319,7 +305,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '5',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::RED,
                 'note' => 'Om de dag innemen volgens schema van de specialist; niet zelf stoppen.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
@@ -341,7 +326,6 @@ class MedicationSeeder extends Seeder
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::SACHET,
                 'type_medication' => MedicationType::SACHETS,
-                'color' => MedicationColor::BLUE,
                 'note' => 'Zakje oplossen in water; innemen voor het slapen gaan.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,

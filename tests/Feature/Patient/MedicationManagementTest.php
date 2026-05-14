@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
@@ -58,7 +57,6 @@ test('patients can create a medication and name is encrypted at rest', function 
         'dose' => '400',
         'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::RED->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -70,7 +68,6 @@ test('patients can create a medication and name is encrypted at rest', function 
     expect($medication->name)->toBe('Ibuprofen');
     expect($medication->dose)->toBe('400');
     expect($medication->dose_unit)->toBe(MedicationDoseUnit::MILLIGRAM);
-    expect($medication->color)->toBe(MedicationColor::RED);
     expect($medication->family_id)->toBeNull();
 
     $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
@@ -104,7 +101,6 @@ test('patients can create a medication with an optional trimmed note', function 
         'dose' => '100',
         'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         'note' => '  Na het eten innemen  ',
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
@@ -130,7 +126,6 @@ test('patients cannot store a medication without stock fields', function () {
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
 
@@ -147,7 +142,6 @@ test('patients cannot store a medication with only one stock field', function ()
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         'low_stock' => '3',
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -165,7 +159,6 @@ test('patients cannot store a medication with only current stock', function () {
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         'current_stock' => '10',
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -186,7 +179,6 @@ test('patients creating a medication links it to the first linked family when pr
         'dose' => '1000',
         'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -212,7 +204,6 @@ test('patients cannot store a medication without dose', function () {
         'dose' => '',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -229,7 +220,6 @@ test('patients cannot store a medication without dose unit', function () {
         'name' => 'Zonder eenheid',
         'dose' => '10',
         'type_medication' => MedicationType::LIQUID->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
@@ -247,7 +237,6 @@ test('patients cannot store a new medication without a schedule', function () {
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
     ]);
 
@@ -267,7 +256,6 @@ test('patients store schedule dose quantity from medication dose', function () {
         'dose' => '250',
         'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
         'schedule' => $schedule,
     ]);
@@ -333,7 +321,6 @@ test('patients can create a medication with weekday-only intake frequency', func
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
-        'color' => MedicationColor::BLUE->value,
         ...validNewMedicationStockPayload(),
         'schedule' => $schedule,
     ]);
@@ -355,7 +342,6 @@ test('doctors cannot create patient medications', function () {
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Test',
         'type_medication' => MedicationType::PILL->value,
-        'color' => null,
     ]);
 
     $response->assertForbidden();
@@ -372,14 +358,15 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     (new MedicationSeeder)->run($patient, $family);
 
     $medications = $patient->medications()->orderBy('id')->get();
-    expect($medications)->toHaveCount(2);
+    expect($medications)->toHaveCount(15);
 
     $medication = $medications->first();
     expect($medication->name)->toBe('Paracetamol 500 mg');
     expect($medication->dose)->toBe('1');
     expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($medication->color)->toBe(MedicationColor::BLUE);
-    expect($medication->note)->toBe('Bij koorts extra letten op vocht.');
+    expect($medication->note)->toBe(
+        'Maximaal 6 tabletten per 24 uur. Bij aanhoudende koorts contact opnemen met de huisarts.',
+    );
     expect($medication->family_id)->toBe($family->id);
 
     $schedule = $medication->schedules()->first();
@@ -393,20 +380,20 @@ test('medication seeder persists encrypted schedule and stock fields', function 
 
     $stock = $medication->stocks()->first();
     expect($stock)->not->toBeNull();
-    expect($stock->low_stock)->toBe('10');
+    expect($stock->low_stock)->toBe('12');
     expect($stock->family_id)->toBe($family->id);
 
     $rawStock = DB::table('medication_stocks')->where('id', $stock->id)->first();
-    expect($rawStock->low_stock)->not->toBe('10');
+    expect($rawStock->low_stock)->not->toBe('12');
 
     $metformin = $medications->get(1);
-    expect($metformin->name)->toBe('Metformine');
+    expect($metformin->name)->toBe('Metformine 500 mg');
     expect($metformin->dose)->toBe('500');
     expect($metformin->dose_unit)->toBe(MedicationDoseUnit::MILLIGRAM);
     expect($metformin->family_id)->toBe($family->id);
 
     $metforminStockRaw = DB::table('medication_stocks')->where('medication_id', $metformin->id)->first();
-    expect($metforminStockRaw->current_stock)->not->toBe('28');
+    expect($metforminStockRaw->current_stock)->not->toBe('180');
 });
 
 test('patients cannot update another patients medication', function () {

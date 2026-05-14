@@ -10,7 +10,6 @@ export const medicationWizardCreateFormClientSchemaFinal = z.object({
     dose: medicationWizardDetailsSchema.shape.dose,
     dose_unit: medicationWizardDetailsSchema.shape.dose_unit,
     type_medication: medicationWizardDetailsSchema.shape.type_medication,
-    color: medicationWizardDetailsSchema.shape.color,
     current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
     low_stock: trimmedNonEmptyMax(64, 'stockLowRequired', 'stockLowMax'),
     note: z.string().superRefine((note, ctx) => {
