@@ -40,6 +40,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call(DailyCheckinDemoSeeder::class, false, ['patient' => $patient]);
         $this->call(AppointmentSeeder::class, false, ['patient' => $patient]);
+        $this->call(MedicationSeeder::class, false, [
+            'patient' => $patient,
+            'family' => $family,
+        ]);
 
         $patient->refresh();
         $checkinCount = $patient->dailyCheckins()->count();
