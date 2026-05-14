@@ -13,15 +13,37 @@ function hostnameFromAppUrl(appUrl: string): string | null {
     }
 }
 
+function appUrlUsesHttps(appUrl: string): boolean {
+    try {
+        return new URL(appUrl).protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
+    const appUrlFromEnv = env.APP_URL ?? '';
+    const appHostname = hostnameFromAppUrl(appUrlFromEnv);
+    const appUsesHttps = appUrlUsesHttps(appUrlFromEnv);
     const devServerHost =
-        env.VITE_DEV_SERVER_HOST
-        ?? hostnameFromAppUrl(env.APP_URL ?? '')
-        ?? 'localhost';
-    const appOrigin = env.APP_URL || `http://${devServerHost}:8000`;
-    const useHttps = false;
-    const devServerOrigin = `${useHttps ? 'https' : 'http'}://${devServerHost}:5173`;
+        env.VITE_DEV_SERVER_HOST ?? appHostname ?? 'localhost';
+    const appOrigin = appUrlFromEnv || `http://${devServerHost}:8000`;
+    const devProtocol = appUsesHttps ? 'https' : 'http';
+    const devServerOrigin = `${devProtocol}://${devServerHost}:5173`;
+
+    let detectTls: string | boolean;
+    if (! appUsesHttps) {
+        detectTls = false;
+    } else if (
+        appHostname !== null
+        && appHostname !== ''
+        && appHostname !== 'localhost'
+    ) {
+        detectTls = appHostname;
+    } else {
+        detectTls = true;
+    }
 
     return {
         plugins: [
@@ -29,7 +51,7 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: ['resources/js/app.ts'],
                 refresh: true,
-                https: useHttps,
+                detectTls,
             }),
             inertia(),
             vue({
@@ -45,14 +67,14 @@ export default defineConfig(({ mode }) => {
             host: true,
             port: 5173,
             strictPort: true,
-            https: useHttps,
+            ...(appUsesHttps ? {} : { https: false }),
             origin: devServerOrigin,
             cors: {
                 origin: appOrigin,
             },
             hmr: {
                 host: devServerHost,
-                protocol: useHttps ? 'wss' : 'ws',
+                protocol: appUsesHttps ? 'wss' : 'ws',
             },
         },
         ssr: {
