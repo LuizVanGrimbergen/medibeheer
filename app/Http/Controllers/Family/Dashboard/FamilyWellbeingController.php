@@ -6,7 +6,7 @@ namespace App\Http\Controllers\Family\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Family\Concerns\AuthorizesFamilyProfile;
-use App\Services\FamilyWellbeingScreenService;
+use App\Services\Family\FamilyWellbeingScreenService;
 use App\Support\FamilyDashboardState;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
