@@ -5,7 +5,7 @@ namespace Database\Factories;
 use App\Models\FamilyInvitation;
 use App\Models\Patient;
 use App\Models\User;
-use App\Services\FamilyInvitationService;
+use App\Services\Family\FamilyInvitationService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FamilyInvitationFactory extends Factory

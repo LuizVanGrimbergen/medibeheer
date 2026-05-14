@@ -40,7 +40,7 @@ class PatientMedicationStockController extends Controller
 
         $stock->update($request->validated());
 
-        return redirect()->route('patient.medications');
+        return redirect()->back(fallback: route('patient.medications'));
     }
 
     public function destroy(Request $request, Medication $medication, MedicationStock $stock): RedirectResponse

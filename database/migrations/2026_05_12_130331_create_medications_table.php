@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
             $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
             $table->text('name');
+            $table->text('dose');
             $table->string('dose_unit', 32)->default(MedicationDoseUnit::OTHER->value);
             $table->text('type_medication');
             $table->string('color', 64)->nullable()->default(MedicationColor::BLUE->value);

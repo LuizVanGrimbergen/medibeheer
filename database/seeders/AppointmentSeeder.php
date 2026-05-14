@@ -7,7 +7,7 @@ use App\Enums\DoctorType;
 use App\Models\Appointment;
 use App\Models\Family;
 use App\Models\Patient;
-use App\Services\AppointmentTransportInvitationService;
+use App\Services\Appointments\AppointmentTransportInvitationService;
 use Carbon\Carbon;
 use Faker\Generator;
 use Illuminate\Database\Seeder;

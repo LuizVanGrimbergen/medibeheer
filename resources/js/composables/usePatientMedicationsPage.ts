@@ -127,6 +127,7 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
             .post(route('patient.medications.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
+                    router.flushAll();
                     resetCreateDialogToFreshDefaults();
                     createDialogOpen.value = false;
                 },
@@ -145,6 +146,7 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
             .put(route('patient.medications.update', id), {
                 preserveScroll: true,
                 onSuccess: () => {
+                    router.flushAll();
                     closeEditMedicationDialog();
                 },
             });
@@ -157,6 +159,9 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
 
         router.delete(route('patient.medications.destroy', medication.id), {
             preserveScroll: true,
+            onSuccess: () => {
+                router.flushAll();
+            },
         });
     }
 

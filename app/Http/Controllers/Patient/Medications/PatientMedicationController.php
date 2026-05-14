@@ -7,7 +7,7 @@ use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Medications\StoreMedicationRequest;
 use App\Http\Requests\Patient\Medications\UpdateMedicationRequest;
 use App\Models\Medication;
-use App\Services\PatientMedicationsScreenService;
+use App\Services\Patient\PatientMedicationsScreenService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -105,6 +105,11 @@ class PatientMedicationController extends Controller
                     ...$medicationPayload,
                     'family_id' => $patient->defaultMedicationFamilyId(),
                 ]);
+
+                $medication->stocks()->update([
+                    'family_id' => $medication->family_id,
+                    'patient_id' => $medication->patient_id,
+                ]);
             }
 
             if (isset($validated['schedule'])) {
@@ -122,9 +127,11 @@ class PatientMedicationController extends Controller
             }
 
             if (array_key_exists('current_stock', $validated) && array_key_exists('low_stock', $validated)) {
-                $medication->stocks()->first()?->update(
-                    Arr::only($validated, ['current_stock', 'low_stock']),
-                );
+                $medication->stocks()->first()?->update([
+                    ...Arr::only($validated, ['current_stock', 'low_stock']),
+                    'family_id' => $medication->family_id,
+                    'patient_id' => $medication->patient_id,
+                ]);
             }
         });
 

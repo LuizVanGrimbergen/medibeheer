@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Services;
+declare(strict_types=1);
+
+namespace App\Services\Family;
 
 use App\Mail\FamilyInvitationMail;
 use App\Models\Family;
@@ -116,8 +118,8 @@ final class FamilyInvitationService
     {
         $invitation = FamilyInvitation::query()
             ->where('token_hash', $tokenHash)
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
+            ->whereNull('accepted_at', 'and', false)
+            ->whereNull('revoked_at', 'and', false)
             ->where('expires_at', '>', now())
             ->lockForUpdate()
             ->first();
@@ -162,8 +164,8 @@ final class FamilyInvitationService
         $query = FamilyInvitation::query()
             ->where('patient_id', $patient->id)
             ->where('invited_email_hash', $emailHash)
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
+            ->whereNull('accepted_at', 'and', false)
+            ->whereNull('revoked_at', 'and', false)
             ->where('expires_at', '>', now());
 
         if ($lockForUpdate) {

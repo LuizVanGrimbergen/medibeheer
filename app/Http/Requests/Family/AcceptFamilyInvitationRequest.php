@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Family;
 
-use App\Services\FamilyInvitationService;
+use App\Services\Family\FamilyInvitationService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AcceptFamilyInvitationRequest extends FormRequest
@@ -18,7 +18,7 @@ class AcceptFamilyInvitationRequest extends FormRequest
     /**************************************/
     /*          Validation Rules */
     /**************************************/
-    
+
     public function rules(): array
     {
         return [
