@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Patient\Appointments;
 use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Http\Requests\Patient\StoreAppointmentRequest;
-use App\Http\Requests\Patient\UpdateAppointmentRequest;
+use App\Http\Requests\Patient\Appointments\StoreAppointmentRequest;
+use App\Http\Requests\Patient\Appointments\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use App\Services\AppointmentTransportInvitationService;
 use App\Services\PatientAppointmentsScreenService;
@@ -108,7 +108,7 @@ class PatientAppointmentController extends Controller
 
         $this->authorize('delete', $appointment);
 
-        $appointment->delete();
+        Appointment::destroy($appointment->getKey());
 
         return redirect()->route('patient.appointments');
     }

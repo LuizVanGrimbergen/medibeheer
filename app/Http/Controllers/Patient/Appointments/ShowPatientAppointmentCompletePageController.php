@@ -7,7 +7,7 @@ namespace App\Http\Controllers\Patient\Appointments;
 use App\Enums\AppointmentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Http\Resources\PatientAppointmentResource;
+use App\Http\Resources\Appointments\PatientAppointmentResource;
 use App\Models\Appointment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
