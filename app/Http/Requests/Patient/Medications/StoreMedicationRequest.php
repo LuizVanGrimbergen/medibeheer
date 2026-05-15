@@ -42,6 +42,14 @@ class StoreMedicationRequest extends FormRequest
             $this->merge(['note' => trim((string) $note)]);
         }
 
+        $strength = $this->input('strength');
+
+        if ($strength === null || (is_string($strength) && trim($strength) === '')) {
+            $this->merge(['strength' => null]);
+        } else {
+            $this->merge(['strength' => trim((string) $strength)]);
+        }
+
         $currentStockInput = $this->input('current_stock');
         $lowStockInput = $this->input('low_stock');
 
@@ -61,6 +69,7 @@ class StoreMedicationRequest extends FormRequest
             'dose' => ['required', 'string', 'max:500'],
             'dose_unit' => ['required', Rule::enum(MedicationDoseUnit::class)],
             'type_medication' => ['required', Rule::enum(MedicationType::class)],
+            'strength' => ['nullable', 'string', 'max:500'],
             'note' => ['nullable', 'string', 'max:2000'],
             'current_stock' => ['required', 'string', 'max:500'],
             'low_stock' => ['required', 'string', 'max:64'],

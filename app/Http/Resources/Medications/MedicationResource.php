@@ -36,6 +36,7 @@ class MedicationResource extends JsonResource
             'dose' => filled($this->dose) ? (string) $this->dose : null,
             'dose_unit' => $this->dose_unit?->value,
             'type_medication' => $this->type_medication->value,
+            'strength' => filled($this->strength) ? (string) $this->strength : null,
             'note' => filled($this->note) ? (string) $this->note : null,
             'schedules' => $this->relationLoaded('schedules')
                 ? MedicationScheduleResource::collection($this->schedules)->resolve()
