@@ -59,7 +59,8 @@ export function medicationWizardStepAfterFullClientParseFailure(
         hasKey('name') ||
         hasKey('dose') ||
         hasKey('dose_unit') ||
-        hasKey('type_medication');
+        hasKey('type_medication') ||
+        hasKey('strength');
 
     const hasTimingErrors =
         hasKey('schedule.meal_timing') ||

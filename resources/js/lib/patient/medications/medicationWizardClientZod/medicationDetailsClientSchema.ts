@@ -24,4 +24,13 @@ export const medicationWizardDetailsSchema = z.object({
             });
         }
     }),
+    strength: z.string().superRefine((val, ctx) => {
+        if (val.length > 500) {
+            ctx.addIssue({
+                code: 'custom',
+                message: medicationWizardStepValidation('strengthMax'),
+                path: ['strength'],
+            });
+        }
+    }),
 });
