@@ -62,7 +62,7 @@ it('averages every n days intake over calendar days', function () {
     expect($result['days'])->toBe(98);
 });
 
-it('averages weekday intake over seven days', function () {
+it('averages selected weekday intake over seven days', function () {
     $patient = Patient::factory()->create();
     $medication = Medication::factory()->for($patient)->create();
     MedicationStock::factory()->forMedication($medication)->create([
@@ -85,6 +85,29 @@ it('averages weekday intake over seven days', function () {
     expect($result['days'])->toBe(14);
 });
 
+it('averages two selected weekdays over seven days', function () {
+    $patient = Patient::factory()->create();
+    $medication = Medication::factory()->for($patient)->create();
+    MedicationStock::factory()->forMedication($medication)->create([
+        'current_stock' => '10',
+        'low_stock' => '1',
+    ]);
+    MedicationSchedule::factory()->forMedication($medication)->create([
+        'intake_frequency' => MedicationIntakeFrequency::WEEKDAYS,
+        'intake_weekdays' => [1, 2],
+        'times_per_day' => '1',
+        'dose_quantity' => '1',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->addMonth(),
+    ]);
+
+    $medication->load(['stocks', 'schedules']);
+    $result = app(MedicationSupplyEstimateService::class)->estimate($medication);
+
+    expect($result['quality'])->toBe('approx');
+    expect($result['days'])->toBe(35);
+});
+
 it('returns unknown when no schedules exist', function () {
     $patient = Patient::factory()->create();
     $medication = Medication::factory()->for($patient)->create();
@@ -98,6 +121,32 @@ it('returns unknown when no schedules exist', function () {
 
     expect($result['quality'])->toBe('unknown');
     expect($result['days'])->toBeNull();
+});
+
+it('includes the schedule end date on the last active day', function () {
+    $patient = Patient::factory()->create();
+    $medication = Medication::factory()->for($patient)->create();
+    MedicationStock::factory()->forMedication($medication)->create([
+        'current_stock' => '10',
+        'low_stock' => '2',
+    ]);
+    MedicationSchedule::factory()->forMedication($medication)->create([
+        'intake_frequency' => MedicationIntakeFrequency::DAILY,
+        'intake_weekdays' => null,
+        'times_per_day' => '1',
+        'dose_quantity' => '1',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->toDateString(),
+    ]);
+
+    $medication->load(['stocks', 'schedules']);
+    $schedule = $medication->schedules->first();
+    $schedule->end_date = Carbon::parse('2026-05-14 23:59:59', 'Europe/Amsterdam');
+
+    $result = app(MedicationSupplyEstimateService::class)->estimate($medication);
+
+    expect($result['quality'])->toBe('approx');
+    expect($result['days'])->toBe(10);
 });
 
 it('returns unknown when schedule is outside the active date range', function () {
@@ -143,10 +192,35 @@ it('parses decimal stock with comma', function () {
     $result = app(MedicationSupplyEstimateService::class)->estimate($medication);
 
     expect($result['quality'])->toBe('approx');
-    expect($result['days'])->toBe(4);
+    expect($result['days'])->toBe(3);
 });
 
-it('returns zero days when rounded supply is less than one day at the estimated rate', function () {
+it('parses stock with milligram unit suffix for supply estimate', function () {
+    $patient = Patient::factory()->create();
+    $medication = Medication::factory()->for($patient)->create([
+        'dose_unit' => \App\Enums\MedicationDoseUnit::MILLIGRAM,
+    ]);
+    MedicationStock::factory()->forMedication($medication)->create([
+        'current_stock' => '200 mg',
+        'low_stock' => '40 mg',
+    ]);
+    MedicationSchedule::factory()->forMedication($medication)->create([
+        'intake_frequency' => MedicationIntakeFrequency::DAILY,
+        'intake_weekdays' => null,
+        'times_per_day' => '1',
+        'dose_quantity' => '20',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->addMonth(),
+    ]);
+
+    $medication->load(['stocks', 'schedules']);
+    $result = app(MedicationSupplyEstimateService::class)->estimate($medication);
+
+    expect($result['quality'])->toBe('approx');
+    expect($result['days'])->toBe(10);
+});
+
+it('returns zero days when floored supply is less than one day at the estimated rate', function () {
     $patient = Patient::factory()->create();
     $medication = Medication::factory()->for($patient)->create();
     MedicationStock::factory()->forMedication($medication)->create([
