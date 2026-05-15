@@ -1,20 +1,17 @@
 export default {
     title: 'Medicatie',
-    heading: 'Medicatie',
-    description:
-        'Hier vindt u uw medicaties. Voeg een medicatie toe om later inname en voorraad te kunnen beheren.',
     metaDescription:
         'Overzicht van uw medicatie in Medibeheer. Voeg medicaties toe en beheer later inname en voorraad.',
-    newMedication: 'Nieuwe medicatie',
+    newMedication: 'Medicatie toevoegen',
     dialogEditTitle: 'Medicatie wijzigen',
     deleteConfirm:
         'Weet u zeker dat u deze medicatie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
     empty:
-        'U heeft nog geen medicaties toegevoegd. Tik op de knop “Nieuwe medicatie” om te beginnen.',
+        'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
     listHeading: 'Uw medicaties',
     cardIntakePeriodAria: 'Innameperiode van {start} tot {end}.',
     cardActionsAriaLabel: 'Acties voor deze medicatie',
-    dialogTitle: 'Nieuwe medicatie',
+    dialogTitle: 'Medicatie toevoegen',
     stepsProgress: 'Stap {current} van {total}',
     overview: {
         title: 'Controleer uw gegevens',
@@ -28,8 +25,6 @@ export default {
         name: 'Medicatienaam',
         namePlaceholder: 'voeg hier een naam toe',
         dose: 'Hoeveel neemt u per keer?',
-        doseIntakeHint:
-            'Vul in wat u per inname telt (vaak stuks, ml of zakjes). Milligram op de verpakking is de sterkte per stuk, niet hetzelfde als dit veld.',
         dosePlaceholder: 'Bijv. 1 of 2',
         dosePlaceholderPill: 'Bijv. 1 tablet per keer',
         dosePlaceholderLiquid: 'Bijv. 5 of 10 (ml)',
@@ -38,6 +33,8 @@ export default {
         dosePlaceholderSachets: 'Bijv. 1 zakje per keer',
         dosePlaceholderOther: 'Bijv. 1',
         doseUnit: 'Eenheid',
+        strength: 'Sterkte (optioneel)',
+        strengthPlaceholder: 'Bijv. 1000 mg per tablet',
         type: 'Type',
         selectPlaceholder: 'Maak een keuze',
         mealTiming: 'Moment van inname',
@@ -54,6 +51,7 @@ export default {
         currentStockPlaceholder: 'Bijv. 30',
         lowStock: 'Waarschuwing einde voorraad',
         lowStockPlaceholder: 'Bijv. 5',
+        stockPlaceholderAmountOnly: 'Bijv. {example}',
         notePlaceholder: 'Optioneel. Bijvoorbeeld: innemen met veel water.',
     },
     types: {
@@ -74,6 +72,12 @@ export default {
         nTimesPerDay: '{n} per dag',
         customPlaceholder: 'andere mogelijkheden',
         customSelectAriaLabel: 'Aantal keren per dag tussen 5 en 24',
+    },
+    intakePeriodPresets: {
+        '1_week': '1 week',
+        '4_weeks': '4 weken',
+        '6_weeks': '6 weken',
+        custom: 'Aangepast',
     },
     intakeFrequencies: {
         daily: 'Dagelijks',
@@ -109,6 +113,7 @@ export default {
         doseMax: 'De dosis mag maximaal 500 tekens zijn.',
         doseRequired: 'Vul de dosis in.',
         doseUnitRequired: 'Kies een eenheid voor de dosis.',
+        strengthMax: 'De sterkte mag maximaal 500 tekens zijn.',
         typeRequired: 'Kies een type medicatie.',
         scheduleMealTimingRequired: 'Kies wanneer u het medicatie neemt t.o.v. eten.',
         scheduleIntakeFrequencyRequired: 'Kies hoe vaak u het medicatie neemt.',
@@ -138,6 +143,5 @@ export default {
         edit: 'Wijzigen',
         delete: 'Verwijderen',
         editDetails: 'Gegevens bewerken',
-        backToOverview: 'Terug naar overzicht',
     },
 };
