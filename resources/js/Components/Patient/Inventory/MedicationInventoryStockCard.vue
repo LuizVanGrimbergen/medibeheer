@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { AlertTriangle, Layers, PackagePlus, Pill } from 'lucide-vue-next';
+import { AlertTriangle, Layers, PackagePlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/MedicationInventoryStockEditDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Progress } from '@/Components/ui/progress';
-import { isMedicationStockLow } from '@/lib/patient/inventory/isMedicationStockLow';
+import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
+import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
-import { medicationStockProgressTone } from '@/lib/patient/inventory/medicationStockProgressTone';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import type { MedicationListItem, MedicationTypeValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -36,50 +38,10 @@ const typeLabel = computed(() =>
     t(`patient.medications.types.${props.medication.type_medication as MedicationTypeValue}`),
 );
 
-const inventoryPillWrapToneClass = computed((): string => {
+const showSupplyAlertRow = computed((): boolean => {
     const tone = stockProgressTone.value;
 
-    if (tone === 'critical') {
-        return 'bg-danger/12';
-    }
-
-    if (tone === 'warning') {
-        return 'bg-stock-near/12 dark:bg-stock-near-dark/15';
-    }
-
-    if (tone === 'safe') {
-        return 'bg-success/12';
-    }
-
-    return 'bg-primary/12';
-});
-
-const inventoryPillIconClass = computed((): string => {
-    const tone = stockProgressTone.value;
-
-    if (tone === 'critical') {
-        return 'text-danger';
-    }
-
-    if (tone === 'warning') {
-        return 'text-stock-near dark:text-stock-near-dark';
-    }
-
-    if (tone === 'safe') {
-        return 'text-success';
-    }
-
-    return 'text-primary';
-});
-
-const showLowStock = computed((): boolean => {
-    const stock = primaryStock.value;
-
-    if (stock === undefined) {
-        return false;
-    }
-
-    return isMedicationStockLow(stock.current_stock, stock.low_stock);
+    return tone === 'critical' || tone === 'warning';
 });
 
 const stockProgressPercent = computed((): number | null => {
@@ -89,18 +51,18 @@ const stockProgressPercent = computed((): number | null => {
         return null;
     }
 
-    return medicationStockProgressPercent(stock.current_stock, stock.low_stock);
+    return medicationStockProgressPercent(
+        stock.current_stock,
+        stock.low_stock,
+        props.medication.dose_unit,
+    );
 });
 
-const stockProgressTone = computed(() => {
-    const stock = primaryStock.value;
+const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
 
-    if (stock === undefined) {
-        return null;
-    }
-
-    return medicationStockProgressTone(stock.current_stock, stock.low_stock);
-});
+const inventoryVisualToneClasses = computed(() =>
+    medicationListVisualToneClasses(stockProgressTone.value),
+);
 
 const stockProgressIndicatorClass = computed((): string | undefined => {
     const tone = stockProgressTone.value;
@@ -118,24 +80,6 @@ const stockProgressIndicatorClass = computed((): string | undefined => {
     }
 
     return undefined;
-});
-
-const inventoryCardBorderClass = computed(() => {
-    const tone = stockProgressTone.value;
-
-    if (tone === 'critical') {
-        return 'border-danger/70 dark:border-danger/80';
-    }
-
-    if (tone === 'warning') {
-        return 'border-stock-near/70 dark:border-stock-near-dark/75';
-    }
-
-    if (tone === 'safe') {
-        return 'border-success/55 dark:border-success/65';
-    }
-
-    return 'border-border/80';
 });
 
 const adjustStockButtonClass = computed((): string => {
@@ -235,12 +179,22 @@ const supplyEstimateLineClass = computed((): string => {
 
     return 'text-text-heading';
 });
+
+const primaryStockAmountTrimmed = computed((): string => primaryStock.value?.current_stock.trim() ?? '');
+
+const currentStockDisplayLine = computed((): string =>
+    formatMedicationStockDisplayAmount(
+        t,
+        primaryStockAmountTrimmed.value,
+        props.medication.dose_unit,
+    ),
+);
 </script>
 
 <template>
     <Card
         class="min-w-0 w-full rounded-3xl border-2 bg-surface text-text shadow-md shadow-black/[0.04]"
-        :class="inventoryCardBorderClass"
+        :class="inventoryVisualToneClasses.border"
     >
         <CardContent class="relative p-4 pb-6 pt-5 sm:p-8">
             <div
@@ -248,20 +202,19 @@ const supplyEstimateLineClass = computed((): string => {
             >
                 <div
                     class="flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-16"
-                    :class="inventoryPillWrapToneClass"
+                    :class="inventoryVisualToneClasses.pillWrap"
                 >
                     <span class="sr-only">{{ typeLabel }}</span>
-                    <Pill
-                        class="size-6 shrink-0 sm:size-8"
-                        :class="inventoryPillIconClass"
-                        aria-hidden="true"
+                    <MedicationTypeLeadIcon
+                        :medication-type="medication.type_medication"
+                        :icon-tone-class="inventoryVisualToneClasses.pillIcon"
                     />
                 </div>
                 <div
-                    class="flex w-full min-w-0 flex-col space-y-4 sm:flex-1 sm:items-stretch sm:space-y-6"
+                    class="flex w-full min-w-0 flex-col space-y-3.5 sm:flex-1 sm:items-stretch"
                 >
                     <p
-                        class="wrap-break-word text-lg font-bold leading-snug text-text-heading sm:text-2xl sm:leading-snug"
+                        class="min-w-0 wrap-break-word text-lg font-bold leading-snug text-text-heading sm:text-xl"
                     >
                         {{ medication.name }}
                     </p>
@@ -282,18 +235,18 @@ const supplyEstimateLineClass = computed((): string => {
 
                         <div
                             class="flex min-w-0 items-start gap-3 sm:items-center sm:gap-3"
-                            :role="showLowStock || stockProgressTone === 'warning' ? 'alert' : undefined"
+                            :role="showSupplyAlertRow ? 'alert' : undefined"
                         >
-                            <template v-if="showLowStock || stockProgressTone === 'warning'">
+                            <template v-if="showSupplyAlertRow">
                                 <span class="sr-only">{{
-                                    showLowStock
+                                    stockProgressTone === 'critical'
                                         ? t('patient.inventory.lowStockBadge')
                                         : t('patient.inventory.warningStockIconAria')
                                 }}</span>
                                 <AlertTriangle
                                     class="mt-0.5 size-6 shrink-0 sm:mt-0 sm:size-7"
                                     :class="
-                                        showLowStock
+                                        stockProgressTone === 'critical'
                                             ? 'text-danger'
                                             : 'text-stock-near dark:text-stock-near-dark'
                                     "
@@ -328,7 +281,7 @@ const supplyEstimateLineClass = computed((): string => {
                                     <span
                                         class="whitespace-pre-wrap wrap-break-word text-3xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-4xl"
                                     >
-                                        {{ primaryStock.current_stock.trim() }}
+                                        {{ currentStockDisplayLine }}
                                     </span>
                                 </div>
                             </div>
@@ -374,6 +327,7 @@ const supplyEstimateLineClass = computed((): string => {
         v-if="primaryStock !== undefined"
         v-model:open="stockEditOpen"
         :medication-id="medication.id"
+        :dose-unit="medication.dose_unit"
         :stock="primaryStock"
         :form-id="stockFormId"
         :id-prefix="stockIdPrefix"
