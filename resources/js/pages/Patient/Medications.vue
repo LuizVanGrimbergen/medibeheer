@@ -47,13 +47,13 @@ const {
             />
 
             <section class="space-y-5">
-                <h2 class="text-2xl font-bold leading-tight text-text-heading">
+                <h1 class="text-2xl font-bold leading-tight text-text-heading sm:text-3xl sm:leading-tight">
                     {{ t('patient.medications.listHeading') }}
-                </h2>
+                </h1>
 
                 <ul
                     v-if="props.medications.data.length > 0"
-                    class="flex min-w-0 w-full flex-col gap-5"
+                    class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"
                 >
                     <li
                         v-for="medication in props.medications.data"
