@@ -13,6 +13,7 @@ export function medicationListItemToCreateFormState(
     base.dose = item.dose?.trim() ?? '';
     base.dose_unit = item.dose_unit ?? base.dose_unit;
     base.type_medication = item.type_medication;
+    base.strength = item.strength?.trim() ?? '';
     base.note = item.note ?? '';
 
     const firstStock = item.stocks[0];

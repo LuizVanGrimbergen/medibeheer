@@ -24,6 +24,7 @@ export type MedicationCreateFormState = {
     dose: string;
     dose_unit: MedicationDoseUnitValue | '';
     type_medication: MedicationTypeValue | '';
+    strength: string;
     current_stock: string;
     low_stock: string;
     note: string;

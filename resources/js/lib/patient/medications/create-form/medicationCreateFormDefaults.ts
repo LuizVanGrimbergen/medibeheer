@@ -6,6 +6,7 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
         dose: '',
         dose_unit: '',
         type_medication: '',
+        strength: '',
         current_stock: '',
         low_stock: '',
         note: '',

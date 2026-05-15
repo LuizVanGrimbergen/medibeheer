@@ -21,6 +21,7 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     dose: string;
     dose_unit: MedicationCreateFormState['dose_unit'];
     type_medication: MedicationCreateFormState['type_medication'];
+    strength: string | null;
     current_stock: string;
     low_stock: string;
     note: string | null;
@@ -36,12 +37,14 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     };
 } {
     const noteTrimmed = data.note.trim();
+    const strengthTrimmed = data.strength.trim();
 
     return {
         name: data.name.trim(),
         dose: data.dose.trim(),
         dose_unit: data.dose_unit,
         type_medication: data.type_medication,
+        strength: strengthTrimmed === '' ? null : strengthTrimmed,
         current_stock: data.current_stock.trim(),
         low_stock: data.low_stock.trim(),
         note: noteTrimmed === '' ? null : noteTrimmed,
