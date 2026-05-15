@@ -6,7 +6,7 @@ import MedicationInventoryStockCard from '@/Components/Patient/Inventory/Medicat
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import { medicationInventoryListSortRank } from '@/lib/patient/inventory/medicationInventoryListSortRank';
+import { compareMedicationInventoryListItems } from '@/lib/patient/inventory/medicationInventoryListSortRank';
 import type { PatientInventoryScreenProps } from '@/lib/patient/inventory/patientInventoryScreenProps';
 import type { MedicationListItem } from '@/lib/types';
 
@@ -17,15 +17,7 @@ const { t } = useI18n();
 const sortedInventoryMedications = computed((): MedicationListItem[] => {
     const items = [...props.medications.data];
 
-    items.sort((a, b) => {
-        const rankDiff = medicationInventoryListSortRank(a) - medicationInventoryListSortRank(b);
-
-        if (rankDiff !== 0) {
-            return rankDiff;
-        }
-
-        return a.name.localeCompare(b.name, 'nl', { sensitivity: 'base' });
-    });
+    items.sort(compareMedicationInventoryListItems);
 
     return items;
 });
@@ -37,49 +29,43 @@ const sortedInventoryMedications = computed((): MedicationListItem[] => {
     </Head>
 
     <PatientLayout>
-        <div class="flex min-w-0 w-full flex-col gap-8">
+        <section class="flex min-w-0 w-full flex-col space-y-5">
             <h1 class="text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
-                {{ t('patient.inventory.heading') }}
+                {{ t('patient.inventory.listHeading') }}
             </h1>
 
-            <section class="space-y-5">
-                <h2 class="text-2xl font-bold leading-tight text-text-heading sm:text-3xl sm:leading-tight">
-                    {{ t('patient.inventory.listHeading') }}
-                </h2>
-
-                <ul
-                    v-if="props.medications.data.length > 0"
-                    class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"
+            <ul
+                v-if="props.medications.data.length > 0"
+                class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"
+            >
+                <li
+                    v-for="medication in sortedInventoryMedications"
+                    :key="medication.id"
+                    class="min-w-0"
                 >
-                    <li
-                        v-for="medication in sortedInventoryMedications"
-                        :key="medication.id"
-                        class="min-w-0"
-                    >
-                        <MedicationInventoryStockCard :medication="medication" />
-                    </li>
-                </ul>
+                    <MedicationInventoryStockCard :medication="medication" />
+                </li>
+            </ul>
 
-                <NumberedPagination
-                    v-if="
-                        props.medications.data.length > 0 &&
-                            props.medications.meta.last_page > 1
-                    "
-                    route-name="patient.inventory"
-                    :meta="props.medications.meta"
-                />
+            <NumberedPagination
+                v-if="
+                    props.medications.data.length > 0 &&
+                        props.medications.meta.last_page > 1
+                "
+                route-name="patient.inventory"
+                :meta="props.medications.meta"
+            />
 
-                <Card
-                    v-if="props.medications.meta.total === 0"
-                    class="rounded-2xl border-2 border-dashed border-border bg-surface-2/70 text-text shadow-none"
+            <Card
+                v-if="props.medications.meta.total === 0"
+                class="rounded-2xl border-2 border-dashed border-border bg-surface-2/70 text-text shadow-none"
+            >
+                <CardContent
+                    class="px-5 py-14 text-center text-lg leading-relaxed text-text-muted sm:px-8"
                 >
-                    <CardContent
-                        class="px-5 py-14 text-center text-lg leading-relaxed text-text-muted sm:px-8"
-                    >
-                        {{ t('patient.inventory.empty') }}
-                    </CardContent>
-                </Card>
-            </section>
-        </div>
+                    {{ t('patient.inventory.empty') }}
+                </CardContent>
+            </Card>
+        </section>
     </PatientLayout>
 </template>
