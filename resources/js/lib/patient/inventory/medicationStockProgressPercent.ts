@@ -1,11 +1,14 @@
+import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
+
 export function medicationStockProgressPercent(
     currentStock: string,
     lowStock: string,
+    doseUnit?: string | null,
 ): number | null {
-    const current = Number.parseFloat(currentStock.trim());
-    const low = Number.parseFloat(lowStock.trim());
+    const current = parseMedicationStockNumericValue(currentStock, doseUnit);
+    const low = parseMedicationStockNumericValue(lowStock, doseUnit);
 
-    if (!Number.isFinite(current) || !Number.isFinite(low) || current < 0 || low < 0) {
+    if (current === null || low === null) {
         return null;
     }
 
