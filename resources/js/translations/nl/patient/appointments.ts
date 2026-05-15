@@ -5,6 +5,7 @@ export default {
     plannedHeading: 'Geplande afspraken',
     plannedDescription:
         'Geplande afspraken staan op volgorde van datum. Als een afspraak is afgerond of geannuleerd, verdwijnt deze uit dit overzicht.',
+    cardActionsAriaLabel: 'Acties voor deze afspraak',
     empty: 'U heeft nog geen afspraken. Tik op de knop “Nieuwe afspraak” om te beginnen.',
     emptyPlanned:
         'Er zijn momenteel geen geplande afspraken. Nieuwe afspraken verschijnen hier zodra u ze toevoegt.',
@@ -56,6 +57,7 @@ export default {
         startsAtDate: 'Dag',
         startsAtTime: 'Uur',
         startsAtHint: 'Eerst de dag, daarna het uur.',
+        note: 'Notitie',
         notes: 'Notities (optioneel)',
         notesPlaceholder: 'Bijv. meenemen: verwijsbrief, ID',
         needsTransport: 'Transport nodig?',
