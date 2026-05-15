@@ -11,7 +11,7 @@ export function medicationWizardStepForInertiaFormErrors(
         (errors.dose !== undefined && errors.dose.length > 0) ||
         (errors.dose_unit !== undefined && errors.dose_unit.length > 0) ||
         (errors.type_medication !== undefined && errors.type_medication.length > 0) ||
-        (errors.color !== undefined && errors.color.length > 0);
+        (errors.strength !== undefined && errors.strength.length > 0);
 
     if (hasDetailServerError) {
         return 1;

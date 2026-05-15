@@ -16,19 +16,10 @@ const { t } = useI18n();
 
 <template>
     <div
-        class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+        v-if="canCreateMedication"
+        class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-center sm:justify-end sm:gap-6"
     >
-        <div class="min-w-0 w-full">
-            <h1 class="text-3xl font-bold leading-tight text-text-heading">
-                {{ t('patient.medications.heading') }}
-            </h1>
-            <p class="mt-3 max-w-2xl text-base leading-relaxed text-text-muted">
-                {{ t('patient.medications.description') }}
-            </p>
-        </div>
-
         <Button
-            v-if="canCreateMedication"
             size="lg"
             class="min-h-14 w-full touch-manipulation gap-2.5 self-stretch px-6 font-body text-lg font-bold sm:w-auto sm:self-center sm:px-8"
             type="button"

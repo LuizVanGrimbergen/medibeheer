@@ -1,7 +1,5 @@
 import type { Component } from 'vue';
 
-import type { MedicationColorHex } from '@/lib/patient/medications/options/medicationColorOptions';
-
 export type RoleKey = 'patient' | 'doctor' | 'family_member';
 
 export type RoleOption = {
@@ -152,9 +150,6 @@ export const MEDICATION_DOSE_UNIT_VALUES = [
 
 export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
 
-export type { MedicationColorHex };
-export { MEDICATION_COLOR_HEX_VALUES } from '@/lib/patient/medications/options/medicationColorOptions';
-
 export const MEDICATION_MEAL_TIMING_VALUES = [
     'before_food',
     'after_food',
@@ -264,7 +259,7 @@ export type MedicationListItem = {
     dose: string | null;
     dose_unit: MedicationDoseUnitValue | null;
     type_medication: MedicationTypeValue;
-    color: MedicationColorHex | null;
+    strength: string | null;
     note: string | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];

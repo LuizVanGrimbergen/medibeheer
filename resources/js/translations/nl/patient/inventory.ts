@@ -1,15 +1,14 @@
 export default {
     title: 'Voorraad',
-    heading: 'Voorraad',
-    listHeading: 'Voorraad per medicatie',
+    listHeading: 'Uw voorraad per medicatie',
     empty:
         'U heeft nog geen medicaties. Voeg eerst medicaties toe om hier uw voorraad te zien.',
     stockMissing: 'Geen voorraadgegevens',
     lowStockBadge: 'Dringend bijbestellen',
     warningStockIconAria: 'Uw voorraad nadert de waarschuwingsdrempel.',
-    adjustStock: 'Voorraad aanpassen',
+    adjustStock: 'Voorraad aanvullen',
     editStockDialogTitle: 'Voorraad aanpassen',
-    addStockAmountLabel: 'Stuks toevoegen',
+    addStockAmountLabel: 'Medicatie toevoegen',
     addStockAmountPlaceholder: 'Bijv. 30',
     addStockInvalidAmount: 'Voer een geldig aantal groter dan 0 in.',
     addStockInvalidBase: 'Voorraad moet een geldig getal zijn.',

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,7 +17,6 @@ return new class extends Migration
             $table->text('dose');
             $table->string('dose_unit', 32)->default(MedicationDoseUnit::OTHER->value);
             $table->text('type_medication');
-            $table->string('color', 64)->nullable()->default(MedicationColor::BLUE->value);
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();

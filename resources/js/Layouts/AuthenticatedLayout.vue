@@ -18,7 +18,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
         class="flex h-svh min-h-svh flex-col overflow-hidden bg-bg"
     >
         <AppNavbar :user-name="authenticatedUserName" />
-        <div class="mx-auto mt-4 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <PwaIosInstallBanner />
         </div>
 

@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationType;
 use App\Models\Patient;
@@ -19,7 +18,11 @@ class MedicationFactory extends Factory
             'dose' => fake()->randomElement(['500 mg', '1 tablet', '10 ml', '2 druppels']),
             'dose_unit' => fake()->randomElement(MedicationDoseUnit::cases()),
             'type_medication' => fake()->randomElement(MedicationType::cases()),
-            'color' => fake()->optional(0.5)->randomElement(MedicationColor::cases()),
+            'strength' => fake()->optional(0.35)->randomElement([
+                '500 mg per tablet',
+                '20 mg per ml',
+                '400 IE',
+            ]),
             'note' => fake()->optional(0.25)->realTextBetween(20, 120),
         ];
     }

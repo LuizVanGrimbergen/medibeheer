@@ -1,5 +1,4 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { MEDICATION_COLOR_HEX_VALUES } from '@/lib/types';
 
 export function blankMedicationCreateForm(): MedicationCreateFormState {
     return {
@@ -7,7 +6,7 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
         dose: '',
         dose_unit: '',
         type_medication: '',
-        color: MEDICATION_COLOR_HEX_VALUES[0],
+        strength: '',
         current_stock: '',
         low_stock: '',
         note: '',

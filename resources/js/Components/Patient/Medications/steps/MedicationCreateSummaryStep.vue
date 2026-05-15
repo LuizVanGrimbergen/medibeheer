@@ -7,8 +7,8 @@ import type {
     MedicationFormWizardStep,
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
-import { MEDICATION_COLOR_OPTIONS } from '@/lib/patient/medications/options/medicationColorOptions';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
 import type {
@@ -125,16 +125,6 @@ const typeLabel = computed(() => {
     return t(`patient.medications.types.${value}`);
 });
 
-const colorLabel = computed(() => {
-    const option = MEDICATION_COLOR_OPTIONS.find((item) => item.value === props.form.color);
-
-    if (option === undefined) {
-        return '—';
-    }
-
-    return t(`patient.medications.colors.${option.labelKey}`);
-});
-
 const doseTimesJoined = computed(() => {
     const count = parseMedicationTimesPerDayCount(props.form.schedule.times_per_day);
 
@@ -149,9 +139,17 @@ const doseTimesJoined = computed(() => {
         .join(', ');
 });
 
-const currentStockSummary = computed(() => props.form.current_stock.trim());
+const doseUnitForStock = computed(() =>
+    props.form.dose_unit === '' ? null : props.form.dose_unit,
+);
 
-const lowStockSummary = computed(() => props.form.low_stock.trim());
+const currentStockSummary = computed(() =>
+    formatMedicationStockDisplayAmount(t, props.form.current_stock, doseUnitForStock.value),
+);
+
+const lowStockSummary = computed(() =>
+    formatMedicationStockDisplayAmount(t, props.form.low_stock, doseUnitForStock.value),
+);
 
 const summaryMealTimingFocusSuffix = computed(() => {
     const v = props.form.schedule.meal_timing;
@@ -208,16 +206,6 @@ const summaryTypeFocusSuffix = computed(() => {
     return `type-option-${v}`;
 });
 
-const summaryColorFocusSuffix = computed(() => {
-    const option = MEDICATION_COLOR_OPTIONS.find((item) => item.value === props.form.color);
-
-    if (option === undefined) {
-        return 'color';
-    }
-
-    return `color-${option.labelKey}`;
-});
-
 const overviewSectionHeadingClass = cn(
     patientFormLabelClass,
     'mb-3 text-lg text-text-heading md:mb-4 md:text-xl',
@@ -262,6 +250,22 @@ function summaryRowAria(fieldTranslationKey: string): string {
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
+                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.type') }}</dt>
+                    <dd :class="summaryDdClass">
+                        <span :class="summaryValueClass">{{ typeLabel }}</span>
+                        <IconActionButton v-if="showStepNavigation"
+                            :ariaLabel="summaryRowAria('fields.type')"
+                            :disabled="props.form.processing"
+                            @click="activateSummaryRow(1, summaryTypeFocusSuffix)"
+                        >
+                            <Pencil
+                                class="size-5"
+                                aria-hidden="true"
+                            />
+                        </IconActionButton>
+                    </dd>
+                </div>
+                <div :class="summaryRowGroupClass">
                     <dt :class="summaryLabelClass">{{ t('patient.medications.fields.dose') }}</dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">
@@ -283,29 +287,16 @@ function summaryRowAria(fieldTranslationKey: string): string {
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.type') }}</dt>
+                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.strength') }}</dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ typeLabel }}</span>
-                        <IconActionButton v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.type')"
+                        <span :class="summaryValueClass">
+                            {{ props.form.strength.trim() || '—' }}
+                        </span>
+                        <IconActionButton
+                            v-if="showStepNavigation"
+                            :ariaLabel="summaryRowAria('fields.strength')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(1, summaryTypeFocusSuffix)"
-                        >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
-                        </IconActionButton>
-                    </dd>
-                </div>
-                <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.color') }}</dt>
-                    <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ colorLabel }}</span>
-                        <IconActionButton v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.color')"
-                            :disabled="props.form.processing"
-                            @click="activateSummaryRow(1, summaryColorFocusSuffix)"
+                            @click="activateSummaryRow(1, 'strength')"
                         >
                             <Pencil
                                 class="size-5"

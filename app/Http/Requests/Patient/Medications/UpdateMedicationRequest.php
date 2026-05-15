@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Patient\Medications;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
@@ -32,6 +31,13 @@ class UpdateMedicationRequest extends FormRequest
             $trimmed = trim((string) $this->input('note'));
 
             $this->merge(['note' => $trimmed === '' ? null : $trimmed]);
+        }
+
+        if ($this->has('strength')) {
+            $raw = $this->input('strength');
+            $trimmed = is_string($raw) ? trim($raw) : '';
+
+            $this->merge(['strength' => $trimmed === '' ? null : $trimmed]);
         }
 
         if ($this->has('current_stock') || $this->has('low_stock')) {
@@ -78,7 +84,7 @@ class UpdateMedicationRequest extends FormRequest
                 Rule::enum(MedicationDoseUnit::class),
             ],
             'type_medication' => ['sometimes', 'required', Rule::enum(MedicationType::class)],
-            'color' => ['nullable', Rule::enum(MedicationColor::class)],
+            'strength' => ['sometimes', 'nullable', 'string', 'max:500'],
             'note' => ['sometimes', 'nullable', 'string', 'max:2000'],
             'current_stock' => ['sometimes', 'required_with:low_stock', 'string', 'max:500'],
             'low_stock' => ['sometimes', 'required_with:current_stock', 'string', 'max:64'],

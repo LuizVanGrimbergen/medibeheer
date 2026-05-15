@@ -1,7 +1,6 @@
 import type { FormDataErrors } from '@inertiajs/core';
 import type { InertiaForm } from '@inertiajs/vue3';
 import type {
-    MedicationColorHex,
     MedicationDoseUnitValue,
     MedicationIntakeFrequencyValue,
     MedicationMealTimingValue,
@@ -25,7 +24,7 @@ export type MedicationCreateFormState = {
     dose: string;
     dose_unit: MedicationDoseUnitValue | '';
     type_medication: MedicationTypeValue | '';
-    color: MedicationColorHex;
+    strength: string;
     current_stock: string;
     low_stock: string;
     note: string;

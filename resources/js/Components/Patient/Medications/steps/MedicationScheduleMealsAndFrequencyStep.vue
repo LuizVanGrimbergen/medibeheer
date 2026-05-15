@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { InputError } from '@/Components/ui/input-error';
@@ -18,8 +18,23 @@ const INTAKE_FREQUENCY_PRESETS: readonly MedicationIntakeFrequencyValue[] = [
     'daily',
     'every_2_days',
     'every_3_days',
-    'every_4_days',
 ];
+
+function isIntakeFrequencyCustomInterval(frequency: string): boolean {
+    const match = /^every_(\d+)_days$/.exec(frequency);
+
+    if (match === null) {
+        return false;
+    }
+
+    const dayCount = Number(match[1]);
+
+    return Number.isInteger(dayCount) && dayCount >= 5 && dayCount <= 60;
+}
+
+function isIntakeFrequencyPreset(frequency: string): boolean {
+    return (INTAKE_FREQUENCY_PRESETS as readonly string[]).includes(frequency);
+}
 
 const INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS = Array.from({ length: 56 }, (_, index) => index + 5);
 
@@ -38,13 +53,47 @@ const hasIntakeFrequencyBlockError = computed(
         Boolean(form.errors['schedule.intake_weekdays']),
 );
 
+const prefersCustomIntakeFrequency = ref(
+    isIntakeFrequencyCustomInterval(form.schedule.intake_frequency),
+);
+
+const showCustomIntakeFrequencySelect = computed(
+    () =>
+        prefersCustomIntakeFrequency.value ||
+        isIntakeFrequencyCustomInterval(form.schedule.intake_frequency),
+);
+
 function setIntakeFrequencyPreset(frequency: MedicationIntakeFrequencyValue): void {
+    prefersCustomIntakeFrequency.value = false;
     form.schedule.intake_frequency = frequency;
 
     if (frequency !== 'weekdays') {
         form.schedule.intake_weekdays = [];
     }
 }
+
+function setIntakeFrequencyWeekdays(): void {
+    prefersCustomIntakeFrequency.value = false;
+    form.schedule.intake_frequency = 'weekdays';
+}
+
+function selectCustomIntakeFrequency(): void {
+    prefersCustomIntakeFrequency.value = true;
+    form.schedule.intake_weekdays = [];
+}
+
+watch(
+    () => form.schedule.intake_frequency,
+    (frequency) => {
+        if (prefersCustomIntakeFrequency.value || frequency === 'weekdays') {
+            return;
+        }
+
+        if (!isIntakeFrequencyPreset(frequency) && frequency.length > 0) {
+            prefersCustomIntakeFrequency.value = true;
+        }
+    },
+);
 
 function toggleIsoWeekday(day: (typeof ISO_WEEKDAY_NUMBERS)[number]): void {
     if (form.schedule.intake_frequency !== 'weekdays') {
@@ -252,17 +301,36 @@ const intakeFrequencyCustomDaysSelect = computed({
                         type="button"
                         class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
                         :class="
-                            form.schedule.intake_frequency === frequency
+                            !showCustomIntakeFrequencySelect &&
+                                form.schedule.intake_frequency === frequency
                                 ? 'border-primary bg-primary/10 text-text-heading'
                                 : 'border-border bg-surface text-text hover:bg-surface-hover'
                         "
-                        :aria-pressed="form.schedule.intake_frequency === frequency"
+                        :aria-pressed="
+                            !showCustomIntakeFrequencySelect &&
+                                form.schedule.intake_frequency === frequency
+                        "
                         @click="setIntakeFrequencyPreset(frequency)"
                     >
                         {{ presetIntakeFrequencyLabel(frequency) }}
                     </button>
+                    <button
+                        :id="`${idPrefix}-schedule-intake-frequency-custom`"
+                        type="button"
+                        class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                        :class="
+                            showCustomIntakeFrequencySelect
+                                ? 'border-primary bg-primary/10 text-text-heading'
+                                : 'border-border bg-surface text-text hover:bg-surface-hover'
+                        "
+                        :aria-pressed="showCustomIntakeFrequencySelect"
+                        @click="selectCustomIntakeFrequency"
+                    >
+                        {{ t('patient.medications.intakePeriodPresets.custom') }}
+                    </button>
                 </div>
                 <select
+                    v-if="showCustomIntakeFrequencySelect"
                     :id="`${idPrefix}-schedule-intake-frequency-custom-days`"
                     v-model="intakeFrequencyCustomDaysSelect"
                     class="w-full text-base md:text-lg"
@@ -317,7 +385,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                             : 'border-border bg-surface text-text hover:bg-surface-hover'
                     "
                     :aria-pressed="form.schedule.intake_frequency === 'weekdays'"
-                    @click="setIntakeFrequencyPreset('weekdays')"
+                    @click="setIntakeFrequencyWeekdays()"
                 >
                     {{ t('patient.medications.intakeFrequencies.weekdaysButton') }}
                 </button>

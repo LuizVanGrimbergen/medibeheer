@@ -1,15 +1,14 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
 import { useI18n } from 'vue-i18n';
+import MedicationStockAmountField from '@/Components/Patient/Medications/form/MedicationStockAmountField.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,
     patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
 } from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
@@ -33,76 +32,28 @@ const { t } = useI18n();
             v-if="props.showStockFields"
             class="space-y-8"
         >
-            <div>
-                <Label
-                    :for="`${props.idPrefix}-current-stock`"
-                    :class="cn(patientFormLabelClass, 'text-xl')"
-                >
-                    {{ t('patient.medications.fields.currentStock') }}
-                </Label>
-                <Input
-                    :id="`${props.idPrefix}-current-stock`"
-                    v-model="props.form.current_stock"
-                    type="text"
-                    name="current_stock"
-                    autocomplete="off"
-                    maxlength="500"
-                    :placeholder="t('patient.medications.fields.currentStockPlaceholder')"
-                    :class="
-                        cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
-                            'mt-2',
-                            props.form.errors.current_stock ? patientFormFieldInvalidClass : null,
-                        )
-                    "
-                    :aria-invalid="Boolean(props.form.errors.current_stock)"
-                    :aria-describedby="
-                        props.form.errors.current_stock
-                            ? `${props.idPrefix}-current-stock-error`
-                            : undefined
-                    "
-                />
-                <InputError
-                    :id="`${props.idPrefix}-current-stock-error`"
-                    :message="props.form.errors.current_stock"
-                />
-            </div>
-            <div>
-                <Label
-                    :for="`${props.idPrefix}-low-stock`"
-                    :class="cn(patientFormLabelClass, 'text-xl')"
-                >
-                    {{ t('patient.medications.fields.lowStock') }}
-                </Label>
-                <Input
-                    :id="`${props.idPrefix}-low-stock`"
-                    v-model="props.form.low_stock"
-                    type="text"
-                    name="low_stock"
-                    autocomplete="off"
-                    maxlength="64"
-                    :placeholder="t('patient.medications.fields.lowStockPlaceholder')"
-                    :class="
-                        cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
-                            'mt-2',
-                            props.form.errors.low_stock ? patientFormFieldInvalidClass : null,
-                        )
-                    "
-                    :aria-invalid="Boolean(props.form.errors.low_stock)"
-                    :aria-describedby="
-                        props.form.errors.low_stock
-                            ? `${props.idPrefix}-low-stock-error`
-                            : undefined
-                    "
-                />
-                <InputError
-                    :id="`${props.idPrefix}-low-stock-error`"
-                    :message="props.form.errors.low_stock"
-                />
-            </div>
+            <MedicationStockAmountField
+                v-model="props.form.current_stock"
+                :id-prefix="props.idPrefix"
+                field-id-suffix="current-stock"
+                label-key="patient.medications.fields.currentStock"
+                placeholder-example-amount="200"
+                fallback-placeholder-key="patient.medications.fields.currentStockPlaceholder"
+                :dose-unit="props.form.dose_unit"
+                :maxlength="500"
+                :error-message="props.form.errors.current_stock"
+            />
+            <MedicationStockAmountField
+                v-model="props.form.low_stock"
+                :id-prefix="props.idPrefix"
+                field-id-suffix="low-stock"
+                label-key="patient.medications.fields.lowStock"
+                placeholder-example-amount="40"
+                fallback-placeholder-key="patient.medications.fields.lowStockPlaceholder"
+                :dose-unit="props.form.dose_unit"
+                :maxlength="64"
+                :error-message="props.form.errors.low_stock"
+            />
         </div>
         <div>
             <Label

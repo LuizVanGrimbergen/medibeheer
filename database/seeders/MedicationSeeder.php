@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\MedicationColor;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
@@ -29,12 +28,12 @@ class MedicationSeeder extends Seeder
 
         $demos = [
             [
-                'name' => 'Paracetamol 500 mg',
+                'name' => 'Paracetamol',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::BLUE,
-                'note' => 'Maximaal 6 tabletten per 24 uur. Bij aanhoudende koorts contact opnemen met de huisarts.',
+                'strength' => '500 mg',
+                'note' => 'Maximaal 6 tabletten in 24 uur. Bij aanhoudende koorts of pijn: huisarts.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -46,17 +45,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(2)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '48',
-                    'low_stock' => '12',
+                    'current_stock' => '72',
+                    'low_stock' => '18',
                 ],
             ],
             [
-                'name' => 'Metformine 500 mg',
+                'name' => 'Metformine',
                 'dose' => '500',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => null,
-                'note' => 'Inname tijdens of vlak na de maaltijd om maag-darmklachten te beperken.',
+                'strength' => '500 mg',
+                'note' => 'Tijdens of direct na de maaltijd innemen om maag-darmklachten te beperken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -68,17 +67,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(6)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '180',
+                    'current_stock' => '38',
                     'low_stock' => '28',
                 ],
             ],
             [
-                'name' => 'Atorvastatine 40 mg',
+                'name' => 'Atorvastatine',
                 'dose' => '40',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::PURPLE,
-                'note' => null,
+                'strength' => '40 mg',
+                'note' => 'Voor het slapen gaan innemen, tenzij de arts anders voorschrijft.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -95,12 +94,12 @@ class MedicationSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Omeprazol 20 mg',
+                'name' => 'Omeprazol',
                 'dose' => '20',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::BLACK,
-                'note' => 'Capsule heel doorslikken, niet kauwen of openmaken.',
+                'strength' => '20 mg',
+                'note' => 'Capsule heel doorslikken; niet kauwen of openmaken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -112,17 +111,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(4)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '56',
-                    'low_stock' => '10',
+                    'current_stock' => '10',
+                    'low_stock' => '14',
                 ],
             ],
             [
-                'name' => 'Bisoprololfumaraat 2,5 mg',
+                'name' => 'Bisoprololfumaraat',
                 'dose' => '2.5',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::RED,
-                'note' => 'Niet zomaar stoppen; overleg bij klachten met de behandelend arts.',
+                'strength' => '2,5 mg',
+                'note' => 'Niet zonder overleg stoppen; bij duizeligheid of kortademigheid: arts bellen.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::WEEKDAYS,
@@ -134,17 +133,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(5)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '100',
-                    'low_stock' => '20',
+                    'current_stock' => '24',
+                    'low_stock' => '18',
                 ],
             ],
             [
-                'name' => 'Levothyroxine 75 microgram',
+                'name' => 'Levothyroxine',
                 'dose' => '75',
                 'dose_unit' => MedicationDoseUnit::OTHER,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::PINK,
-                'note' => 'Tablet op nuchtere maag met water; minstens een half uur voor het ontbijt geen calcium- of ijzerpreparaten.',
+                'strength' => '75 microgram',
+                'note' => 'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -161,12 +160,12 @@ class MedicationSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Salbutamol aerosol 100 microgram/dosis',
+                'name' => 'Salbutamol',
                 'dose' => '2',
                 'dose_unit' => MedicationDoseUnit::UNIT,
                 'type_medication' => MedicationType::OTHER,
-                'color' => MedicationColor::BLUE,
-                'note' => 'Bij benauwdheid maximaal 4 pufjes per keer; bij verergering 112 of huisarts.',
+                'strength' => '100 microgram per puff (aerosol)',
+                'note' => 'Bij benauwdheid; bij geen verbetering of verergering: 112 of huisarts.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -178,17 +177,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(3)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '2',
-                    'low_stock' => '1',
+                    'current_stock' => '40',
+                    'low_stock' => '60',
                 ],
             ],
             [
-                'name' => 'Cholecalciferol (vitamine D3) 25 microgram',
+                'name' => 'Cholecalciferol',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'color' => null,
-                'note' => 'Eén tablet per week, bij voorkeur op dezelfde dag.',
+                'strength' => '25 microgram (1000 IE)',
+                'note' => 'Eén tablet per week, bij voorkeur dezelfde dag en bij een maaltijd.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::everyNDaysValue(7),
@@ -200,17 +199,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(8)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '18',
-                    'low_stock' => '4',
+                    'current_stock' => '24',
+                    'low_stock' => '6',
                 ],
             ],
             [
-                'name' => 'Insuline glargine 100 E/ml',
+                'name' => 'Insuline glargine',
                 'dose' => '24',
                 'dose_unit' => MedicationDoseUnit::INJECTION,
                 'type_medication' => MedicationType::INJECTION,
-                'color' => null,
-                'note' => 'Injectie op een vaste plek in de buik of bovenbeen; roteer injectieplaatsen.',
+                'strength' => '100 E/ml',
+                'note' => 'Basale insuline op vast tijdstip; roteer injectieplaatsen (buik/bovenbeen).',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -222,17 +221,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(6)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '5',
-                    'low_stock' => '2',
+                    'current_stock' => '36',
+                    'low_stock' => '72',
                 ],
             ],
             [
-                'name' => 'Hydrocortisoncrème 1%',
+                'name' => 'Hydrocortisoncrème',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::OTHER,
                 'type_medication' => MedicationType::CREAM,
-                'color' => MedicationColor::PINK,
-                'note' => 'Dun laagje op de aangedane huid; niet op gezicht of grote oppervlakken zonder overleg.',
+                'strength' => '1 %',
+                'note' => 'Dun laagje op de aangedane huid; niet langdurig op gezicht of grote oppervlakken zonder overleg.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -244,17 +243,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addWeeks(2)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '1',
-                    'low_stock' => '1',
+                    'current_stock' => '3',
+                    'low_stock' => '2',
                 ],
             ],
             [
-                'name' => 'Lactulose drank 670 mg/ml',
+                'name' => 'Lactulose',
                 'dose' => '15',
                 'dose_unit' => MedicationDoseUnit::MILLILITER,
                 'type_medication' => MedicationType::LIQUID,
-                'color' => MedicationColor::PURPLE,
-                'note' => 'Goed schudden voor gebruik; eventueel verdund met water of sap.',
+                'strength' => '670 mg/ml',
+                'note' => 'Fles goed schudden; eventueel verdund met water of sap.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -271,12 +270,12 @@ class MedicationSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Macrogol 3350 met elektrolyten 13,5 g',
+                'name' => 'Macrogol met elektrolyten',
                 'dose' => '13.5',
                 'dose_unit' => MedicationDoseUnit::GRAM,
                 'type_medication' => MedicationType::SACHETS,
-                'color' => MedicationColor::BLACK,
-                'note' => 'Zakje oplossen in een half glas water; direct drinken.',
+                'strength' => '13,5 g per zakje',
+                'note' => 'Zakje oplossen in een half glas water; meteen opdrinken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -288,17 +287,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addWeeks(3)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '20',
-                    'low_stock' => '6',
+                    'current_stock' => '6',
+                    'low_stock' => '10',
                 ],
             ],
             [
-                'name' => 'Travoprost oogdruppels 40 microgram/ml',
+                'name' => 'Travoprost',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::DROP,
                 'type_medication' => MedicationType::LIQUID,
-                'color' => null,
-                'note' => 'Eén druppel in het aangedane oog; druk een minuut zachtjes op de traanbuis om systemische opname te beperken.',
+                'strength' => '40 microgram/ml',
+                'note' => 'Eén druppel in het aangedane oog; daarna een minuut zachtjes drukken op de traanbuis.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
@@ -310,17 +309,17 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(10)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '2',
-                    'low_stock' => '1',
+                    'current_stock' => '11',
+                    'low_stock' => '8',
                 ],
             ],
             [
-                'name' => 'Prednisolon 5 mg',
+                'name' => 'Prednisolon',
                 'dose' => '5',
                 'dose_unit' => MedicationDoseUnit::MILLIGRAM,
                 'type_medication' => MedicationType::PILL,
-                'color' => MedicationColor::RED,
-                'note' => 'Om de dag innemen volgens schema van de specialist; niet zelf stoppen.',
+                'strength' => '5 mg',
+                'note' => 'Om de dag volgens schema van de arts; niet zelf stoppen of dosering wijzigen.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::everyNDaysValue(2),
@@ -337,11 +336,11 @@ class MedicationSeeder extends Seeder
                 ],
             ],
             [
-                'name' => 'Magnesium citraat 375 mg',
+                'name' => 'Magnesiumcitraat',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::SACHET,
                 'type_medication' => MedicationType::SACHETS,
-                'color' => MedicationColor::BLUE,
+                'strength' => '375 mg per zakje',
                 'note' => 'Zakje oplossen in water; innemen voor het slapen gaan.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::AFTER_FOOD,
@@ -354,7 +353,7 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addMonths(3)->toDateString(),
                 ],
                 'stock' => [
-                    'current_stock' => '4',
+                    'current_stock' => '28',
                     'low_stock' => '8',
                 ],
             ],

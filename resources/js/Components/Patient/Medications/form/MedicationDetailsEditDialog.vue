@@ -224,23 +224,6 @@ const secondaryButtonClass =
                                 >
                                     {{ t('patient.medications.actions.cancel') }}
                                 </button>
-                                <button
-                                    v-if="editingStep >= 1"
-                                    type="button"
-                                    :disabled="props.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'outline',
-                                                size: 'lg',
-                                            }),
-                                            'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg',
-                                        )
-                                    "
-                                    @click.stop.prevent="editingStep = 0"
-                                >
-                                    {{ t('patient.medications.actions.backToOverview') }}
-                                </button>
                             </div>
                         </CardContent>
                     </Card>

@@ -15,6 +15,25 @@ abstract class MedicationIntakeFrequency
         return "every_{$n}_days";
     }
 
+    public static function parseEveryNDays(string $value): ?int
+    {
+        if ($value === self::DAILY || $value === self::WEEKDAYS) {
+            return null;
+        }
+
+        if (preg_match('/^every_(\d+)_days$/', $value, $matches) !== 1) {
+            return null;
+        }
+
+        $n = (int) $matches[1];
+
+        if ($n < 2) {
+            return null;
+        }
+
+        return $n;
+    }
+
     public static function allowedValues(): array
     {
         static $values = null;

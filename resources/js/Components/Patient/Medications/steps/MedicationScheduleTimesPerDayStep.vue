@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { InputError } from '@/Components/ui/input-error';
@@ -27,6 +27,50 @@ const { t } = useI18n();
 function timesPerDayOptionLabel(count: number): string {
     return t('patient.medications.timesPerDay.nTimesPerDay', { n: count });
 }
+
+function isTimesPerDayPresetValue(value: string): boolean {
+    return (TIMES_PER_DAY_PRESET_VALUES as readonly string[]).includes(value.trim());
+}
+
+function isTimesPerDayCustomValue(value: string): boolean {
+    if (!/^\d+$/.test(value.trim())) {
+        return false;
+    }
+
+    const count = Number(value.trim());
+
+    return Number.isInteger(count) && count >= 5 && count <= 24;
+}
+
+const prefersCustomTimesPerDay = ref(isTimesPerDayCustomValue(form.schedule.times_per_day));
+
+const showCustomTimesPerDaySelect = computed(
+    () =>
+        prefersCustomTimesPerDay.value ||
+        isTimesPerDayCustomValue(form.schedule.times_per_day),
+);
+
+const selectTimesPerDayPreset = (value: (typeof TIMES_PER_DAY_PRESET_VALUES)[number]): void => {
+    prefersCustomTimesPerDay.value = false;
+    form.schedule.times_per_day = value;
+};
+
+const selectCustomTimesPerDay = (): void => {
+    prefersCustomTimesPerDay.value = true;
+};
+
+watch(
+    () => form.schedule.times_per_day,
+    (value) => {
+        if (prefersCustomTimesPerDay.value) {
+            return;
+        }
+
+        if (!isTimesPerDayPresetValue(value) && value.trim().length > 0) {
+            prefersCustomTimesPerDay.value = true;
+        }
+    },
+);
 
 const timesPerDayCustomSelect = computed({
     get(): string {
@@ -98,17 +142,36 @@ const timesPerDayCustomSelect = computed({
                     type="button"
                     class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
                     :class="
-                        form.schedule.times_per_day.trim() === value
+                        !showCustomTimesPerDaySelect &&
+                            form.schedule.times_per_day.trim() === value
                             ? 'border-primary bg-primary/10 text-text-heading'
                             : 'border-border bg-surface text-text hover:bg-surface-hover'
                     "
-                    :aria-pressed="form.schedule.times_per_day.trim() === value"
-                    @click="form.schedule.times_per_day = value"
+                    :aria-pressed="
+                        !showCustomTimesPerDaySelect &&
+                            form.schedule.times_per_day.trim() === value
+                    "
+                    @click="selectTimesPerDayPreset(value)"
                 >
                     {{ timesPerDayOptionLabel(Number(value)) }}
                 </button>
+                <button
+                    :id="`${idPrefix}-schedule-times-per-day-custom-trigger`"
+                    type="button"
+                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                    :class="
+                        showCustomTimesPerDaySelect
+                            ? 'border-primary bg-primary/10 text-text-heading'
+                            : 'border-border bg-surface text-text hover:bg-surface-hover'
+                    "
+                    :aria-pressed="showCustomTimesPerDaySelect"
+                    @click="selectCustomTimesPerDay"
+                >
+                    {{ t('patient.medications.intakePeriodPresets.custom') }}
+                </button>
             </div>
             <select
+                v-if="showCustomTimesPerDaySelect"
                 :id="`${idPrefix}-schedule-times-per-day-custom`"
                 v-model="timesPerDayCustomSelect"
                 class="w-full text-base md:text-lg"

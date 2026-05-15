@@ -95,7 +95,7 @@ class PatientMedicationController extends Controller
             'dose',
             'dose_unit',
             'type_medication',
-            'color',
+            'strength',
             'note',
         ]);
 
