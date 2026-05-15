@@ -2,6 +2,9 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
+import MedicationStockAmountField from '@/Components/Patient/Medications/form/MedicationStockAmountField.vue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
@@ -21,6 +24,7 @@ import { cn } from '@/lib/utils';
 const props = defineProps<{
     open: boolean;
     medicationId: number;
+    doseUnit: string | null;
     stock: MedicationStockListItem;
     formId: string;
     idPrefix: string;
@@ -61,28 +65,6 @@ watch(
     },
 );
 
-function parseFlexibleStock(value: string): number | null {
-    const trimmed = value.trim();
-
-    if (trimmed.length < 1) {
-        return null;
-    }
-
-    const normalized = trimmed.replace(',', '.');
-
-    if (!/^-?\d+(\.\d+)?$/.test(normalized)) {
-        return null;
-    }
-
-    const n = Number.parseFloat(normalized);
-
-    if (!Number.isFinite(n) || n < 0) {
-        return null;
-    }
-
-    return n;
-}
-
 function prefersCommaDecimal(value: string): boolean {
     return value.trim().includes(',');
 }
@@ -116,7 +98,7 @@ function mergeAddIntoCurrentStockForSubmit(): boolean {
 
     const snapshot = serverCurrentStockAtOpen.value.trim();
 
-    const add = parseFlexibleStock(stockToAdd.value);
+    const add = parseMedicationStockNumericValue(stockToAdd.value, props.doseUnit);
 
     if (add === null || add <= 0) {
         addStockError.value = t('patient.inventory.addStockInvalidAmount');
@@ -124,7 +106,7 @@ function mergeAddIntoCurrentStockForSubmit(): boolean {
         return false;
     }
 
-    const base = parseFlexibleStock(snapshot);
+    const base = parseMedicationStockNumericValue(snapshot, props.doseUnit);
 
     if (base === null) {
         addStockError.value = t('patient.inventory.addStockInvalidBase');
@@ -135,7 +117,11 @@ function mergeAddIntoCurrentStockForSubmit(): boolean {
     const useComma =
         prefersCommaDecimal(snapshot) || prefersCommaDecimal(stockToAdd.value);
 
-    form.current_stock = formatStockTotal(base + add, useComma);
+    form.current_stock = formatMedicationStockDisplayAmount(
+        t,
+        formatStockTotal(base + add, useComma),
+        props.doseUnit,
+    );
     stockToAdd.value = '';
 
     return true;
@@ -280,45 +266,17 @@ function submitStock(): void {
                                             />
                                         </div>
                                     </div>
-                                    <div>
-                                        <Label
-                                            :for="`${props.idPrefix}-low-stock`"
-                                            :class="cn(patientFormLabelClass, 'text-xl')"
-                                        >
-                                            {{ t('patient.medications.fields.lowStock') }}
-                                        </Label>
-                                        <Input
-                                            :id="`${props.idPrefix}-low-stock`"
-                                            v-model="form.low_stock"
-                                            type="text"
-                                            name="low_stock"
-                                            autocomplete="off"
-                                            maxlength="64"
-                                            :placeholder="
-                                                t('patient.medications.fields.lowStockPlaceholder')
-                                            "
-                                            :class="
-                                                cn(
-                                                    patientFormFieldInputClass,
-                                                    patientFormLargeTouchFieldClass,
-                                                    'mt-2',
-                                                    form.errors.low_stock
-                                                        ? patientFormFieldInvalidClass
-                                                        : null,
-                                                )
-                                            "
-                                            :aria-invalid="Boolean(form.errors.low_stock)"
-                                            :aria-describedby="
-                                                form.errors.low_stock
-                                                    ? `${props.idPrefix}-low-stock-error`
-                                                    : undefined
-                                            "
-                                        />
-                                        <InputError
-                                            :id="`${props.idPrefix}-low-stock-error`"
-                                            :message="form.errors.low_stock"
-                                        />
-                                    </div>
+                                    <MedicationStockAmountField
+                                        v-model="form.low_stock"
+                                        :id-prefix="props.idPrefix"
+                                        field-id-suffix="low-stock"
+                                        label-key="patient.medications.fields.lowStock"
+                                        placeholder-example-amount="40"
+                                        fallback-placeholder-key="patient.medications.fields.lowStockPlaceholder"
+                                        :dose-unit="props.doseUnit ?? ''"
+                                        :maxlength="64"
+                                        :error-message="form.errors.low_stock"
+                                    />
                                 </div>
                             </CardContent>
                         </Card>
