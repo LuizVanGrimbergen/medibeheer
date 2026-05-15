@@ -26,6 +26,7 @@ class Medication extends Model
         'dose',
         'dose_unit',
         'type_medication',
+        'strength',
         'note',
     ];
 
@@ -36,6 +37,7 @@ class Medication extends Model
             'dose' => 'encrypted',
             'dose_unit' => MedicationDoseUnit::class,
             'type_medication' => MedicationType::class,
+            'strength' => 'encrypted',
             'note' => 'encrypted',
         ];
     }
