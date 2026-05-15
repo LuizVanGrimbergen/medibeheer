@@ -91,7 +91,7 @@ function dismiss(): void {
 <template>
     <Alert
         v-if="showBanner"
-        class="rounded-2xl border-2 border-primary/35 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+        class="mt-4 rounded-2xl border-2 border-primary/35 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
     >
         <AlertTitle class="text-lg font-semibold leading-snug text-text-heading sm:text-xl">
             {{ t('app.pwa.iosInstallTitle') }}
