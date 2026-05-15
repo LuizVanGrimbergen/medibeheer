@@ -259,6 +259,7 @@ export type MedicationListItem = {
     dose: string | null;
     dose_unit: MedicationDoseUnitValue | null;
     type_medication: MedicationTypeValue;
+    strength: string | null;
     note: string | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];
