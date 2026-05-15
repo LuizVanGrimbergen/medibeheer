@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { Calendar, Clock, FileText, Package, Pencil, Pill, Trash2 } from 'lucide-vue-next';
+import { Calendar, Clock, FileText, Package, Pencil, Scale, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
+import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
+import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import type { MedicationListItem, MedicationTypeValue } from '@/lib/types';
 
@@ -161,8 +164,24 @@ const doseLine = computed((): string | null => {
     return `${dose} ${chip}`;
 });
 
+const strengthLine = computed(() => props.medication.strength?.trim() || null);
+
 const typeLabel = computed(() =>
     t(`patient.medications.types.${props.medication.type_medication as MedicationTypeValue}`),
+);
+
+const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
+
+const medicationVisualToneClasses = computed(() =>
+    medicationListVisualToneClasses(stockProgressTone.value),
+);
+
+const medicationPillWrapToneClass = computed(
+    () => medicationVisualToneClasses.value.pillWrap,
+);
+
+const medicationPillIconClass = computed(
+    () => medicationVisualToneClasses.value.pillIcon,
 );
 
 const notePreview = computed((): string | null => {
@@ -184,11 +203,12 @@ const notePreview = computed((): string | null => {
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="min-w-0 w-full rounded-3xl border-2 bg-surface text-text shadow-md shadow-black/[0.04]"
+        :class="medicationVisualToneClasses.border"
     >
-        <CardContent class="relative p-6 sm:p-7">
+        <CardContent class="relative p-4 pb-6 pt-5 sm:p-8">
             <div
-                class="absolute right-6 top-6 z-10 flex flex-row items-center gap-0.5 sm:right-7 sm:top-7"
+                class="absolute right-4 top-4 z-10 flex flex-row items-center gap-0.5 sm:right-8 sm:top-8"
                 role="toolbar"
                 :aria-label="t('patient.medications.cardActionsAriaLabel')"
             >
@@ -213,62 +233,88 @@ const notePreview = computed((): string | null => {
                 </IconActionButton>
             </div>
 
-            <div class="flex min-w-0 flex-1 items-start gap-4 pr-21 sm:pr-28">
+            <div
+                class="flex min-w-0 w-full flex-col gap-5 pr-21 sm:flex-row sm:items-start sm:gap-6 sm:pr-28"
+            >
                 <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
+                    class="flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-16"
+                    :class="medicationPillWrapToneClass"
                 >
                     <span class="sr-only">{{ typeLabel }}</span>
-                    <Pill
-                        class="size-6 shrink-0 text-primary"
-                        aria-hidden="true"
+                    <MedicationTypeLeadIcon
+                        :medication-type="medication.type_medication"
+                        :icon-tone-class="medicationPillIconClass"
                     />
                 </div>
-                <div class="min-w-0 flex-1 overflow-hidden space-y-3.5">
+                <div
+                    class="flex w-full min-w-0 flex-col space-y-3.5 sm:flex-1 sm:items-stretch"
+                >
                     <p
-                        class="truncate text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                        class="min-w-0 wrap-break-word text-lg font-bold leading-snug text-text-heading sm:text-xl"
                     >
                         {{ medication.name }}
                     </p>
                     <p
                         v-if="doseLine !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:text-base"
+                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
                     >
                         <Package
-                            class="mt-0.5 size-5 shrink-0 text-text-muted"
+                            class="mt-0.5 size-5 shrink-0 text-text-muted sm:mt-0"
                             aria-hidden="true"
                         />
-                        <span class="min-w-0 flex-1">
+                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span
-                                class="mb-1 block text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
                             >
                                 {{ t('patient.medications.overview.amountPerIntake') }}
                             </span>
                             <span
-                                class="block text-base tabular-nums text-text sm:text-lg"
+                                class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                             >
                                 {{ doseLine }}
                             </span>
                         </span>
                     </p>
                     <p
-                        v-if="sortedDoseTimes.length > 0"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:text-base"
+                        v-if="strengthLine !== null"
+                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
                     >
-                        <Clock
-                            class="mt-0.5 size-5 shrink-0 text-text-muted"
+                        <Scale
+                            class="mt-0.5 size-5 shrink-0 text-text-muted sm:mt-0"
                             aria-hidden="true"
                         />
-                        <span class="min-w-0 flex-1">
+                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span
-                                class="mb-1 block text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
+                            >
+                                {{ t('patient.medications.fields.strength') }}
+                            </span>
+                            <span
+                                class="block text-base font-semibold leading-relaxed text-text sm:text-lg"
+                            >
+                                {{ strengthLine }}
+                            </span>
+                        </span>
+                    </p>
+                    <p
+                        v-if="sortedDoseTimes.length > 0"
+                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
+                    >
+                        <Clock
+                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
+                            aria-hidden="true"
+                        />
+                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <span
+                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
                             >
                                 {{ t('patient.medications.fields.doseTime') }}
                             </span>
-                            <span class="block space-y-1">
+                            <span class="flex flex-col gap-1">
                                 <span
                                     v-for="time in sortedDoseTimes"
                                     :key="time"
-                                    class="block text-base tabular-nums text-text sm:text-lg"
+                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                                 >
                                     {{ time }}
                                 </span>
@@ -277,50 +323,50 @@ const notePreview = computed((): string | null => {
                     </p>
                     <p
                         v-if="scheduleDateRow !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:text-base"
+                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
                         :aria-label="scheduleDateRow.ariaLabel"
                     >
                         <Calendar
-                            class="mt-0.5 size-5 shrink-0 text-text-muted"
+                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
                             aria-hidden="true"
                         />
                         <span class="grid min-w-0 flex-1 grid-cols-1 gap-3.5">
-                            <span class="block min-w-0">
+                            <span class="flex min-w-0 flex-col gap-0.5">
                                 <span
-                                    class="mb-1 block text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                                    class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
                                 >
                                     {{ t('patient.medications.fields.startDate') }}
                                 </span>
                                 <time
                                     v-if="scheduleDateRow.startIso !== null"
-                                    class="block text-base tabular-nums text-text sm:text-lg"
+                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                                     :datetime="scheduleDateRow.startIso"
                                 >
                                     {{ scheduleDateRow.startDisplay }}
                                 </time>
                                 <span
                                     v-else
-                                    class="block text-base tabular-nums text-text sm:text-lg"
+                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                                 >
                                     {{ scheduleDateRow.startDisplay }}
                                 </span>
                             </span>
-                            <span class="block min-w-0">
+                            <span class="flex min-w-0 flex-col gap-0.5">
                                 <span
-                                    class="mb-1 block text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                                    class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
                                 >
                                     {{ t('patient.medications.fields.endDate') }}
                                 </span>
                                 <time
                                     v-if="scheduleDateRow.endIso !== null"
-                                    class="block text-base tabular-nums text-text sm:text-lg"
+                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                                     :datetime="scheduleDateRow.endIso"
                                 >
                                     {{ scheduleDateRow.endDisplay }}
                                 </time>
                                 <span
                                     v-else
-                                    class="block text-base tabular-nums text-text sm:text-lg"
+                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
                                 >
                                     {{ scheduleDateRow.endDisplay }}
                                 </span>
@@ -329,20 +375,20 @@ const notePreview = computed((): string | null => {
                     </p>
                     <p
                         v-if="notePreview !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:text-base"
+                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
                     >
                         <FileText
-                            class="mt-0.5 size-5 shrink-0 text-text-muted"
+                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
                             aria-hidden="true"
                         />
-                        <span class="min-w-0 flex-1">
+                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                             <span
-                                class="mb-1 block text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
                             >
                                 {{ t('patient.medications.fields.note') }}
                             </span>
                             <span
-                                class="line-clamp-4 block whitespace-pre-wrap wrap-break-word text-base text-text sm:text-lg"
+                                class="line-clamp-4 block whitespace-pre-wrap wrap-break-word text-base font-semibold leading-relaxed text-text sm:text-lg"
                             >
                                 {{ notePreview }}
                             </span>
