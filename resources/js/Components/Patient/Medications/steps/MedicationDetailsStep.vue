@@ -57,16 +57,6 @@ const dosePlaceholder = computed(() => {
     return t('patient.medications.fields.dosePlaceholder');
 });
 
-const doseInputDescribedBy = computed(() => {
-    const parts: string[] = [`${idPrefix}-dose-intake-hint`];
-
-    if (form.errors.dose) {
-        parts.push(`${idPrefix}-dose-error`);
-    }
-
-    return parts.join(' ');
-});
-
 watch(
     () => form.type_medication,
     () => {
@@ -212,15 +202,9 @@ watch(
             <legend :class="cn(patientFormLabelClass, 'text-lg md:text-xl')">
                 {{ t('patient.medications.fields.dose') }}
             </legend>
-            <p
-                :id="`${idPrefix}-dose-intake-hint`"
-                class="mt-2 max-w-prose text-sm leading-snug text-text-muted md:text-base"
-            >
-                {{ t('patient.medications.fields.doseIntakeHint') }}
-            </p>
             <div
                 :id="`${idPrefix}-dose-unit`"
-                class="mt-3"
+                class="mt-2"
                 :class="
                     cn(
                         'flex min-h-14 w-full min-w-0 overflow-hidden rounded-2xl border-2 bg-surface transition-[border-color,box-shadow] touch-manipulation',
@@ -243,7 +227,9 @@ watch(
                     class="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     :aria-invalid="Boolean(form.errors.dose)"
                     aria-required="true"
-                    :aria-describedby="doseInputDescribedBy"
+                    :aria-describedby="
+                        form.errors.dose ? `${idPrefix}-dose-error` : undefined
+                    "
                 />
                 <div
                     class="relative flex shrink-0 self-stretch border-l-2 border-border"
@@ -289,5 +275,40 @@ watch(
                 :message="form.errors.dose_unit"
             />
         </fieldset>
+
+        <div>
+            <Label
+                :for="`${idPrefix}-strength`"
+                :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
+            >
+                {{ t('patient.medications.fields.strength') }}
+            </Label>
+            <Input
+                :id="`${idPrefix}-strength`"
+                v-model="form.strength"
+                type="text"
+                name="strength"
+                autocomplete="off"
+                maxlength="500"
+                :placeholder="t('patient.medications.fields.strengthPlaceholder')"
+                class="mt-2"
+                :class="
+                    cn(
+                        patientFormFieldInputClass,
+                        patientFormLargeTouchFieldClass,
+                        'md:min-h-14 md:py-3! md:text-lg! md:leading-normal!',
+                        form.errors.strength ? patientFormFieldInvalidClass : null,
+                    )
+                "
+                :aria-invalid="Boolean(form.errors.strength)"
+                :aria-describedby="
+                    form.errors.strength ? `${idPrefix}-strength-error` : undefined
+                "
+            />
+            <InputError
+                :id="`${idPrefix}-strength-error`"
+                :message="form.errors.strength"
+            />
+        </div>
     </div>
 </template>
