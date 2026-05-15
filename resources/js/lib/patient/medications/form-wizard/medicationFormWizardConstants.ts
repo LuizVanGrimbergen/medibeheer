@@ -2,9 +2,10 @@ export const MEDICATION_FORM_WIZARD_STEP_TOTAL = 7;
 
 export const medicationFormErrorScrollOrder = [
     'name',
+    'type_medication',
     'dose',
     'dose_unit',
-    'type_medication',
+    'strength',
     'current_stock',
     'low_stock',
     'note',
@@ -21,9 +22,10 @@ export type MedicationFormWizardScrollFieldKey = (typeof medicationFormErrorScro
 
 export const medicationFormFieldDomSuffix: Record<MedicationFormWizardScrollFieldKey, string> = {
     name: 'name',
-    dose: 'dose',
-    dose_unit: 'dose-unit',
     type_medication: 'type',
+    dose: 'dose',
+    dose_unit: 'dose-unit-select',
+    strength: 'strength',
     current_stock: 'current-stock',
     low_stock: 'low-stock',
     note: 'note',

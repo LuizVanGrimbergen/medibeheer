@@ -23,6 +23,7 @@ export function attemptMedicationWizardAdvanceFromStep1(
         dose: form.dose,
         dose_unit: form.dose_unit,
         type_medication: form.type_medication,
+        strength: form.strength,
     });
 
     if (!check.ok) {
