@@ -116,6 +116,37 @@ test('patients can create a medication with an optional trimmed note', function 
     expect($raw->note)->not->toBe('Na het eten innemen');
 });
 
+test('patients can create a medication with optional strength separate from intake dose', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Paracetamol',
+        'dose' => '1',
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
+        'strength' => '1000 mg per tablet',
+        'type_medication' => MedicationType::PILL->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $medication = Medication::query()->where('patient_id', $patient->id)->first();
+    expect($medication)->not->toBeNull();
+    expect($medication->dose)->toBe('1');
+    expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
+    expect($medication->strength)->toBe('1000 mg per tablet');
+
+    $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
+    expect($schedule)->not->toBeNull();
+    expect($schedule->dose_quantity)->toBe('1');
+
+    $raw = DB::table('medications')->where('id', $medication->id)->first();
+    expect((string) $raw->strength)->not->toBe('1000 mg per tablet');
+});
+
 test('patients cannot store a medication without stock fields', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
