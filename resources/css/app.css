@@ -77,6 +77,19 @@
     --color-input-text: #1f334a;
     --color-input-placeholder: #2f6fae;
 
+    --animate-supply-alert-flicker: supply-alert-flicker 1.4s ease-in-out infinite;
+
+}
+
+@keyframes supply-alert-flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
 }
 
 .font-lexend {
@@ -149,5 +162,11 @@
 
     .daily-checkin-symptom-chip {
         @apply min-h-14 w-full justify-start rounded-xl px-4 py-3 text-left font-semibold whitespace-normal sm:min-h-16 sm:w-auto sm:justify-center sm:rounded-2xl sm:px-5 sm:py-3 sm:text-center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .animate-supply-alert-flicker {
+            animation: none;
+        }
     }
 }

@@ -4,7 +4,6 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
-import MedicationStockAmountField from '@/Components/Patient/Medications/form/MedicationStockAmountField.vue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
@@ -43,7 +42,6 @@ const serverCurrentStockAtOpen = ref('');
 
 const form = useForm({
     current_stock: '',
-    low_stock: '',
 });
 
 watch(
@@ -55,7 +53,6 @@ watch(
 
         form.defaults({
             current_stock: props.stock.current_stock,
-            low_stock: props.stock.low_stock,
         });
         form.reset();
         form.clearErrors();
@@ -266,17 +263,6 @@ function submitStock(): void {
                                             />
                                         </div>
                                     </div>
-                                    <MedicationStockAmountField
-                                        v-model="form.low_stock"
-                                        :id-prefix="props.idPrefix"
-                                        field-id-suffix="low-stock"
-                                        label-key="patient.medications.fields.lowStock"
-                                        placeholder-example-amount="40"
-                                        fallback-placeholder-key="patient.medications.fields.lowStockPlaceholder"
-                                        :dose-unit="props.doseUnit ?? ''"
-                                        :maxlength="64"
-                                        :error-message="form.errors.low_stock"
-                                    />
                                 </div>
                             </CardContent>
                         </Card>

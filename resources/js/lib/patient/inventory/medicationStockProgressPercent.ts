@@ -1,18 +1,17 @@
-import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
+import type { MedicationSupplyEstimateQuality } from '@/lib/types';
+
+import { MEDICATION_SUPPLY_PROGRESS_FULL_DAYS } from './medicationSupplyDayThresholds';
 
 export function medicationStockProgressPercent(
-    currentStock: string,
-    lowStock: string,
-    doseUnit?: string | null,
+    supplyEstimateDays: number | null,
+    supplyEstimateQuality: MedicationSupplyEstimateQuality,
 ): number | null {
-    const current = parseMedicationStockNumericValue(currentStock, doseUnit);
-    const low = parseMedicationStockNumericValue(lowStock, doseUnit);
-
-    if (current === null || low === null) {
+    if (supplyEstimateQuality !== 'approx' || supplyEstimateDays === null) {
         return null;
     }
 
-    const scale = Math.max(low * 2, current, Number.EPSILON);
+    const days = Math.max(0, supplyEstimateDays);
+    const capped = Math.min(days, MEDICATION_SUPPLY_PROGRESS_FULL_DAYS);
 
-    return Math.min(100, Math.round((current / scale) * 100));
+    return Math.round((capped / MEDICATION_SUPPLY_PROGRESS_FULL_DAYS) * 100);
 }
