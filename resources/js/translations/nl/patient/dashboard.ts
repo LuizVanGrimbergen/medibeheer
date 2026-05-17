@@ -39,4 +39,40 @@ export default {
             done: 'Gereed',
         },
     },
+    todayMedications: {
+        title: 'Medicatie vandaag',
+        description:
+            'Dit moet u vandaag innemen. Tik op de knop zodra u de dosis heeft genomen.',
+        empty: 'Vandaag hoeft u geen medicatie in te nemen.',
+        markTaken: 'Inemen',
+        taken: 'Ingenomen',
+        takenSection: {
+            title: 'Ingenomen',
+        },
+        intakeCard: {
+            dose: 'Dosis',
+            time: 'Inname om',
+            note: 'Notitie',
+        },
+        takenAria: '{name} om {time} als ingenomen gemarkeerd',
+        markTakenAria: 'Neem {name} om {time} in',
+        periods: {
+            morning: {
+                title: 'Ochtend',
+                hint: '05:00 – 12:00',
+            },
+            afternoon: {
+                title: 'Middag',
+                hint: '12:00 – 17:00',
+            },
+            evening: {
+                title: 'Avond',
+                hint: '17:00 – 22:00',
+            },
+            night: {
+                title: 'Nacht',
+                hint: '22:00 – 05:00',
+            },
+        },
+    },
 };
