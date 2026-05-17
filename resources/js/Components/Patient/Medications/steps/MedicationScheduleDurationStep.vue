@@ -9,9 +9,12 @@ import { Label } from '@/Components/ui/label';
 import { todayLocalIsoDate } from '@/lib/patient/medications/schedule/medicationScheduleDuration';
 import {
     applyMedicationScheduleDurationPreset,
+    applyMedicationScheduleOngoingPreset,
     detectMedicationScheduleDurationPreset,
-    MEDICATION_SCHEDULE_DURATION_PRESET_KEYS,
+    MEDICATION_SCHEDULE_DURATION_ONGOING_KEY,
+    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS,
     type MedicationScheduleDurationPresetKey,
+    type MedicationScheduleDurationTimedPresetKey,
 } from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
     patientFormFieldInputClass,
@@ -35,25 +38,32 @@ const prefersCustomDuration = ref(
     ) === 'custom',
 );
 
-const activeDurationChoice = computed(() => {
-    if (prefersCustomDuration.value) {
-        return 'custom' as const;
-    }
+const activeDurationChoice = computed(
+    (): ReturnType<typeof detectMedicationScheduleDurationPreset> => {
+        if (prefersCustomDuration.value) {
+            return 'custom';
+        }
 
-    return detectMedicationScheduleDurationPreset(
-        form.schedule.start_date,
-        form.schedule.end_date,
-    );
-});
+        return detectMedicationScheduleDurationPreset(
+            form.schedule.start_date,
+            form.schedule.end_date,
+        );
+    },
+);
 
 const showCustomDateFields = computed(() => activeDurationChoice.value === 'custom');
 
 const durationPresetLabel = (preset: MedicationScheduleDurationPresetKey): string =>
     t(`patient.medications.intakePeriodPresets.${preset}`);
 
-const selectPreset = (preset: MedicationScheduleDurationPresetKey): void => {
+const selectTimedPreset = (preset: MedicationScheduleDurationTimedPresetKey): void => {
     prefersCustomDuration.value = false;
     applyMedicationScheduleDurationPreset(form.schedule, preset);
+};
+
+const selectOngoing = (): void => {
+    prefersCustomDuration.value = false;
+    applyMedicationScheduleOngoingPreset(form.schedule);
 };
 
 const selectCustom = (): void => {
@@ -64,19 +74,35 @@ const selectCustom = (): void => {
     }
 };
 
+const selectPreset = (preset: MedicationScheduleDurationPresetKey): void => {
+    if (preset === MEDICATION_SCHEDULE_DURATION_ONGOING_KEY) {
+        selectOngoing();
+
+        return;
+    }
+
+    selectTimedPreset(preset);
+};
+
 watch(
     () => [form.schedule.start_date, form.schedule.end_date] as const,
     () => {
+        const detected = detectMedicationScheduleDurationPreset(
+            form.schedule.start_date,
+            form.schedule.end_date,
+        );
+
+        if (detected === null) {
+            prefersCustomDuration.value = false;
+
+            return;
+        }
+
         if (prefersCustomDuration.value) {
             return;
         }
 
-        if (
-            detectMedicationScheduleDurationPreset(
-                form.schedule.start_date,
-                form.schedule.end_date,
-            ) === 'custom'
-        ) {
+        if (detected === 'custom') {
             prefersCustomDuration.value = true;
         }
     },
@@ -120,7 +146,7 @@ watch(
                     "
                 >
                     <button
-                        v-for="preset in MEDICATION_SCHEDULE_DURATION_PRESET_KEYS"
+                        v-for="preset in MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS"
                         :id="`${idPrefix}-schedule-duration-preset-${preset}`"
                         :key="preset"
                         type="button"

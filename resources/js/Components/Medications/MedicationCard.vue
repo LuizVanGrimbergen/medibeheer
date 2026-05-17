@@ -71,7 +71,9 @@ const scheduleDateRow = computed((): {
     const startDisplay =
         startTrimmed.length < 1 ? '—' : formatYmdForMedicationCard(startTrimmed);
     const endDisplay =
-        endTrimmed.length < 1 ? '—' : formatYmdForMedicationCard(endTrimmed);
+        endTrimmed.length < 1
+            ? t('patient.medications.intakePeriodPresets.ongoing')
+            : formatYmdForMedicationCard(endTrimmed);
 
     return {
         startDisplay,
