@@ -19,8 +19,6 @@ class PatientMedicationStockController extends Controller
     {
         $this->authorizePatientProfile($request);
 
-        $this->authorize('update', $medication);
-
         $medication->stocks()->create(array_merge($request->validated(), [
             'patient_id' => $medication->patient_id,
             'family_id' => $medication->family_id,
@@ -36,9 +34,11 @@ class PatientMedicationStockController extends Controller
     ): RedirectResponse {
         $this->authorizePatientProfile($request);
 
-        $this->authorize('update', $medication);
+        if (! $stock->medication->is($medication)) {
+            abort(404);
+        }
 
-        $stock->update($request->validated());
+        $stock->fill($request->validated())->save();
 
         return redirect()->back(fallback: route('patient.medications'));
     }

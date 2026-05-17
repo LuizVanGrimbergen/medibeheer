@@ -2,18 +2,20 @@
 
 namespace App\Http\Requests\Patient\Medications;
 
-use App\Models\Medication;
+use App\Http\Requests\Patient\Medications\Concerns\AuthorizesRouteMedication;
 use App\Models\MedicationStock;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMedicationStockRequest extends FormRequest
 {
+    use AuthorizesRouteMedication;
+
     public function authorize(): bool
     {
-        $medication = $this->route('medication');
         $stock = $this->route('stock');
+        $medication = $this->routeMedication();
 
-        if (! $medication instanceof Medication || ! $stock instanceof MedicationStock) {
+        if ($medication === null || ! $stock instanceof MedicationStock) {
             return false;
         }
 
@@ -21,14 +23,13 @@ class UpdateMedicationStockRequest extends FormRequest
             return false;
         }
 
-        return $this->user()?->can('update', $medication) ?? false;
+        return $this->userCanUpdateRouteMedication();
     }
 
     public function rules(): array
     {
         return [
             'current_stock' => ['sometimes', 'required', 'string', 'max:500'],
-            'low_stock' => ['sometimes', 'required', 'string', 'max:64'],
         ];
     }
 }
