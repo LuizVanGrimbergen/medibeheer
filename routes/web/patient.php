@@ -12,6 +12,7 @@ use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
 use App\Http\Middleware\EnsurePatient;
@@ -84,5 +85,8 @@ Route::middleware([
         /* Daily check-ins routes */
         Route::post('daily-checkins', [PatientDailyCheckinController::class, 'store'])
             ->name('daily-checkins.store');
+
+        Route::post('medication-intakes', [PatientMedicationIntakeController::class, 'store'])
+            ->name('medication-intakes.store');
 
     });

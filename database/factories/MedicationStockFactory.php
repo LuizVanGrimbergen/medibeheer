@@ -34,7 +34,6 @@ class MedicationStockFactory extends Factory
         return [
             'medication_id' => Medication::factory(),
             'current_stock' => (string) fake()->numberBetween(0, 100),
-            'low_stock' => (string) fake()->numberBetween(1, 10),
         ];
     }
 

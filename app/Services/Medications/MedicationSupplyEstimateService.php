@@ -7,28 +7,32 @@ namespace App\Services\Medications;
 use App\Enums\MedicationIntakeFrequency;
 use App\Models\Medication;
 use App\Models\MedicationSchedule;
+use App\Support\Medications\MedicationScheduleOccursOnDate;
 use App\Support\Medications\MedicationStockNumericParser;
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
 final class MedicationSupplyEstimateService
 {
     public function __construct(
         private readonly MedicationStockNumericParser $stockNumericParser,
+        private readonly MedicationScheduleOccursOnDate $scheduleOccursOnDate,
     ) {}
 
-    public function estimate(Medication $medication): array
+    public function estimate(Medication $medication, ?CarbonInterface $asOfDate = null): array
     {
-        $days = $this->resolveEstimatedSupplyDays($medication);
+        $days = $this->resolveEstimatedSupplyDays($medication, $asOfDate);
 
         return [
-            'days' => $days === null ? null : max(0, $days),
+            'days' => $days,
             'quality' => $days === null ? 'unknown' : 'approx',
         ];
     }
 
-    private function resolveEstimatedSupplyDays(Medication $medication): ?int
-    {
+    private function resolveEstimatedSupplyDays(
+        Medication $medication,
+        ?CarbonInterface $asOfDate,
+    ): ?int {
         $stock = $medication->stocks->first();
         $current = $stock === null
             ? null
@@ -41,11 +45,15 @@ final class MedicationSupplyEstimateService
             return null;
         }
 
-        $today = Carbon::today();
+        $medication->loadMissing('schedules.weekdays');
+
+        $referenceDate = $asOfDate === null
+            ? CarbonImmutable::today()
+            : CarbonImmutable::parse($asOfDate)->startOfDay();
         $dailyTotal = 0.0;
 
         foreach ($medication->schedules as $schedule) {
-            if (! $this->scheduleIsActiveOn($schedule, $today)) {
+            if (! $this->scheduleOccursOnDate->isActiveOn($schedule, $referenceDate)) {
                 continue;
             }
 
@@ -63,58 +71,41 @@ final class MedicationSupplyEstimateService
         return (int) floor($current / $dailyTotal);
     }
 
-    private function scheduleIsActiveOn(MedicationSchedule $schedule, Carbon $today): bool
-    {
-        $todayDate = $today->toDateString();
-
-        $startDate = $schedule->start_date;
-        if ($startDate instanceof CarbonInterface && $todayDate < $startDate->toDateString()) {
-            return false;
-        }
-
-        $endDate = $schedule->end_date;
-        if ($endDate instanceof CarbonInterface && $todayDate > $endDate->toDateString()) {
-            return false;
-        }
-
-        return true;
-    }
-
     private function consumptionUnitsPerDay(MedicationSchedule $schedule): ?float
     {
         $dose = $this->parsePositiveFloat((string) $schedule->dose_quantity);
         $times = $this->parsePositiveFloat((string) $schedule->times_per_day);
+        $intakeDayFraction = $this->intakeDayFraction($schedule);
 
-        if ($dose === null || $times === null) {
+        if ($dose === null || $times === null || $intakeDayFraction === null) {
             return null;
         }
 
-        $unitsPerActiveDay = $dose * $times;
+        return $dose * $times * $intakeDayFraction;
+    }
+
+    private function intakeDayFraction(MedicationSchedule $schedule): ?float
+    {
         $frequency = (string) $schedule->intake_frequency;
         $everyNDays = MedicationIntakeFrequency::parseEveryNDays($frequency);
 
         return match (true) {
-            $frequency === MedicationIntakeFrequency::DAILY => $unitsPerActiveDay,
-            $frequency === MedicationIntakeFrequency::WEEKDAYS => $this->selectedWeekdaysConsumptionPerDay(
-                $schedule,
-                $unitsPerActiveDay,
-            ),
-            $everyNDays !== null => $unitsPerActiveDay / (float) $everyNDays,
+            $frequency === MedicationIntakeFrequency::DAILY => 1.0,
+            $frequency === MedicationIntakeFrequency::WEEKDAYS => $this->selectedWeekdaysFraction($schedule),
+            $everyNDays !== null => 1.0 / $everyNDays,
             default => null,
         };
     }
 
-    private function selectedWeekdaysConsumptionPerDay(
-        MedicationSchedule $schedule,
-        float $unitsPerActiveDay,
-    ): ?float {
+    private function selectedWeekdaysFraction(MedicationSchedule $schedule): ?float
+    {
         $selectedWeekdays = $schedule->intake_weekdays;
 
         if (! is_array($selectedWeekdays) || $selectedWeekdays === []) {
             return null;
         }
 
-        return ($unitsPerActiveDay * count($selectedWeekdays)) / 7.0;
+        return count($selectedWeekdays) / 7.0;
     }
 
     private function parsePositiveFloat(string $value): ?float

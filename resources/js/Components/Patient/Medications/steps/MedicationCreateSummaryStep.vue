@@ -8,7 +8,9 @@ import type {
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import { medicationStrengthDisplayValue } from '@/lib/patient/medications/strength/medicationStrengthDisplayValue';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
 import type {
@@ -140,15 +142,11 @@ const doseTimesJoined = computed(() => {
 });
 
 const doseUnitForStock = computed(() =>
-    props.form.dose_unit === '' ? null : props.form.dose_unit,
+    medicationStockDisplayDoseUnit(props.form.dose_unit, props.form.strength_unit),
 );
 
 const currentStockSummary = computed(() =>
     formatMedicationStockDisplayAmount(t, props.form.current_stock, doseUnitForStock.value),
-);
-
-const lowStockSummary = computed(() =>
-    formatMedicationStockDisplayAmount(t, props.form.low_stock, doseUnitForStock.value),
 );
 
 const summaryMealTimingFocusSuffix = computed(() => {
@@ -290,7 +288,9 @@ function summaryRowAria(fieldTranslationKey: string): string {
                     <dt :class="summaryLabelClass">{{ t('patient.medications.fields.strength') }}</dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">
-                            {{ props.form.strength.trim() || '—' }}
+                            {{
+                                medicationStrengthDisplayValue(props.form).trim() || '—'
+                            }}
                         </span>
                         <IconActionButton
                             v-if="showStepNavigation"
@@ -347,25 +347,6 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             :ariaLabel="summaryRowAria('fields.currentStock')"
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(6, 'current-stock')"
-                        >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
-                        </IconActionButton>
-                    </dd>
-                </div>
-                <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.lowStock') }}</dt>
-                    <dd :class="summaryDdClass">
-                        <span :class="cn(summaryValueClass, 'tabular-nums')">
-                            {{ lowStockSummary.length > 0 ? lowStockSummary : '—' }}
-                        </span>
-                        <IconActionButton
-                            v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.lowStock')"
-                            :disabled="props.form.processing"
-                            @click="activateSummaryRow(6, 'low-stock')"
                         >
                             <Pencil
                                 class="size-5"
@@ -474,7 +455,11 @@ function summaryRowAria(fieldTranslationKey: string): string {
                 <div :class="summaryRowGroupClass">
                     <dt :class="summaryLabelClass">{{ t('patient.medications.fields.endDate') }}</dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ props.form.schedule.end_date.trim() || '—' }}</span>
+                        <span :class="summaryValueClass">{{
+                            props.form.schedule.end_date.trim().length > 0
+                                ? props.form.schedule.end_date.trim()
+                                : t('patient.medications.intakePeriodPresets.ongoing')
+                        }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.endDate')"

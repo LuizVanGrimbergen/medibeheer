@@ -28,6 +28,16 @@ class MedicationScheduleFactory extends Factory
 
             $schedule->patient_id = $medication->patient_id;
             $schedule->family_id = $medication->family_id;
+        })->afterCreating(function (MedicationSchedule $schedule): void {
+            if ($schedule->intake_frequency !== MedicationIntakeFrequency::WEEKDAYS) {
+                return;
+            }
+
+            if ($schedule->weekdays()->exists()) {
+                return;
+            }
+
+            $schedule->syncIntakeWeekdays([1, 3, 5]);
         });
     }
 
@@ -39,9 +49,6 @@ class MedicationScheduleFactory extends Factory
             'medication_id' => Medication::factory(),
             'meal_timing' => fake()->randomElement(MedicationMealTiming::cases()),
             'intake_frequency' => $intakeFrequency,
-            'intake_weekdays' => $intakeFrequency === MedicationIntakeFrequency::WEEKDAYS
-                ? [1, 3, 5]
-                : null,
             'times_per_day' => (string) fake()->numberBetween(1, 4),
             'dose_quantity' => (string) fake()->randomFloat(1, 0.5, 2),
             'dose_time' => fake()->time('H:i'),

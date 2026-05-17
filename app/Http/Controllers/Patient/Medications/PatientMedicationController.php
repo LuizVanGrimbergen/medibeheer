@@ -8,6 +8,7 @@ use App\Http\Requests\Patient\Medications\StoreMedicationRequest;
 use App\Http\Requests\Patient\Medications\UpdateMedicationRequest;
 use App\Models\Medication;
 use App\Services\Patient\PatientMedicationsScreenService;
+use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -40,40 +41,38 @@ class PatientMedicationController extends Controller
     {
         $patient = $this->authorizePatientProfile($request);
 
-        $this->authorize('create', Medication::class);
-
         $validated = $request->validated();
-        $schedule = $validated['schedule'];
+        $normalizedSchedule = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($validated['schedule']);
+        $intakeWeekdays = $normalizedSchedule['intake_weekdays'];
+        $scheduleAttributes = Arr::except($normalizedSchedule, ['intake_weekdays']);
         $stockCurrent = $validated['current_stock'] ?? null;
-        $stockLow = $validated['low_stock'] ?? null;
 
         $medicationAttributes = Arr::except($validated, [
             'schedule',
             'current_stock',
-            'low_stock',
         ]);
 
         DB::transaction(function () use (
             $patient,
             $medicationAttributes,
-            $schedule,
+            $scheduleAttributes,
+            $intakeWeekdays,
             $stockCurrent,
-            $stockLow,
         ): void {
             $medication = $patient->medications()->create([
                 ...$medicationAttributes,
                 'family_id' => $patient->defaultMedicationFamilyId(),
             ]);
 
-            $medication->schedules()->create([
-                ...$schedule,
+            $createdSchedule = $medication->schedules()->create([
+                ...$scheduleAttributes,
                 'patient_id' => $medication->patient_id,
                 'family_id' => $medication->family_id,
             ]);
+            $createdSchedule->syncIntakeWeekdays($intakeWeekdays);
 
             $medication->stocks()->create([
                 'current_stock' => $stockCurrent,
-                'low_stock' => $stockLow,
                 'patient_id' => $medication->patient_id,
                 'family_id' => $medication->family_id,
             ]);
@@ -85,8 +84,6 @@ class PatientMedicationController extends Controller
     public function update(UpdateMedicationRequest $request, Medication $medication): RedirectResponse
     {
         $patient = $this->authorizePatientProfile($request);
-
-        $this->authorize('update', $medication);
 
         $validated = $request->validated();
 
@@ -101,10 +98,10 @@ class PatientMedicationController extends Controller
 
         DB::transaction(function () use ($medication, $validated, $medicationPayload, $patient): void {
             if ($medicationPayload !== []) {
-                $medication->update([
+                $medication->fill([
                     ...$medicationPayload,
                     'family_id' => $patient->defaultMedicationFamilyId(),
-                ]);
+                ])->save();
 
                 $medication->stocks()->update([
                     'family_id' => $medication->family_id,
@@ -113,25 +110,38 @@ class PatientMedicationController extends Controller
             }
 
             if (isset($validated['schedule'])) {
-                $scheduleAttrs = Arr::only($validated['schedule'], [
+                $normalizedSchedule = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule(
+                    $validated['schedule'],
+                );
+                $intakeWeekdays = $normalizedSchedule['intake_weekdays'];
+                $scheduleAttrs = Arr::only($normalizedSchedule, [
                     'meal_timing',
                     'intake_frequency',
-                    'intake_weekdays',
                     'times_per_day',
                     'dose_quantity',
                     'dose_time',
                     'start_date',
                     'end_date',
                 ]);
-                $medication->schedules()->first()?->update($scheduleAttrs);
+
+                $scheduleModel = $medication->schedules()->first();
+
+                if ($scheduleModel !== null) {
+                    $scheduleModel->fill($scheduleAttrs)->save();
+                    $scheduleModel->syncIntakeWeekdays($intakeWeekdays);
+                }
             }
 
-            if (array_key_exists('current_stock', $validated) && array_key_exists('low_stock', $validated)) {
-                $medication->stocks()->first()?->update([
-                    ...Arr::only($validated, ['current_stock', 'low_stock']),
-                    'family_id' => $medication->family_id,
-                    'patient_id' => $medication->patient_id,
-                ]);
+            if (array_key_exists('current_stock', $validated)) {
+                $stock = $medication->stocks()->first();
+
+                if ($stock !== null) {
+                    $stock->fill([
+                        'current_stock' => $validated['current_stock'],
+                        'family_id' => $medication->family_id,
+                        'patient_id' => $medication->patient_id,
+                    ])->save();
+                }
             }
         });
 

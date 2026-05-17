@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import MedicationDetailsEditDialog from '@/Components/Patient/Medications/form/MedicationDetailsEditDialog.vue';
 import MedicationFormDialog from '@/Components/Patient/Medications/form/MedicationFormDialog.vue';
-import MedicationPageIntro from '@/Components/Patient/Medications/MedicationPageIntro.vue';
+import MedicationPageIntro from '@/Components/Patient/Medications/form/MedicationPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientMedicationsPage } from '@/composables/usePatientMedicationsPage';

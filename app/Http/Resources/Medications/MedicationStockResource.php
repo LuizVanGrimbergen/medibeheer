@@ -15,7 +15,6 @@ class MedicationStockResource extends JsonResource
             'id' => $this->id,
             'medication_id' => $this->medication_id,
             'current_stock' => (string) $this->current_stock,
-            'low_stock' => (string) $this->low_stock,
         ];
     }
 }

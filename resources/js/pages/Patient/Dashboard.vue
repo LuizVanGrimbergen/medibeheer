@@ -5,8 +5,14 @@ import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DailyCheckinCard from '@/Components/Patient/DailyCheckins/form/DailyCheckinCard.vue';
 import DailyCheckinSuccessScreen from '@/Components/Patient/DailyCheckins/form/DailyCheckinSuccessScreen.vue';
+import TodayMedicationIntakesSection from '@/Components/Patient/Medications/form/TodayMedicationIntakesSection.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import type { DailyCheckin, DailyMoodScoreValue, PageProps } from '@/lib/types';
+import type {
+    DailyCheckin,
+    DailyMoodScoreValue,
+    PageProps,
+    TodayMedicationIntakeSlot,
+} from '@/lib/types';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
@@ -14,6 +20,7 @@ const page = usePage<PageProps>();
 const props = defineProps<{
     today_date: string;
     today_checkin: DailyCheckin | null;
+    today_medication_intakes: TodayMedicationIntakeSlot[];
 }>();
 
 function localCalendarDateIso(): string {
@@ -84,6 +91,8 @@ const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
                 :today_date="props.today_date"
                 :today_checkin="props.today_checkin"
             />
+
+            <TodayMedicationIntakesSection :slots="props.today_medication_intakes" />
         </div>
     </PatientLayout>
 </template>

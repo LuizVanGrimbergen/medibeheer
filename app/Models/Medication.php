@@ -65,4 +65,9 @@ class Medication extends Model
     {
         return $this->hasMany(MedicationStock::class);
     }
+
+    public function intakes(): HasMany
+    {
+        return $this->hasMany(MedicationIntake::class);
+    }
 }

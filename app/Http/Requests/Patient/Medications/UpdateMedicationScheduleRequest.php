@@ -2,26 +2,20 @@
 
 namespace App\Http\Requests\Patient\Medications;
 
-use App\Enums\MedicationIntakeFrequency;
-use App\Enums\MedicationMealTiming;
-use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleDateFields;
-use App\Models\Medication;
+use App\Http\Requests\Patient\Medications\Concerns\AuthorizesRouteMedication;
+use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleFields;
 use App\Models\MedicationSchedule;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class UpdateMedicationScheduleRequest extends FormRequest
 {
-    use ValidatesMedicationScheduleDateFields;
+    use AuthorizesRouteMedication;
+    use ValidatesMedicationScheduleFields;
 
     protected function prepareForValidation(): void
     {
-        $medication = $this->route('medication');
-
-        if ($medication instanceof Medication) {
-            $this->merge(['dose_quantity' => trim((string) $medication->dose)]);
-        }
+        $this->mirrorMedicationDoseIntoDoseQuantity();
 
         if (! $this->has('intake_frequency') && ! $this->has('intake_weekdays')) {
             return;
@@ -40,14 +34,20 @@ class UpdateMedicationScheduleRequest extends FormRequest
             'intake_frequency' => $frequency,
             'intake_weekdays' => $weekdays,
         ]));
+
+        if ($this->has('end_date')) {
+            $this->merge($this->normalizeMedicationScheduleDatesForValidation([
+                'end_date' => $this->input('end_date'),
+            ]));
+        }
     }
 
     public function authorize(): bool
     {
-        $medication = $this->route('medication');
         $schedule = $this->route('schedule');
+        $medication = $this->routeMedication();
 
-        if (! $medication instanceof Medication || ! $schedule instanceof MedicationSchedule) {
+        if ($medication === null || ! $schedule instanceof MedicationSchedule) {
             return false;
         }
 
@@ -55,31 +55,14 @@ class UpdateMedicationScheduleRequest extends FormRequest
             return false;
         }
 
-        return $this->user()?->can('update', $medication) ?? false;
+        return $this->userCanUpdateRouteMedication();
     }
 
     public function rules(): array
     {
         return [
-            'meal_timing' => ['sometimes', 'required', Rule::enum(MedicationMealTiming::class)],
-            'intake_frequency' => ['sometimes', 'required', Rule::in(MedicationIntakeFrequency::allowedValues())],
-            'intake_weekdays' => [
-                'exclude_unless:intake_frequency,weekdays',
-                'sometimes',
-                'required',
-                'array',
-                'min:1',
-            ],
-            'intake_weekdays.*' => ['integer', Rule::in([1, 2, 3, 4, 5, 6, 7])],
-            'times_per_day' => [
-                'sometimes',
-                'required',
-                'string',
-                Rule::in(array_map(static fn (int $n): string => (string) $n, range(1, 24))),
-            ],
+            ...$this->rulesMedicationScheduleFields(sometimes: true),
             'dose_quantity' => ['sometimes', 'string', 'max:500'],
-            'dose_time' => ['sometimes', 'required', 'string', 'max:500'],
-            ...$this->rulesMedicationScheduleStartAndEndDatesTopLevelSometimes(),
         ];
     }
 }

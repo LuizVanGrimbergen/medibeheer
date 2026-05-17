@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationInventoryStockCard from '@/Components/Patient/Inventory/MedicationInventoryStockCard.vue';
+import MedicationInventoryStockCard from '@/Components/Patient/Inventory/form/MedicationInventoryStockCard.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';

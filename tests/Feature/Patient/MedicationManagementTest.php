@@ -7,6 +7,7 @@ use App\Enums\MedicationType;
 use App\Models\Family;
 use App\Models\Medication;
 use App\Models\MedicationSchedule;
+use App\Models\MedicationScheduleWeekday;
 use App\Models\MedicationStock;
 use App\Models\User;
 use Database\Seeders\MedicationSeeder;
@@ -29,7 +30,6 @@ function validNewMedicationStockPayload(): array
 {
     return [
         'current_stock' => '20',
-        'low_stock' => '5',
     ];
 }
 
@@ -84,7 +84,6 @@ test('patients can create a medication and name is encrypted at rest', function 
     $stock = MedicationStock::query()->where('medication_id', $medication->id)->first();
     expect($stock)->not->toBeNull();
     expect($stock->current_stock)->toBe('20');
-    expect($stock->low_stock)->toBe('5');
 
     $raw = DB::table('medications')->where('id', $medication->id)->first();
     expect($raw->name)->not->toBe('Ibuprofen');
@@ -160,41 +159,7 @@ test('patients cannot store a medication without stock fields', function () {
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
 
-    $response->assertSessionHasErrors(['current_stock', 'low_stock']);
-});
-
-test('patients cannot store a medication with only one stock field', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Alleen drempel',
-        'dose' => '1',
-        'dose_unit' => MedicationDoseUnit::PIECE->value,
-        'type_medication' => MedicationType::PILL->value,
-        'low_stock' => '3',
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
     $response->assertSessionHasErrors('current_stock');
-});
-
-test('patients cannot store a medication with only current stock', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Alleen huidige voorraad',
-        'dose' => '1',
-        'dose_unit' => MedicationDoseUnit::PIECE->value,
-        'type_medication' => MedicationType::PILL->value,
-        'current_stock' => '10',
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
-    $response->assertSessionHasErrors('low_stock');
 });
 
 test('patients creating a medication links it to the first linked family when present', function () {
@@ -363,8 +328,10 @@ test('patients can create a medication with weekday-only intake frequency', func
 
     $saved = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
     expect($saved)->not->toBeNull();
+    $saved->load('weekdays');
     expect($saved->intake_frequency)->toBe(MedicationIntakeFrequency::WEEKDAYS);
     expect($saved->intake_weekdays)->toBe([1, 2]);
+    expect(MedicationScheduleWeekday::query()->where('medication_schedule_id', $saved->id)->count())->toBe(2);
 });
 
 test('doctors cannot create patient medications', function () {
@@ -389,42 +356,147 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     (new MedicationSeeder)->run($patient, $family);
 
     $medications = $patient->medications()->orderBy('id')->get();
-    expect($medications)->toHaveCount(15);
+    expect($medications)->toHaveCount(4);
 
-    $medication = $medications->first();
-    expect($medication->name)->toBe('Paracetamol 500 mg');
-    expect($medication->dose)->toBe('1');
-    expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($medication->note)->toBe(
-        'Maximaal 6 tabletten per 24 uur. Bij aanhoudende koorts contact opnemen met de huisarts.',
+    $levothyroxine = $medications->firstWhere('name', 'Levothyroxine');
+    expect($levothyroxine)->not->toBeNull();
+    expect($levothyroxine->dose)->toBe('75');
+    expect($levothyroxine->dose_unit)->toBe(MedicationDoseUnit::OTHER);
+    expect($levothyroxine->note)->toBe(
+        'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
     );
-    expect($medication->family_id)->toBe($family->id);
+    expect($levothyroxine->family_id)->toBe($family->id);
 
-    $schedule = $medication->schedules()->first();
+    $schedule = $levothyroxine->schedules()->first();
     expect($schedule)->not->toBeNull();
-    expect($schedule->times_per_day)->toBe('3');
+    expect($schedule->times_per_day)->toBe('1');
+    expect($schedule->dose_time)->toBe('06:45');
     expect($schedule->family_id)->toBe($family->id);
 
     $rawSchedule = DB::table('medication_schedules')->where('id', $schedule->id)->first();
-    expect($rawSchedule->times_per_day)->not->toBe('3');
-    expect($rawSchedule->dose_time)->not->toBe('08:00, 14:00, 21:00');
+    expect($rawSchedule->times_per_day)->not->toBe('1');
+    expect($rawSchedule->dose_time)->not->toBe('06:45');
 
-    $stock = $medication->stocks()->first();
+    $stock = $levothyroxine->stocks()->first();
     expect($stock)->not->toBeNull();
-    expect($stock->low_stock)->toBe('12');
+    expect($stock->current_stock)->toBe('2250');
     expect($stock->family_id)->toBe($family->id);
 
     $rawStock = DB::table('medication_stocks')->where('id', $stock->id)->first();
-    expect($rawStock->low_stock)->not->toBe('12');
+    expect($rawStock->current_stock)->not->toBe('2250');
 
-    $metformin = $medications->get(1);
-    expect($metformin->name)->toBe('Metformine 500 mg');
+    $metformin = $medications->firstWhere('name', 'Metformine');
+    expect($metformin)->not->toBeNull();
     expect($metformin->dose)->toBe('500');
     expect($metformin->dose_unit)->toBe(MedicationDoseUnit::MILLIGRAM);
     expect($metformin->family_id)->toBe($family->id);
+    expect($metformin->schedules()->first()?->dose_time)->toBe('12:30');
+    expect($metformin->stocks()->first()?->current_stock)->toBe('5000');
 
-    $metforminStockRaw = DB::table('medication_stocks')->where('medication_id', $metformin->id)->first();
-    expect($metforminStockRaw->current_stock)->not->toBe('180');
+    $magnesium = $medications->firstWhere('name', 'Magnesiumcitraat');
+    expect($magnesium)->not->toBeNull();
+    expect($magnesium->dose_unit)->toBe(MedicationDoseUnit::SACHET);
+    expect($magnesium->schedules()->first()?->dose_time)->toBe('18:30');
+    expect($magnesium->stocks()->first()?->current_stock)->toBe('5');
+
+    $atorvastatine = $medications->firstWhere('name', 'Atorvastatine');
+    expect($atorvastatine)->not->toBeNull();
+    expect($atorvastatine->schedules()->first()?->dose_time)->toBe('22:00');
+    expect($atorvastatine->stocks()->first()?->current_stock)->toBe('440');
+});
+
+test('patients cannot store a medication with the unit dose unit', function () {
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Insuline',
+        'dose' => '10',
+        'dose_unit' => MedicationDoseUnit::UNIT->value,
+        'type_medication' => MedicationType::INJECTION->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertSessionHasErrors('dose_unit');
+});
+
+test('patients cannot store drops without strength', function () {
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Vitamine D',
+        'dose' => '2',
+        'dose_unit' => MedicationDoseUnit::DROP->value,
+        'type_medication' => MedicationType::LIQUID->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertSessionHasErrors('strength');
+});
+
+test('patients can store drops with strength composed from amount and unit', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Vitamine D',
+        'dose' => '2',
+        'dose_unit' => MedicationDoseUnit::DROP->value,
+        'type_medication' => MedicationType::LIQUID->value,
+        'strength' => '10 mg per druppel',
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $medication = Medication::query()->where('patient_id', $patient->id)->first();
+    expect($medication)->not->toBeNull();
+    expect($medication->strength)->toBe('10 mg per druppel');
+});
+
+test('patients cannot store injections without strength', function () {
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Insuline',
+        'dose' => '24',
+        'dose_unit' => MedicationDoseUnit::INJECTION->value,
+        'type_medication' => MedicationType::INJECTION->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertSessionHasErrors('strength');
+});
+
+test('patients can create a medication with an ongoing schedule without end date', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $schedule = validNewMedicationSchedulePayload();
+    $schedule['end_date'] = null;
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Levothyroxine',
+        'dose' => '75',
+        'dose_unit' => MedicationDoseUnit::OTHER->value,
+        'type_medication' => MedicationType::PILL->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => $schedule,
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $medication = Medication::query()->where('patient_id', $patient->id)->first();
+    expect($medication)->not->toBeNull();
+
+    $saved = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
+    expect($saved)->not->toBeNull();
+    expect($saved->end_date)->toBeNull();
 });
 
 test('patients cannot update another patients medication', function () {

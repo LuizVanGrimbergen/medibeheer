@@ -1,41 +1,50 @@
-import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationStockProgressTone';
-import { medicationStockProgressTone } from '@/lib/patient/inventory/medicationStockProgressTone';
-import type { MedicationListItem } from '@/lib/types';
+import type {
+    MedicationListItem,
+    MedicationSupplyEstimateQuality,
+} from '@/lib/types';
 
-const SUPPLY_CRITICAL_MAX_DAYS = 5;
+import {
+    MEDICATION_SUPPLY_CRITICAL_MAX_DAYS,
+    MEDICATION_SUPPLY_WARNING_MAX_DAYS,
+} from './medicationSupplyDayThresholds';
 
-const SUPPLY_WARNING_MAX_DAYS = 7;
+export type MedicationStockProgressTone = 'critical' | 'warning' | 'safe';
 
-/** Card tone from supply days when known; otherwise stock vs low threshold. */
+export type MedicationVisualToneContext = {
+    supply_estimate_days: number | null;
+    supply_estimate_quality: MedicationSupplyEstimateQuality;
+};
+
+export function medicationSupplyProgressToneFromDays(
+    days: number,
+): MedicationStockProgressTone {
+    if (days <= MEDICATION_SUPPLY_CRITICAL_MAX_DAYS) {
+        return 'critical';
+    }
+
+    if (days <= MEDICATION_SUPPLY_WARNING_MAX_DAYS) {
+        return 'warning';
+    }
+
+    return 'safe';
+}
+
+/** Card tone from supply days when known. */
+export function medicationVisualToneFromContext(
+    context: MedicationVisualToneContext,
+): MedicationStockProgressTone | null {
+    if (
+        context.supply_estimate_quality === 'approx'
+        && context.supply_estimate_days !== null
+    ) {
+        return medicationSupplyProgressToneFromDays(context.supply_estimate_days);
+    }
+
+    return null;
+}
+
 export function medicationListVisualTone(
     medication: MedicationListItem,
 ): MedicationStockProgressTone | null {
-    if (
-        medication.supply_estimate_quality === 'approx'
-        && medication.supply_estimate_days !== null
-    ) {
-        const days = medication.supply_estimate_days;
-
-        if (days <= SUPPLY_CRITICAL_MAX_DAYS) {
-            return 'critical';
-        }
-
-        if (days <= SUPPLY_WARNING_MAX_DAYS) {
-            return 'warning';
-        }
-
-        return 'safe';
-    }
-
-    const stock = medication.stocks[0];
-
-    if (stock === undefined) {
-        return null;
-    }
-
-    return medicationStockProgressTone(
-        stock.current_stock,
-        stock.low_stock,
-        medication.dose_unit,
-    );
+    return medicationVisualToneFromContext(medication);
 }

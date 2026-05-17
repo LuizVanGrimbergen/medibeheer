@@ -1,4 +1,4 @@
-import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationStockProgressTone';
+import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 
 export type MedicationListVisualToneClassSet = {
     border: string;

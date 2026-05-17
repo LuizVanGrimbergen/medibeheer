@@ -246,10 +246,40 @@ export type MedicationStockListItem = {
     id: number;
     medication_id: number;
     current_stock: string;
-    low_stock: string;
 };
 
 export type MedicationSupplyEstimateQuality = 'approx' | 'unknown';
+
+export const TODAY_MEDICATION_INTAKE_DAY_PERIOD_VALUES = [
+    'morning',
+    'afternoon',
+    'evening',
+    'night',
+] as const;
+
+export type TodayMedicationIntakeDayPeriodValue =
+    (typeof TODAY_MEDICATION_INTAKE_DAY_PERIOD_VALUES)[number];
+
+export type TodayMedicationIntakeStockItem = Pick<
+    MedicationStockListItem,
+    'current_stock'
+>;
+
+export type TodayMedicationIntakeSlot = {
+    medication_id: number;
+    medication_schedule_id: number;
+    dose_time: string;
+    day_period: TodayMedicationIntakeDayPeriodValue;
+    name: string;
+    type_medication: MedicationTypeValue;
+    dose: string | null;
+    dose_unit: MedicationDoseUnitValue | null;
+    note: string | null;
+    taken_at: string | null;
+    stocks: TodayMedicationIntakeStockItem[];
+    supply_estimate_days: number | null;
+    supply_estimate_quality: MedicationSupplyEstimateQuality;
+};
 
 export type MedicationListItem = {
     id: number;

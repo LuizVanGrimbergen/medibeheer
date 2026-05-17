@@ -12,12 +12,12 @@ final class PatientMedicationsScreenService
 {
     public function buildProps(Patient $patient): array
     {
-        return $this->paginatedMedicationsForScreen($patient, ['schedules', 'stocks']);
+        return $this->paginatedMedicationsForScreen($patient, ['schedules.weekdays', 'stocks']);
     }
 
     public function buildInventoryProps(Patient $patient): array
     {
-        return $this->paginatedMedicationsForScreen($patient, ['stocks', 'schedules']);
+        return $this->paginatedMedicationsForScreen($patient, ['stocks', 'schedules.weekdays']);
     }
 
     private function paginatedMedicationsForScreen(Patient $patient, array $with): array

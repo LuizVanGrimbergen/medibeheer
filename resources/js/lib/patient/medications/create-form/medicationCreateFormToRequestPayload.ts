@@ -1,4 +1,5 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import { resolveMedicationStrengthForPayload } from '@/lib/patient/medications/strength/buildMedicationStrengthFromParts';
 import { parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
 
 function buildMedicationScheduleDoseTimeForPayload(
@@ -23,7 +24,6 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     type_medication: MedicationCreateFormState['type_medication'];
     strength: string | null;
     current_stock: string;
-    low_stock: string;
     note: string | null;
     schedule: {
         meal_timing: MedicationCreateFormState['schedule']['meal_timing'];
@@ -33,20 +33,18 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         dose_quantity: string;
         dose_time: string;
         start_date: string;
-        end_date: string;
+        end_date: string | null;
     };
 } {
     const noteTrimmed = data.note.trim();
-    const strengthTrimmed = data.strength.trim();
 
     return {
         name: data.name.trim(),
         dose: data.dose.trim(),
         dose_unit: data.dose_unit,
         type_medication: data.type_medication,
-        strength: strengthTrimmed === '' ? null : strengthTrimmed,
+        strength: resolveMedicationStrengthForPayload(data),
         current_stock: data.current_stock.trim(),
-        low_stock: data.low_stock.trim(),
         note: noteTrimmed === '' ? null : noteTrimmed,
         schedule: {
             meal_timing: data.schedule.meal_timing,
@@ -59,7 +57,11 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
             dose_quantity: data.dose.trim(),
             dose_time: buildMedicationScheduleDoseTimeForPayload(data.schedule),
             start_date: data.schedule.start_date.trim(),
-            end_date: data.schedule.end_date.trim(),
+            end_date: (() => {
+                const trimmed = data.schedule.end_date.trim();
+
+                return trimmed === '' ? null : trimmed;
+            })(),
         },
     };
 }

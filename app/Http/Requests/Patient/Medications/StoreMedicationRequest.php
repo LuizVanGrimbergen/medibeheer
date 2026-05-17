@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Patient\Medications;
 
-use App\Enums\MedicationDoseUnit;
-use App\Enums\MedicationIntakeFrequency;
-use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
-use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleDateFields;
+use App\Http\Requests\Patient\Medications\Concerns\NormalizesNullableStringInputs;
+use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleFields;
+use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationStrengthField;
 use App\Models\Medication;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,7 +13,9 @@ use Illuminate\Validation\Rule;
 
 class StoreMedicationRequest extends FormRequest
 {
-    use ValidatesMedicationScheduleDateFields;
+    use NormalizesNullableStringInputs;
+    use ValidatesMedicationScheduleFields;
+    use ValidatesMedicationStrengthField;
 
     public function authorize(): bool
     {
@@ -30,36 +31,14 @@ class StoreMedicationRequest extends FormRequest
             $schedule['dose_quantity'] = is_string($dose) ? trim($dose) : '';
 
             $schedule = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($schedule);
+            $schedule = $this->normalizeMedicationScheduleDatesForValidation($schedule);
 
             $this->merge(['schedule' => $schedule]);
         }
 
-        $note = $this->input('note');
-
-        if ($note === null || (is_string($note) && trim($note) === '')) {
-            $this->merge(['note' => null]);
-        } else {
-            $this->merge(['note' => trim((string) $note)]);
-        }
-
-        $strength = $this->input('strength');
-
-        if ($strength === null || (is_string($strength) && trim($strength) === '')) {
-            $this->merge(['strength' => null]);
-        } else {
-            $this->merge(['strength' => trim((string) $strength)]);
-        }
-
-        $currentStockInput = $this->input('current_stock');
-        $lowStockInput = $this->input('low_stock');
-
-        $currentTrimmed = is_string($currentStockInput) ? trim($currentStockInput) : '';
-        $lowTrimmed = is_string($lowStockInput) ? trim($lowStockInput) : '';
-
-        $this->merge([
-            'current_stock' => $currentTrimmed === '' ? null : $currentTrimmed,
-            'low_stock' => $lowTrimmed === '' ? null : $lowTrimmed,
-        ]);
+        $this->mergeTrimmedOrNull('note');
+        $this->mergeTrimmedOrNull('strength');
+        $this->mergeTrimmedOrNull('current_stock');
     }
 
     public function rules(): array
@@ -67,30 +46,13 @@ class StoreMedicationRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:500'],
             'dose' => ['required', 'string', 'max:500'],
-            'dose_unit' => ['required', Rule::enum(MedicationDoseUnit::class)],
+            'dose_unit' => $this->rulesMedicationDoseUnitField(),
             'type_medication' => ['required', Rule::enum(MedicationType::class)],
-            'strength' => ['nullable', 'string', 'max:500'],
+            'strength' => $this->rulesMedicationStrengthField(),
             'note' => ['nullable', 'string', 'max:2000'],
             'current_stock' => ['required', 'string', 'max:500'],
-            'low_stock' => ['required', 'string', 'max:64'],
             'schedule' => ['required', 'array'],
-            'schedule.meal_timing' => ['required', Rule::enum(MedicationMealTiming::class)],
-            'schedule.intake_frequency' => ['required', Rule::in(MedicationIntakeFrequency::allowedValues())],
-            'schedule.intake_weekdays' => [
-                'exclude_unless:schedule.intake_frequency,weekdays',
-                'required',
-                'array',
-                'min:1',
-            ],
-            'schedule.intake_weekdays.*' => ['integer', Rule::in([1, 2, 3, 4, 5, 6, 7])],
-            'schedule.times_per_day' => [
-                'required',
-                'string',
-                Rule::in(array_map(static fn (int $n): string => (string) $n, range(1, 24))),
-            ],
-            'schedule.dose_quantity' => ['required', 'string', 'max:500'],
-            'schedule.dose_time' => ['required', 'string', 'max:500'],
-            ...$this->rulesMedicationScheduleStartAndEndDatesNestedUnderSchedule(),
+            ...$this->rulesMedicationScheduleFields(prefix: 'schedule.'),
         ];
     }
 }

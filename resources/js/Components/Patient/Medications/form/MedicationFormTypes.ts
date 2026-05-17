@@ -1,5 +1,6 @@
 import type { FormDataErrors } from '@inertiajs/core';
 import type { InertiaForm } from '@inertiajs/vue3';
+import type { MedicationStrengthUnitValue } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import type {
     MedicationDoseUnitValue,
     MedicationIntakeFrequencyValue,
@@ -25,8 +26,9 @@ export type MedicationCreateFormState = {
     dose_unit: MedicationDoseUnitValue | '';
     type_medication: MedicationTypeValue | '';
     strength: string;
+    strength_amount: string;
+    strength_unit: MedicationStrengthUnitValue | '';
     current_stock: string;
-    low_stock: string;
     note: string;
     schedule: MedicationScheduleFormSlice;
 };

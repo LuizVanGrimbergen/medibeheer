@@ -1,8 +1,10 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockAmountField from '@/Components/Patient/Medications/form/MedicationStockAmountField.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
@@ -24,6 +26,10 @@ const props = withDefaults(
 );
 
 const { t } = useI18n();
+
+const stockDisplayDoseUnit = computed(() =>
+    medicationStockDisplayDoseUnit(props.form.dose_unit, props.form.strength_unit),
+);
 </script>
 
 <template>
@@ -39,20 +45,9 @@ const { t } = useI18n();
                 label-key="patient.medications.fields.currentStock"
                 placeholder-example-amount="200"
                 fallback-placeholder-key="patient.medications.fields.currentStockPlaceholder"
-                :dose-unit="props.form.dose_unit"
+                :dose-unit="stockDisplayDoseUnit ?? ''"
                 :maxlength="500"
                 :error-message="props.form.errors.current_stock"
-            />
-            <MedicationStockAmountField
-                v-model="props.form.low_stock"
-                :id-prefix="props.idPrefix"
-                field-id-suffix="low-stock"
-                label-key="patient.medications.fields.lowStock"
-                placeholder-example-amount="40"
-                fallback-placeholder-key="patient.medications.fields.lowStockPlaceholder"
-                :dose-unit="props.form.dose_unit"
-                :maxlength="64"
-                :error-message="props.form.errors.low_stock"
             />
         </div>
         <div>

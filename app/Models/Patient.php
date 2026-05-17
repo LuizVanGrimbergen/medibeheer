@@ -67,6 +67,11 @@ class Patient extends Model
         return $this->hasMany(Medication::class);
     }
 
+    public function medicationIntakes(): HasMany
+    {
+        return $this->hasMany(MedicationIntake::class);
+    }
+
     /**************************************/
     /*       Accessors / Mutators */
     /**************************************/

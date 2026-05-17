@@ -3,7 +3,7 @@ import { AlertTriangle, Layers, PackagePlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
-import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/MedicationInventoryStockEditDialog.vue';
+import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Progress } from '@/Components/ui/progress';
@@ -11,7 +11,9 @@ import { medicationListVisualTone } from '@/lib/patient/inventory/medicationList
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
+import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import type { MedicationListItem, MedicationTypeValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -52,9 +54,8 @@ const stockProgressPercent = computed((): number | null => {
     }
 
     return medicationStockProgressPercent(
-        stock.current_stock,
-        stock.low_stock,
-        props.medication.dose_unit,
+        props.medication.supply_estimate_days,
+        props.medication.supply_estimate_quality,
     );
 });
 
@@ -182,11 +183,20 @@ const supplyEstimateLineClass = computed((): string => {
 
 const primaryStockAmountTrimmed = computed((): string => primaryStock.value?.current_stock.trim() ?? '');
 
+const stockDisplayDoseUnit = computed(() => {
+    const parsedStrength = parseMedicationStrengthFromStored(props.medication.strength);
+
+    return medicationStockDisplayDoseUnit(
+        props.medication.dose_unit,
+        parsedStrength.strength_unit,
+    );
+});
+
 const currentStockDisplayLine = computed((): string =>
     formatMedicationStockDisplayAmount(
         t,
         primaryStockAmountTrimmed.value,
-        props.medication.dose_unit,
+        stockDisplayDoseUnit.value,
     ),
 );
 </script>
@@ -226,8 +236,7 @@ const currentStockDisplayLine = computed((): string =>
                             :indicator-class="stockProgressIndicatorClass"
                             :aria-label="
                                 t('patient.inventory.stockProgressAria', {
-                                    current: primaryStock.current_stock.trim(),
-                                    low: primaryStock.low_stock.trim(),
+                                    days: String(props.medication.supply_estimate_days ?? 0),
                                 })
                             "
                             class="h-4 w-full sm:h-5"
@@ -327,7 +336,7 @@ const currentStockDisplayLine = computed((): string =>
         v-if="primaryStock !== undefined"
         v-model:open="stockEditOpen"
         :medication-id="medication.id"
-        :dose-unit="medication.dose_unit"
+        :dose-unit="stockDisplayDoseUnit"
         :stock="primaryStock"
         :form-id="stockFormId"
         :id-prefix="stockIdPrefix"

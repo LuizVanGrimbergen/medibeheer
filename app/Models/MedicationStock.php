@@ -21,14 +21,12 @@ class MedicationStock extends Model
         'family_id',
         'medication_id',
         'current_stock',
-        'low_stock',
     ];
 
     protected function casts(): array
     {
         return [
             'current_stock' => 'encrypted',
-            'low_stock' => 'encrypted',
         ];
     }
 

@@ -14,7 +14,6 @@ return new class extends Migration
             $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('medication_id')->constrained()->cascadeOnDelete();
             $table->text('current_stock');
-            $table->text('low_stock');
             $table->timestamps();
             $table->softDeletes();
 

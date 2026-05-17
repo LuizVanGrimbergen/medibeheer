@@ -60,7 +60,9 @@ export function medicationWizardStepAfterFullClientParseFailure(
         hasKey('dose') ||
         hasKey('dose_unit') ||
         hasKey('type_medication') ||
-        hasKey('strength');
+        hasKey('strength') ||
+        hasKey('strength_amount') ||
+        hasKey('strength_unit');
 
     const hasTimingErrors =
         hasKey('schedule.meal_timing') ||
@@ -70,7 +72,7 @@ export function medicationWizardStepAfterFullClientParseFailure(
     const hasTimesPerDayErrors = hasKey('schedule.times_per_day');
     const hasDoseSlotErrors = hasKey('schedule.dose_time');
     const hasDurationErrors = hasKey('schedule.start_date') || hasKey('schedule.end_date');
-    const hasStepSixErrors = hasKey('note') || hasKey('current_stock') || hasKey('low_stock');
+    const hasStepSixErrors = hasKey('note') || hasKey('current_stock');
 
     if (hasDetailErrors) {
         return 1;

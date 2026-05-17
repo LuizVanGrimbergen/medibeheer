@@ -43,12 +43,10 @@ test('patients updating medication stock from inventory return to inventory', fu
         ->actingAs($user)
         ->put(route('patient.medications.stocks.update', [$medication, $stock]), [
             'current_stock' => '100',
-            'low_stock' => '8',
         ]);
 
     $response->assertRedirect(route('patient.inventory'));
 
     $stock->refresh();
     expect($stock->current_stock)->toBe('100');
-    expect($stock->low_stock)->toBe('8');
 });
