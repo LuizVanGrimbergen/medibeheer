@@ -24,6 +24,8 @@ export function attemptMedicationWizardAdvanceFromStep1(
         dose_unit: form.dose_unit,
         type_medication: form.type_medication,
         strength: form.strength,
+        strength_amount: form.strength_amount,
+        strength_unit: form.strength_unit,
     });
 
     if (!check.ok) {
@@ -87,7 +89,6 @@ export function attemptMedicationWizardAdvanceFromStep6(
     const check = tryMedicationWizardNoteStockStep({
         note: form.note,
         current_stock: form.current_stock,
-        low_stock: form.low_stock,
     });
 
     if (!check.ok) {

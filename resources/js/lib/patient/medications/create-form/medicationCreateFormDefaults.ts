@@ -7,8 +7,9 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
         dose_unit: '',
         type_medication: '',
         strength: '',
+        strength_amount: '',
+        strength_unit: '',
         current_stock: '',
-        low_stock: '',
         note: '',
         schedule: {
             meal_timing: '',

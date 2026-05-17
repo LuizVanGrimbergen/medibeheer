@@ -145,12 +145,10 @@ function applyMedicationWizardDurationRefinement(
     }
 
     if (endTrimmed.length < 1) {
-        ctx.addIssue({
-            code: 'custom',
-            message: medicationWizardStepValidation('scheduleEndDateRequired'),
-            path: ['end_date'],
-        });
-    } else if (medicationScheduleEndDateIsoInclusiveLocal(endTrimmed, 1) === null) {
+        return;
+    }
+
+    if (medicationScheduleEndDateIsoInclusiveLocal(endTrimmed, 1) === null) {
         ctx.addIssue({
             code: 'custom',
             message: medicationWizardStepValidation('scheduleEndDateInvalid'),

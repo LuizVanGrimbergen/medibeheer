@@ -5,22 +5,19 @@ import { medicationWizardScheduleSliceSchema } from './medicationScheduleClientS
 import { medicationWizardStepValidation } from './wizardStepMessages';
 import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
 
-export const medicationWizardCreateFormClientSchemaFinal = z.object({
-    name: medicationWizardDetailsSchema.shape.name,
-    dose: medicationWizardDetailsSchema.shape.dose,
-    dose_unit: medicationWizardDetailsSchema.shape.dose_unit,
-    type_medication: medicationWizardDetailsSchema.shape.type_medication,
-    strength: medicationWizardDetailsSchema.shape.strength,
-    current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
-    low_stock: trimmedNonEmptyMax(64, 'stockLowRequired', 'stockLowMax'),
-    note: z.string().superRefine((note, ctx) => {
-        if (note.length > 2000) {
-            ctx.addIssue({
-                code: 'custom',
-                message: medicationWizardStepValidation('noteMax'),
-                path: ['note'],
-            });
-        }
+export const medicationWizardCreateFormClientSchemaFinal = z.intersection(
+    medicationWizardDetailsSchema,
+    z.object({
+        current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
+        note: z.string().superRefine((note, ctx) => {
+            if (note.length > 2000) {
+                ctx.addIssue({
+                    code: 'custom',
+                    message: medicationWizardStepValidation('noteMax'),
+                    path: ['note'],
+                });
+            }
+        }),
+        schedule: medicationWizardScheduleSliceSchema,
     }),
-    schedule: medicationWizardScheduleSliceSchema,
-});
+);

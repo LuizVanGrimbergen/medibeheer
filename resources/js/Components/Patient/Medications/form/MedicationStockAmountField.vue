@@ -18,12 +18,10 @@ const model = defineModel<string>({ required: true });
 
 const props = defineProps<{
     idPrefix: string;
-    fieldIdSuffix: 'current-stock' | 'low-stock';
-    labelKey: 'patient.medications.fields.currentStock' | 'patient.medications.fields.lowStock';
+    fieldIdSuffix: 'current-stock';
+    labelKey: 'patient.medications.fields.currentStock';
     placeholderExampleAmount: string;
-    fallbackPlaceholderKey:
-        | 'patient.medications.fields.currentStockPlaceholder'
-        | 'patient.medications.fields.lowStockPlaceholder';
+    fallbackPlaceholderKey: 'patient.medications.fields.currentStockPlaceholder';
     doseUnit: string;
     maxlength: number;
     errorMessage?: string;

@@ -7,7 +7,9 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import { MEDICATION_DOSE_UNIT_OPTIONS } from '@/lib/patient/medications/options/medicationDoseUnitOptions';
+import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
+import { medicationDoseUnitOptionsForSelect } from '@/lib/patient/medications/options/medicationDoseUnitOptions';
+import { MEDICATION_STRENGTH_UNIT_OPTIONS } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import { MEDICATION_TYPE_OPTIONS } from '@/lib/patient/medications/options/medicationTypeIcons';
 import { defaultDoseUnitForMedicationType } from '@/lib/patient/medications/options/medicationTypeDefaultDoseUnit';
 import {
@@ -26,6 +28,37 @@ const { form, idPrefix } = defineProps<{
 }>();
 
 const { t } = useI18n();
+
+const doseUnitSelectOptions = computed(() =>
+    medicationDoseUnitOptionsForSelect(form.dose_unit),
+);
+
+const strengthIsRequired = computed(() =>
+    medicationDoseUnitRequiresStrength(form.dose_unit),
+);
+
+const strengthFieldLabel = computed(() =>
+    strengthIsRequired.value
+        ? t('patient.medications.fields.strength')
+        : t('patient.medications.fields.strengthOptional'),
+);
+
+const strengthPlaceholder = computed(() =>
+    t('patient.medications.fields.strengthPlaceholder'),
+);
+
+const strengthAmountPlaceholder = computed(() =>
+    t('patient.medications.fields.strengthAmountPlaceholder'),
+);
+
+const strengthCompositeHasError = computed(
+    () =>
+        Boolean(
+            form.errors.strength ||
+                form.errors.strength_amount ||
+                form.errors.strength_unit,
+        ),
+);
 
 const dosePlaceholder = computed(() => {
     const type = form.type_medication as MedicationTypeValue | '';
@@ -71,6 +104,25 @@ watch(
         if (next !== null) {
             form.dose_unit = next;
         }
+    },
+);
+
+watch(
+    () => form.dose_unit,
+    (doseUnit) => {
+        if (!medicationDoseUnitRequiresStrength(doseUnit)) {
+            form.strength_amount = '';
+            form.strength_unit = '';
+
+            return;
+        }
+
+        if (form.strength_unit !== '') {
+            return;
+        }
+
+        form.strength_unit =
+            doseUnit === 'injection' ? 'milliliter' : 'milligram';
     },
 );
 </script>
@@ -255,7 +307,7 @@ watch(
                             {{ t('patient.medications.fields.selectPlaceholder') }}
                         </option>
                         <option
-                            v-for="opt in MEDICATION_DOSE_UNIT_OPTIONS"
+                            v-for="opt in doseUnitSelectOptions"
                             :key="opt.value"
                             :value="opt.value"
                         >
@@ -276,12 +328,101 @@ watch(
             />
         </fieldset>
 
-        <div>
+        <fieldset
+            v-if="strengthIsRequired"
+            class="min-w-0 border-0 p-0"
+        >
+            <legend :class="cn(patientFormLabelClass, 'text-lg md:text-xl')">
+                {{ strengthFieldLabel }}
+            </legend>
+            <div
+                :id="`${idPrefix}-strength-unit`"
+                class="mt-2"
+                :class="
+                    cn(
+                        'flex min-h-14 w-full min-w-0 overflow-hidden rounded-2xl border-2 bg-surface transition-[border-color,box-shadow] touch-manipulation',
+                        'focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/25',
+                        strengthCompositeHasError
+                            ? 'border-danger ring-2 ring-danger/25'
+                            : 'border-border',
+                    )
+                "
+            >
+                <input
+                    :id="`${idPrefix}-strength-amount`"
+                    v-model="form.strength_amount"
+                    type="text"
+                    name="strength_amount"
+                    required
+                    autocomplete="off"
+                    maxlength="500"
+                    inputmode="decimal"
+                    :placeholder="strengthAmountPlaceholder"
+                    class="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    :aria-invalid="Boolean(form.errors.strength_amount || form.errors.strength)"
+                    aria-required="true"
+                    :aria-describedby="
+                        form.errors.strength_amount || form.errors.strength
+                            ? `${idPrefix}-strength-amount-error`
+                            : undefined
+                    "
+                />
+                <div
+                    class="relative flex shrink-0 self-stretch border-l-2 border-border"
+                >
+                    <select
+                        :id="`${idPrefix}-strength-unit-select`"
+                        v-model="form.strength_unit"
+                        :aria-label="t('patient.medications.fields.strengthUnit')"
+                        class="min-h-14 min-w-22 max-w-40 cursor-pointer appearance-none border-0 bg-transparent bg-size-[1.25rem] bg-position-[right_0.75rem_center] bg-no-repeat py-3.5 pl-3 pr-11 text-base font-semibold leading-normal text-text-heading focus:outline-none focus-visible:outline-none touch-manipulation"
+                        :style="patientFormSelectChevronStyle"
+                        required
+                        :aria-invalid="Boolean(form.errors.strength_unit || form.errors.strength)"
+                        aria-required="true"
+                        :aria-describedby="
+                            form.errors.strength_unit || form.errors.strength
+                                ? `${idPrefix}-strength-unit-error`
+                                : undefined
+                        "
+                    >
+                        <option
+                            disabled
+                            value=""
+                        >
+                            {{ t('patient.medications.fields.selectPlaceholder') }}
+                        </option>
+                        <option
+                            v-for="opt in MEDICATION_STRENGTH_UNIT_OPTIONS"
+                            :key="opt.value"
+                            :value="opt.value"
+                        >
+                            {{
+                                medicationDoseUnitChipForAmount(
+                                    t,
+                                    form.strength_amount,
+                                    opt.value,
+                                )
+                            }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <InputError
+                :id="`${idPrefix}-strength-amount-error`"
+                :message="form.errors.strength_amount ?? form.errors.strength"
+            />
+            <InputError
+                :id="`${idPrefix}-strength-unit-error`"
+                :message="form.errors.strength_unit"
+            />
+        </fieldset>
+
+        <div v-else>
             <Label
                 :for="`${idPrefix}-strength`"
                 :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
             >
-                {{ t('patient.medications.fields.strength') }}
+                {{ strengthFieldLabel }}
             </Label>
             <Input
                 :id="`${idPrefix}-strength`"
@@ -290,7 +431,7 @@ watch(
                 name="strength"
                 autocomplete="off"
                 maxlength="500"
-                :placeholder="t('patient.medications.fields.strengthPlaceholder')"
+                :placeholder="strengthPlaceholder"
                 class="mt-2"
                 :class="
                     cn(
