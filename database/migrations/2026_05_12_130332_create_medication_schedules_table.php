@@ -15,7 +15,6 @@ return new class extends Migration
             $table->foreignId('medication_id')->constrained()->cascadeOnDelete();
             $table->text('meal_timing');
             $table->text('intake_frequency');
-            $table->json('intake_weekdays')->nullable();
             $table->text('times_per_day');
             $table->text('dose_quantity');
             $table->text('dose_time');

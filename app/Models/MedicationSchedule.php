@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\MedicationMealTiming;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MedicationSchedule extends Model
@@ -23,7 +25,6 @@ class MedicationSchedule extends Model
         'medication_id',
         'meal_timing',
         'intake_frequency',
-        'intake_weekdays',
         'times_per_day',
         'dose_quantity',
         'dose_time',
@@ -36,13 +37,57 @@ class MedicationSchedule extends Model
         return [
             'meal_timing' => MedicationMealTiming::class,
             'intake_frequency' => 'encrypted',
-            'intake_weekdays' => 'array',
             'dose_quantity' => 'encrypted',
             'dose_time' => 'encrypted',
             'times_per_day' => 'encrypted',
             'start_date' => 'date',
             'end_date' => 'date',
         ];
+    }
+
+    protected function intakeWeekdays(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?array {
+                $this->loadMissing('weekdays');
+
+                if ($this->weekdays->isEmpty()) {
+                    return null;
+                }
+
+                return $this->weekdays
+                    ->pluck('weekday')
+                    ->map(static function (mixed $w): int {
+                        return is_int($w) ? $w : (int) (string) $w;
+                    })
+                    ->unique()
+                    ->sort()
+                    ->values()
+                    ->all();
+            },
+        );
+    }
+
+    public function syncIntakeWeekdays(?array $weekdayNumbers): void
+    {
+        $this->weekdays()->delete();
+
+        if ($weekdayNumbers === null || $weekdayNumbers === []) {
+            return;
+        }
+
+        $seen = [];
+
+        foreach ($weekdayNumbers as $day) {
+            $n = (int) $day;
+
+            if ($n < 1 || $n > 7 || isset($seen[$n])) {
+                continue;
+            }
+
+            $seen[$n] = true;
+            $this->weekdays()->create(['weekday' => $n]);
+        }
     }
 
     /**************************************/
@@ -62,5 +107,15 @@ class MedicationSchedule extends Model
     public function medication(): BelongsTo
     {
         return $this->belongsTo(Medication::class);
+    }
+
+    public function intakes(): HasMany
+    {
+        return $this->hasMany(MedicationIntake::class);
+    }
+
+    public function weekdays(): HasMany
+    {
+        return $this->hasMany(MedicationScheduleWeekday::class);
     }
 }
