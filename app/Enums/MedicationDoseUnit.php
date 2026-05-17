@@ -13,4 +13,17 @@ enum MedicationDoseUnit: string
     case UNIT = 'unit';
     case SACHET = 'sachet';
     case OTHER = 'other';
+
+    public function requiresStrength(): bool
+    {
+        return $this === self::DROP || $this === self::INJECTION;
+    }
+
+    public static function selectableForForms(): array
+    {
+        return array_values(array_filter(
+            self::cases(),
+            static fn (self $unit): bool => $unit !== self::UNIT,
+        ));
+    }
 }
