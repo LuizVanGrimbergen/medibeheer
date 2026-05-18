@@ -15,13 +15,23 @@ trait AuthorizesRouteMedication
 
     protected function userCanUpdateRouteMedication(): bool
     {
+        return $this->userCanOnRouteMedication('update');
+    }
+
+    protected function userCanUpdateRouteMedicationStock(): bool
+    {
+        return $this->userCanOnRouteMedication('updateStock');
+    }
+
+    private function userCanOnRouteMedication(string $ability): bool
+    {
         $medication = $this->routeMedication();
 
         if ($medication === null) {
             return false;
         }
 
-        return $this->user()?->can('update', $medication) ?? false;
+        return $this->user()?->can($ability, $medication) ?? false;
     }
 
     protected function mirrorMedicationDoseIntoDoseQuantity(): void
