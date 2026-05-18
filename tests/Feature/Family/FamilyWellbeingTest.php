@@ -17,9 +17,7 @@ test('linked family members see wellbeing check-ins on wellbeing', function () {
         'note' => 'Even uitgerust.',
     ]);
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $response = $this->actingAs($familyUser)->get(route('family.wellbeing'));
 
@@ -54,9 +52,7 @@ test('family updates page does not load wellbeing props', function () {
         'note' => 'Even uitgerust.',
     ]);
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $this->actingAs($familyUser)->get(route('family.updates'))
         ->assertOk()
@@ -70,9 +66,7 @@ test('linked family members can visit family wellbeing', function () {
     $patient = $patientUser->patient;
     expect($patient)->not->toBeNull();
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $response = $this->actingAs($familyUser)->get(route('family.wellbeing'));
 
@@ -92,9 +86,7 @@ test('shared family props expose active patient today mood for footer nav', func
         'note' => null,
     ]);
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
@@ -114,9 +106,7 @@ test('shared family props expose bad mood when check-in is bad', function () {
         'note' => null,
     ]);
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
@@ -145,9 +135,7 @@ test('family wellbeing calendar only loads check-ins for the requested month', f
         'note' => null,
     ]);
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $this->actingAs($familyUser)->get(route('family.wellbeing', ['calendar_month' => '2026-05']))
         ->assertOk()
@@ -164,9 +152,7 @@ test('shared family props use null today mood when there is no check-in today', 
     $patient = $patientUser->patient;
     expect($patient)->not->toBeNull();
 
-    $familyUser = User::factory()->familyMember()->create();
-    $family = $familyUser->familyOrCreate();
-    $family->patients()->attach($patient->id);
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()

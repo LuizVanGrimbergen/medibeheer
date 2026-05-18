@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Patient;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -11,6 +13,15 @@ pest()->extend(TestCase::class)
 expect()->extend('toBeOne', function () {
     return $this->toBe(1);
 });
+
+function createLinkedFamilyMemberForPatient(Patient $patient): User
+{
+    $familyUser = User::factory()->familyMember()->create();
+    $family = $familyUser->familyOrCreate();
+    $family->patients()->attach($patient->id);
+
+    return $familyUser;
+}
 
 function assertInertiaRootComponent(TestResponse $response, string $component): void
 {
