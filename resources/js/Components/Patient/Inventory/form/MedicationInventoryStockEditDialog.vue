@@ -20,15 +20,21 @@ import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/pati
 import type { MedicationStockListItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-const props = defineProps<{
-    open: boolean;
-    medicationId: number;
-    doseUnit: string | null;
-    stock: MedicationStockListItem;
-    formId: string;
-    idPrefix: string;
-    dialogContentClass: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        open: boolean;
+        medicationId: number;
+        doseUnit: string | null;
+        stock: MedicationStockListItem;
+        formId: string;
+        idPrefix: string;
+        dialogContentClass: string;
+        updateRouteName?: string;
+    }>(),
+    {
+        updateRouteName: 'patient.medications.stocks.update',
+    },
+);
 
 const emit = defineEmits<{
     'update:open': [value: boolean];
@@ -140,7 +146,7 @@ function submitStock(): void {
     }
 
     form.put(
-        route('patient.medications.stocks.update', {
+        route(props.updateRouteName, {
             medication: props.medicationId,
             stock: props.stock.id,
         }),
