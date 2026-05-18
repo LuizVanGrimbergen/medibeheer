@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
 import FamilyWellbeingMonthCalendar from '@/Components/Family/Wellbeing/FamilyWellbeingMonthCalendar.vue';
+import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
+import { useHistorySelectedDay } from '@/composables/useHistorySelectedDay';
 import type { FamilyWellbeingScreenProps } from '@/lib/family/wellbeing/familyWellbeingScreenProps';
-import type { DailyCheckin, FamilyDashboardProps } from '@/lib/types';
+import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
+import type { FamilyDashboardProps } from '@/lib/types';
 
 const props = defineProps<
     FamilyWellbeingScreenProps & {
@@ -20,52 +23,25 @@ const listPaginationQuery = computed((): Record<string, string> => ({
     calendar_month: props.wellbeing_calendar_month,
 }));
 
-const selectedCalendarDate = ref<string | null>(null);
-const selectedDaySectionRef = ref<HTMLElement | null>(null);
-
-watch(
-    () => props.wellbeing_calendar_month,
-    () => {
-        selectedCalendarDate.value = null;
-    },
+const wellbeingCalendarIndex = computed(() =>
+    indexWellbeingCalendarCheckins(props.wellbeing_calendar_checkins),
 );
 
-const checkinsByCalendarDate = computed((): Map<string, DailyCheckin> => {
-    const map = new Map<string, DailyCheckin>();
+const {
+    selectedCalendarDate,
+    selectedDaySectionRef,
+    onSelectCalendarDate,
+} = useHistorySelectedDay(() => props.wellbeing_calendar_month);
 
-    for (const checkin of props.wellbeing_calendar_checkins) {
-        map.set(checkin.checkin_date, checkin);
-    }
-
-    return map;
-});
-
-const selectedDayCheckin = computed((): DailyCheckin | undefined => {
+const selectedDayCheckin = computed(() => {
     const date = selectedCalendarDate.value;
 
     if (date === null) {
         return undefined;
     }
 
-    return checkinsByCalendarDate.value.get(date);
+    return wellbeingCalendarIndex.value.checkinsByDate.get(date);
 });
-
-function onSelectCalendarDate(dateKey: string): void {
-    const next = selectedCalendarDate.value === dateKey ? null : dateKey;
-
-    selectedCalendarDate.value = next;
-
-    if (next === null) {
-        return;
-    }
-
-    nextTick(() => {
-        selectedDaySectionRef.value?.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-        });
-    });
-}
 </script>
 
 <template>
@@ -90,20 +66,16 @@ function onSelectCalendarDate(dateKey: string): void {
         >
             <FamilyWellbeingMonthCalendar
                 :calendar-month="props.wellbeing_calendar_month"
-                :calendar-checkins="props.wellbeing_calendar_checkins"
+                :moods-by-date="wellbeingCalendarIndex.moodsByDate"
                 :selected-date="selectedCalendarDate"
                 @select-date="onSelectCalendarDate"
             />
 
-            <section
-                v-if="selectedCalendarDate !== null"
+            <HistorySelectedDaySection
                 ref="selectedDaySectionRef"
-                class="scroll-mt-24 space-y-3"
-                tabindex="-1"
+                :selected-date="selectedCalendarDate"
+                :heading="t('family.wellbeing.selectedDayHeading')"
             >
-                <h2 class="text-lg font-semibold text-text-heading">
-                    {{ t('family.wellbeing.selectedDayHeading') }}
-                </h2>
                 <FamilyWellbeingCheckinCard
                     v-if="selectedDayCheckin !== undefined"
                     :checkin="selectedDayCheckin"
@@ -114,7 +86,7 @@ function onSelectCalendarDate(dateKey: string): void {
                 >
                     {{ t('family.wellbeing.selectedDayNoCheckin') }}
                 </p>
-            </section>
+            </HistorySelectedDaySection>
 
             <template v-if="props.wellbeing_checkins.meta.total === 0">
                 <p class="text-sm leading-relaxed text-text-muted">
@@ -145,3 +117,4 @@ function onSelectCalendarDate(dateKey: string): void {
         </div>
     </div>
 </template>
+
