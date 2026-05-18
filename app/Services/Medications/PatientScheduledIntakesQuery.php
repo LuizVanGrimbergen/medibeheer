@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Medications;
 
 use App\Enums\MedicationIntakeDayPeriod;
+use App\Enums\MedicationIntakeDayStatus;
 use App\Models\Medication;
 use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
@@ -14,6 +15,7 @@ use App\Support\Medications\MedicationScheduleOccursOnDate;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 final class PatientScheduledIntakesQuery
 {
@@ -30,11 +32,80 @@ final class PatientScheduledIntakesQuery
         $intakes = $this->loadIntakesByKey($patient, $targetDate);
         $supplyEstimates = $this->buildSupplyEstimates($medications, $targetDate);
 
+        return $this->buildSlotsForDate($medications, $targetDate, $intakes, $supplyEstimates);
+    }
+
+    public function monthCalendarDataForPatient(Patient $patient, string $calendarMonth): array
+    {
+        $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
+        $monthEnd = $monthStart->endOfMonth();
+        $medications = $this->loadMedicationsFor($patient);
+
+        $intakesInMonth = MedicationIntake::query()
+            ->where('patient_id', $patient->id)
+            ->whereBetween('intake_date', [
+                $monthStart->toDateString(),
+                $monthEnd->toDateString(),
+            ])
+            ->get();
+
+        $intakesByDate = $intakesInMonth->groupBy(
+            fn (MedicationIntake $intake): string => $intake->intake_date->toDateString(),
+        );
+
+        $supplyEstimates = $this->buildSupplyEstimates($medications, CarbonImmutable::today());
+
+        $days = [];
+        $slots = [];
+
+        for ($date = $monthStart; $date <= $monthEnd; $date = $date->addDay()) {
+            $dateKey = $date->toDateString();
+            $dayIntakes = ($intakesByDate->get($dateKey) ?? collect())
+                ->keyBy(
+                    fn (MedicationIntake $intake): string => $this->intakeKey(
+                        $intake->medication_schedule_id,
+                        (string) $intake->dose_time,
+                    ),
+                );
+            $daySlots = $this->buildSlotsForDate($medications, $date, $dayIntakes, $supplyEstimates);
+            $scheduledCount = count($daySlots);
+            $takenCount = count(array_filter(
+                $daySlots,
+                static fn (array $slot): bool => $slot['taken_at'] !== null,
+            ));
+
+            $days[] = [
+                'date' => $dateKey,
+                'status' => MedicationIntakeDayStatus::fromCounts($scheduledCount, $takenCount)->value,
+                'scheduled_count' => $scheduledCount,
+                'taken_count' => $takenCount,
+            ];
+
+            foreach ($daySlots as $slot) {
+                $slots[] = [
+                    ...$slot,
+                    'intake_date' => $dateKey,
+                ];
+            }
+        }
+
+        return [
+            'days' => $days,
+            'slots' => $slots,
+        ];
+    }
+
+    private function buildSlotsForDate(
+        EloquentCollection $medications,
+        CarbonImmutable $date,
+        Collection $intakes,
+        array $supplyEstimates,
+    ): array {
         $scheduled = [];
 
         foreach ($medications as $medication) {
             foreach ($medication->schedules as $schedule) {
-                if (! $this->scheduleOccursOnDate->isIntakeDueOn($schedule, $targetDate)) {
+                if (! $this->scheduleOccursOnDate->isIntakeDueOn($schedule, $date)) {
                     continue;
                 }
 
@@ -97,7 +168,7 @@ final class PatientScheduledIntakesQuery
         Medication $medication,
         MedicationSchedule $schedule,
         string $doseTime,
-        EloquentCollection $intakes,
+        Collection $intakes,
         array $supplyEstimates,
     ): array {
         $intake = $intakes->get($this->intakeKey($schedule->id, $doseTime));
@@ -178,6 +249,6 @@ final class PatientScheduledIntakesQuery
 
     private function intakeKey(int $scheduleId, string $doseTime): string
     {
-        return "{$scheduleId}|" . trim($doseTime);
+        return "{$scheduleId}|".trim($doseTime);
     }
 }
