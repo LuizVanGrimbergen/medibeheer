@@ -26,6 +26,14 @@ test('verified family members can visit family wellbeing', function () {
     $response->assertOk();
 });
 
+test('verified family members can visit family medications', function () {
+    $user = User::factory()->familyMember()->create();
+
+    $response = $this->actingAs($user)->get(route('family.medications'));
+
+    $response->assertOk();
+});
+
 test('patients cannot visit family overview', function () {
     $user = User::factory()->patient()->create();
 
@@ -46,6 +54,14 @@ test('patients cannot visit family wellbeing', function () {
     $user = User::factory()->patient()->create();
 
     $response = $this->actingAs($user)->get(route('family.wellbeing'));
+
+    $response->assertForbidden();
+});
+
+test('patients cannot visit family medications', function () {
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->get(route('family.medications'));
 
     $response->assertForbidden();
 });
@@ -72,6 +88,12 @@ test('guests are redirected when visiting family updates', function () {
 
 test('guests are redirected when visiting family wellbeing', function () {
     $response = $this->get(route('family.wellbeing'));
+
+    $response->assertRedirect(route('login'));
+});
+
+test('guests are redirected when visiting family medications', function () {
+    $response = $this->get(route('family.medications'));
 
     $response->assertRedirect(route('login'));
 });

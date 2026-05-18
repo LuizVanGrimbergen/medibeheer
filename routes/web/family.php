@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Family\Dashboard\FamilyAppointmentsController;
+use App\Http\Controllers\Family\Dashboard\FamilyMedicationsController;
 use App\Http\Controllers\Family\Dashboard\FamilyMedicationStockController;
 use App\Http\Controllers\Family\Dashboard\FamilyOverviewController;
 use App\Http\Controllers\Family\Dashboard\FamilyUpdatesController;
@@ -29,11 +30,11 @@ Route::middleware([
         /* Family Appointments */
         Route::get('appointments', FamilyAppointmentsController::class)->name('appointments');
 
-        /* Family Medication Stock */
+        /* Family Medications */
+        Route::get('medications', FamilyMedicationsController::class)->name('medications');
         Route::put('medications/{medication}/stocks/{stock}', [FamilyMedicationStockController::class, 'update'])
             ->scopeBindings()
             ->name('medications.stocks.update');
-
         Route::get('updates', FamilyUpdatesController::class)->name('updates');
 
         /* Family Wellbeing */
