@@ -2,6 +2,7 @@
 import { Calendar, Clock, FileText, Package, Pencil, Scale, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationStockControls from '@/Components/Medications/MedicationStockControls.vue';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
@@ -10,9 +11,19 @@ import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicat
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import type { MedicationListItem, MedicationTypeValue } from '@/lib/types';
 
-const props = defineProps<{
-    medication: MedicationListItem;
-}>();
+const props = withDefaults(
+    defineProps<{
+        medication: MedicationListItem;
+        showActions?: boolean;
+        showStock?: boolean;
+        stockUpdateRouteName?: string;
+    }>(),
+    {
+        showActions: true,
+        showStock: false,
+        stockUpdateRouteName: 'patient.medications.stocks.update',
+    },
+);
 
 const emit = defineEmits<{
     edit: [];
@@ -210,6 +221,7 @@ const notePreview = computed((): string | null => {
     >
         <CardContent class="relative p-4 pb-6 pt-5 sm:p-8">
             <div
+                v-if="props.showActions"
                 class="absolute right-4 top-4 z-10 flex flex-row items-center gap-0.5 sm:right-8 sm:top-8"
                 role="toolbar"
                 :aria-label="t('patient.medications.cardActionsAriaLabel')"
@@ -236,7 +248,8 @@ const notePreview = computed((): string | null => {
             </div>
 
             <div
-                class="flex min-w-0 w-full flex-col gap-5 pr-21 sm:flex-row sm:items-start sm:gap-6 sm:pr-28"
+                class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6"
+                :class="{ 'pr-21 sm:pr-28': props.showActions }"
             >
                 <div
                     class="flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-16"
@@ -396,6 +409,14 @@ const notePreview = computed((): string | null => {
                             </span>
                         </span>
                     </p>
+
+                    <MedicationStockControls
+                        v-if="props.showStock"
+                        :medication="medication"
+                        :update-route-name="props.stockUpdateRouteName"
+                        :id-prefix="`medication-card-stock-${medication.id}`"
+                        class="border-t border-border/70 pt-4"
+                    />
                 </div>
             </div>
         </CardContent>

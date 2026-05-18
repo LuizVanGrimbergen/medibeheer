@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Bell, CalendarDays, LayoutGrid, Smile } from 'lucide-vue-next';
+import { Bell, CalendarDays, LayoutGrid, Pill, Smile } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -40,14 +40,17 @@ type FamilyNavItem = {
     routeName:
         | 'family.overview'
         | 'family.appointments'
+        | 'family.medications'
         | 'family.wellbeing'
         | 'family.updates';
     labelKey:
         | 'family.navigation.overview'
         | 'family.navigation.appointments'
+        | 'family.navigation.medications'
         | 'family.navigation.wellbeing'
         | 'family.navigation.updates';
     icon: LucideIcon;
+    requiresLinkedPatient?: boolean;
 };
 
 function pathOnly(urlOrPath: string): string {
@@ -72,16 +75,25 @@ const allFamilyNavItems: readonly FamilyNavItem[] = [
         routeName: 'family.appointments',
         labelKey: 'family.navigation.appointments',
         icon: CalendarDays,
+        requiresLinkedPatient: true,
+    },
+    {
+        routeName: 'family.medications',
+        labelKey: 'family.navigation.medications',
+        icon: Pill,
+        requiresLinkedPatient: true,
     },
     {
         routeName: 'family.wellbeing',
         labelKey: 'family.navigation.wellbeing',
         icon: Smile,
+        requiresLinkedPatient: true,
     },
     {
         routeName: 'family.updates',
         labelKey: 'family.navigation.updates',
         icon: Bell,
+        requiresLinkedPatient: true,
     },
 ];
 
@@ -92,15 +104,8 @@ const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
         return allFamilyNavItems;
     }
 
-    const showUpdatesNav = Boolean(f.has_linked_patient);
-
-    if (!showUpdatesNav) {
-        return allFamilyNavItems.filter(
-            (item) =>
-                item.routeName !== 'family.updates' &&
-                item.routeName !== 'family.appointments' &&
-                item.routeName !== 'family.wellbeing',
-        );
+    if (!f.has_linked_patient) {
+        return allFamilyNavItems.filter((item) => !item.requiresLinkedPatient);
     }
 
     return allFamilyNavItems;

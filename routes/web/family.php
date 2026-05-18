@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Family\Dashboard\FamilyAppointmentsController;
+use App\Http\Controllers\Family\Dashboard\FamilyMedicationsController;
+use App\Http\Controllers\Family\Dashboard\FamilyMedicationStockController;
 use App\Http\Controllers\Family\Dashboard\FamilyOverviewController;
 use App\Http\Controllers\Family\Dashboard\FamilyUpdatesController;
 use App\Http\Controllers\Family\Dashboard\FamilyWellbeingController;
@@ -12,7 +14,6 @@ use App\Http\Middleware\EnsureFamilyMember;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Routing\Middleware\ThrottleRequests;
-/* invitation routes */
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([
@@ -25,8 +26,18 @@ Route::middleware([
     ->name('family.')
     ->group(function (): void {
         Route::get('/', FamilyOverviewController::class)->name('overview');
+
+        /* Family Appointments */
         Route::get('appointments', FamilyAppointmentsController::class)->name('appointments');
+
+        /* Family Medications */
+        Route::get('medications', FamilyMedicationsController::class)->name('medications');
+        Route::put('medications/{medication}/stocks/{stock}', [FamilyMedicationStockController::class, 'update'])
+            ->scopeBindings()
+            ->name('medications.stocks.update');
         Route::get('updates', FamilyUpdatesController::class)->name('updates');
+
+        /* Family Wellbeing */
         Route::get('wellbeing', FamilyWellbeingController::class)->name('wellbeing');
 
         /* Family Invitations */

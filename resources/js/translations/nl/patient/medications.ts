@@ -149,4 +149,29 @@ export default {
         delete: 'Verwijderen',
         editDetails: 'Gegevens bewerken',
     },
+    history: {
+        registerHeading: 'Medicatieregister',
+        selectedDayHeading: 'Geselecteerde dag',
+        selectedDayNoSchedule: 'Geen geplande innames op deze dag.',
+        selectedDayNoIntakes: 'Geen innames gevonden voor deze dag.',
+        calendar: {
+            prevMonth: 'Vorige maand',
+            nextMonth: 'Volgende maand',
+            gridAria: 'Inname per dag in {month}',
+            dayNoSchedule: '{date}, geen geplande innames',
+            dayNoIntake: '{date}, geen inname',
+            dayWithStatus: '{date}, status: {status}',
+            openDayDetails: 'Details voor deze dag tonen',
+        },
+        status: {
+            complete: 'Alles genomen',
+            partial: 'Deels genomen',
+            none_taken: 'Niet genomen',
+            no_schedule: 'Geen schema',
+        },
+        slot: {
+            taken: 'Genomen',
+            notTaken: 'Niet genomen',
+        },
+    },
 };

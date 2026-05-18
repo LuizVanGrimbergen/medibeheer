@@ -23,7 +23,7 @@ class UpdateMedicationStockRequest extends FormRequest
             return false;
         }
 
-        return $this->userCanUpdateRouteMedication();
+        return $this->userCanUpdateRouteMedicationStock();
     }
 
     public function rules(): array

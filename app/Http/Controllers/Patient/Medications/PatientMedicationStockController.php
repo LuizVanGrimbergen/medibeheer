@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient\Medications;
 
+use App\Http\Controllers\Concerns\UpdatesMedicationStock;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Medications\StoreMedicationStockRequest;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 class PatientMedicationStockController extends Controller
 {
     use AuthorizesPatientProfile;
+    use UpdatesMedicationStock;
 
     public function store(StoreMedicationStockRequest $request, Medication $medication): RedirectResponse
     {
@@ -34,13 +36,11 @@ class PatientMedicationStockController extends Controller
     ): RedirectResponse {
         $this->authorizePatientProfile($request);
 
-        if (! $stock->medication->is($medication)) {
-            abort(404);
-        }
-
-        $stock->fill($request->validated())->save();
-
-        return redirect()->back(fallback: route('patient.medications'));
+        return $this->performMedicationStockUpdate(
+            $request,
+            $stock,
+            route('patient.medications'),
+        );
     }
 
     public function destroy(Request $request, Medication $medication, MedicationStock $stock): RedirectResponse

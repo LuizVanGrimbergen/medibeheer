@@ -23,6 +23,15 @@ class MedicationPolicy
         return $this->ownsPatientMedication($user, $medication);
     }
 
+    public function updateStock(User $user, Medication $medication): bool
+    {
+        if ($this->ownsPatientMedication($user, $medication)) {
+            return true;
+        }
+
+        return $user->isFamilyLinkedToPatient($medication->patient);
+    }
+
     public function delete(User $user, Medication $medication): bool
     {
         return $this->ownsPatientMedication($user, $medication);

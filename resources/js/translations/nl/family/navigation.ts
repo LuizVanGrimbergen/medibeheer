@@ -2,6 +2,7 @@ export default {
     mobileFooterAriaLabel: 'Familie hoofdmenu',
     overview: 'Overzicht',
     appointments: 'Afspraken',
+    medications: 'Medicatie',
     wellbeing: 'Welzijn',
     updates: 'Updates',
     wellbeingAriaNoCheckin: 'Welzijn, geen check-in vandaag',
