@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Patient\DailyCheckins;
 
 use App\Enums\DailyMoodScore;
+use App\Events\Family\DailyCheckinCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\DailyCheckins\StoreDailyCheckinRequest;
@@ -39,7 +40,7 @@ class PatientDailyCheckinController extends Controller
             ? $moodRaw
             : DailyMoodScore::from((string) $moodRaw);
 
-        DB::transaction(function () use ($patient, $today, $mood, $validated): void {
+        $checkin = DB::transaction(function () use ($patient, $today, $mood, $validated): DailyCheckin {
             $checkin = $patient->dailyCheckins()->create([
                 'checkin_date' => $today->toDateString(),
                 'mood_score' => $mood,
@@ -55,7 +56,13 @@ class PatientDailyCheckinController extends Controller
                     ]);
                 }
             }
+
+            return $checkin;
         });
+
+        $checkin->load('selectedSymptoms');
+
+        DailyCheckinCreatedEvent::dispatch($checkin);
 
         return redirect()
             ->route('patient.dashboard')
