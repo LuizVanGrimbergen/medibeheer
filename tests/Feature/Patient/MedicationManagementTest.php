@@ -47,6 +47,35 @@ test('patient medications inertia page includes medications collection', functio
         ->where('can_create_medication', true));
 });
 
+test('patients can create a medication with snooze time per dose slot', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Vitamine D',
+        'dose' => '1',
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
+        'type_medication' => MedicationType::PILL->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => [
+            ...validNewMedicationSchedulePayload(),
+            'times_per_day' => '2',
+            'dose_time' => '09:00, 12:00',
+            'snooze_time' => '60, 30',
+        ],
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $schedule = MedicationSchedule::query()
+        ->where('patient_id', $patient->id)
+        ->first();
+
+    expect($schedule)->not->toBeNull();
+    expect($schedule->dose_time)->toBe('09:00|60, 12:00|30');
+});
+
 test('patients can create a medication and name is encrypted at rest', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;

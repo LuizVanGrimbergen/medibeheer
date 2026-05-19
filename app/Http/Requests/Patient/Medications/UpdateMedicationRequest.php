@@ -7,6 +7,7 @@ use App\Http\Requests\Patient\Medications\Concerns\AuthorizesRouteMedication;
 use App\Http\Requests\Patient\Medications\Concerns\NormalizesNullableStringInputs;
 use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleFields;
 use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationStrengthField;
+use App\Support\MedicationScheduleDoseTimeFields;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -26,6 +27,7 @@ class UpdateMedicationRequest extends FormRequest
             $dose = $this->input('dose');
             $schedule['dose_quantity'] = is_string($dose) ? trim($dose) : '';
             $schedule = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($schedule);
+            $schedule = MedicationScheduleDoseTimeFields::normalizeNestedSchedule($schedule);
             $schedule = $this->normalizeMedicationScheduleDatesForValidation($schedule);
             $this->merge(['schedule' => $schedule]);
         }

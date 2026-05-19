@@ -5,6 +5,7 @@ namespace App\Http\Requests\Patient\Medications;
 use App\Http\Requests\Patient\Medications\Concerns\AuthorizesRouteMedication;
 use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleFields;
 use App\Models\MedicationSchedule;
+use App\Support\MedicationScheduleDoseTimeFields;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -16,6 +17,13 @@ class UpdateMedicationScheduleRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->mirrorMedicationDoseIntoDoseQuantity();
+
+        if ($this->has('dose_time') || $this->has('snooze_time')) {
+            $this->merge(MedicationScheduleDoseTimeFields::normalizeFlatPayload([
+                'dose_time' => $this->input('dose_time'),
+                'snooze_time' => $this->input('snooze_time'),
+            ]));
+        }
 
         if (! $this->has('intake_frequency') && ! $this->has('intake_weekdays')) {
             return;
