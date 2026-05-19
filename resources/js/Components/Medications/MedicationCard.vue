@@ -8,8 +8,12 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
-import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import type { MedicationListItem, MedicationTypeValue } from '@/lib/types';
+import {
+    medicationIntakeDoseLine,
+    medicationIntakeNotePreview,
+    medicationTypeLabel,
+} from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
+import type { MedicationListItem } from '@/lib/types';
 
 const props = withDefaults(
     defineProps<{
@@ -131,7 +135,7 @@ const sortedDoseTimes = computed((): string[] => {
         }
 
         for (const segment of raw.split(',')) {
-            const part = segment.trim();
+            const part = segment.trim().split('|', 1)[0]?.trim() ?? '';
 
             if (part.length > 0) {
                 seen.add(part);
@@ -159,29 +163,18 @@ const sortedDoseTimes = computed((): string[] => {
     });
 });
 
-const doseLine = computed((): string | null => {
-    const dose = props.medication.dose?.trim();
-
-    if (dose === undefined || dose.length < 1) {
-        return null;
-    }
-
-    const unit = props.medication.dose_unit;
-
-    if (unit === null) {
-        return dose;
-    }
-
-    const chip = medicationDoseUnitChipForAmount(t, dose, unit);
-
-    return `${dose} ${chip}`;
-});
+const doseLine = computed(() =>
+    medicationIntakeDoseLine(t, {
+        dose: props.medication.dose,
+        dose_unit: props.medication.dose_unit,
+        note: props.medication.note,
+        type_medication: props.medication.type_medication,
+    }),
+);
 
 const strengthLine = computed(() => props.medication.strength?.trim() || null);
 
-const typeLabel = computed(() =>
-    t(`patient.medications.types.${props.medication.type_medication as MedicationTypeValue}`),
-);
+const typeLabel = computed(() => medicationTypeLabel(t, props.medication.type_medication));
 
 const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
 
@@ -197,21 +190,7 @@ const medicationPillIconClass = computed(
     () => medicationVisualToneClasses.value.pillIcon,
 );
 
-const notePreview = computed((): string | null => {
-    const raw = props.medication.note;
-
-    if (raw === null) {
-        return null;
-    }
-
-    const trimmed = raw.trim();
-
-    if (trimmed.length < 1) {
-        return null;
-    }
-
-    return trimmed;
-});
+const notePreview = computed(() => medicationIntakeNotePreview(props.medication));
 </script>
 
 <template>

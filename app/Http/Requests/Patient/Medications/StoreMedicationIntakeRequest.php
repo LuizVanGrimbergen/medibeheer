@@ -4,6 +4,8 @@ namespace App\Http\Requests\Patient\Medications;
 
 use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
+use App\Support\Medications\MedicationIntakeClock;
+use App\Support\Medications\MedicationScheduleDoseTimes;
 use App\Support\Medications\MedicationScheduleOccursOnDate;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Http\FormRequest;
@@ -29,6 +31,8 @@ class StoreMedicationIntakeRequest extends FormRequest
                     ->where('patient_id', $patient?->id),
             ],
             'dose_time' => ['required', 'string', 'max:5', 'regex:/^\d{1,2}:\d{2}$/'],
+            'late_intake' => ['sometimes', 'boolean'],
+            'taken_at' => ['nullable', 'date'],
         ];
     }
 
@@ -57,11 +61,49 @@ class StoreMedicationIntakeRequest extends FormRequest
 
             $doseTime = (string) $this->input('dose_time');
 
-            if (! app(MedicationScheduleOccursOnDate::class)
-                ->hasScheduledDoseOn($schedule, $doseTime, CarbonImmutable::today())) {
+            $occursOnDate = app(MedicationScheduleOccursOnDate::class);
+
+            if (! $occursOnDate->hasScheduledDoseOn($schedule, $doseTime, MedicationIntakeClock::today())) {
                 $validator->errors()->add(
                     'medication_schedule_id',
                     trans('medication.intake_slot_not_due_today'),
+                );
+
+                return;
+            }
+
+            if ($this->boolean('late_intake') || $this->filled('taken_at')) {
+                if ($this->filled('taken_at')) {
+                    $takenAt = CarbonImmutable::parse(
+                        (string) $this->input('taken_at'),
+                        MedicationIntakeClock::TIMEZONE,
+                    );
+
+                    if (! $takenAt->isSameDay(MedicationIntakeClock::now())) {
+                        $validator->errors()->add(
+                            'taken_at',
+                            trans('medication.intake_taken_at_not_today'),
+                        );
+                    }
+
+                    if ($takenAt->isFuture()) {
+                        $validator->errors()->add(
+                            'taken_at',
+                            trans('medication.intake_taken_at_in_future'),
+                        );
+                    }
+                }
+
+                return;
+            }
+
+            if (! MedicationScheduleDoseTimes::isWithinIntakeWindow(
+                $doseTime,
+                (string) $schedule->dose_time,
+            )) {
+                $validator->errors()->add(
+                    'dose_time',
+                    trans('medication.intake_outside_window'),
                 );
             }
         });

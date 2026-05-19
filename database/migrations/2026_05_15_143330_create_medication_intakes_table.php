@@ -14,13 +14,14 @@ return new class extends Migration
             $table->foreignId('medication_id')->constrained()->cascadeOnDelete();
             $table->foreignId('medication_schedule_id')->constrained()->cascadeOnDelete();
             $table->date('intake_date');
-            $table->string('dose_time', 5)->default('');
+            $table->text('dose_time');
+            $table->char('dose_time_index', 64);
             $table->timestamp('taken_at');
             $table->timestamps();
 
             $table->unique(
-                ['medication_schedule_id', 'intake_date', 'dose_time'],
-                'medication_intakes_schedule_date_time_unique',
+                ['medication_schedule_id', 'intake_date', 'dose_time_index'],
+                'medication_intakes_schedule_date_dose_unique',
             );
             $table->index(['patient_id', 'intake_date']);
         });

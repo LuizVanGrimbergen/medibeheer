@@ -1,5 +1,9 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import type { MedicationListItem } from '@/lib/types';
+import {
+    buildMedicationScheduleDoseTimeSlots,
+    buildMedicationScheduleSnoozeTimeSlots,
+} from '../schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
 import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import { blankMedicationCreateForm } from './medicationCreateFormDefaults';
@@ -30,24 +34,14 @@ export function medicationListItemToCreateFormState(
         return base;
     }
 
-    const rawSlots = first.dose_time.split(',').map((segment) => segment.trim());
-    const slots = rawSlots.length > 0 ? rawSlots : [''];
     const count = parseMedicationTimesPerDayCount(first.times_per_day);
-
-    let dose_time_slots = slots;
-
-    if (count !== null) {
-        if (slots.length < count) {
-            dose_time_slots = [
-                ...slots,
-                ...Array.from({ length: count - slots.length }, () => ''),
-            ];
-        }
-
-        if (slots.length > count) {
-            dose_time_slots = slots.slice(0, count);
-        }
-    }
+    const slotCount = count ?? 1;
+    const dose_time_slots = buildMedicationScheduleDoseTimeSlots(first.dose_time, slotCount);
+    const snooze_time_slots = buildMedicationScheduleSnoozeTimeSlots(
+        first.dose_time,
+        first.snooze_time,
+        slotCount,
+    );
 
     base.schedule = {
         meal_timing: first.meal_timing,
@@ -55,6 +49,7 @@ export function medicationListItemToCreateFormState(
         intake_weekdays: first.intake_weekdays === null ? [] : [...first.intake_weekdays],
         times_per_day: first.times_per_day,
         dose_time_slots,
+        snooze_time_slots,
         start_date: first.start_date ?? '',
         end_date: first.end_date ?? '',
     };

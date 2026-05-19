@@ -1,5 +1,6 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { resolveMedicationStrengthForPayload } from '@/lib/patient/medications/strength/buildMedicationStrengthFromParts';
+import { buildMedicationScheduleSnoozeTimeForPayload } from '../schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
 
 function buildMedicationScheduleDoseTimeForPayload(
@@ -32,6 +33,7 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         times_per_day: string;
         dose_quantity: string;
         dose_time: string;
+        snooze_time: string;
         start_date: string;
         end_date: string | null;
     };
@@ -56,6 +58,15 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
             times_per_day: data.schedule.times_per_day.trim(),
             dose_quantity: data.dose.trim(),
             dose_time: buildMedicationScheduleDoseTimeForPayload(data.schedule),
+            snooze_time: (() => {
+                const count = parseMedicationTimesPerDayCount(data.schedule.times_per_day);
+
+                if (count === null) {
+                    return '';
+                }
+
+                return buildMedicationScheduleSnoozeTimeForPayload(data.schedule, count);
+            })(),
             start_date: data.schedule.start_date.trim(),
             end_date: (() => {
                 const trimmed = data.schedule.end_date.trim();

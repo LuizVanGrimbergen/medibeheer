@@ -38,14 +38,14 @@ export function handleMedicationWizardFooterBack(params: {
     }
 
     if (currentStep.value === 4) {
-        inertiaForm.clearErrors('schedule.dose_time');
+        inertiaForm.clearErrors('schedule.dose_time', 'schedule.snooze_time');
         currentStep.value = 3;
 
         return;
     }
 
     if (currentStep.value === 3) {
-        inertiaForm.clearErrors('schedule.times_per_day', 'schedule.dose_time');
+        inertiaForm.clearErrors('schedule.times_per_day', 'schedule.dose_time', 'schedule.snooze_time');
         currentStep.value = 2;
 
         return;

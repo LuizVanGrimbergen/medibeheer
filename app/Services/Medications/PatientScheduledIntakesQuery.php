@@ -11,6 +11,8 @@ use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
 use App\Models\Patient;
 use App\Support\Medications\DoseTime;
+use App\Support\Medications\MedicationIntakeClock;
+use App\Support\Medications\MedicationScheduleDoseTimes;
 use App\Support\Medications\MedicationScheduleOccursOnDate;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
@@ -43,17 +45,14 @@ final class PatientScheduledIntakesQuery
 
         $intakesInMonth = MedicationIntake::query()
             ->where('patient_id', $patient->id)
-            ->whereBetween('intake_date', [
-                $monthStart->toDateString(),
-                $monthEnd->toDateString(),
-            ])
+            ->whereBetween('intake_date', [$monthStart->toDateString(), $monthEnd->toDateString()], 'and')
             ->get();
 
         $intakesByDate = $intakesInMonth->groupBy(
             fn (MedicationIntake $intake): string => $intake->intake_date->toDateString(),
         );
 
-        $supplyEstimates = $this->buildSupplyEstimates($medications, CarbonImmutable::today());
+        $supplyEstimates = $this->buildSupplyEstimates($medications, MedicationIntakeClock::today());
 
         $days = [];
         $slots = [];
@@ -179,6 +178,14 @@ final class PatientScheduledIntakesQuery
             'medication_id' => $medication->id,
             'medication_schedule_id' => $schedule->id,
             'dose_time' => $doseTime,
+            'snooze_minutes' => MedicationScheduleDoseTimes::snoozeMinutesFor(
+                $doseTime,
+                (string) $schedule->dose_time,
+            ),
+            'intake_window_state' => MedicationScheduleDoseTimes::resolveIntakeWindowState(
+                $doseTime,
+                (string) $schedule->dose_time,
+            ),
             'day_period' => $dayPeriod->value,
             'name' => (string) $medication->name,
             'type_medication' => $medication->type_medication->value,
@@ -241,7 +248,7 @@ final class PatientScheduledIntakesQuery
     private function resolveTargetDate(?CarbonInterface $date): CarbonImmutable
     {
         if ($date === null) {
-            return CarbonImmutable::today();
+            return MedicationIntakeClock::today();
         }
 
         return CarbonImmutable::parse($date)->startOfDay();

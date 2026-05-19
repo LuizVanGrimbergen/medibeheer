@@ -7,10 +7,19 @@ import type {
     MedicationFormWizardStep,
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
+import { medicationTypeLabel } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
+import {
+    resolveMedicationWizardIntakeFrequencyFocusSuffix,
+    resolveMedicationWizardMealTimingFocusSuffix,
+    resolveMedicationWizardTimesPerDayFocusSuffix,
+    resolveMedicationWizardTypeFocusSuffix,
+} from '@/lib/patient/medications/form-wizard/medicationFormWizardFocusSuffixes';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import { medicationStrengthDisplayValue } from '@/lib/patient/medications/strength/medicationStrengthDisplayValue';
+import { formatMedicationSnoozeMinutesLabelFromRaw } from '@/lib/patient/medications/schedule/formatMedicationSnoozeLabel';
+import { medicationIntakeFrequencySummaryLabel } from '@/lib/patient/medications/schedule/medicationIntakeFrequencyDisplay';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
+import { medicationStrengthDisplayValue } from '@/lib/patient/medications/strength/medicationStrengthDisplayValue';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
 import type {
@@ -18,15 +27,7 @@ import type {
     MedicationMealTimingValue,
     MedicationTypeValue,
 } from '@/lib/types';
-import { MEDICATION_MEAL_TIMING_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
-
-const INTAKE_FREQUENCY_UI_PRESETS = [
-    'daily',
-    'every_2_days',
-    'every_3_days',
-    'every_4_days',
-] as const satisfies readonly MedicationIntakeFrequencyValue[];
 
 const props = withDefaults(
     defineProps<{
@@ -61,51 +62,13 @@ function activateSummaryRow(step: MedicationFormWizardStep, focusElementIdSuffix
 const summaryLabelClass = 'shrink-0 text-sm font-medium text-text-muted md:text-base';
 const summaryValueClass = 'min-w-0 flex-1 text-base font-semibold leading-snug text-text-heading sm:text-end md:text-lg';
 
-function intakeFrequencyPresetLabel(value: MedicationIntakeFrequencyValue): string {
-    if (value === 'daily') {
-        return t('patient.medications.intakeFrequencies.daily');
-    }
-
-    if (value === 'weekdays') {
-        return t('patient.medications.intakeFrequencies.weekdays');
-    }
-
-    const match = /^every_(\d+)_days$/.exec(value);
-
-    if (match === null) {
-        return value;
-    }
-
-    const dayCount = Number(match[1]);
-
-    if (!Number.isInteger(dayCount) || dayCount < 2 || dayCount > 60) {
-        return value;
-    }
-
-    return t('patient.medications.intakeFrequencies.everyNDays', { n: dayCount });
-}
-
-const intakeFrequencySummary = computed(() => {
-    const value = props.form.schedule.intake_frequency as MedicationIntakeFrequencyValue | '';
-
-    if (value === '') {
-        return '—';
-    }
-
-    if (value === 'weekdays') {
-        const days = props.form.schedule.intake_weekdays;
-
-        if (days.length < 1) {
-            return intakeFrequencyPresetLabel(value);
-        }
-
-        const parts = days.map((d) => t(`patient.medications.weekdayIso.${d}`));
-
-        return `${intakeFrequencyPresetLabel(value)} (${parts.join(', ')})`;
-    }
-
-    return intakeFrequencyPresetLabel(value);
-});
+const intakeFrequencySummary = computed(() =>
+    medicationIntakeFrequencySummaryLabel(
+        t,
+        props.form.schedule.intake_frequency as MedicationIntakeFrequencyValue | '',
+        props.form.schedule.intake_weekdays,
+    ),
+);
 
 const mealTimingLabel = computed(() => {
     const value = props.form.schedule.meal_timing as MedicationMealTimingValue | '';
@@ -124,7 +87,7 @@ const typeLabel = computed(() => {
         return '—';
     }
 
-    return t(`patient.medications.types.${value}`);
+    return medicationTypeLabel(t, value);
 });
 
 const doseTimesJoined = computed(() => {
@@ -134,11 +97,26 @@ const doseTimesJoined = computed(() => {
         return '—';
     }
 
-    return props.form.schedule.dose_time_slots
-        .slice(0, count)
-        .map((slot) => slot.trim())
-        .filter((slot) => slot.length > 0)
-        .join(', ');
+    const parts: string[] = [];
+
+    for (let index = 0; index < count; index += 1) {
+        const time = props.form.schedule.dose_time_slots[index]?.trim() ?? '';
+
+        if (time.length < 1) {
+            continue;
+        }
+
+        const snooze = props.form.schedule.snooze_time_slots[index] ?? '';
+        const snoozeLabel = formatMedicationSnoozeMinutesLabelFromRaw(t, snooze);
+
+        parts.push(`${time} (${snoozeLabel})`);
+    }
+
+    if (parts.length < 1) {
+        return '—';
+    }
+
+    return parts.join(', ');
 });
 
 const doseUnitForStock = computed(() =>
@@ -149,60 +127,21 @@ const currentStockSummary = computed(() =>
     formatMedicationStockDisplayAmount(t, props.form.current_stock, doseUnitForStock.value),
 );
 
-const summaryMealTimingFocusSuffix = computed(() => {
-    const v = props.form.schedule.meal_timing;
-    const timing = v === '' ? MEDICATION_MEAL_TIMING_VALUES[0] : v;
+const summaryMealTimingFocusSuffix = computed(() =>
+    resolveMedicationWizardMealTimingFocusSuffix(props.form.schedule.meal_timing),
+);
 
-    return `schedule-meal-timing-option-${timing}`;
-});
+const summaryIntakeFrequencyFocusSuffix = computed(() =>
+    resolveMedicationWizardIntakeFrequencyFocusSuffix(props.form.schedule),
+);
 
-const summaryIntakeFrequencyFocusSuffix = computed(() => {
-    const v = props.form.schedule.intake_frequency;
+const summaryTimesPerDayFocusSuffix = computed(() =>
+    resolveMedicationWizardTimesPerDayFocusSuffix(props.form.schedule.times_per_day.trim()),
+);
 
-    if (v === 'weekdays') {
-        if (props.form.schedule.intake_weekdays.length < 1) {
-            return 'schedule-intake-frequency-option-weekdays';
-        }
-
-        return `schedule-intake-weekday-${props.form.schedule.intake_weekdays[0]}`;
-    }
-
-    if ((INTAKE_FREQUENCY_UI_PRESETS as readonly string[]).includes(v)) {
-        return `schedule-intake-frequency-option-${v}`;
-    }
-
-    const match = /^every_(\d+)_days$/.exec(v);
-
-    if (match !== null) {
-        const n = Number(match[1]);
-
-        if (Number.isInteger(n) && n >= 5 && n <= 60) {
-            return 'schedule-intake-frequency-custom-days';
-        }
-    }
-
-    return 'schedule-intake-frequency-option-daily';
-});
-
-const summaryTimesPerDayFocusSuffix = computed(() => {
-    const trimmed = props.form.schedule.times_per_day.trim();
-
-    if (/^[1-4]$/.test(trimmed)) {
-        return `schedule-times-per-day-option-${trimmed}`;
-    }
-
-    return 'schedule-times-per-day-custom';
-});
-
-const summaryTypeFocusSuffix = computed(() => {
-    const v = props.form.type_medication;
-
-    if (v === '') {
-        return 'type';
-    }
-
-    return `type-option-${v}`;
-});
+const summaryTypeFocusSuffix = computed(() =>
+    resolveMedicationWizardTypeFocusSuffix(props.form.type_medication),
+);
 
 const overviewSectionHeadingClass = cn(
     patientFormLabelClass,

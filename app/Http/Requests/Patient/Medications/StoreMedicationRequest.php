@@ -7,6 +7,7 @@ use App\Http\Requests\Patient\Medications\Concerns\NormalizesNullableStringInput
 use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationScheduleFields;
 use App\Http\Requests\Patient\Medications\Concerns\ValidatesMedicationStrengthField;
 use App\Models\Medication;
+use App\Support\MedicationScheduleDoseTimeFields;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -31,6 +32,7 @@ class StoreMedicationRequest extends FormRequest
             $schedule['dose_quantity'] = is_string($dose) ? trim($dose) : '';
 
             $schedule = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($schedule);
+            $schedule = MedicationScheduleDoseTimeFields::normalizeNestedSchedule($schedule);
             $schedule = $this->normalizeMedicationScheduleDatesForValidation($schedule);
 
             $this->merge(['schedule' => $schedule]);

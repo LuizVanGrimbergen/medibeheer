@@ -88,6 +88,51 @@ function applyMedicationWizardTimesPerDayRefinement(
     }
 }
 
+function applyMedicationWizardSnoozeTimesRefinement(
+    data: { times_per_day: string; snooze_time_slots: readonly string[] },
+    ctx: z.core.$RefinementCtx,
+): void {
+    const timesCount = parseMedicationTimesPerDayCount(data.times_per_day.trim());
+
+    if (timesCount === null) {
+        return;
+    }
+
+    const snoozeSlots = Array.from({ length: timesCount }, (_, i) => {
+        const raw = data.snooze_time_slots[i] ?? '';
+
+        return raw.trim();
+    });
+
+    if (snoozeSlots.some((slot) => slot.length < 1)) {
+        ctx.addIssue({
+            code: 'custom',
+            message: medicationWizardStepValidation('scheduleSnoozeTimeRequired'),
+            path: ['snooze_time'],
+        });
+
+        return;
+    }
+
+    const invalid = snoozeSlots.some((slot) => {
+        if (!/^\d+$/.test(slot)) {
+            return true;
+        }
+
+        const minutes = Number(slot);
+
+        return !Number.isInteger(minutes) || minutes < 0 || minutes > 24 * 60;
+    });
+
+    if (invalid) {
+        ctx.addIssue({
+            code: 'custom',
+            message: medicationWizardStepValidation('scheduleSnoozeTimeInvalid'),
+            path: ['snooze_time'],
+        });
+    }
+}
+
 function applyMedicationWizardDoseTimesRefinement(
     data: { times_per_day: string; dose_time_slots: readonly string[] },
     ctx: z.core.$RefinementCtx,
@@ -202,8 +247,10 @@ export const medicationWizardDoseTimesFieldsSchema = z
     .object({
         times_per_day: z.string(),
         dose_time_slots: z.array(z.string()),
+        snooze_time_slots: z.array(z.string()),
     })
-    .superRefine(applyMedicationWizardDoseTimesRefinement);
+    .superRefine(applyMedicationWizardDoseTimesRefinement)
+    .superRefine(applyMedicationWizardSnoozeTimesRefinement);
 
 export const medicationWizardDurationFieldsSchema = z
     .object({
@@ -219,10 +266,12 @@ export const medicationWizardScheduleSliceSchema = z
         intake_weekdays: z.array(z.number()),
         times_per_day: z.string(),
         dose_time_slots: z.array(z.string()),
+        snooze_time_slots: z.array(z.string()),
         start_date: z.string(),
         end_date: z.string(),
     })
     .superRefine(applyMedicationWizardScheduleTimingRefinement)
     .superRefine(applyMedicationWizardTimesPerDayRefinement)
     .superRefine(applyMedicationWizardDoseTimesRefinement)
+    .superRefine(applyMedicationWizardSnoozeTimesRefinement)
     .superRefine(applyMedicationWizardDurationRefinement);

@@ -4,9 +4,12 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import { Card, CardContent } from '@/Components/ui/card';
-import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import {
+    medicationIntakeDoseLine,
+    medicationIntakeNotePreview,
+    medicationTypeLabel,
+} from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import type { MedicationTypeValue } from '@/lib/types';
 
 const props = defineProps<{
     slot: MedicationIntakeHistorySlot;
@@ -16,43 +19,11 @@ const { t } = useI18n();
 
 const isTaken = computed(() => props.slot.taken_at !== null);
 
-const doseLine = computed((): string | null => {
-    const dose = props.slot.dose?.trim();
+const doseLine = computed(() => medicationIntakeDoseLine(t, props.slot));
 
-    if (dose === undefined || dose === null || dose.length < 1) {
-        return null;
-    }
+const notePreview = computed(() => medicationIntakeNotePreview(props.slot));
 
-    const unit = props.slot.dose_unit;
-
-    if (unit === null) {
-        return dose;
-    }
-
-    const chip = medicationDoseUnitChipForAmount(t, dose, unit);
-
-    return `${dose} ${chip}`;
-});
-
-const notePreview = computed((): string | null => {
-    const raw = props.slot.note;
-
-    if (raw === null) {
-        return null;
-    }
-
-    const trimmed = raw.trim();
-
-    if (trimmed.length < 1) {
-        return null;
-    }
-
-    return trimmed;
-});
-
-const typeLabel = computed(() =>
-    t(`patient.medications.types.${props.slot.type_medication as MedicationTypeValue}`),
-);
+const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medication));
 </script>
 
 <template>

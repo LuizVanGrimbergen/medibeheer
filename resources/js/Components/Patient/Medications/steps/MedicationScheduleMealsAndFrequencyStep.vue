@@ -6,6 +6,16 @@ import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medica
 import { InputError } from '@/Components/ui/input-error';
 import { MEDICATION_MEAL_TIMING_OPTIONS } from '@/lib/patient/medications/options/medicationMealTimingOptions';
 import {
+    isCustomIntakeFrequencyInterval,
+    isWizardIntakeFrequencyPreset,
+    MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX,
+    MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN,
+    MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS,
+    MEDICATION_INTAKE_FREQUENCY_WIZARD_PRESETS,
+    medicationIntakeFrequencyLabel,
+    parseEveryNDaysFrequency,
+} from '@/lib/patient/medications/schedule/medicationIntakeFrequencyDisplay';
+import {
     patientFormFieldInvalidClass,
     patientFormLabelClass,
     patientFormSelectBaseClass,
@@ -13,30 +23,6 @@ import {
 } from '@/lib/patient/patientFormFieldClasses';
 import type { MedicationIntakeFrequencyValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
-
-const INTAKE_FREQUENCY_PRESETS: readonly MedicationIntakeFrequencyValue[] = [
-    'daily',
-    'every_2_days',
-    'every_3_days',
-];
-
-function isIntakeFrequencyCustomInterval(frequency: string): boolean {
-    const match = /^every_(\d+)_days$/.exec(frequency);
-
-    if (match === null) {
-        return false;
-    }
-
-    const dayCount = Number(match[1]);
-
-    return Number.isInteger(dayCount) && dayCount >= 5 && dayCount <= 60;
-}
-
-function isIntakeFrequencyPreset(frequency: string): boolean {
-    return (INTAKE_FREQUENCY_PRESETS as readonly string[]).includes(frequency);
-}
-
-const INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS = Array.from({ length: 56 }, (_, index) => index + 5);
 
 const ISO_WEEKDAY_NUMBERS = [1, 2, 3, 4, 5, 6, 7] as const;
 
@@ -54,13 +40,13 @@ const hasIntakeFrequencyBlockError = computed(
 );
 
 const prefersCustomIntakeFrequency = ref(
-    isIntakeFrequencyCustomInterval(form.schedule.intake_frequency),
+    isCustomIntakeFrequencyInterval(form.schedule.intake_frequency),
 );
 
 const showCustomIntakeFrequencySelect = computed(
     () =>
         prefersCustomIntakeFrequency.value ||
-        isIntakeFrequencyCustomInterval(form.schedule.intake_frequency),
+        isCustomIntakeFrequencyInterval(form.schedule.intake_frequency),
 );
 
 function setIntakeFrequencyPreset(frequency: MedicationIntakeFrequencyValue): void {
@@ -89,7 +75,7 @@ watch(
             return;
         }
 
-        if (!isIntakeFrequencyPreset(frequency) && frequency.length > 0) {
+        if (!isWizardIntakeFrequencyPreset(frequency) && frequency.length > 0) {
             prefersCustomIntakeFrequency.value = true;
         }
     },
@@ -111,37 +97,15 @@ function toggleIsoWeekday(day: (typeof ISO_WEEKDAY_NUMBERS)[number]): void {
     form.schedule.intake_weekdays = Array.from(selected).sort((a, b) => a - b);
 }
 
-function presetIntakeFrequencyLabel(frequency: MedicationIntakeFrequencyValue): string {
-    if (frequency === 'daily') {
-        return t('patient.medications.intakeFrequencies.daily');
-    }
-
-    const match = /^every_(\d+)_days$/.exec(frequency);
-
-    if (!match) {
-        return frequency;
-    }
-
-    const dayCount = Number(match[1]);
-
-    if (!Number.isInteger(dayCount) || dayCount < 2 || dayCount > 60) {
-        return frequency;
-    }
-
-    return t('patient.medications.intakeFrequencies.everyNDays', { n: dayCount });
-}
-
 const intakeFrequencyCustomDaysSelect = computed({
     get(): string {
-        const match = /^every_(\d+)_days$/.exec(form.schedule.intake_frequency);
+        const dayCount = parseEveryNDaysFrequency(form.schedule.intake_frequency);
 
-        if (!match) {
-            return '';
-        }
-
-        const dayCount = Number(match[1]);
-
-        if (!Number.isInteger(dayCount) || dayCount < 5 || dayCount > 60) {
+        if (
+            dayCount === null ||
+            dayCount < MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN ||
+            dayCount > MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX
+        ) {
             return '';
         }
 
@@ -154,7 +118,11 @@ const intakeFrequencyCustomDaysSelect = computed({
 
         const dayCount = Number(value);
 
-        if (!Number.isInteger(dayCount) || dayCount < 5 || dayCount > 60) {
+        if (
+            !Number.isInteger(dayCount) ||
+            dayCount < MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN ||
+            dayCount > MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX
+        ) {
             return;
         }
 
@@ -295,7 +263,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                     "
                 >
                     <button
-                        v-for="frequency in INTAKE_FREQUENCY_PRESETS"
+                        v-for="frequency in MEDICATION_INTAKE_FREQUENCY_WIZARD_PRESETS"
                         :id="`${idPrefix}-schedule-intake-frequency-option-${frequency}`"
                         :key="frequency"
                         type="button"
@@ -312,7 +280,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                         "
                         @click="setIntakeFrequencyPreset(frequency)"
                     >
-                        {{ presetIntakeFrequencyLabel(frequency) }}
+                        {{ medicationIntakeFrequencyLabel(t, frequency) }}
                     </button>
                     <button
                         :id="`${idPrefix}-schedule-intake-frequency-custom`"
@@ -364,7 +332,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                         {{ t('patient.medications.intakeFrequencies.customIntervalPlaceholder') }}
                     </option>
                     <option
-                        v-for="dayCount in INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS"
+                        v-for="dayCount in MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS"
                         :key="dayCount"
                         :value="String(dayCount)"
                     >

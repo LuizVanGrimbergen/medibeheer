@@ -45,6 +45,11 @@ export default {
             'Dit moet u vandaag innemen. Tik op de knop zodra u de dosis heeft genomen.',
         empty: 'Vandaag hoeft u geen medicatie in te nemen.',
         markTaken: 'Inemen',
+        markTakenNow: 'Nu inemen',
+        markTakenCustom: 'Aangepast',
+        customTakenTimeLabel: 'Wanneer heeft u ingenomen?',
+        confirmCustomTaken: 'Inname bevestigen',
+        notYetTimeToTake: 'Nog niet tijd om in te nemen',
         taken: 'Ingenomen',
         takenSection: {
             title: 'Ingenomen',
