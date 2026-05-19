@@ -1,29 +1,21 @@
-import { MEDICATION_MEAL_TIMING_VALUES } from '@/lib/types';
+import {
+    resolveMedicationWizardMealTimingFocusSuffix,
+    resolveMedicationWizardTimesPerDayFocusSuffix,
+} from '@/lib/patient/medications/form-wizard/medicationFormWizardFocusSuffixes';
 
 export function focusMedicationWizardNameField(idPrefix: string): void {
     document.getElementById(`${idPrefix}-name`)?.focus({ preventScroll: true });
 }
 
 export function focusMedicationWizardMealTimingField(idPrefix: string, mealTimingRaw: string): void {
-    const mealTiming =
-        mealTimingRaw === '' ? MEDICATION_MEAL_TIMING_VALUES[0] : mealTimingRaw;
-
     document
-        .getElementById(`${idPrefix}-schedule-meal-timing-option-${mealTiming}`)
+        .getElementById(`${idPrefix}-${resolveMedicationWizardMealTimingFocusSuffix(mealTimingRaw)}`)
         ?.focus({ preventScroll: true });
 }
 
 export function focusMedicationWizardTimesPerDayField(idPrefix: string, timesPerDayTrimmed: string): void {
-    if (/^[1-4]$/.test(timesPerDayTrimmed)) {
-        document
-            .getElementById(`${idPrefix}-schedule-times-per-day-option-${timesPerDayTrimmed}`)
-            ?.focus({ preventScroll: true });
-
-        return;
-    }
-
     document
-        .getElementById(`${idPrefix}-schedule-times-per-day-custom`)
+        .getElementById(`${idPrefix}-${resolveMedicationWizardTimesPerDayFocusSuffix(timesPerDayTrimmed)}`)
         ?.focus({ preventScroll: true });
 }
 
