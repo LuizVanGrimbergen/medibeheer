@@ -94,6 +94,71 @@ final class PatientScheduledIntakesQuery
         ];
     }
 
+    public function takenSlotsWithinDaysForPatient(Patient $patient, int $days): array
+    {
+        $today = CarbonImmutable::today();
+        $from = $today->subDays($days - 1);
+
+        return $this->takenSlotsForPatientBetweenDates($patient, $from, $today);
+    }
+
+    public function takenSlotsForPatientBetweenDates(
+        Patient $patient,
+        CarbonImmutable $from,
+        CarbonImmutable $to,
+    ): array {
+        $medications = $this->loadMedicationsFor($patient);
+
+        $intakesInRange = MedicationIntake::query()
+            ->where('patient_id', $patient->id)
+            ->whereDate('intake_date', '>=', $from->toDateString())
+            ->whereDate('intake_date', '<=', $to->toDateString())
+            ->get();
+
+        $intakesByDate = $intakesInRange->groupBy(
+            fn (MedicationIntake $intake): string => $intake->intake_date->toDateString(),
+        );
+
+        $supplyEstimates = $this->buildSupplyEstimates($medications, MedicationIntakeClock::today());
+
+        $slots = [];
+
+        for ($date = $from; $date <= $to; $date = $date->addDay()) {
+            $dateKey = $date->toDateString();
+            $dayIntakes = ($intakesByDate->get($dateKey) ?? collect())
+                ->keyBy(
+                    fn (MedicationIntake $intake): string => $this->intakeKey(
+                        $intake->medication_schedule_id,
+                        (string) $intake->dose_time,
+                    ),
+                );
+            $daySlots = $this->buildSlotsForDate($medications, $date, $dayIntakes, $supplyEstimates);
+
+            foreach ($daySlots as $slot) {
+                if ($slot['taken_at'] === null) {
+                    continue;
+                }
+
+                $slots[] = [
+                    ...$slot,
+                    'intake_date' => $dateKey,
+                ];
+            }
+        }
+
+        usort($slots, function (array $left, array $right): int {
+            $dateComparison = strcmp($right['intake_date'], $left['intake_date']);
+
+            if ($dateComparison !== 0) {
+                return $dateComparison;
+            }
+
+            return $this->compareScheduledIntakes($left, $right);
+        });
+
+        return $slots;
+    }
+
     private function buildSlotsForDate(
         EloquentCollection $medications,
         CarbonImmutable $date,
