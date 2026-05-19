@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\RateLimiting\AuthRateLimits;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -11,6 +12,32 @@ class RateLimitServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        RateLimiter::for('login', function (Request $request): Limit {
+            return Limit::perMinute(AuthRateLimits::LOGIN_MAX_ATTEMPTS)
+                ->by(AuthRateLimits::loginKey($request));
+        });
+
+        RateLimiter::for('forgot-password', function (Request $request): Limit {
+            return Limit::perMinute(AuthRateLimits::FORGOT_PASSWORD_MAX_ATTEMPTS)
+                ->by(AuthRateLimits::forgotPasswordKey($request));
+        });
+
+        RateLimiter::for('register', function (Request $request): Limit {
+            return Limit::perMinute(5)->by((string) $request->ip());
+        });
+
+        RateLimiter::for('reset-password', function (Request $request): Limit {
+            return Limit::perMinute(3)->by((string) $request->ip());
+        });
+
+        RateLimiter::for('email-verification', function (Request $request): Limit {
+            return Limit::perMinute(6)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('account-delete', function (Request $request): Limit {
+            return Limit::perMinute(5)->by(self::userOrIpKey($request));
+        });
+
         RateLimiter::for('confirm-password', $this->passwordActionRateLimiter());
         RateLimiter::for('update-password', $this->passwordActionRateLimiter());
 
@@ -53,9 +80,7 @@ class RateLimitServiceProvider extends ServiceProvider
     private function passwordActionRateLimiter(): \Closure
     {
         return function (Request $request): Limit {
-            $key = $request->user()?->id ?? $request->ip();
-
-            return Limit::perMinute(5)->by($key);
+            return Limit::perMinute(5)->by(self::userOrIpKey($request));
         };
     }
 }
