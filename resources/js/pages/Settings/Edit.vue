@@ -7,15 +7,17 @@ import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import SecurityActivityLog from './Partials/SecurityActivityLog.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import type { SecurityActivityPaginator } from '@/lib/types';
 
-type SettingsSection = 'information' | 'password' | 'delete';
+type SettingsSection = 'information' | 'password' | 'delete' | 'security-activity';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
 
-const sectionKeys = new Set<SettingsSection>(['information', 'password', 'delete']);
+const sectionKeys = new Set<SettingsSection>(['information', 'password', 'delete', 'security-activity']);
 const selectedSection = computed<SettingsSection | null>(() => {
     const [, search = ''] = page.url.split('?');
     const section = new URLSearchParams(search).get('section');
@@ -38,6 +40,7 @@ const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
 const props = defineProps<{
     mustVerifyEmail: boolean;
     status?: string;
+    securityActivities: SecurityActivityPaginator | null;
 }>();
 </script>
 
@@ -84,6 +87,17 @@ const props = defineProps<{
                     </SettingsWidgetLink>
 
                     <SettingsWidgetLink
+                        :href="route('settings.edit', { section: 'security-activity' })"
+                    >
+                        <p class="text-lg font-semibold text-primary">
+                            {{ t('profile.securityActivity.title') }}
+                        </p>
+                        <p class="mt-1 text-sm text-text-muted">
+                            {{ t('profile.securityActivity.description') }}
+                        </p>
+                    </SettingsWidgetLink>
+
+                    <SettingsWidgetLink
                         :href="route('settings.edit', { section: 'delete' })"
                     >
                         <p class="text-lg font-semibold text-primary">
@@ -116,6 +130,11 @@ const props = defineProps<{
 
                         <UpdatePasswordForm
                             v-if="selectedSection === 'password'"
+                        />
+
+                        <SecurityActivityLog
+                            v-if="selectedSection === 'security-activity' && props.securityActivities !== null"
+                            :security-activities="props.securityActivities"
                         />
 
                         <DeleteUserForm
