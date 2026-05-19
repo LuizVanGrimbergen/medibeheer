@@ -2,9 +2,11 @@
 
 namespace App\Policies;
 
+use App\Enums\MedicationListStatus;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Models\User;
+use App\Support\Medications\MedicationListClassifier;
 
 class MedicationPolicy
 {
@@ -20,7 +22,7 @@ class MedicationPolicy
 
     public function update(User $user, Medication $medication): bool
     {
-        return $this->ownsPatientMedication($user, $medication);
+        return $this->canMutateActiveMedication($user, $medication);
     }
 
     public function updateStock(User $user, Medication $medication): bool
@@ -34,7 +36,16 @@ class MedicationPolicy
 
     public function delete(User $user, Medication $medication): bool
     {
-        return $this->ownsPatientMedication($user, $medication);
+        return $this->canMutateActiveMedication($user, $medication);
+    }
+
+    private function canMutateActiveMedication(User $user, Medication $medication): bool
+    {
+        if (! $this->ownsPatientMedication($user, $medication)) {
+            return false;
+        }
+
+        return app(MedicationListClassifier::class)->statusFor($medication) === MedicationListStatus::ACTIVE;
     }
 
     private function ownsPatientMedication(User $user, Medication $medication): bool
