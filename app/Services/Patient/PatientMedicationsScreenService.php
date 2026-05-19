@@ -10,29 +10,57 @@ use App\Support\InertiaPagination;
 
 final class PatientMedicationsScreenService
 {
+    private const array MEDICATION_LIST_WITH = ['schedules.weekdays', 'stocks'];
+
     public function buildProps(Patient $patient): array
     {
-        return $this->paginatedMedicationsForScreen($patient, ['schedules.weekdays', 'stocks']);
+        return [
+            'active_medications' => $this->paginateActiveMedications($patient, self::MEDICATION_LIST_WITH),
+        ];
     }
 
     public function buildInventoryProps(Patient $patient): array
     {
-        return $this->paginatedMedicationsForScreen($patient, ['stocks', 'schedules.weekdays']);
+        return [
+            'medications' => $this->paginateActiveMedications($patient, self::MEDICATION_LIST_WITH),
+        ];
     }
 
-    private function paginatedMedicationsForScreen(Patient $patient, array $with): array
+    public function buildFamilyMedicationsProps(Patient $patient): array
+    {
+        return [
+            'medications' => $this->paginateMedicationRegister($patient, self::MEDICATION_LIST_WITH),
+        ];
+    }
+
+    private function paginateActiveMedications(Patient $patient, array $with): array
     {
         $paginator = $patient->medications()
+            ->activeOnMedicationList()
             ->with($with)
             ->orderByDesc('id')
             ->paginate(InertiaPagination::PER_PAGE)
             ->withQueryString();
 
-        return [
-            'medications' => InertiaPagination::payload(
-                $paginator,
-                MedicationResource::collectForInertia($paginator->getCollection()),
-            ),
-        ];
+        return InertiaPagination::payload(
+            $paginator,
+            MedicationResource::collectForInertia($paginator->getCollection()),
+        );
+    }
+
+    /** @param list<string> $with */
+    private function paginateMedicationRegister(Patient $patient, array $with): array
+    {
+        $paginator = $patient->medications()
+            ->withTrashed()
+            ->with($with)
+            ->orderByDesc('id')
+            ->paginate(InertiaPagination::PER_PAGE)
+            ->withQueryString();
+
+        return InertiaPagination::payload(
+            $paginator,
+            MedicationResource::collectForInertia($paginator->getCollection()),
+        );
     }
 }
