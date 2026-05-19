@@ -46,5 +46,9 @@ export function medicationVisualToneFromContext(
 export function medicationListVisualTone(
     medication: MedicationListItem,
 ): MedicationStockProgressTone | null {
+    if (medication.list_status !== 'active') {
+        return null;
+    }
+
     return medicationVisualToneFromContext(medication);
 }

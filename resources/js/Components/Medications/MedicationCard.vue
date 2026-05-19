@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Calendar, Clock, FileText, Package, Pencil, Scale, Trash2 } from 'lucide-vue-next';
+import { Calendar, Clock, Package, Pencil, Scale, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockControls from '@/Components/Medications/MedicationStockControls.vue';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import PatientListCardDetailRow from '@/Components/Patient/PatientListCardDetailRow.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
@@ -21,11 +22,15 @@ const props = withDefaults(
         showActions?: boolean;
         showStock?: boolean;
         stockUpdateRouteName?: string;
+        listStatusEndedLabelKey?: string;
+        listStatusRemovedLabelKey?: string;
     }>(),
     {
         showActions: true,
         showStock: false,
         stockUpdateRouteName: 'patient.medications.stocks.update',
+        listStatusEndedLabelKey: 'patient.medications.listStatus.ended',
+        listStatusRemovedLabelKey: 'patient.medications.listStatus.removed',
     },
 );
 
@@ -35,6 +40,34 @@ const emit = defineEmits<{
 }>();
 
 const { t, locale } = useI18n();
+
+const isInactiveListItem = computed(
+    () =>
+        props.medication.list_status === 'ended'
+        || props.medication.list_status === 'removed',
+);
+
+const listStatusLabel = computed((): string | null => {
+    if (props.medication.list_status === 'ended') {
+        return t(props.listStatusEndedLabelKey);
+    }
+
+    if (props.medication.list_status === 'removed') {
+        return t(props.listStatusRemovedLabelKey);
+    }
+
+    return null;
+});
+
+const canEdit = computed(
+    () => props.showActions && props.medication.list_status !== 'removed',
+);
+
+const canDelete = computed(
+    () => props.showActions && props.medication.list_status === 'active',
+);
+
+const showCardToolbar = computed(() => canEdit.value || canDelete.value);
 
 const formatYmdForMedicationCard = (ymd: string): string => {
     const parts = ymd.split('-').map(Number);
@@ -195,17 +228,21 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border-2 bg-surface text-text shadow-md shadow-black/[0.04]"
-        :class="medicationVisualToneClasses.border"
+        class="min-w-0 w-full rounded-3xl border bg-surface text-text shadow-md shadow-black/[0.04]"
+        :class="[
+            medicationVisualToneClasses.border,
+            isInactiveListItem ? 'opacity-90' : null,
+        ]"
     >
-        <CardContent class="relative p-4 pb-6 pt-5 sm:p-8">
+        <CardContent class="relative space-y-6 p-6 sm:p-7">
             <div
-                v-if="props.showActions"
-                class="absolute right-4 top-4 z-10 flex flex-row items-center gap-0.5 sm:right-8 sm:top-8"
+                v-if="showCardToolbar"
+                class="absolute right-6 top-6 z-10 flex flex-row items-center gap-0.5 sm:right-7 sm:top-7"
                 role="toolbar"
                 :aria-label="t('patient.medications.cardActionsAriaLabel')"
             >
                 <IconActionButton
+                    v-if="canEdit"
                     :ariaLabel="t('patient.medications.actions.edit')"
                     @click="emit('edit')"
                 >
@@ -215,6 +252,7 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                     />
                 </IconActionButton>
                 <IconActionButton
+                    v-if="canDelete"
                     tone="danger"
                     :ariaLabel="t('patient.medications.actions.delete')"
                     @click="emit('delete')"
@@ -227,177 +265,156 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
             </div>
 
             <div
-                class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6"
-                :class="{ 'pr-21 sm:pr-28': props.showActions }"
+                class="flex min-w-0 items-start gap-4"
+                :class="showCardToolbar ? 'pr-21 sm:pr-28' : null"
             >
-                <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-16"
-                    :class="medicationPillWrapToneClass"
-                >
-                    <span class="sr-only">{{ typeLabel }}</span>
-                    <MedicationTypeLeadIcon
-                        :medication-type="medication.type_medication"
-                        :icon-tone-class="medicationPillIconClass"
-                    />
-                </div>
-                <div
-                    class="flex w-full min-w-0 flex-col space-y-3.5 sm:flex-1 sm:items-stretch"
-                >
-                    <p
-                        class="min-w-0 wrap-break-word text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                    <div
+                        class="flex size-12 shrink-0 items-center justify-center rounded-xl"
+                        :class="medicationPillWrapToneClass"
+                        aria-hidden="true"
                     >
-                        {{ medication.name }}
-                    </p>
-                    <p
-                        v-if="doseLine !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
-                    >
+                        <span class="sr-only">{{ typeLabel }}</span>
+                        <MedicationTypeLeadIcon
+                            :medication-type="medication.type_medication"
+                            :icon-tone-class="medicationPillIconClass"
+                        />
+                    </div>
+                    <div class="min-w-0 flex-1 overflow-hidden space-y-1">
+                        <p
+                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                        >
+                            {{ medication.name }}
+                        </p>
+                        <p class="text-base font-normal leading-snug text-text-muted">
+                            {{ typeLabel }}
+                        </p>
+                        <p
+                            v-if="listStatusLabel !== null"
+                            class="pt-1 text-sm font-semibold leading-snug text-text-muted"
+                        >
+                            {{ listStatusLabel }}
+                        </p>
+                    </div>
+            </div>
+
+            <div class="space-y-5">
+                <PatientListCardDetailRow
+                    v-if="doseLine !== null"
+                    :label="t('patient.medications.overview.amountPerIntake')"
+                >
+                    <template #icon>
                         <Package
-                            class="mt-0.5 size-5 shrink-0 text-text-muted sm:mt-0"
+                            class="mt-0.5 size-6 shrink-0 text-primary"
+                            :stroke-width="2"
                             aria-hidden="true"
                         />
-                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span
-                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                            >
-                                {{ t('patient.medications.overview.amountPerIntake') }}
-                            </span>
-                            <span
-                                class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
-                            >
-                                {{ doseLine }}
-                            </span>
-                        </span>
-                    </p>
-                    <p
-                        v-if="strengthLine !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
-                    >
+                    </template>
+                    {{ doseLine }}
+                </PatientListCardDetailRow>
+
+                <PatientListCardDetailRow
+                    v-if="strengthLine !== null"
+                    :label="t('patient.medications.fields.strength')"
+                >
+                    <template #icon>
                         <Scale
-                            class="mt-0.5 size-5 shrink-0 text-text-muted sm:mt-0"
+                            class="mt-0.5 size-6 shrink-0 text-primary"
+                            :stroke-width="2"
                             aria-hidden="true"
                         />
-                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span
-                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                            >
-                                {{ t('patient.medications.fields.strength') }}
-                            </span>
-                            <span
-                                class="block text-base font-semibold leading-relaxed text-text sm:text-lg"
-                            >
-                                {{ strengthLine }}
-                            </span>
-                        </span>
-                    </p>
-                    <p
-                        v-if="sortedDoseTimes.length > 0"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
-                    >
-                        <Clock
-                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
-                            aria-hidden="true"
-                        />
-                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span
-                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                            >
-                                {{ t('patient.medications.fields.doseTime') }}
-                            </span>
-                            <span class="flex flex-col gap-1">
-                                <span
-                                    v-for="time in sortedDoseTimes"
-                                    :key="time"
-                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
-                                >
-                                    {{ time }}
-                                </span>
-                            </span>
-                        </span>
-                    </p>
-                    <p
-                        v-if="scheduleDateRow !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
-                        :aria-label="scheduleDateRow.ariaLabel"
-                    >
-                        <Calendar
-                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
-                            aria-hidden="true"
-                        />
-                        <span class="grid min-w-0 flex-1 grid-cols-1 gap-3.5">
-                            <span class="flex min-w-0 flex-col gap-0.5">
-                                <span
-                                    class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                                >
+                    </template>
+                    {{ strengthLine }}
+                </PatientListCardDetailRow>
+
+                <div
+                    v-if="sortedDoseTimes.length > 0"
+                    class="flex gap-4 sm:gap-5"
+                >
+                    <Clock
+                        class="mt-1 size-6 shrink-0 self-start text-primary"
+                        :stroke-width="2"
+                        aria-hidden="true"
+                    />
+                    <div class="min-w-0 flex-1 space-y-1.5">
+                        <p class="text-base font-semibold leading-tight text-text-heading">
+                            {{ t('patient.medications.fields.doseTime') }}
+                        </p>
+                        <p
+                            v-for="time in sortedDoseTimes"
+                            :key="time"
+                            class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
+                        >
+                            {{ time }}
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    v-if="scheduleDateRow !== null"
+                    class="flex gap-4 sm:gap-5"
+                    :aria-label="scheduleDateRow.ariaLabel"
+                >
+                    <Calendar
+                        class="mt-1 size-6 shrink-0 self-start text-primary"
+                        :stroke-width="2"
+                        aria-hidden="true"
+                    />
+                    <div class="min-w-0 flex-1 space-y-3">
+                            <div>
+                                <p class="text-base font-semibold leading-tight text-text-heading">
                                     {{ t('patient.medications.fields.startDate') }}
-                                </span>
+                                </p>
                                 <time
                                     v-if="scheduleDateRow.startIso !== null"
-                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
+                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
                                     :datetime="scheduleDateRow.startIso"
                                 >
                                     {{ scheduleDateRow.startDisplay }}
                                 </time>
-                                <span
+                                <p
                                     v-else
-                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
+                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
                                 >
                                     {{ scheduleDateRow.startDisplay }}
-                                </span>
-                            </span>
-                            <span class="flex min-w-0 flex-col gap-0.5">
-                                <span
-                                    class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                                >
+                                </p>
+                            </div>
+                            <div>
+                                <p class="text-base font-semibold leading-tight text-text-heading">
                                     {{ t('patient.medications.fields.endDate') }}
-                                </span>
+                                </p>
                                 <time
                                     v-if="scheduleDateRow.endIso !== null"
-                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
+                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
                                     :datetime="scheduleDateRow.endIso"
                                 >
                                     {{ scheduleDateRow.endDisplay }}
                                 </time>
-                                <span
+                                <p
                                     v-else
-                                    class="block text-base font-semibold tabular-nums leading-relaxed text-text sm:text-lg"
+                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
                                 >
                                     {{ scheduleDateRow.endDisplay }}
-                                </span>
-                            </span>
-                        </span>
-                    </p>
-                    <p
-                        v-if="notePreview !== null"
-                        class="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-text-muted sm:items-center sm:gap-3 sm:text-base"
-                    >
-                        <FileText
-                            class="mt-0.5 size-5 shrink-0 self-start text-text-muted sm:mt-0"
-                            aria-hidden="true"
-                        />
-                        <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span
-                                class="block text-sm font-semibold leading-snug text-text-muted sm:text-base"
-                            >
-                                {{ t('patient.medications.fields.note') }}
-                            </span>
-                            <span
-                                class="line-clamp-4 block whitespace-pre-wrap wrap-break-word text-base font-semibold leading-relaxed text-text sm:text-lg"
-                            >
-                                {{ notePreview }}
-                            </span>
-                        </span>
-                    </p>
-
-                    <MedicationStockControls
-                        v-if="props.showStock"
-                        :medication="medication"
-                        :update-route-name="props.stockUpdateRouteName"
-                        :id-prefix="`medication-card-stock-${medication.id}`"
-                        class="border-t border-border/70 pt-4"
-                    />
+                                </p>
+                            </div>
+                    </div>
                 </div>
             </div>
+
+            <p
+                v-if="notePreview !== null"
+                class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
+            >
+                {{ notePreview }}
+            </p>
+
+            <MedicationStockControls
+                v-if="props.showStock"
+                :medication="medication"
+                :update-route-name="props.stockUpdateRouteName"
+                :id-prefix="`medication-card-stock-${medication.id}`"
+                :can-adjust-stock="medication.list_status === 'active'"
+                class="border-t border-border/70 pt-5"
+            />
         </CardContent>
     </Card>
 </template>
