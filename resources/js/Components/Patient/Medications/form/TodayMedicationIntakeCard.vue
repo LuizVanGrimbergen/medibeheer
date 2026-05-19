@@ -1,15 +1,31 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { AlertTriangle, Check } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
 import { medicationVisualToneFromContext } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
-import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import type { MedicationTypeValue, TodayMedicationIntakeSlot } from '@/lib/types';
+import {
+    medicationIntakeDoseLine,
+    medicationIntakeNotePreview,
+    medicationTypeLabel,
+} from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
+import {
+    buildMedicationTakenAtForToday,
+    currentMedicationIntakeTimeHHmm,
+} from '@/lib/patient/medications/intake/medicationIntakeWindow';
+import {
+    patientFormFieldInvalidClass,
+    patientFormLabelClass,
+    patientFormNativeDateTimeInputClass,
+} from '@/lib/patient/patientFormFieldClasses';
+import type { TodayMedicationIntakeSlot } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     slot: TodayMedicationIntakeSlot;
@@ -19,51 +35,44 @@ const { t } = useI18n();
 
 const isTaken = computed(() => props.slot.taken_at !== null);
 
+const intakeWindowState = computed(() => props.slot.intake_window_state);
+
+const showPastSnoozeActions = computed(
+    () => !isTaken.value && intakeWindowState.value === 'past',
+);
+
+const showStandardTakeButton = computed(
+    () => !isTaken.value && intakeWindowState.value === 'within',
+);
+
+const showBeforeWindowState = computed(
+    () => !isTaken.value && intakeWindowState.value === 'before',
+);
+
+const showCustomTimePanel = ref(false);
+const customTakenTime = ref(currentMedicationIntakeTimeHHmm());
+
+watch(showPastSnoozeActions, (visible) => {
+    if (!visible) {
+        showCustomTimePanel.value = false;
+    }
+});
+
 const form = useForm<{
     medication_schedule_id: number;
     dose_time: string;
+    late_intake?: boolean;
+    taken_at?: string;
 }>({
     medication_schedule_id: props.slot.medication_schedule_id,
     dose_time: props.slot.dose_time,
 });
 
-const doseLine = computed((): string | null => {
-    const dose = props.slot.dose?.trim();
+const doseLine = computed(() => medicationIntakeDoseLine(t, props.slot));
 
-    if (dose === undefined || dose === null || dose.length < 1) {
-        return null;
-    }
+const notePreview = computed(() => medicationIntakeNotePreview(props.slot));
 
-    const unit = props.slot.dose_unit;
-
-    if (unit === null) {
-        return dose;
-    }
-
-    const chip = medicationDoseUnitChipForAmount(t, dose, unit);
-
-    return `${dose} ${chip}`;
-});
-
-const notePreview = computed((): string | null => {
-    const raw = props.slot.note;
-
-    if (raw === null) {
-        return null;
-    }
-
-    const trimmed = raw.trim();
-
-    if (trimmed.length < 1) {
-        return null;
-    }
-
-    return trimmed;
-});
-
-const typeLabel = computed(() =>
-    t(`patient.medications.types.${props.slot.type_medication as MedicationTypeValue}`),
-);
+const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medication));
 
 const stockProgressTone = computed(() =>
     medicationVisualToneFromContext({
@@ -89,14 +98,69 @@ const markTakenAriaLabel = computed(() =>
     }),
 );
 
-function markTaken(): void {
+const intakeFormError = computed(() => form.errors.taken_at ?? form.errors.dose_time);
+
+function buildIntakeRequestPayload(
+    data: { medication_schedule_id: number; dose_time: string },
+    payload: { lateIntake?: boolean; takenAtIso?: string },
+): { medication_schedule_id: number; dose_time: string; late_intake?: boolean; taken_at?: string } {
+    const request: {
+        medication_schedule_id: number;
+        dose_time: string;
+        late_intake?: boolean;
+        taken_at?: string;
+    } = {
+        medication_schedule_id: data.medication_schedule_id,
+        dose_time: data.dose_time,
+    };
+
+    if (payload.lateIntake === true) {
+        request.late_intake = true;
+    }
+
+    if (payload.takenAtIso) {
+        request.taken_at = payload.takenAtIso;
+    }
+
+    return request;
+}
+
+function submitIntake(payload: { lateIntake?: boolean; takenAtIso?: string }): void {
     if (isTaken.value || form.processing) {
         return;
     }
 
-    form.post(route('patient.medication-intakes.store'), {
-        preserveScroll: true,
-    });
+    form
+        .transform((data) => buildIntakeRequestPayload(data, payload))
+        .post(route('patient.medication-intakes.store'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                showCustomTimePanel.value = false;
+            },
+        });
+}
+
+function markTakenWithinWindow(): void {
+    submitIntake({});
+}
+
+function markTakenNow(): void {
+    submitIntake({ lateIntake: true });
+}
+
+function openCustomTimePanel(): void {
+    customTakenTime.value = currentMedicationIntakeTimeHHmm();
+    showCustomTimePanel.value = true;
+}
+
+function confirmCustomTakenTime(): void {
+    const takenAt = buildMedicationTakenAtForToday(customTakenTime.value);
+
+    if (takenAt === null) {
+        return;
+    }
+
+    submitIntake({ takenAtIso: takenAt });
 }
 </script>
 
@@ -106,17 +170,12 @@ function markTaken(): void {
         :class="intakeCardToneClasses.border"
     >
         <CardContent class="relative flex flex-col gap-5 p-5 sm:gap-6 sm:p-6">
-            <div
+            <AlertTriangle
                 v-if="showCriticalSupplyAlert"
-                class="pointer-events-none absolute right-4 top-4 z-10 sm:right-6 sm:top-6"
+                class="pointer-events-none absolute right-4 top-4 z-10 size-6 shrink-0 animate-supply-alert-flicker text-danger sm:right-6 sm:top-6 sm:size-7"
                 role="img"
                 :aria-label="t('patient.inventory.lowStockBadge')"
-            >
-                <AlertTriangle
-                    class="size-6 shrink-0 animate-supply-alert-flicker text-danger sm:size-7"
-                    aria-hidden="true"
-                />
-            </div>
+            />
 
             <div
                 class="flex min-w-0 items-start gap-4"
@@ -193,30 +252,114 @@ function markTaken(): void {
                 </div>
             </div>
 
+            <div
+                v-if="showBeforeWindowState"
+                class="flex flex-col gap-3"
+            >
+                <Button
+                    type="button"
+                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                    variant="outline"
+                    disabled
+                >
+                    {{ t('patient.dashboard.todayMedications.notYetTimeToTake') }}
+                </Button>
+            </div>
+
+            <div
+                v-else-if="showStandardTakeButton"
+                class="flex flex-col gap-2"
+            >
+                <Button
+                    type="button"
+                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                    :disabled="form.processing"
+                    :aria-label="markTakenAriaLabel"
+                    @click="markTakenWithinWindow"
+                >
+                    {{ t('patient.dashboard.todayMedications.markTaken') }}
+                </Button>
+                <InputError :message="intakeFormError" />
+            </div>
+
+            <div
+                v-else-if="showPastSnoozeActions"
+                class="flex flex-col gap-3"
+            >
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        :disabled="form.processing"
+                        @click="markTakenNow"
+                    >
+                        {{ t('patient.dashboard.todayMedications.markTakenNow') }}
+                    </Button>
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        variant="outline"
+                        :disabled="form.processing"
+                        :aria-expanded="showCustomTimePanel"
+                        @click="openCustomTimePanel"
+                    >
+                        {{ t('patient.dashboard.todayMedications.markTakenCustom') }}
+                    </Button>
+                </div>
+
+                <div
+                    v-if="showCustomTimePanel"
+                    class="space-y-3 rounded-2xl border border-border/70 bg-bg p-4 sm:p-5"
+                >
+                    <Label
+                        :for="`intake-custom-time-${slot.medication_schedule_id}-${slot.dose_time}`"
+                        :class="patientFormLabelClass"
+                    >
+                        {{ t('patient.dashboard.todayMedications.customTakenTimeLabel') }}
+                    </Label>
+                    <input
+                        :id="`intake-custom-time-${slot.medication_schedule_id}-${slot.dose_time}`"
+                        v-model="customTakenTime"
+                        type="time"
+                        step="60"
+                        autocomplete="off"
+                        :class="
+                            cn(
+                                patientFormNativeDateTimeInputClass,
+                                intakeFormError ? patientFormFieldInvalidClass : null,
+                            )
+                        "
+                        :aria-invalid="Boolean(intakeFormError)"
+                    />
+                    <InputError :message="intakeFormError" />
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        :disabled="form.processing"
+                        @click="confirmCustomTakenTime"
+                    >
+                        {{ t('patient.dashboard.todayMedications.confirmCustomTaken') }}
+                    </Button>
+                </div>
+                <InputError
+                    v-if="!showCustomTimePanel"
+                    :message="intakeFormError"
+                />
+            </div>
+
             <Button
+                v-else-if="isTaken"
                 type="button"
-                class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                :class="
-                    isTaken
-                        ? 'border-2 border-success bg-success/10 text-text-heading hover:bg-success/10'
-                        : undefined
-                "
-                :variant="isTaken ? 'outline' : 'default'"
-                :disabled="isTaken || form.processing"
-                :aria-label="isTaken ? undefined : markTakenAriaLabel"
-                :aria-pressed="isTaken"
-                @click="markTaken"
+                class="min-h-14 w-full touch-manipulation rounded-2xl border-2 border-success bg-success/10 text-lg font-bold text-text-heading hover:bg-success/10 sm:min-h-12 sm:text-base"
+                variant="outline"
+                disabled
+                :aria-pressed="true"
             >
                 <Check
-                    v-if="isTaken"
                     class="size-6 shrink-0 text-success sm:size-5"
                     aria-hidden="true"
                 />
-                {{
-                    isTaken
-                        ? t('patient.dashboard.todayMedications.taken')
-                        : t('patient.dashboard.todayMedications.markTaken')
-                }}
+                {{ t('patient.dashboard.todayMedications.taken') }}
             </Button>
         </CardContent>
     </Card>
