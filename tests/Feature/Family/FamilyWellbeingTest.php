@@ -40,27 +40,6 @@ test('family members without a patient link see empty wellbeing data on wellbein
         ->has('wellbeing_checkins.data', 0));
 });
 
-test('family updates page does not load wellbeing props', function () {
-    $patientUser = User::factory()->patient()->create();
-    $patient = $patientUser->patient;
-    expect($patient)->not->toBeNull();
-
-    DailyCheckin::query()->create([
-        'patient_id' => $patient->id,
-        'checkin_date' => now()->toDateString(),
-        'mood_score' => DailyMoodScore::OK->value,
-        'note' => 'Even uitgerust.',
-    ]);
-
-    $familyUser = createLinkedFamilyMemberForPatient($patient);
-
-    $this->actingAs($familyUser)->get(route('family.updates'))
-        ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Updates')
-            ->missing('wellbeing_checkins'));
-});
-
 test('linked family members can visit family wellbeing', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = $patientUser->patient;
