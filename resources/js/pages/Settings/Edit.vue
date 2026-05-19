@@ -7,17 +7,24 @@ import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import PrivacyDataForm from './Partials/PrivacyDataForm.vue';
 import SecurityActivityLog from './Partials/SecurityActivityLog.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 import type { SecurityActivityPaginator } from '@/lib/types';
 
-type SettingsSection = 'information' | 'password' | 'delete' | 'security-activity';
+type SettingsSection = 'information' | 'password' | 'delete' | 'security-activity' | 'privacy-data';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
 
-const sectionKeys = new Set<SettingsSection>(['information', 'password', 'delete', 'security-activity']);
+const sectionKeys = new Set<SettingsSection>([
+    'information',
+    'password',
+    'privacy-data',
+    'delete',
+    'security-activity',
+]);
 const selectedSection = computed<SettingsSection | null>(() => {
     const [, search = ''] = page.url.split('?');
     const section = new URLSearchParams(search).get('section');
@@ -87,6 +94,17 @@ const props = defineProps<{
                     </SettingsWidgetLink>
 
                     <SettingsWidgetLink
+                        :href="route('settings.edit', { section: 'privacy-data' })"
+                    >
+                        <p class="text-lg font-semibold text-primary">
+                            {{ t('privacy.settings.title') }}
+                        </p>
+                        <p class="mt-1 text-sm text-text-muted">
+                            {{ t('privacy.settings.description') }}
+                        </p>
+                    </SettingsWidgetLink>
+
+                    <SettingsWidgetLink
                         :href="route('settings.edit', { section: 'security-activity' })"
                     >
                         <p class="text-lg font-semibold text-primary">
@@ -130,6 +148,10 @@ const props = defineProps<{
 
                         <UpdatePasswordForm
                             v-if="selectedSection === 'password'"
+                        />
+
+                        <PrivacyDataForm
+                            v-if="selectedSection === 'privacy-data'"
                         />
 
                         <SecurityActivityLog
