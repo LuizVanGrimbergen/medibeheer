@@ -1,11 +1,13 @@
 <?php
 
 use App\Enums\MedicationIntakeFrequency;
+use App\Enums\MedicationListStatus;
 use App\Models\Medication;
 use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
 use App\Models\MedicationStock;
 use App\Models\User;
+use App\Support\Medications\MedicationIntakeClock;
 use Carbon\CarbonImmutable;
 
 test('linked family members see patient medications on family medications', function () {
@@ -26,6 +28,44 @@ test('linked family members see patient medications on family medications', func
         ->component('Family/Medications')
         ->has('medications.data', 1)
         ->where('medications.data.0.name', 'Paracetamol'));
+});
+
+test('linked family members see ended and removed medications with list status on family medications', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $patientUser = User::factory()->patient()->create();
+    $patient = $patientUser->patient;
+    expect($patient)->not->toBeNull();
+
+    $activeMedication = Medication::factory()->for($patient)->create(['name' => 'Actief']);
+    MedicationSchedule::factory()->forMedication($activeMedication)->create([
+        'end_date' => '2026-12-31',
+    ]);
+
+    $endedMedication = Medication::factory()->for($patient)->create(['name' => 'Verlopen']);
+    MedicationSchedule::factory()->forMedication($endedMedication)->create([
+        'end_date' => MedicationIntakeClock::today()->subDay()->toDateString(),
+    ]);
+
+    $removedMedication = Medication::factory()->for($patient)->create(['name' => 'Verwijderd']);
+    MedicationSchedule::factory()->forMedication($removedMedication)->create();
+    $removedMedication->delete();
+
+    $familyUser = createLinkedFamilyMemberForPatient($patient);
+
+    $response = $this->actingAs($familyUser)->get(route('family.medications'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->has('medications.data', 3)
+        ->where('medications.data.0.list_status', MedicationListStatus::REMOVED->value)
+        ->where('medications.data.0.name', 'Verwijderd')
+        ->where('medications.data.1.list_status', MedicationListStatus::ENDED->value)
+        ->where('medications.data.1.name', 'Verlopen')
+        ->where('medications.data.2.list_status', MedicationListStatus::ACTIVE->value)
+        ->where('medications.data.2.name', 'Actief'));
+
+    CarbonImmutable::setTestNow();
 });
 
 test('linked family members see medication intake calendar data on family medications', function () {
