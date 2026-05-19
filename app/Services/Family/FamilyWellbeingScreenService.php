@@ -6,11 +6,14 @@ namespace App\Services\Family;
 
 use App\Models\DailyCheckin;
 use App\Models\Patient;
-use App\Support\InertiaPagination;
 use Carbon\CarbonImmutable;
 
 final class FamilyWellbeingScreenService
 {
+    public function __construct(
+        private FamilyDailyCheckinListService $checkinList,
+    ) {}
+
     public function buildProps(string $calendarMonth, Patient $patient): array
     {
         $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
@@ -27,23 +30,10 @@ final class FamilyWellbeingScreenService
             ->values()
             ->all();
 
-        $paginator = DailyCheckin::query()
-            ->whereBelongsTo($patient)
-            ->with('selectedSymptoms')
-            ->orderByDesc('checkin_date')
-            ->orderByDesc('id')
-            ->paginate(InertiaPagination::PER_PAGE)
-            ->withQueryString();
-
         return [
             'wellbeing_calendar_month' => $calendarMonth,
             'wellbeing_calendar_checkins' => $calendarCheckinsPayload,
-            'wellbeing_checkins' => InertiaPagination::payload(
-                $paginator,
-                $paginator->getCollection()
-                    ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
-                    ->all(),
-            ),
+            'wellbeing_checkins' => $this->checkinList->paginatedForPatient($patient),
         ];
     }
 
@@ -52,7 +42,7 @@ final class FamilyWellbeingScreenService
         return [
             'wellbeing_calendar_month' => $calendarMonth,
             'wellbeing_calendar_checkins' => [],
-            'wellbeing_checkins' => InertiaPagination::empty(),
+            'wellbeing_checkins' => $this->checkinList->empty(),
         ];
     }
 }
