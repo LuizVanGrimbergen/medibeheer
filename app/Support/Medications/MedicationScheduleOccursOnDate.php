@@ -47,48 +47,7 @@ final class MedicationScheduleOccursOnDate
 
     public function sortedDoseTimes(MedicationSchedule $schedule): array
     {
-        $raw = trim((string) $schedule->dose_time);
-
-        if ($raw === '') {
-            return [''];
-        }
-
-        $seen = [];
-
-        foreach (explode(',', $raw) as $segment) {
-            $part = trim($segment);
-
-            if ($part !== '') {
-                $seen[$part] = true;
-            }
-        }
-
-        if ($seen === []) {
-            return [''];
-        }
-
-        $times = array_keys($seen);
-
-        usort($times, static function (string $left, string $right): int {
-            $leftTime = DoseTime::tryFrom($left);
-            $rightTime = DoseTime::tryFrom($right);
-
-            if ($leftTime === null && $rightTime === null) {
-                return strcmp($left, $right);
-            }
-
-            if ($leftTime === null) {
-                return 1;
-            }
-
-            if ($rightTime === null) {
-                return -1;
-            }
-
-            return $leftTime->minutesSinceMidnight() <=> $rightTime->minutesSinceMidnight();
-        });
-
-        return $times;
+        return MedicationScheduleDoseTimes::sortedTimes((string) $schedule->dose_time);
     }
 
     public function hasScheduledDoseOn(
