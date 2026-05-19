@@ -7,6 +7,7 @@ use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
 use App\Models\Family;
+use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
 use App\Models\Patient;
 use App\Support\Medications\MedicationScheduleOccursOnDate;
@@ -207,17 +208,18 @@ class MedicationSeeder extends Seeder
             return;
         }
 
-        $patient->medicationIntakes()->updateOrCreate(
-            [
-                'medication_schedule_id' => $schedule->id,
-                'intake_date' => $intakeDate->toDateString(),
-                'dose_time' => $trimmedDoseTime,
-            ],
-            [
-                'medication_id' => $schedule->medication_id,
-                'taken_at' => $doseMoment->copy()->addMinutes(random_int(-10, 25)),
-            ],
+        $intake = MedicationIntake::firstOrNewForScheduleDateAndDoseTime(
+            $schedule->id,
+            $intakeDate->toDateString(),
+            $trimmedDoseTime,
         );
+
+        $intake->fill([
+            'patient_id' => $patient->id,
+            'medication_id' => $schedule->medication_id,
+            'taken_at' => $doseMoment->copy()->addMinutes(random_int(-10, 25)),
+        ]);
+        $intake->save();
     }
 
     private function doseMoment(Carbon $date, string $doseTime): ?Carbon
