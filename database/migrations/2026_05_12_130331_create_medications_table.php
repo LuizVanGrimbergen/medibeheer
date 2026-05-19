@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('name');
             $table->text('dose');
             $table->string('dose_unit', 32)->default(MedicationDoseUnit::OTHER->value);
+            $table->text('strength')->nullable();
             $table->text('type_medication');
             $table->text('note')->nullable();
             $table->timestamps();
