@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { Eye, EyeOff, Stethoscope, UserRound, Users } from 'lucide-vue-next';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
@@ -9,7 +9,8 @@ import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import type { PageProps, RoleKey, RoleOption } from '@/lib/types';
+import { useAuthRoleOptions } from '@/lib/auth/useAuthRoleOptions';
+import type { PageProps, RoleKey } from '@/lib/types';
 
 const form = useForm({
     email: '',
@@ -86,31 +87,7 @@ const emailErrorMessage = computed(() => {
     return form.errors.email.replace(/\d+/, String(remainingRateLimitSeconds.value));
 });
 
-const roles = computed(() => {
-    return [
-        {
-            key: 'patient',
-            label: t('auth.common.roles.patient'),
-            icon: UserRound,
-            ringClass:
-                'border-role-patient/60 bg-role-patient/10 text-role-patient',
-        },
-        {
-            key: 'doctor',
-            label: t('auth.common.roles.doctor'),
-            icon: Stethoscope,
-            ringClass:
-                'border-role-doctor/50 bg-role-doctor/10 text-role-doctor',
-        },
-        {
-            key: 'family_member',
-            label: t('auth.common.roles.family_member'),
-            icon: Users,
-            ringClass:
-                'border-role-family/60 bg-role-family/10 text-role-family',
-        },
-    ] satisfies readonly RoleOption[];
-});
+const roles = useAuthRoleOptions();
 
 const selectedRole = computed(() => {
     return props.selectedRole ?? null;
@@ -198,7 +175,7 @@ const submit = () => {
 
     <AuthPageContainer
         title-key="auth.login.heroTitlePrefix"
-        subtitle-key="auth.login.heroSubtitle"
+        :show-subtitle="false"
         append-app-name
     >
         <AuthRoleSelectorWidget

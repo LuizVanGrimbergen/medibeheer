@@ -24,4 +24,9 @@ class UserPolicy
     {
         return $user->is($target);
     }
+
+    public function exportData(User $user, User $target): bool
+    {
+        return $user->is($target);
+    }
 }

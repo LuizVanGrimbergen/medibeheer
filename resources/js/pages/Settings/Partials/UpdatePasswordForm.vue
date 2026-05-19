@@ -53,11 +53,6 @@ const updatePassword = () => {
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <PasswordRequirementsCard
-                :password="form.password"
-                :minimum-length="minimumPasswordLength"
-            />
-
             <div>
                 <Label for="current_password" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('profile.password.currentPassword') }}
@@ -83,14 +78,24 @@ const updatePassword = () => {
                     {{ t('profile.password.newPassword') }}
                 </Label>
 
-                <Input
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                    autocomplete="new-password"
-                />
+                <div
+                    class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
+                >
+                    <Input
+                        id="password"
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        class="h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 text-xl text-text shadow-none placeholder:text-text-muted focus-visible:ring-0"
+                        autocomplete="new-password"
+                    />
+
+                    <PasswordRequirementsCard
+                        integrated
+                        :password="form.password"
+                        :minimum-length="minimumPasswordLength"
+                    />
+                </div>
 
                 <InputError :message="form.errors.password" class="mt-2" />
             </div>

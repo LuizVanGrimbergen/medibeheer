@@ -46,34 +46,39 @@ const submit = () => {
         subtitle-key="auth.resetPwd.subtitle"
     >
         <form class="space-y-5" novalidate @submit.prevent="submit">
-            <PasswordRequirementsCard
-                :password="form.password"
-                :minimum-length="minimumPasswordLength"
-            />
-
             <div>
                 <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('auth.resetPwd.pwdLabel') }}
                 </Label>
-                <div class="relative">
-                    <Input
-                        id="password"
-                        v-model="form.password"
-                        :type="showPassword ? 'text' : 'password'"
-                        :autocomplete="showPassword ? 'off' : 'new-password'"
-                        required
-                        autofocus
-                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                <div
+                    class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
+                >
+                    <div class="relative">
+                        <Input
+                            id="password"
+                            v-model="form.password"
+                            :type="showPassword ? 'text' : 'password'"
+                            :autocomplete="showPassword ? 'off' : 'new-password'"
+                            required
+                            autofocus
+                            class="h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 pr-12 text-xl text-text shadow-none placeholder:text-text-muted focus-visible:ring-0"
+                        />
+                        <button
+                            type="button"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
+                            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                            @click="showPassword = !showPassword"
+                        >
+                            <EyeOff v-if="showPassword" :size="20" />
+                            <Eye v-else :size="20" />
+                        </button>
+                    </div>
+
+                    <PasswordRequirementsCard
+                        integrated
+                        :password="form.password"
+                        :minimum-length="minimumPasswordLength"
                     />
-                    <button
-                        type="button"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                        :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                        @click="showPassword = !showPassword"
-                    >
-                        <EyeOff v-if="showPassword" :size="20" />
-                        <Eye v-else :size="20" />
-                    </button>
                 </div>
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>

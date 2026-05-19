@@ -9,13 +9,14 @@ import AuthPageHeader from './AuthPageHeader.vue';
 const props = withDefaults(
     defineProps<{
         titleKey: string;
-        subtitleKey: string;
-        showBranding?: boolean;
+        titleAccentKey?: string;
+        subtitleKey?: string;
         appendAppName?: boolean;
+        showSubtitle?: boolean;
     }>(),
     {
-        showBranding: false,
         appendAppName: false,
+        showSubtitle: true,
     },
 );
 
@@ -32,9 +33,10 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
 
             <AuthPageHeader
                 :title-key="props.titleKey"
+                :title-accent-key="props.titleAccentKey"
                 :subtitle-key="props.subtitleKey"
-                :show-branding="props.showBranding"
                 :append-app-name="props.appendAppName"
+                :show-subtitle="props.showSubtitle"
             />
 
             <FlashErrorBanner

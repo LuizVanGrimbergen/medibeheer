@@ -38,6 +38,10 @@ class RateLimitServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by(self::userOrIpKey($request));
         });
 
+        RateLimiter::for('data-export', function (Request $request): Limit {
+            return Limit::perMinute(3)->by(self::userOrIpKey($request));
+        });
+
         RateLimiter::for('confirm-password', $this->passwordActionRateLimiter());
         RateLimiter::for('update-password', $this->passwordActionRateLimiter());
 

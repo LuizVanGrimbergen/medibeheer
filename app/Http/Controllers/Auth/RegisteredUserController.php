@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use App\Services\Audit\SecurityActivityLogger;
+use App\Services\Privacy\UserConsentRecorder;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class RegisteredUserController extends Controller
 {
     public function __construct(
         private readonly SecurityActivityLogger $securityActivityLogger,
+        private readonly UserConsentRecorder $userConsentRecorder,
     ) {}
 
     /**************************************/
@@ -31,6 +33,7 @@ class RegisteredUserController extends Controller
     {
         return Inertia::render('Auth/Register', [
             'selectedRole' => $resolveSelectedRole($request),
+            'privacyPolicyVersion' => config('privacy.policy_version'),
         ]);
     }
 
@@ -49,6 +52,8 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+
+        $this->userConsentRecorder->recordRegistrationConsents($user, $request);
 
         Auth::login($user, true);
         $request->session()->regenerate();

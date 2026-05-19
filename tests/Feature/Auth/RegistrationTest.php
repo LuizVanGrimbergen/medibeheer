@@ -7,6 +7,20 @@ use App\Models\User;
 use App\Notifications\Auth\VerifyEmailNotification;
 use Illuminate\Support\Facades\Notification;
 
+/** @return array<string, mixed> */
+function registrationPayload(array $overrides = []): array
+{
+    return array_merge([
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'role' => 'patient',
+        'password' => 'Qw7!mR2#xP9@tL4$',
+        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
+        'accepted_privacy_policy' => true,
+        'accepted_health_data_processing' => true,
+    ], $overrides);
+}
+
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
 
@@ -16,13 +30,7 @@ test('registration screen can be rendered', function () {
 test('new users can register', function () {
     Notification::fake();
 
-    $response = $this->post('/register', [
-        'name' => 'Test User',
-        'email' => 'test@example.com',
-        'role' => 'patient',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    $response = $this->post('/register', registrationPayload());
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('verification.notice'));
@@ -34,36 +42,26 @@ test('new users can register', function () {
 });
 
 test('new users can register with uppercase and padded email input', function () {
-    $response = $this->post('/register', [
-        'name' => 'Test User',
+    $response = $this->post('/register', registrationPayload([
         'email' => '  TEST@EXAMPLE.COM  ',
-        'role' => 'patient',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    ]));
 
     $this->assertAuthenticated();
     $response->assertRedirect(route('verification.notice'));
 });
 
 test('new users can not register with duplicate email ignoring case and whitespace', function () {
-    $this->post('/register', [
+    $this->post('/register', registrationPayload([
         'name' => 'First User',
-        'email' => 'test@example.com',
-        'role' => 'patient',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    ]));
 
     auth()->logout();
 
-    $response = $this->post('/register', [
+    $response = $this->post('/register', registrationPayload([
         'name' => 'Second User',
         'email' => '  TEST@EXAMPLE.COM ',
         'role' => 'doctor',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    ]));
 
     $response->assertSessionHasErrors('email');
     $this->assertGuest();
@@ -72,13 +70,11 @@ test('new users can not register with duplicate email ignoring case and whitespa
 test('registering as family member creates a family profile and not a patient profile', function () {
     Notification::fake();
 
-    $this->post('/register', [
+    $this->post('/register', registrationPayload([
         'name' => 'Family User',
         'email' => 'family.profile@example.com',
         'role' => 'family_member',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    ]));
 
     $this->assertAuthenticated();
 
@@ -91,13 +87,11 @@ test('registering as family member creates a family profile and not a patient pr
 test('registering as doctor does not create a patient profile', function () {
     Notification::fake();
 
-    $this->post('/register', [
+    $this->post('/register', registrationPayload([
         'name' => 'Doctor User',
         'email' => 'doctor.profile@example.com',
         'role' => 'doctor',
-        'password' => 'Qw7!mR2#xP9@tL4$',
-        'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
-    ]);
+    ]));
 
     $this->assertAuthenticated();
 

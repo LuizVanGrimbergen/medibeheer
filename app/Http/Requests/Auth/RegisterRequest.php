@@ -40,6 +40,17 @@ class RegisterRequest extends FormRequest
             'role' => ['required', Rule::enum(UserRole::class)],
             'password' => ['required', 'string', 'max:255', 'confirmed', Password::min(12)->mixedCase()->numbers()->symbols()->uncompromised()],
             'password_confirmation' => ['required', 'string'],
+            'accepted_privacy_policy' => ['required', 'accepted'],
+            'accepted_health_data_processing' => ['required', 'accepted'],
+        ];
+    }
+
+    /** @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'accepted_privacy_policy.accepted' => trans('privacy.consent.privacy_policy'),
+            'accepted_health_data_processing.accepted' => trans('privacy.consent.health_data'),
         ];
     }
 
