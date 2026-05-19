@@ -10,6 +10,7 @@ import {
     Stethoscope,
     Trash2,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
@@ -39,7 +40,7 @@ type AppointmentCardAppointment = {
     status?: AppointmentStatusValue;
 };
 
-defineProps<{
+const props = defineProps<{
     appointment: AppointmentCardAppointment;
     doneDisplayed: boolean;
     isPatching: boolean;
@@ -50,6 +51,8 @@ defineProps<{
     completeFormHref?: string;
     cancelFormHref?: string;
 }>();
+
+const showActionsToolbar = computed(() => props.showActions ?? true);
 
 const emit = defineEmits<{
     edit: [];
@@ -66,58 +69,61 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
     <Card
         class="min-w-0 w-full rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
     >
-        <CardContent class="space-y-6 p-6 sm:p-7">
-            <div class="space-y-4">
-                <div class="flex min-w-0 items-start gap-4">
-                    <div
-                        class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
-                        aria-hidden="true"
-                    >
-                        <Stethoscope class="size-6 text-primary" />
-                    </div>
-                    <div class="min-w-0 flex-1 overflow-hidden space-y-1">
-                        <p
-                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
-                        >
-                            {{
-                                appointment.doctor_type
-                                    ? doctorTypeLabel(appointment.doctor_type)
-                                    : appointment.provider_name
-                            }}
-                        </p>
-                        <p
-                            v-if="appointment.doctor_type"
-                            class="text-base font-normal leading-snug text-text-muted"
-                        >
-                            {{ appointment.provider_name }}
-                        </p>
-                    </div>
-                </div>
-
-                <div
-                    v-if="showActions ?? true"
-                    class="flex justify-end gap-0.5 pt-1"
+        <CardContent class="relative space-y-6 p-6 sm:p-7">
+            <div
+                v-if="showActionsToolbar"
+                class="absolute right-6 top-6 z-10 flex flex-row items-center gap-0.5 sm:right-7 sm:top-7"
+                role="toolbar"
+                :aria-label="t('patient.appointments.cardActionsAriaLabel')"
+            >
+                <IconActionButton
+                    v-if="appointment.status !== 'cancelled'"
+                    :ariaLabel="t('patient.appointments.actions.edit')"
+                    @click="emit('edit')"
                 >
-                    <IconActionButton
-                        v-if="appointment.status !== 'cancelled'"
-                        :ariaLabel="t('patient.appointments.actions.edit')"
-                        @click="emit('edit')"
+                    <Pencil
+                        class="size-5"
+                        aria-hidden="true"
+                    />
+                </IconActionButton>
+                <IconActionButton
+                    tone="danger"
+                    :ariaLabel="t('patient.appointments.actions.delete')"
+                    @click="emit('delete')"
+                >
+                    <Trash2
+                        class="size-5"
+                        aria-hidden="true"
+                    />
+                </IconActionButton>
+            </div>
+
+            <div
+                class="flex min-w-0 items-start gap-4"
+                :class="showActionsToolbar ? 'pr-21 sm:pr-28' : null"
+            >
+                <div
+                    class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
+                    aria-hidden="true"
+                >
+                    <Stethoscope class="size-6 text-primary" />
+                </div>
+                <div class="min-w-0 flex-1 overflow-hidden space-y-1">
+                    <p
+                        class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
                     >
-                        <Pencil
-                            class="size-5"
-                            aria-hidden="true"
-                        />
-                    </IconActionButton>
-                    <IconActionButton
-                        tone="danger"
-                        :ariaLabel="t('patient.appointments.actions.delete')"
-                        @click="emit('delete')"
+                        {{
+                            appointment.doctor_type
+                                ? doctorTypeLabel(appointment.doctor_type)
+                                : appointment.provider_name
+                        }}
+                    </p>
+                    <p
+                        v-if="appointment.doctor_type"
+                        class="text-base font-normal leading-snug text-text-muted"
                     >
-                        <Trash2
-                            class="size-5"
-                            aria-hidden="true"
-                        />
-                    </IconActionButton>
+                        {{ appointment.provider_name }}
+                    </p>
                 </div>
             </div>
 

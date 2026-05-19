@@ -1,6 +1,5 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
@@ -76,11 +75,12 @@ function attachMedicationScheduleDateOrderWatcher(
 }
 
 export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) {
-    const { t } = useI18n();
     const createDialogOpen = ref(false);
     const editDialogOpen = ref(false);
     const editMedicationId = ref<number | null>(null);
-
+    const deleteDialogOpen = ref(false);
+    const deleteMedication = ref<MedicationListItem | null>(null);
+    const deleteProcessing = ref(false);
     function resetCreateDialogToFreshDefaults(): void {
         createForm.defaults(blankMedicationCreateForm());
         createForm.reset();
@@ -161,15 +161,33 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
             });
     }
 
-    function confirmAndDeleteMedication(medication: MedicationListItem): void {
-        if (!confirm(t('patient.medications.deleteConfirm'))) {
+    function openDeleteMedicationDialog(medication: MedicationListItem): void {
+        deleteMedication.value = medication;
+        deleteDialogOpen.value = true;
+    }
+
+    function closeDeleteMedicationDialog(): void {
+        deleteDialogOpen.value = false;
+        deleteMedication.value = null;
+    }
+
+    function confirmDeleteMedication(): void {
+        if (deleteMedication.value === null) {
             return;
         }
 
-        router.delete(route('patient.medications.destroy', medication.id), {
+        const medicationId = deleteMedication.value.id;
+
+        deleteProcessing.value = true;
+
+        router.delete(route('patient.medications.destroy', medicationId), {
             preserveScroll: true,
             onSuccess: () => {
                 router.flushAll();
+                closeDeleteMedicationDialog();
+            },
+            onFinish: () => {
+                deleteProcessing.value = false;
             },
         });
     }
@@ -186,6 +204,11 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
         openEditMedication,
         closeEditMedicationDialog,
         submitEditMedication,
-        confirmAndDeleteMedication,
+        openDeleteMedicationDialog,
+        closeDeleteMedicationDialog,
+        confirmDeleteMedication,
+        deleteDialogOpen,
+        deleteMedication,
+        deleteProcessing,
     };
 }

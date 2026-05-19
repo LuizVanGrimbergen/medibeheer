@@ -21,7 +21,7 @@ final class FamilyMedicationsScreenService
         $calendar = $this->scheduledIntakesQuery->monthCalendarDataForPatient($patient, $calendarMonth);
 
         return [
-            ...$this->patientMedicationsScreenService->buildProps($patient),
+            ...$this->patientMedicationsScreenService->buildFamilyMedicationsProps($patient),
             'medication_calendar_month' => $calendarMonth,
             'medication_calendar_days' => $calendar['days'],
             'medication_calendar_slots' => $calendar['slots'],

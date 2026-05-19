@@ -2,6 +2,7 @@
 
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
+use App\Enums\MedicationListStatus;
 use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
 use App\Models\Family;
@@ -10,6 +11,9 @@ use App\Models\MedicationSchedule;
 use App\Models\MedicationScheduleWeekday;
 use App\Models\MedicationStock;
 use App\Models\User;
+use App\Support\Medications\MedicationIntakeClock;
+use App\Support\Medications\MedicationListClassifier;
+use Carbon\CarbonImmutable;
 use Database\Seeders\MedicationSeeder;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +37,38 @@ function validNewMedicationStockPayload(): array
     ];
 }
 
+test('medication list classifier marks active medications without an end date', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $patient = User::factory()->patient()->create()->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()->for($patient)->create();
+    MedicationSchedule::factory()->forMedication($medication)->create([
+        'end_date' => null,
+    ]);
+
+    $status = app(MedicationListClassifier::class)->statusFor($medication->fresh('schedules'));
+
+    expect($status)->toBe(MedicationListStatus::ACTIVE);
+});
+
+test('medication list classifier marks medications past end date as ended', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $patient = User::factory()->patient()->create()->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()->for($patient)->create();
+    MedicationSchedule::factory()->forMedication($medication)->create([
+        'end_date' => MedicationIntakeClock::today()->subDay()->toDateString(),
+    ]);
+
+    $status = app(MedicationListClassifier::class)->statusFor($medication->fresh('schedules'));
+
+    expect($status)->toBe(MedicationListStatus::ENDED);
+});
+
 test('patient medications inertia page includes medications collection', function () {
     $user = User::factory()->patient()->create();
 
@@ -42,9 +78,82 @@ test('patient medications inertia page includes medications collection', functio
     assertInertiaRootComponent($response, 'Patient/Medications');
     $response->assertInertia(fn ($page) => $page
         ->component('Patient/Medications')
-        ->has('medications.data')
-        ->has('medications.meta')
+        ->has('active_medications.data')
+        ->has('active_medications.meta')
+        ->missing('previously_used_medications')
         ->where('can_create_medication', true));
+});
+
+test('patient medications page splits active and previously used medications', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $activeMedication = Medication::factory()->for($patient)->create(['name' => 'Actief']);
+    MedicationSchedule::factory()->forMedication($activeMedication)->create([
+        'end_date' => '2026-12-31',
+    ]);
+
+    $endedMedication = Medication::factory()->for($patient)->create(['name' => 'Afgelopen']);
+    MedicationSchedule::factory()->forMedication($endedMedication)->create([
+        'end_date' => '2026-05-01',
+    ]);
+
+    $removedMedication = Medication::factory()->for($patient)->create(['name' => 'Verwijderd']);
+    MedicationSchedule::factory()->forMedication($removedMedication)->create([
+        'end_date' => null,
+    ]);
+    $removedMedication->delete();
+
+    $response = $this->actingAs($user)->get(route('patient.medications'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->where('active_medications.meta.total', 1)
+        ->where('active_medications.data.0.name', 'Actief')
+        ->missing('previously_used_medications'));
+});
+
+test('patients cannot update medications that are no longer active on the list', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $endedMedication = Medication::factory()->for($patient)->create(['name' => 'Afgelopen']);
+    MedicationSchedule::factory()->forMedication($endedMedication)->create([
+        'end_date' => '2026-05-01',
+    ]);
+
+    $response = $this->actingAs($user)->put(route('patient.medications.update', $endedMedication), [
+        'name' => 'Nieuwe naam',
+    ]);
+
+    $response->assertForbidden();
+});
+
+test('destroying a medication soft deletes it and related schedule and stock', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()->for($patient)->create();
+    $schedule = MedicationSchedule::factory()->forMedication($medication)->create();
+    $stock = MedicationStock::factory()->for($medication)->create();
+
+    $response = $this->actingAs($user)->delete(route('patient.medications.destroy', $medication));
+
+    $response->assertRedirect(route('patient.medications'));
+
+    expect(Medication::query()->find($medication->id))->toBeNull();
+    expect(Medication::withTrashed()->find($medication->id)?->trashed())->toBeTrue();
+    expect(MedicationSchedule::query()->find($schedule->id))->toBeNull();
+    expect(MedicationSchedule::withTrashed()->find($schedule->id)?->trashed())->toBeTrue();
+    expect(MedicationStock::query()->find($stock->id))->toBeNull();
+    expect(MedicationStock::withTrashed()->find($stock->id)?->trashed())->toBeTrue();
 });
 
 test('patients can create a medication with snooze time per dose slot', function () {

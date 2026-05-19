@@ -33,38 +33,40 @@ const typeLabel = computed(() =>
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border-2 bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="min-w-0 w-full rounded-3xl border bg-surface text-text shadow-md shadow-black/[0.04]"
         :class="inventoryVisualToneClasses.border"
     >
-        <CardContent class="relative p-4 pb-6 pt-5 sm:p-8">
-            <div
-                class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:gap-6"
-            >
-                <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-16"
-                    :class="inventoryVisualToneClasses.pillWrap"
-                >
-                    <span class="sr-only">{{ typeLabel }}</span>
-                    <MedicationTypeLeadIcon
-                        :medication-type="medication.type_medication"
-                        :icon-tone-class="inventoryVisualToneClasses.pillIcon"
-                    />
-                </div>
-                <div
-                    class="flex w-full min-w-0 flex-col space-y-3.5 sm:flex-1 sm:items-stretch"
-                >
-                    <p
-                        class="min-w-0 wrap-break-word text-lg font-bold leading-snug text-text-heading sm:text-xl"
+        <CardContent class="relative space-y-6 p-6 sm:p-7">
+            <div class="space-y-4">
+                <div class="flex min-w-0 items-start gap-4">
+                    <div
+                        class="flex size-12 shrink-0 items-center justify-center rounded-xl"
+                        :class="inventoryVisualToneClasses.pillWrap"
                     >
-                        {{ medication.name }}
-                    </p>
-
-                    <MedicationStockControls
-                        :medication="medication"
-                        :update-route-name="props.updateRouteName"
-                        :id-prefix="`patient-inventory-stock-${medication.id}`"
-                    />
+                        <span class="sr-only">{{ typeLabel }}</span>
+                        <MedicationTypeLeadIcon
+                            :medication-type="medication.type_medication"
+                            :icon-tone-class="inventoryVisualToneClasses.pillIcon"
+                        />
+                    </div>
+                    <div class="min-w-0 flex-1 overflow-hidden space-y-1">
+                        <p
+                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                        >
+                            {{ medication.name }}
+                        </p>
+                        <p class="text-base font-normal leading-snug text-text-muted">
+                            {{ typeLabel }}
+                        </p>
+                    </div>
                 </div>
+
+                <MedicationStockControls
+                    :medication="medication"
+                    :update-route-name="props.updateRouteName"
+                    :id-prefix="`patient-inventory-stock-${medication.id}`"
+                    class="border-t border-border/70 pt-5"
+                />
             </div>
         </CardContent>
     </Card>

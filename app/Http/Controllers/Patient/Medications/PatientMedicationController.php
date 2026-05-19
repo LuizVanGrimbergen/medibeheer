@@ -154,7 +154,11 @@ class PatientMedicationController extends Controller
 
         $this->authorize('delete', $medication);
 
-        Medication::destroy($medication->getKey());
+        DB::transaction(function () use ($medication): void {
+            $medication->schedules()->delete();
+            $medication->stocks()->delete();
+            $medication->delete();
+        });
 
         return redirect()->route('patient.medications');
     }
