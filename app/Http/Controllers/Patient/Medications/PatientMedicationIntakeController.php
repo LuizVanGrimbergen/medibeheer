@@ -7,6 +7,7 @@ use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Medications\StoreMedicationIntakeRequest;
 use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
+use App\Support\Medications\MedicationIntakeClock;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 
@@ -19,7 +20,7 @@ class PatientMedicationIntakeController extends Controller
         $patient = $this->authorizePatientProfile($request);
 
         $validated = $request->validated();
-        $today = CarbonImmutable::today();
+        $today = MedicationIntakeClock::today();
 
         $schedule = MedicationSchedule::query()
             ->whereKey($validated['medication_schedule_id'])
@@ -31,16 +32,20 @@ class PatientMedicationIntakeController extends Controller
             ? trim((string) $validated['dose_time'])
             : '';
 
-        $intake = MedicationIntake::query()->firstOrNew([
-            'medication_schedule_id' => $schedule->id,
-            'intake_date' => $today,
-            'dose_time' => $doseTime,
-        ]);
+        $intake = MedicationIntake::firstOrNewForScheduleDateAndDoseTime(
+            $schedule->id,
+            $today,
+            $doseTime,
+        );
+
+        $takenAt = isset($validated['taken_at'])
+            ? CarbonImmutable::parse((string) $validated['taken_at'], MedicationIntakeClock::TIMEZONE)
+            : MedicationIntakeClock::now();
 
         $intake->fill([
             'patient_id' => $patient->id,
             'medication_id' => $schedule->medication_id,
-            'taken_at' => now(),
+            'taken_at' => $takenAt,
         ]);
         $intake->save();
 
