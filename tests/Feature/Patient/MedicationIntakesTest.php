@@ -4,6 +4,7 @@ use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
+use App\Events\Family\MedicationIntakeRecordedEvent;
 use App\Models\Medication;
 use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
@@ -11,6 +12,7 @@ use App\Models\User;
 use App\Support\Medications\MedicationIntakeClock;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 function setMedicationIntakeTestNow(string $localDateTime): void
 {
@@ -59,6 +61,39 @@ test('patient dashboard includes today medication intake slots', function () {
         ->where('today_medication_intakes.0.taken_at', null)
         ->where('today_medication_intakes.1.dose_time', '20:00')
         ->where('today_medication_intakes.1.day_period', 'evening'));
+
+    CarbonImmutable::setTestNow();
+});
+
+test('recording a medication intake dispatches a family updates broadcast event', function () {
+    Event::fake([MedicationIntakeRecordedEvent::class]);
+
+    setMedicationIntakeTestNow('2026-05-15 09:20:00');
+
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()->for($patient)->create([
+        'type_medication' => MedicationType::PILL,
+    ]);
+
+    $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
+        'intake_frequency' => MedicationIntakeFrequency::DAILY,
+        'dose_time' => '09:00',
+        'start_date' => '2026-05-01',
+        'end_date' => null,
+    ]);
+
+    $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
+        'medication_schedule_id' => $schedule->id,
+        'dose_time' => '09:00',
+    ])->assertRedirect(route('patient.dashboard'));
+
+    Event::assertDispatched(MedicationIntakeRecordedEvent::class, function (MedicationIntakeRecordedEvent $event) use ($patient): bool {
+        return $event->intake->patient_id === $patient->id
+            && $event->intake->intake_date->toDateString() === '2026-05-15';
+    });
 
     CarbonImmutable::setTestNow();
 });
