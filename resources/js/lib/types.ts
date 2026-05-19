@@ -251,6 +251,8 @@ export type MedicationStockListItem = {
 
 export type MedicationSupplyEstimateQuality = 'approx' | 'unknown';
 
+export type MedicationListStatusValue = 'active' | 'ended' | 'removed';
+
 export const TODAY_MEDICATION_INTAKE_DAY_PERIOD_VALUES = [
     'morning',
     'afternoon',
@@ -290,6 +292,7 @@ export type MedicationListItem = {
     id: number;
     patient_id: number;
     family_id: number | null;
+    list_status: MedicationListStatusValue;
     name: string;
     dose: string | null;
     dose_unit: MedicationDoseUnitValue | null;
