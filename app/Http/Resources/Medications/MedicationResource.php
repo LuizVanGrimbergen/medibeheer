@@ -6,6 +6,7 @@ namespace App\Http\Resources\Medications;
 
 use App\Models\Medication;
 use App\Services\Medications\MedicationSupplyEstimateService;
+use App\Support\Medications\MedicationListClassifier;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,10 +29,13 @@ class MedicationResource extends JsonResource
             $supplyEstimateQuality = $estimate['quality'];
         }
 
+        $listStatus = app(MedicationListClassifier::class)->statusFor($this->resource);
+
         return [
             'id' => $this->id,
             'patient_id' => $this->patient_id,
             'family_id' => $this->family_id,
+            'list_status' => $listStatus->value,
             'name' => (string) $this->name,
             'dose' => filled($this->dose) ? (string) $this->dose : null,
             'dose_unit' => $this->dose_unit?->value,
