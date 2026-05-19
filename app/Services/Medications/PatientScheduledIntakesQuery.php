@@ -37,10 +37,22 @@ final class PatientScheduledIntakesQuery
         return $this->buildSlotsForDate($medications, $targetDate, $intakes, $supplyEstimates);
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function slotsWithinDaysForPatient(Patient $patient, int $days): array
+    {
+        $today = MedicationIntakeClock::today();
+        $from = $today->subDays($days - 1);
+
+        return $this->slotsForPatientBetweenDates($patient, $from, $today);
+    }
+
     public function monthCalendarDataForPatient(Patient $patient, string $calendarMonth): array
     {
         $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
         $monthEnd = $monthStart->endOfMonth();
+
         $medications = $this->loadMedicationsFor($patient);
 
         $intakesInMonth = MedicationIntake::query()
@@ -92,6 +104,51 @@ final class PatientScheduledIntakesQuery
             'days' => $days,
             'slots' => $slots,
         ];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function slotsForPatientBetweenDates(
+        Patient $patient,
+        CarbonImmutable $from,
+        CarbonImmutable $to,
+    ): array {
+        $medications = $this->loadMedicationsFor($patient);
+
+        $intakesInRange = MedicationIntake::query()
+            ->where('patient_id', $patient->id)
+            ->whereBetween('intake_date', [$from->toDateString(), $to->toDateString()], 'and')
+            ->get();
+
+        $intakesByDate = $intakesInRange->groupBy(
+            fn (MedicationIntake $intake): string => $intake->intake_date->toDateString(),
+        );
+
+        $supplyEstimates = $this->buildSupplyEstimates($medications, MedicationIntakeClock::today());
+
+        $slots = [];
+
+        for ($date = $to; $date >= $from; $date = $date->subDay()) {
+            $dateKey = $date->toDateString();
+            $dayIntakes = ($intakesByDate->get($dateKey) ?? collect())
+                ->keyBy(
+                    fn (MedicationIntake $intake): string => $this->intakeKey(
+                        $intake->medication_schedule_id,
+                        (string) $intake->dose_time,
+                    ),
+                );
+            $daySlots = $this->buildSlotsForDate($medications, $date, $dayIntakes, $supplyEstimates);
+
+            foreach ($daySlots as $slot) {
+                $slots[] = [
+                    ...$slot,
+                    'intake_date' => $dateKey,
+                ];
+            }
+        }
+
+        return $slots;
     }
 
     private function buildSlotsForDate(
