@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsPatientDataChanges;
 use App\Support\Medications\MedicationDoseTimeBlindIndex;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MedicationIntake extends Model
 {
     use HasFactory;
+    use LogsPatientDataChanges;
+
+    protected function patientDataActivityLogAttributes(): array
+    {
+        return [
+            'patient_id',
+            'medication_id',
+            'medication_schedule_id',
+            'intake_date',
+            'taken_at',
+        ];
+    }
 
     protected $fillable = [
         'patient_id',

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationType;
+use App\Models\Concerns\LogsPatientDataChanges;
 use App\Support\Medications\MedicationIntakeClock;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +17,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Medication extends Model
 {
     use HasFactory;
+    use LogsPatientDataChanges;
     use SoftDeletes;
+
+    /**
+     * @return list<string>
+     */
+    protected function patientDataActivityLogAttributes(): array
+    {
+        return [
+            'patient_id',
+            'family_id',
+            'dose_unit',
+            'type_medication',
+            'deleted_at',
+        ];
+    }
 
     /**************************************/
     /*             Attributes */
