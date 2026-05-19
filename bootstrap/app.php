@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\RegisterForbiddenAccessLogging;
 use App\Http\Middleware\EnsureDoctor;
 use App\Http\Middleware\EnsureFamilyMember;
 use App\Http\Middleware\EnsurePatient;
@@ -37,6 +38,8 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        RegisterForbiddenAccessLogging::register($exceptions);
+
         $exceptions->render(function (TooManyRequestsHttpException $exception, Request $request): ?Response {
             if (! $request->header('X-Inertia')) {
                 return null;
