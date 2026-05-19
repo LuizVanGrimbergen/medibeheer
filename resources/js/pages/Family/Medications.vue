@@ -16,10 +16,31 @@ const props = defineProps<FamilyMedicationsScreenProps>();
 
 const { t } = useI18n();
 
+const medicationRegisterListStatusRank = (medication: MedicationListItem): number => {
+    if (medication.list_status === 'active') {
+        return 0;
+    }
+
+    if (medication.list_status === 'ended') {
+        return 1;
+    }
+
+    return 2;
+};
+
 const sortedRegisterMedications = computed((): MedicationListItem[] => {
     const items = [...props.medications.data];
 
-    items.sort(compareMedicationInventoryListItems);
+    items.sort((left, right) => {
+        const statusRank =
+            medicationRegisterListStatusRank(left) - medicationRegisterListStatusRank(right);
+
+        if (statusRank !== 0) {
+            return statusRank;
+        }
+
+        return compareMedicationInventoryListItems(left, right);
+    });
 
     return items;
 });
@@ -76,6 +97,8 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                             :show-actions="false"
                             show-stock
                             stock-update-route-name="family.medications.stocks.update"
+                            list-status-ended-label-key="family.medications.listStatus.ended"
+                            list-status-removed-label-key="family.medications.listStatus.removed"
                         />
                         </li>
                     </ul>
