@@ -157,7 +157,7 @@ class PatientMedicationController extends Controller
         DB::transaction(function () use ($medication): void {
             $medication->schedules()->delete();
             $medication->stocks()->delete();
-            $medication->delete();
+            Medication::query()->whereKey($medication->getKey())->delete();
         });
 
         return redirect()->route('patient.medications');

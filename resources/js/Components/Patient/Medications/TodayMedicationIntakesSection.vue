@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 import { Moon, Sun, Sunrise, Sunset } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import TodayMedicationIntakeCard from '@/Components/Patient/Medications/form/TodayMedicationIntakeCard.vue';
+import TodayMedicationIntakeCard from '@/Components/Patient/Medications/TodayMedicationIntakeCard.vue';
 import { partitionTodayMedicationIntakes } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
 import type {
     TodayMedicationIntakeDayPeriodValue,
