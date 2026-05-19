@@ -3242,6 +3242,8 @@
             "version": "7.2.8",
             "source": {
                 "type": "git",
+                "url": "https://github.com/pusher/pusher-http-php.git",
+                "reference": "4aa139ed2a2a805cd265449b691198beee1309d2"
             },
             "dist": {
                 "type": "zip",
