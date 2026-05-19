@@ -2,23 +2,21 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Enums\SecurityActivityDescription;
 use App\Enums\UserRole;
 use App\Models\User;
+use App\Services\Audit\SecurityActivityLogger;
+use App\Support\RateLimiting\AuthRateLimits;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
-    private const int MAX_LOGIN_ATTEMPTS = 5;
-
-    private const int LOGIN_THROTTLE_DECAY_SECONDS = 60;
-
     private static ?string $dummyHash = null;
 
     /**************************************/
@@ -78,10 +76,14 @@ class LoginRequest extends FormRequest
             || $user->role !== $requestedRole;
 
         if ($credentialsAreInvalid) {
-            RateLimiter::hit($throttleKey, self::LOGIN_THROTTLE_DECAY_SECONDS);
-            Log::warning('auth.login.failed', [
-                'ip' => $this->ip(),
-            ]);
+            RateLimiter::hit($throttleKey, AuthRateLimits::LOGIN_DECAY_SECONDS);
+
+            app(SecurityActivityLogger::class)->record(
+                SecurityActivityDescription::AUTH_LOGIN_FAILED,
+                properties: [
+                    'role' => $requestedRole->value,
+                ],
+            );
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
@@ -90,10 +92,15 @@ class LoginRequest extends FormRequest
 
         Auth::login($user, $this->boolean('remember'));
         RateLimiter::clear($throttleKey);
-        Log::info('auth.login.succeeded', [
-            'public_id' => $user->public_id,
-            'ip' => $this->ip(),
-        ]);
+
+        app(SecurityActivityLogger::class)->record(
+            SecurityActivityDescription::AUTH_LOGIN_SUCCEEDED,
+            causer: $user,
+            properties: [
+                'public_id' => $user->public_id,
+                'role' => $user->role->value,
+            ],
+        );
     }
 
     /**
@@ -101,7 +108,7 @@ class LoginRequest extends FormRequest
      */
     protected function ensureIsNotRateLimited(string $throttleKey): void
     {
-        if (! RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
+        if (! RateLimiter::tooManyAttempts($throttleKey, AuthRateLimits::LOGIN_MAX_ATTEMPTS)) {
             return;
         }
 
@@ -123,10 +130,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        $normalizedEmail = $this->emailInput();
-        $emailHash = User::hashEmail($normalizedEmail);
-
-        return $emailHash.'|'.$this->ip();
+        return AuthRateLimits::loginKey($this);
     }
 
     private function emailInput(): string

@@ -125,6 +125,15 @@ export type Paginated<T> = {
     meta: PaginationMeta;
 };
 
+export type SecurityActivityEntry = {
+    id: number;
+    description: string;
+    created_at: string | null;
+    ip: string | null;
+};
+
+export type SecurityActivityPaginator = Paginated<SecurityActivityEntry>;
+
 export const MEDICATION_TYPE_VALUES = [
     'pill',
     'liquid',

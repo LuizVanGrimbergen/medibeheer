@@ -16,7 +16,7 @@ Route::middleware([Authenticate::class, RedirectIfEmailUnverified::class])->grou
     Route::get('settings', [ProfileController::class, 'edit'])->name('settings.edit');
     Route::patch('settings', [ProfileController::class, 'update'])->name('settings.update');
     Route::delete('settings', [ProfileController::class, 'destroy'])
-        ->middleware(['throttle:5,1'])
+        ->middleware(['throttle:account-delete'])
         ->name('settings.destroy');
 });
 

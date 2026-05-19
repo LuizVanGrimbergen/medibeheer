@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\MedicationMealTiming;
+use App\Models\Concerns\LogsPatientDataChanges;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class MedicationSchedule extends Model
 {
     use HasFactory;
+    use LogsPatientDataChanges;
     use SoftDeletes;
+
+    protected function patientDataActivityLogAttributes(): array
+    {
+        return [
+            'patient_id',
+            'family_id',
+            'medication_id',
+            'meal_timing',
+            'start_date',
+            'end_date',
+            'deleted_at',
+        ];
+    }
 
     /**************************************/
     /*             Attributes */

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AppointmentStatus;
 use App\Enums\AppointmentTransportStatus;
 use App\Enums\DoctorType;
+use App\Models\Concerns\LogsPatientDataChanges;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,19 @@ class Appointment extends Model
     /**************************************/
 
     use HasFactory;
+    use LogsPatientDataChanges;
+
+    protected function patientDataActivityLogAttributes(): array
+    {
+        return [
+            'patient_id',
+            'family_id',
+            'doctor_type',
+            'starts_at',
+            'needs_transport',
+            'status',
+        ];
+    }
 
     protected $fillable = [
         'patient_id',

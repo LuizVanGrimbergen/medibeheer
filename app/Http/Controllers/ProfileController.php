@@ -2,19 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SecurityActivityDescription;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Services\Audit\SecurityActivityLogger;
+use App\Services\Audit\UserSecurityActivityScreenService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+        private readonly UserSecurityActivityScreenService $userSecurityActivityScreenService,
+    ) {}
+
     /**************************************/
     /*              Actions */
     /**************************************/
@@ -24,12 +31,20 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $this->authorize('view', $request->user());
+        $user = $request->user();
+        $this->authorize('view', $user);
 
-        return Inertia::render('Settings/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+        $payload = [
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-        ]);
+            'securityActivities' => null,
+        ];
+
+        if ($request->string('section')->toString() === 'security-activity') {
+            $payload['securityActivities'] = $this->userSecurityActivityScreenService->paginatedForUser($user);
+        }
+
+        return Inertia::render('Settings/Edit', $payload);
     }
 
     /**
@@ -53,12 +68,16 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        Log::notice('user.profile.updated', [
-            'user_id' => $request->user()->id,
-            'public_id' => $request->user()->public_id,
-            'name_changed' => $previousName !== $request->user()->name,
-            'email_changed' => $previousEmailHash !== $request->user()->email_hash,
-        ]);
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::USER_PROFILE_UPDATED,
+            causer: $request->user(),
+            subject: $request->user(),
+            properties: [
+                'public_id' => $request->user()->public_id,
+                'name_changed' => $previousName !== $request->user()->name,
+                'email_changed' => $emailChanged,
+            ],
+        );
 
         if ($emailChanged) {
             $request->user()->sendEmailVerificationNotification();
@@ -80,14 +99,22 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
         Auth::logout();
 
-        $user->delete();
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::USER_ACCOUNT_DELETED,
+            causer: $user,
+            subject: $user,
+            properties: [
+                'public_id' => $user->public_id,
+            ],
+        );
 
-        Log::alert('user.account.deleted', [
-            'user_id' => $user->id,
-            'public_id' => $user->public_id,
-        ]);
+        User::destroy($user->getKey());
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

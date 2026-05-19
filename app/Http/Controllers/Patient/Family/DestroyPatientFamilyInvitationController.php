@@ -22,7 +22,7 @@ class DestroyPatientFamilyInvitationController extends Controller
 
         abort_unless((int) $familyInvitation->patient_id === (int) $patient->id, 404);
 
-        $service->revoke($familyInvitation);
+        $service->revoke($familyInvitation, $request->user());
 
         return redirect()
             ->route('patient.family')

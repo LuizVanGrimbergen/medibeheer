@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\SecurityActivityDescription;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\NewPasswordRequest;
+use App\Services\Audit\SecurityActivityLogger;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -16,6 +17,10 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+    ) {}
+
     /**************************************/
     /*              Actions */
     /**************************************/
@@ -51,10 +56,14 @@ class NewPasswordController extends Controller
 
                 event(new PasswordReset($user));
 
-                Log::notice('auth.password_reset.completed', [
-                    'user_id' => $user->id,
-                    'public_id' => $user->public_id,
-                ]);
+                $this->securityActivityLogger->record(
+                    SecurityActivityDescription::AUTH_PASSWORD_RESET_COMPLETED,
+                    causer: $user,
+                    subject: $user,
+                    properties: [
+                        'public_id' => $user->public_id,
+                    ],
+                );
             }
         );
 
@@ -62,11 +71,13 @@ class NewPasswordController extends Controller
             return redirect()->route('login')->with('status', trans($status));
         }
 
-        Log::warning('auth.password_reset.failed', [
-            'status' => $status,
-            'email_hash' => $request->string('email')->toString(),
-            'ip' => $request->ip(),
-        ]);
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::AUTH_PASSWORD_RESET_FAILED,
+            properties: [
+                'status' => $status,
+                'email_hash' => $request->string('email')->toString(),
+            ],
+        );
 
         throw ValidationException::withMessages([
             'email' => [trans($status)],

@@ -14,6 +14,8 @@ class AppServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        RegisterGateAccessDeniedLogging::register();
+
         if ($this->app->environment('local') || $this->app->runningUnitTests()) {
             Model::shouldBeStrict();
         }
