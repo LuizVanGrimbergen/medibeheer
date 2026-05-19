@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\ExportUserDataController;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -19,6 +20,8 @@ require __DIR__.'/web/family.php';
 require __DIR__.'/web/doctor.php';
 
 Route::middleware([Authenticate::class, RedirectIfEmailUnverified::class])->group(function () {
+    Broadcast::routes();
+
     Route::get('settings', [ProfileController::class, 'edit'])->name('settings.edit');
     Route::patch('settings', [ProfileController::class, 'update'])->name('settings.update');
     Route::get('settings/export', ExportUserDataController::class)
