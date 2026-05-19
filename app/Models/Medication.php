@@ -20,9 +20,6 @@ class Medication extends Model
     use LogsPatientDataChanges;
     use SoftDeletes;
 
-    /**
-     * @return list<string>
-     */
     protected function patientDataActivityLogAttributes(): array
     {
         return [
