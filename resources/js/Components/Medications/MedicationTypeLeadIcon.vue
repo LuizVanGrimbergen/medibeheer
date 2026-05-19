@@ -24,7 +24,7 @@ const resolvedIcon = computed(() => {
 <template>
     <component
         :is="resolvedIcon"
-        class="size-6 shrink-0 sm:size-8"
+        class="size-6 shrink-0"
         :class="iconToneClass"
         aria-hidden="true"
     />
