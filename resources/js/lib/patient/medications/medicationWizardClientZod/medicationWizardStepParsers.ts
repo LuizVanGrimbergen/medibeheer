@@ -92,6 +92,7 @@ export function tryMedicationWizardDoseTimesStep(
     const parsed = medicationWizardDoseTimesFieldsSchema.safeParse({
         times_per_day: schedule.times_per_day,
         dose_time_slots: [...schedule.dose_time_slots],
+        snooze_time_slots: [...schedule.snooze_time_slots],
     });
 
     if (parsed.success) {

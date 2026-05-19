@@ -238,6 +238,7 @@ export type MedicationScheduleListItem = {
     times_per_day: string;
     dose_quantity: string;
     dose_time: string;
+    snooze_time: string;
     start_date: string | null;
     end_date: string | null;
 };

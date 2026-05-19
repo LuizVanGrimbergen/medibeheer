@@ -14,6 +14,7 @@ export type MedicationScheduleFormSlice = {
     intake_weekdays: number[];
     times_per_day: string;
     dose_time_slots: string[];
+    snooze_time_slots: string[];
     start_date: string;
     end_date: string;
 };
@@ -39,6 +40,7 @@ type MedicationScheduleFormErrorKeys =
     | 'schedule.intake_weekdays'
     | 'schedule.times_per_day'
     | 'schedule.dose_time'
+    | 'schedule.snooze_time'
     | 'schedule.start_date'
     | 'schedule.end_date';
 

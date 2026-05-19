@@ -17,6 +17,7 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
             intake_weekdays: [],
             times_per_day: '',
             dose_time_slots: [''],
+            snooze_time_slots: ['30'],
             start_date: '',
             end_date: '',
         },

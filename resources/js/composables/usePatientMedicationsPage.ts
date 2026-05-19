@@ -6,6 +6,7 @@ import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
 import { medicationListItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationListItemToCreateFormState';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
+import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import {
     patientShellDialogContentClass,
@@ -27,8 +28,9 @@ function attachMedicationScheduleTimeSlotWatcher(
             }
 
             const slots = form.schedule.dose_time_slots;
+            const snoozeSlots = form.schedule.snooze_time_slots;
 
-            if (slots.length === count) {
+            if (slots.length === count && snoozeSlots.length === count) {
                 return;
             }
 
@@ -37,11 +39,18 @@ function attachMedicationScheduleTimeSlotWatcher(
                     ...slots,
                     ...Array.from({ length: count - slots.length }, () => ''),
                 ];
+                form.schedule.snooze_time_slots = [
+                    ...snoozeSlots,
+                    ...Array.from({ length: count - snoozeSlots.length }, () =>
+                        String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
+                    ),
+                ];
 
                 return;
             }
 
             form.schedule.dose_time_slots = slots.slice(0, count);
+            form.schedule.snooze_time_slots = snoozeSlots.slice(0, count);
         },
     );
 }
