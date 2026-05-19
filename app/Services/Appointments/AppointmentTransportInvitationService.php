@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Appointments;
 
+use App\Enums\SecurityActivityDescription;
 use App\Models\Appointment;
 use App\Models\AppointmentTransportInvitation;
 use App\Models\Family;
+use App\Services\Audit\SecurityActivityLogger;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -15,6 +17,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final class AppointmentTransportInvitationService
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+    ) {}
+
     public function syncForAppointment(Appointment $appointment, ?array $requestedFamilyIds = null): void
     {
         if (! $appointment->needs_transport) {
@@ -133,6 +139,16 @@ final class AppointmentTransportInvitationService
                 'cancelled_at' => null,
             ])->save();
         });
+
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::TRANSPORT_INVITATION_ACCEPTED,
+            causer: $family->user,
+            subject: $invitation,
+            properties: [
+                'appointment_id' => $invitation->appointment_id,
+                'family_id' => $family->id,
+            ],
+        );
     }
 
     public function decline(AppointmentTransportInvitation $invitation, Family $family): void
@@ -163,6 +179,16 @@ final class AppointmentTransportInvitationService
                 'declined_at' => $now,
             ])->save();
         });
+
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::TRANSPORT_INVITATION_DECLINED,
+            causer: $family->user,
+            subject: $invitation,
+            properties: [
+                'appointment_id' => $invitation->appointment_id,
+                'family_id' => $family->id,
+            ],
+        );
     }
 
     private function assertInvitationOwnedByFamily(AppointmentTransportInvitation $invitation, Family $family): void

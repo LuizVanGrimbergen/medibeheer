@@ -4,23 +4,29 @@ declare(strict_types=1);
 
 namespace App\Services\Family;
 
+use App\Enums\SecurityActivityDescription;
 use App\Mail\FamilyInvitationMail;
 use App\Models\Family;
 use App\Models\FamilyInvitation;
 use App\Models\Patient;
 use App\Models\User;
+use App\Services\Audit\SecurityActivityLogger;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
 final class FamilyInvitationService
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+    ) {}
+
     public static function normalizeInviteCode(string $code): string
     {
         return strtolower(preg_replace('/\s+/', '', trim($code)));
     }
 
-    public function create(Patient $patient, string $email): void
+    public function create(Patient $patient, string $email, User $invitedBy): void
     {
         $normalized = User::normalizeEmail($email);
 
@@ -62,15 +68,34 @@ final class FamilyInvitationService
                 'email' => [trans('family_invitation.flash.mail_failed')],
             ]);
         }
+
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::FAMILY_INVITATION_CREATED,
+            causer: $invitedBy,
+            subject: $invitation,
+            properties: [
+                'patient_id' => $patient->id,
+                'invited_email_hash' => $emailHash,
+            ],
+        );
     }
 
-    public function revoke(FamilyInvitation $invitation): void
+    public function revoke(FamilyInvitation $invitation, User $revokedBy): void
     {
         if ($invitation->accepted_at !== null || $invitation->revoked_at !== null) {
             return;
         }
 
         $invitation->forceFill(['revoked_at' => now()])->save();
+
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::FAMILY_INVITATION_REVOKED,
+            causer: $revokedBy,
+            subject: $invitation,
+            properties: [
+                'patient_id' => $invitation->patient_id,
+            ],
+        );
     }
 
     public function accept(User $user, string $plainCode): void
@@ -85,6 +110,15 @@ final class FamilyInvitationService
             }
 
             $this->linkFamilyProfileFromInvitation($user, $invitation);
+
+            $this->securityActivityLogger->record(
+                SecurityActivityDescription::FAMILY_INVITATION_ACCEPTED,
+                causer: $user,
+                subject: $invitation,
+                properties: [
+                    'patient_id' => $invitation->patient_id,
+                ],
+            );
         });
     }
 

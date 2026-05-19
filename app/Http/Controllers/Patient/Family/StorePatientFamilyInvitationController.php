@@ -21,6 +21,7 @@ class StorePatientFamilyInvitationController extends Controller
         $service->create(
             $patient,
             $request->validated('email'),
+            $request->user(),
         );
 
         return redirect()
