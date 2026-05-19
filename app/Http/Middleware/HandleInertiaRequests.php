@@ -44,6 +44,11 @@ class HandleInertiaRequests extends Middleware
                 'rateLimitSeconds' => fn () => $request->session()->get('rate_limit_seconds'),
                 'daily_checkin_mood' => fn () => $request->session()->get('daily_checkin_mood'),
             ],
+            'legal' => [
+                'privacyUrl' => route('legal.privacy', absolute: false),
+                'cookiesUrl' => route('legal.cookies', absolute: false),
+                'policyVersion' => config('privacy.policy_version'),
+            ],
         ];
 
         if ($user instanceof User && $user->isFamilyMember() && $request->routeIs('family.*')) {

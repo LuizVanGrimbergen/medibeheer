@@ -48,6 +48,12 @@ export type FamilyDashboardProps = {
     }[];
 };
 
+export type LegalSharedProps = {
+    privacyUrl: string;
+    cookiesUrl: string;
+    policyVersion: string;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -58,6 +64,7 @@ export type PageProps<
         rateLimitSeconds: number | null;
         daily_checkin_mood: DailyMoodScoreValue | null;
     };
+    legal: LegalSharedProps;
 };
 
 export type AppointmentDoctorType =

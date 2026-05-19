@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Legal\ShowCookiePolicyController;
+use App\Http\Controllers\Legal\ShowPrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Settings\ExportUserDataController;
 use App\Http\Middleware\RedirectIfEmailUnverified;
@@ -8,6 +10,9 @@ use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+
+Route::get('privacy', ShowPrivacyPolicyController::class)->name('legal.privacy');
+Route::get('cookies', ShowCookiePolicyController::class)->name('legal.cookies');
 
 require __DIR__.'/web/patient.php';
 require __DIR__.'/web/family.php';
