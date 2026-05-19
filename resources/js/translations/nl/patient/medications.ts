@@ -4,11 +4,20 @@ export default {
         'Overzicht van uw medicatie in Medibeheer. Voeg medicaties toe en beheer later inname en voorraad.',
     newMedication: 'Medicatie toevoegen',
     dialogEditTitle: 'Medicatie wijzigen',
-    deleteConfirm:
-        'Weet u zeker dat u deze medicatie wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+    deleteConfirm: {
+        title: 'Medicatie verwijderen?',
+        description:
+            'Weet u zeker dat u “{name}” wilt verwijderen? Uw eerdere innames blijven bewaard.',
+        confirm: 'Verwijderen',
+        cancel: 'Annuleren',
+    },
     empty:
         'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
-    listHeading: 'Uw medicaties',
+    listHeading: 'Uw medicatie van vandaag',
+    listStatus: {
+        ended: 'Afgelopen',
+        removed: 'Verwijderd',
+    },
     cardIntakePeriodAria: 'Innameperiode van {start} tot {end}.',
     cardActionsAriaLabel: 'Acties voor deze medicatie',
     dialogTitle: 'Medicatie toevoegen',

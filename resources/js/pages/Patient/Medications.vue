@@ -5,6 +5,7 @@ import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import MedicationDetailsEditDialog from '@/Components/Patient/Medications/form/MedicationDetailsEditDialog.vue';
 import MedicationFormDialog from '@/Components/Patient/Medications/form/MedicationFormDialog.vue';
 import MedicationPageIntro from '@/Components/Patient/Medications/form/MedicationPageIntro.vue';
+import MedicationRemoveFromListDialog from '@/Components/Patient/Medications/MedicationRemoveFromListDialog.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientMedicationsPage } from '@/composables/usePatientMedicationsPage';
@@ -26,7 +27,12 @@ const {
     openEditMedication,
     closeEditMedicationDialog,
     submitEditMedication,
-    confirmAndDeleteMedication,
+    openDeleteMedicationDialog,
+    closeDeleteMedicationDialog,
+    confirmDeleteMedication,
+    deleteDialogOpen,
+    deleteMedication,
+    deleteProcessing,
 } = usePatientMedicationsPage(props);
 </script>
 
@@ -52,33 +58,33 @@ const {
                 </h1>
 
                 <ul
-                    v-if="props.medications.data.length > 0"
-                    class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"
+                    v-if="props.active_medications.data.length > 0"
+                    class="flex min-w-0 w-full flex-col gap-5"
                 >
                     <li
-                        v-for="medication in props.medications.data"
+                        v-for="medication in props.active_medications.data"
                         :key="medication.id"
                         class="min-w-0"
                     >
                         <MedicationCard
                             :medication="medication"
                             @edit="openEditMedication(medication)"
-                            @delete="confirmAndDeleteMedication(medication)"
+                            @delete="openDeleteMedicationDialog(medication)"
                         />
                     </li>
                 </ul>
 
                 <NumberedPagination
                     v-if="
-                        props.medications.data.length > 0 &&
-                            props.medications.meta.last_page > 1
+                        props.active_medications.data.length > 0 &&
+                            props.active_medications.meta.last_page > 1
                     "
                     route-name="patient.medications"
-                    :meta="props.medications.meta"
+                    :meta="props.active_medications.meta"
                 />
 
                 <Card
-                    v-if="props.medications.meta.total === 0"
+                    v-if="props.active_medications.meta.total === 0"
                     class="rounded-2xl border-2 border-dashed border-border bg-surface-2/70 text-text shadow-none"
                 >
                     <CardContent
@@ -112,6 +118,15 @@ const {
             :processing="editForm.processing"
             @cancel="closeEditMedicationDialog"
             @submit="submitEditMedication"
+        />
+
+        <MedicationRemoveFromListDialog
+            v-if="deleteMedication !== null"
+            v-model:open="deleteDialogOpen"
+            :medication-name="deleteMedication.name"
+            :processing="deleteProcessing"
+            @cancel="closeDeleteMedicationDialog"
+            @confirm="confirmDeleteMedication"
         />
     </PatientLayout>
 </template>
