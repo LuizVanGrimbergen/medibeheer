@@ -266,10 +266,14 @@ export type TodayMedicationIntakeStockItem = Pick<
     'current_stock'
 >;
 
+export type MedicationIntakeWindowState = 'before' | 'within' | 'past';
+
 export type TodayMedicationIntakeSlot = {
     medication_id: number;
     medication_schedule_id: number;
     dose_time: string;
+    snooze_minutes: number;
+    intake_window_state: MedicationIntakeWindowState;
     day_period: TodayMedicationIntakeDayPeriodValue;
     name: string;
     type_medication: MedicationTypeValue;
