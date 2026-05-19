@@ -7,6 +7,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use App\Services\Audit\SecurityActivityLogger;
 use App\Services\Audit\UserSecurityActivityScreenService;
+use App\Services\Privacy\UserDataErasureService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ class ProfileController extends Controller
     public function __construct(
         private readonly SecurityActivityLogger $securityActivityLogger,
         private readonly UserSecurityActivityScreenService $userSecurityActivityScreenService,
+        private readonly UserDataErasureService $userDataErasureService,
     ) {}
 
     /**************************************/
@@ -113,6 +115,8 @@ class ProfileController extends Controller
                 'public_id' => $user->public_id,
             ],
         );
+
+        $this->userDataErasureService->eraseUserRelatedRecords($user);
 
         User::destroy($user->getKey());
 
