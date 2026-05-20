@@ -6,7 +6,6 @@ namespace App\Services\Family;
 
 use App\Models\DailyCheckin;
 use App\Models\Patient;
-use App\Support\InertiaPagination;
 use Carbon\CarbonImmutable;
 
 final class FamilyDailyCheckinListService
@@ -27,28 +26,5 @@ final class FamilyDailyCheckinListService
             ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
             ->values()
             ->all();
-    }
-
-    public function paginatedForPatient(Patient $patient): array
-    {
-        $paginator = DailyCheckin::query()
-            ->whereBelongsTo($patient)
-            ->with('selectedSymptoms')
-            ->orderByDesc('checkin_date')
-            ->orderByDesc('id')
-            ->paginate(InertiaPagination::PER_PAGE)
-            ->withQueryString();
-
-        return InertiaPagination::payload(
-            $paginator,
-            $paginator->getCollection()
-                ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
-                ->all(),
-        );
-    }
-
-    public function empty(): array
-    {
-        return InertiaPagination::empty();
     }
 }

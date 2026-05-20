@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services\Family;
 
 use App\Models\Patient;
-use App\Services\Medications\PatientScheduledIntakesQuery;
 use App\Support\FamilyUpdatesPeriodDays;
 use Illuminate\Http\Request;
 
@@ -13,7 +12,7 @@ final class FamilyUpdatesScreenService
 {
     public function __construct(
         private FamilyDailyCheckinListService $checkinList,
-        private PatientScheduledIntakesQuery $scheduledIntakesQuery,
+        private FamilyMedicationIntakeListService $medicationIntakeList,
     ) {}
 
     public function buildProps(Request $request, Patient $patient): array
@@ -23,8 +22,7 @@ final class FamilyUpdatesScreenService
         return [
             'updates_period_days' => $periodDays,
             'updates_checkins' => $this->checkinList->withinDaysForPatient($patient, $periodDays),
-            'updates_medication_slots' => $this->scheduledIntakesQuery
-                ->slotsWithinDaysForPatient($patient, $periodDays),
+            'updates_medication_intakes' => $this->medicationIntakeList->takenWithinDaysForPatient($patient, $periodDays),
         ];
     }
 
@@ -33,7 +31,7 @@ final class FamilyUpdatesScreenService
         return [
             'updates_period_days' => FamilyUpdatesPeriodDays::fromRequest($request),
             'updates_checkins' => [],
-            'updates_medication_slots' => [],
+            'updates_medication_intakes' => [],
         ];
     }
 }

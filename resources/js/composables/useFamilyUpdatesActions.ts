@@ -26,3 +26,14 @@ export function setUpdatesPeriodDaysFromToggle(
 
     setUpdatesPeriodDays(Number(next) as FamilyUpdatesPeriodDays, current);
 }
+
+export function reloadFamilyUpdatesPage(): void {
+    router.reload({
+        only: [
+            'updates_checkins',
+            'updates_medication_intakes',
+            'updates_period_days',
+            'family',
+        ],
+    });
+}

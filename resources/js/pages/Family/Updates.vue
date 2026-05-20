@@ -3,12 +3,13 @@ import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
+import FamilyUpdatesEchoListener from '@/Components/Family/Updates/FamilyUpdatesEchoListener.vue';
 import FamilyUpdatesMedicationDayGroup from '@/Components/Family/Updates/FamilyUpdatesMedicationDayGroup.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
 import { setUpdatesPeriodDaysFromToggle } from '@/composables/useFamilyUpdatesActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
-import { groupMedicationSlotsByDate } from '@/lib/family/updates/groupMedicationSlotsByDate';
+import { groupMedicationIntakesByDate } from '@/lib/family/medications/groupMedicationIntakesByDate';
 import type { FamilyUpdatesScreenProps } from '@/lib/family/updates/familyUpdatesScreenProps';
 import type { FamilyDashboardProps } from '@/lib/types';
 
@@ -22,18 +23,20 @@ const { t } = useI18n();
 
 const periodToggleValue = computed((): string => String(props.updates_period_days));
 
-const medicationSlotsByDate = computed(() =>
-    groupMedicationSlotsByDate(props.updates_medication_slots),
+const activePatientId = computed((): number | null => props.family.active_patient_id);
+
+const hasCheckins = computed((): boolean => props.updates_checkins.length > 0);
+
+const hasMedicationIntakes = computed(
+    (): boolean => props.updates_medication_intakes.length > 0,
 );
 
 const hasUpdates = computed(
-    (): boolean =>
-        props.updates_checkins.length > 0 || props.updates_medication_slots.length > 0,
+    (): boolean => hasCheckins.value || hasMedicationIntakes.value,
 );
 
-const showSectionHeadings = computed(
-    (): boolean =>
-        props.updates_checkins.length > 0 && props.updates_medication_slots.length > 0,
+const medicationIntakesByDate = computed(() =>
+    groupMedicationIntakesByDate(props.updates_medication_intakes),
 );
 
 function onPeriodToggleUpdate(next: string): void {
@@ -47,6 +50,12 @@ function onPeriodToggleUpdate(next: string): void {
     </Head>
 
     <FamilyLayout>
+        <FamilyUpdatesEchoListener
+            v-if="props.family.has_linked_patient && activePatientId !== null"
+            :key="activePatientId"
+            :patient-id="activePatientId"
+        />
+
         <div class="flex min-w-0 flex-col gap-6">
             <div class="space-y-2">
                 <h1 class="text-2xl font-semibold text-text-heading">
@@ -89,20 +98,15 @@ function onPeriodToggleUpdate(next: string): void {
                 {{ t('family.updates.emptyInPeriod') }}
             </p>
 
-            <div
-                v-else
-                class="flex min-w-0 flex-col gap-8"
-            >
+            <template v-else>
                 <section
-                    v-if="props.updates_checkins.length > 0"
+                    v-if="hasCheckins"
                     class="space-y-4"
                 >
-                    <h2
-                        v-if="showSectionHeadings"
-                        class="text-lg font-semibold text-text-heading"
-                    >
+                    <h2 class="text-lg font-semibold text-text-heading">
                         {{ t('family.updates.wellbeingHeading') }}
                     </h2>
+
                     <FamilyWellbeingCheckinCard
                         v-for="checkin in props.updates_checkins"
                         :key="checkin.id"
@@ -111,22 +115,21 @@ function onPeriodToggleUpdate(next: string): void {
                 </section>
 
                 <section
-                    v-if="props.updates_medication_slots.length > 0"
+                    v-if="hasMedicationIntakes"
                     class="space-y-4"
                 >
-                    <h2
-                        v-if="showSectionHeadings"
-                        class="text-lg font-semibold text-text-heading"
-                    >
+                    <h2 class="text-lg font-semibold text-text-heading">
                         {{ t('family.updates.medicationsHeading') }}
                     </h2>
+
                     <FamilyUpdatesMedicationDayGroup
-                        v-for="group in medicationSlotsByDate"
+                        v-for="group in medicationIntakesByDate"
                         :key="group.date"
-                        :group="group"
+                        :date="group.date"
+                        :intakes="group.intakes"
                     />
                 </section>
-            </div>
+            </template>
         </div>
     </FamilyLayout>
 </template>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Patient\Medications;
 
+use App\Events\Family\MedicationIntakeRecordedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Medications\StoreMedicationIntakeRequest;
@@ -48,6 +49,8 @@ class PatientMedicationIntakeController extends Controller
             'taken_at' => $takenAt,
         ]);
         $intake->save();
+
+        MedicationIntakeRecordedEvent::dispatch($intake);
 
         return redirect()->route('patient.dashboard');
     }

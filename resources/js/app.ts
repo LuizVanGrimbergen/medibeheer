@@ -7,6 +7,11 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { i18n } from '@/i18n';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { configureEcho } from '@laravel/echo-vue';
+
+configureEcho({
+    broadcaster: 'pusher',
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pageComponents = import.meta.glob<DefineComponent>('./pages/**/*.vue');

@@ -2,41 +2,36 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
-import type { MedicationSlotsByDate } from '@/lib/family/updates/groupMedicationSlotsByDate';
+import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 
 const props = defineProps<{
-    group: MedicationSlotsByDate;
+    date: string;
+    intakes: MedicationIntakeHistorySlot[];
 }>();
 
-const { locale } = useI18n();
+const { d } = useI18n();
 
-const formattedDate = computed((): string => {
-    const [y, m, d] = props.group.date.split('-').map(Number);
-
-    if (! y || ! m || ! d) {
-        return props.group.date;
-    }
-
-    const date = new Date(y, m - 1, d);
-
-    return new Intl.DateTimeFormat(locale.value === 'nl' ? 'nl-NL' : undefined, {
+const dateLabel = computed((): string =>
+    d(props.date, {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
-        year: 'numeric',
-    }).format(date);
-});
+    }),
+);
 </script>
 
 <template>
-    <div class="space-y-3">
-        <p class="text-xs font-medium uppercase tracking-wide text-text-muted">
-            {{ formattedDate }}
-        </p>
-        <MedicationIntakeHistorySlotCard
-            v-for="slot in props.group.slots"
-            :key="`${slot.medication_schedule_id}-${slot.dose_time}-${slot.intake_date}`"
-            :slot="slot"
-        />
-    </div>
+    <section class="space-y-3">
+        <h3 class="text-sm font-semibold text-text-heading">
+            {{ dateLabel }}
+        </h3>
+
+        <div class="flex flex-col gap-3">
+            <MedicationIntakeHistorySlotCard
+                v-for="intake in props.intakes"
+                :key="`${intake.medication_schedule_id}-${intake.dose_time}`"
+                :slot="intake"
+            />
+        </div>
+    </section>
 </template>

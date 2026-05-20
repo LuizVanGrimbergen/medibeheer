@@ -106,10 +106,15 @@ final class PatientScheduledIntakesQuery
         ];
     }
 
-    /**
-     * @return list<array<string, mixed>>
-     */
-    private function slotsForPatientBetweenDates(
+    public function takenSlotsWithinDaysForPatient(Patient $patient, int $days): array
+    {
+        $today = CarbonImmutable::today();
+        $from = $today->subDays($days - 1);
+
+        return $this->takenSlotsForPatientBetweenDates($patient, $from, $today);
+    }
+
+    public function takenSlotsForPatientBetweenDates(
         Patient $patient,
         CarbonImmutable $from,
         CarbonImmutable $to,
@@ -118,7 +123,8 @@ final class PatientScheduledIntakesQuery
 
         $intakesInRange = MedicationIntake::query()
             ->where('patient_id', $patient->id)
-            ->whereBetween('intake_date', [$from->toDateString(), $to->toDateString()], 'and')
+            ->whereDate('intake_date', '>=', $from->toDateString())
+            ->whereDate('intake_date', '<=', $to->toDateString())
             ->get();
 
         $intakesByDate = $intakesInRange->groupBy(
@@ -129,7 +135,7 @@ final class PatientScheduledIntakesQuery
 
         $slots = [];
 
-        for ($date = $to; $date >= $from; $date = $date->subDay()) {
+        for ($date = $from; $date <= $to; $date = $date->addDay()) {
             $dateKey = $date->toDateString();
             $dayIntakes = ($intakesByDate->get($dateKey) ?? collect())
                 ->keyBy(
@@ -141,12 +147,26 @@ final class PatientScheduledIntakesQuery
             $daySlots = $this->buildSlotsForDate($medications, $date, $dayIntakes, $supplyEstimates);
 
             foreach ($daySlots as $slot) {
+                if ($slot['taken_at'] === null) {
+                    continue;
+                }
+
                 $slots[] = [
                     ...$slot,
                     'intake_date' => $dateKey,
                 ];
             }
         }
+
+        usort($slots, function (array $left, array $right): int {
+            $dateComparison = strcmp($right['intake_date'], $left['intake_date']);
+
+            if ($dateComparison !== 0) {
+                return $dateComparison;
+            }
+
+            return $this->compareScheduledIntakes($left, $right);
+        });
 
         return $slots;
     }

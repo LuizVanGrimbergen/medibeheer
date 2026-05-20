@@ -4,9 +4,35 @@
 
 use App\Enums\DailyCheckinSymptom;
 use App\Enums\DailyMoodScore;
+use App\Events\Family\DailyCheckinCreatedEvent;
 use App\Models\DailyCheckin;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+
+test('storing a daily check-in dispatches a family updates broadcast event', function () {
+    Event::fake([DailyCheckinCreatedEvent::class]);
+
+    $user = User::factory()->patient()->create();
+    expect($user->patient)->not->toBeNull();
+
+    $csrfToken = 'test-csrf-token';
+
+    $this->actingAs($user)
+        ->withSession(['_token' => $csrfToken])
+        ->post(route('patient.daily-checkins.store'), [
+            '_token' => $csrfToken,
+            'mood_score' => DailyMoodScore::OK->value,
+            'symptoms' => [DailyCheckinSymptom::FATIGUE->value],
+            'note' => 'Even moe.',
+        ])
+        ->assertRedirect(route('patient.dashboard'));
+
+    Event::assertDispatched(DailyCheckinCreatedEvent::class, function (DailyCheckinCreatedEvent $event) use ($user): bool {
+        return $event->checkin->patient_id === $user->patient->id
+            && $event->checkin->mood_score === DailyMoodScore::OK;
+    });
+});
 
 test('successful daily check-in flashes mood for confirmation screen', function () {
     $user = User::factory()->patient()->create();
