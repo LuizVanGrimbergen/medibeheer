@@ -37,10 +37,22 @@ final class PatientScheduledIntakesQuery
         return $this->buildSlotsForDate($medications, $targetDate, $intakes, $supplyEstimates);
     }
 
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function slotsWithinDaysForPatient(Patient $patient, int $days): array
+    {
+        $today = MedicationIntakeClock::today();
+        $from = $today->subDays($days - 1);
+
+        return $this->slotsForPatientBetweenDates($patient, $from, $today);
+    }
+
     public function monthCalendarDataForPatient(Patient $patient, string $calendarMonth): array
     {
         $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
         $monthEnd = $monthStart->endOfMonth();
+
         $medications = $this->loadMedicationsFor($patient);
 
         $intakesInMonth = MedicationIntake::query()
