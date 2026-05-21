@@ -100,6 +100,7 @@ class StoreMedicationIntakeRequest extends FormRequest
             if (! MedicationScheduleDoseTimes::isWithinIntakeWindow(
                 $doseTime,
                 (string) $schedule->dose_time,
+                $schedule->snooze_time,
             )) {
                 $validator->errors()->add(
                     'dose_time',

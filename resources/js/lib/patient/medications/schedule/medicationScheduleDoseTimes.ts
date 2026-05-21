@@ -4,11 +4,6 @@ export const MEDICATION_SCHEDULE_SNOOZE_MINUTE_OPTIONS = [
     15, 30, 45, 60, 90, 120, 180,
 ] as const;
 
-export type MedicationScheduleDoseTimeSlot = {
-    time: string;
-    snoozeMinutes: number;
-};
-
 function clampSnoozeMinutes(minutes: number): number {
     if (minutes < 0) {
         return 0;
@@ -31,63 +26,42 @@ function parseSnoozeMinutes(value: string): number | null {
     return clampSnoozeMinutes(Number(trimmed));
 }
 
-export function parseMedicationScheduleDoseTimes(raw: string): MedicationScheduleDoseTimeSlot[] {
-    const trimmed = raw.trim();
+function parseDoseTimeSegments(doseTimeRaw: string): string[] {
+    const trimmed = doseTimeRaw.trim();
 
     if (trimmed.length < 1) {
         return [];
     }
 
-    const slots: MedicationScheduleDoseTimeSlot[] = [];
+    return trimmed
+        .split(',')
+        .map((segment) => segment.trim())
+        .filter((segment) => segment.length > 0);
+}
 
-    for (const segment of trimmed.split(',')) {
-        const part = segment.trim();
+function parseSnoozeTimeSegments(snoozeTimeRaw: string): string[] {
+    const trimmed = snoozeTimeRaw.trim();
 
-        if (part.length < 1) {
-            continue;
-        }
-
-        let time = part;
-        let snoozeMinutes = MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES;
-
-        if (part.includes('|')) {
-            const [timePart, snoozePart] = part.split('|', 2);
-            time = timePart.trim();
-            const parsedSnooze = parseSnoozeMinutes(snoozePart ?? '');
-
-            if (parsedSnooze !== null) {
-                snoozeMinutes = parsedSnooze;
-            }
-        }
-
-        if (time.length < 1) {
-            continue;
-        }
-
-        slots.push({ time, snoozeMinutes });
+    if (trimmed.length < 1) {
+        return [];
     }
 
-    return slots;
+    return trimmed
+        .split(',')
+        .map((segment) => segment.trim())
+        .filter((segment) => segment.length > 0);
 }
 
 export function buildMedicationScheduleSnoozeTimeSlots(
-    doseTimeRaw: string,
     snoozeTimeRaw: string | null | undefined,
     slotCount: number,
 ): string[] {
-    const parsed = parseMedicationScheduleDoseTimes(doseTimeRaw);
     const snoozeSegments =
         snoozeTimeRaw === null || snoozeTimeRaw === undefined
             ? []
-            : snoozeTimeRaw.split(',').map((segment) => segment.trim());
+            : parseSnoozeTimeSegments(snoozeTimeRaw);
 
     return Array.from({ length: slotCount }, (_, index) => {
-        const fromParsed = parsed[index]?.snoozeMinutes;
-
-        if (fromParsed !== undefined) {
-            return String(fromParsed);
-        }
-
         const fromSnoozeField = snoozeSegments[index];
 
         if (fromSnoozeField !== undefined && fromSnoozeField.length > 0) {
@@ -104,21 +78,9 @@ export function buildMedicationScheduleDoseTimeSlots(
     doseTimeRaw: string,
     slotCount: number,
 ): string[] {
-    const parsed = parseMedicationScheduleDoseTimes(doseTimeRaw);
-    const legacySegments = doseTimeRaw
-        .split(',')
-        .map((segment) => segment.trim())
-        .filter((segment) => segment.length > 0);
+    const parsed = parseDoseTimeSegments(doseTimeRaw);
 
-    return Array.from({ length: slotCount }, (_, index) => {
-        const fromParsed = parsed[index]?.time;
-
-        if (fromParsed !== undefined) {
-            return fromParsed;
-        }
-
-        return legacySegments[index] ?? '';
-    });
+    return Array.from({ length: slotCount }, (_, index) => parsed[index] ?? '');
 }
 
 export function buildMedicationScheduleSnoozeTimeForPayload(

@@ -25,6 +25,8 @@ export default {
             "Tik op 'Voeg toe' rechtsboven. Open Medibeheer daarna via het icoon op je beginscherm.",
         iosInstallHelp:
             "Zie je de Deel-knop niet? Scroll een klein beetje omhoog zodat de Safari-balk weer zichtbaar wordt.",
+        iosInstallMedicationNote:
+            'Medicatie-herinneringen op iPhone werken alleen als u Medibeheer via het icoon op uw beginscherm opent.',
         dismiss: 'Sluiten',
     },
 };

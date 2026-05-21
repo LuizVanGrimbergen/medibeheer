@@ -46,7 +46,7 @@ trait ValidatesMedicationScheduleFields
             ],
             "{$prefix}dose_quantity" => [...$maybeSometimes, $required, 'string', 'max:500'],
             "{$prefix}dose_time" => [...$maybeSometimes, $required, 'string', 'max:500'],
-            "{$prefix}snooze_time" => [...$maybeSometimes, 'nullable', 'string', 'max:500'],
+            "{$prefix}snooze_time" => [...$maybeSometimes, $required, 'string', 'max:500'],
             ...$this->rulesMedicationScheduleStartAndEndDates($prefix, $sometimes, $requiredWhen),
         ];
     }

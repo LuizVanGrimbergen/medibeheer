@@ -20,8 +20,8 @@ class MedicationScheduleResource extends JsonResource
             'intake_weekdays' => $this->intake_weekdays,
             'times_per_day' => (string) $this->times_per_day,
             'dose_quantity' => (string) $this->dose_quantity,
-            'dose_time' => MedicationScheduleDoseTimes::displayTimes((string) $this->dose_time),
-            'snooze_time' => MedicationScheduleDoseTimes::displaySnoozeMinutes((string) $this->dose_time),
+            'dose_time' => (string) $this->dose_time,
+            'snooze_time' => MedicationScheduleDoseTimes::displaySnoozeMinutes((string) ($this->snooze_time ?? '')),
             'start_date' => $this->start_date?->format('Y-m-d'),
             'end_date' => $this->end_date?->format('Y-m-d'),
         ];

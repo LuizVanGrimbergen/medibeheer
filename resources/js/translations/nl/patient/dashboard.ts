@@ -39,6 +39,11 @@ export default {
             done: 'Gereed',
         },
     },
+    medicationIntakePushSuccess: {
+        eyebrow: 'Medicatie ingenomen',
+        subtitle: 'Het is geregistreerd. U kunt verder.',
+        done: 'Gereed',
+    },
     todayMedications: {
         title: 'Medicatie vandaag',
         description:

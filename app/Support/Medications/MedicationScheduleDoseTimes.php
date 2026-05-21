@@ -12,77 +12,59 @@ final class MedicationScheduleDoseTimes
 
     public const int MAX_SNOOZE_MINUTES = 24 * 60;
 
-    public static function parse(string $raw): array
+    /** @return list<array{time: string, snooze_minutes: int}> */
+    public static function parse(string $doseTimeRaw, ?string $snoozeTimeRaw = null): array
     {
-        $trimmed = trim($raw);
+        $timeSegments = self::timeSegments($doseTimeRaw);
 
-        if ($trimmed === '') {
+        if ($timeSegments === []) {
             return [];
         }
 
+        $snoozeSegments = self::snoozeSegments($snoozeTimeRaw);
         $slots = [];
 
-        foreach (explode(',', $trimmed) as $segment) {
-            $part = trim($segment);
-
-            if ($part === '') {
-                continue;
-            }
-
-            $time = $part;
-            $snoozeMinutes = self::DEFAULT_SNOOZE_MINUTES;
-
-            if (str_contains($part, '|')) {
-                [$timePart, $snoozePart] = array_pad(explode('|', $part, 2), 2, '');
-                $time = trim($timePart);
-                $parsedSnooze = self::parseSnoozeMinutes(trim($snoozePart));
-
-                if ($parsedSnooze !== null) {
-                    $snoozeMinutes = $parsedSnooze;
-                }
-            }
-
-            if ($time === '') {
-                continue;
-            }
+        foreach ($timeSegments as $index => $time) {
+            $snoozeRaw = $snoozeSegments[$index] ?? '';
+            $parsedSnooze = self::parseSnoozeMinutes($snoozeRaw);
 
             $slots[] = [
                 'time' => $time,
-                'snooze_minutes' => $snoozeMinutes,
+                'snooze_minutes' => $parsedSnooze ?? self::DEFAULT_SNOOZE_MINUTES,
             ];
         }
 
         return $slots;
     }
 
-    public static function encode(array $slots): string
+    /** @return list<string> */
+    public static function timeSegments(string $doseTimeRaw): array
     {
-        if ($slots === []) {
-            return '';
+        $trimmed = trim($doseTimeRaw);
+
+        if ($trimmed === '') {
+            return [];
         }
 
         $segments = [];
 
-        foreach ($slots as $slot) {
-            $time = trim($slot['time']);
+        foreach (explode(',', $trimmed) as $segment) {
+            $part = trim($segment);
 
-            if ($time === '') {
-                continue;
+            if ($part !== '') {
+                $segments[] = $part;
             }
-
-            $snooze = self::clampSnoozeMinutes($slot['snooze_minutes']);
-            $segments[] = "{$time}|{$snooze}";
         }
 
-        return implode(', ', $segments);
+        return $segments;
     }
 
     /** @return list<string> */
-    public static function sortedTimes(string $raw): array
+    public static function sortedTimes(string $doseTimeRaw, ?string $snoozeTimeRaw = null): array
     {
         $seen = [];
 
-        foreach (self::parse($raw) as $slot) {
+        foreach (self::parse($doseTimeRaw, $snoozeTimeRaw) as $slot) {
             $seen[$slot['time']] = true;
         }
 
@@ -114,39 +96,34 @@ final class MedicationScheduleDoseTimes
         return $times;
     }
 
-    public static function displayTimes(string $raw): string
+    public static function displaySnoozeMinutes(string $snoozeTimeRaw): string
     {
-        $times = array_map(
-            static fn (array $slot): string => $slot['time'],
-            self::parse($raw),
-        );
+        $trimmed = trim($snoozeTimeRaw);
 
-        if ($times === []) {
+        if ($trimmed === '') {
             return '';
         }
 
-        return implode(', ', $times);
-    }
-
-    public static function displaySnoozeMinutes(string $raw): string
-    {
         $snoozes = array_map(
-            static fn (array $slot): string => (string) self::clampSnoozeMinutes($slot['snooze_minutes']),
-            self::parse($raw),
+            static function (string $segment): string {
+                $parsed = self::parseSnoozeMinutes(trim($segment));
+
+                return (string) ($parsed ?? self::DEFAULT_SNOOZE_MINUTES);
+            },
+            explode(',', $trimmed),
         );
 
-        if ($snoozes === []) {
-            return '';
-        }
-
-        return implode(', ', $snoozes);
+        return implode(', ', array_values(array_filter(
+            $snoozes,
+            static fn (string $segment): bool => $segment !== '',
+        )));
     }
 
-    public static function snoozeMinutesFor(string $doseTime, string $raw): int
+    public static function snoozeMinutesFor(string $doseTime, string $doseTimeRaw, ?string $snoozeTimeRaw = null): int
     {
         $needle = trim($doseTime);
 
-        foreach (self::parse($raw) as $slot) {
+        foreach (self::parse($doseTimeRaw, $snoozeTimeRaw) as $slot) {
             if ($slot['time'] === $needle) {
                 return self::clampSnoozeMinutes($slot['snooze_minutes']);
             }
@@ -155,40 +132,15 @@ final class MedicationScheduleDoseTimes
         return self::DEFAULT_SNOOZE_MINUTES;
     }
 
-    public static function mergeDisplayTimesAndSnoozes(string $doseTime, string $snoozeTime): string
-    {
-        $timeSegments = array_values(array_filter(
-            array_map(static fn (string $segment): string => trim($segment), explode(',', $doseTime)),
-            static fn (string $segment): bool => $segment !== '',
-        ));
-        $snoozeSegments = array_values(array_filter(
-            array_map(static fn (string $segment): string => trim($segment), explode(',', $snoozeTime)),
-            static fn (string $segment): bool => $segment !== '',
-        ));
-
-        $slots = [];
-
-        foreach ($timeSegments as $index => $time) {
-            $snoozeRaw = $snoozeSegments[$index] ?? '';
-            $parsedSnooze = self::parseSnoozeMinutes($snoozeRaw);
-
-            $slots[] = [
-                'time' => $time,
-                'snooze_minutes' => $parsedSnooze ?? self::DEFAULT_SNOOZE_MINUTES,
-            ];
-        }
-
-        return self::encode($slots);
-    }
-
     public static function resolveIntakeWindowState(
         string $doseTime,
-        string $raw,
+        string $doseTimeRaw,
+        ?string $snoozeTimeRaw = null,
         ?CarbonInterface $now = null,
     ): string {
         $now = $now ?? MedicationIntakeClock::now();
 
-        if (self::isWithinIntakeWindow($doseTime, $raw, $now)) {
+        if (self::isWithinIntakeWindow($doseTime, $doseTimeRaw, $snoozeTimeRaw, $now)) {
             return 'within';
         }
 
@@ -207,8 +159,12 @@ final class MedicationScheduleDoseTimes
         return 'past';
     }
 
-    public static function isWithinIntakeWindow(string $doseTime, string $raw, ?CarbonInterface $now = null): bool
-    {
+    public static function isWithinIntakeWindow(
+        string $doseTime,
+        string $doseTimeRaw,
+        ?string $snoozeTimeRaw = null,
+        ?CarbonInterface $now = null,
+    ): bool {
         $now = $now ?? MedicationIntakeClock::now();
         $parsed = DoseTime::tryFrom($doseTime);
 
@@ -217,9 +173,24 @@ final class MedicationScheduleDoseTimes
         }
 
         $start = $now->copy()->startOfDay()->addMinutes($parsed->minutesSinceMidnight());
-        $end = $start->copy()->addMinutes(self::snoozeMinutesFor($doseTime, $raw));
+        $end = $start->copy()->addMinutes(self::snoozeMinutesFor($doseTime, $doseTimeRaw, $snoozeTimeRaw));
 
         return $now->greaterThanOrEqualTo($start) && $now->lessThanOrEqualTo($end);
+    }
+
+    /** @return list<string> */
+    private static function snoozeSegments(?string $snoozeTimeRaw): array
+    {
+        $trimmed = trim($snoozeTimeRaw ?? '');
+
+        if ($trimmed === '') {
+            return [];
+        }
+
+        return array_values(array_filter(
+            array_map(static fn (string $segment): string => trim($segment), explode(',', $trimmed)),
+            static fn (string $segment): bool => $segment !== '',
+        ));
     }
 
     private static function parseSnoozeMinutes(string $value): ?int

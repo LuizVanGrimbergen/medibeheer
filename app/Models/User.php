@@ -15,11 +15,13 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Crypt;
+use NotificationChannels\WebPush\HasPushSubscriptions;
 
 #[ObservedBy(UserObserver::class)]
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory;
+    use HasPushSubscriptions;
     use Notifiable;
 
     /**************************************/

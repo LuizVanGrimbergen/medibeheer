@@ -54,6 +54,11 @@ export type LegalSharedProps = {
     policyVersion: string;
 };
 
+type WebPushSharedProps = {
+    publicKey: string | null;
+    subscribed: boolean;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -65,6 +70,7 @@ export type PageProps<
         daily_checkin_mood: DailyMoodScoreValue | null;
     };
     legal: LegalSharedProps;
+    webpush?: WebPushSharedProps;
 };
 
 export type AppointmentDoctorType =
