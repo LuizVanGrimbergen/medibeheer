@@ -25,6 +25,7 @@ function validNewMedicationSchedulePayload(): array
         'intake_frequency' => MedicationIntakeFrequency::DAILY,
         'times_per_day' => '1',
         'dose_time' => '09:00',
+        'snooze_time' => '30',
         'start_date' => '2026-05-01',
         'end_date' => '2026-05-07',
     ];
@@ -182,7 +183,43 @@ test('patients can create a medication with snooze time per dose slot', function
         ->first();
 
     expect($schedule)->not->toBeNull();
-    expect($schedule->dose_time)->toBe('09:00|60, 12:00|30');
+    expect($schedule->dose_time)->toBe('09:00, 12:00')
+        ->and($schedule->snooze_time)->toBe('60, 30');
+});
+
+test('patients can update a medication schedule snooze time per dose slot', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()->for($patient)->create();
+    $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
+        'times_per_day' => '2',
+        'dose_time' => '09:00, 12:00',
+    ]);
+
+    $response = $this->actingAs($user)->put(route('patient.medications.update', $medication), [
+        'name' => $medication->name,
+        'dose' => $medication->dose,
+        'dose_unit' => $medication->dose_unit->value,
+        'type_medication' => $medication->type_medication->value,
+        'schedule' => [
+            'meal_timing' => $schedule->meal_timing->value,
+            'intake_frequency' => $schedule->intake_frequency,
+            'times_per_day' => '2',
+            'dose_time' => '09:00, 12:00',
+            'snooze_time' => '90, 45',
+            'start_date' => $schedule->start_date?->format('Y-m-d'),
+            'end_date' => $schedule->end_date?->format('Y-m-d'),
+        ],
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $schedule->refresh();
+
+    expect($schedule->dose_time)->toBe('09:00, 12:00')
+        ->and($schedule->snooze_time)->toBe('90, 45');
 });
 
 test('patients can create a medication and name is encrypted at rest', function () {
@@ -216,6 +253,7 @@ test('patients can create a medication and name is encrypted at rest', function 
     expect($schedule->times_per_day)->toBe('1');
     expect($schedule->dose_quantity)->toBe('400');
     expect($schedule->dose_time)->toBe('09:00');
+    expect($schedule->snooze_time)->toBe('30');
     expect($schedule->start_date?->format('Y-m-d'))->toBe('2026-05-01');
     expect($schedule->end_date?->format('Y-m-d'))->toBe('2026-05-07');
 

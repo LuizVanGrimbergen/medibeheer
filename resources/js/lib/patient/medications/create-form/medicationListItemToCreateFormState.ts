@@ -37,11 +37,7 @@ export function medicationListItemToCreateFormState(
     const count = parseMedicationTimesPerDayCount(first.times_per_day);
     const slotCount = count ?? 1;
     const dose_time_slots = buildMedicationScheduleDoseTimeSlots(first.dose_time, slotCount);
-    const snooze_time_slots = buildMedicationScheduleSnoozeTimeSlots(
-        first.dose_time,
-        first.snooze_time,
-        slotCount,
-    );
+    const snooze_time_slots = buildMedicationScheduleSnoozeTimeSlots(first.snooze_time, slotCount);
 
     base.schedule = {
         meal_timing: first.meal_timing,

@@ -38,9 +38,18 @@ function attachMedicationScheduleTimeSlotWatcher(
                     ...slots,
                     ...Array.from({ length: count - slots.length }, () => ''),
                 ];
+            }
+
+            if (slots.length > count) {
+                form.schedule.dose_time_slots = slots.slice(0, count);
+            }
+
+            const syncedSnoozeSlots = form.schedule.snooze_time_slots;
+
+            if (syncedSnoozeSlots.length < count) {
                 form.schedule.snooze_time_slots = [
-                    ...snoozeSlots,
-                    ...Array.from({ length: count - snoozeSlots.length }, () =>
+                    ...syncedSnoozeSlots,
+                    ...Array.from({ length: count - syncedSnoozeSlots.length }, () =>
                         String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
                     ),
                 ];
@@ -48,8 +57,9 @@ function attachMedicationScheduleTimeSlotWatcher(
                 return;
             }
 
-            form.schedule.dose_time_slots = slots.slice(0, count);
-            form.schedule.snooze_time_slots = snoozeSlots.slice(0, count);
+            if (syncedSnoozeSlots.length > count) {
+                form.schedule.snooze_time_slots = syncedSnoozeSlots.slice(0, count);
+            }
         },
     );
 }

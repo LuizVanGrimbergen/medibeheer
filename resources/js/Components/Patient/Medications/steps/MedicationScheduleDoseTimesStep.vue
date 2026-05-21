@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { InputError } from '@/Components/ui/input-error';
@@ -41,11 +41,35 @@ const doseTimeSlotIndices = computed(() =>
     Array.from({ length: doseTimeSlotCount.value }, (_, index) => index),
 );
 
-function ensureSnoozeSlot(index: number): void {
-    if (form.schedule.snooze_time_slots[index] === undefined) {
-        form.schedule.snooze_time_slots[index] = String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES);
+function ensureSnoozeSlotsForVisibleIndices(): void {
+    const indices = doseTimeSlotIndices.value;
+    const current = form.schedule.snooze_time_slots;
+    let next: string[] | null = null;
+
+    for (const index of indices) {
+        if (current[index] !== undefined) {
+            continue;
+        }
+
+        if (next === null) {
+            next = [...current];
+        }
+
+        next[index] = String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES);
+    }
+
+    if (next !== null) {
+        form.schedule.snooze_time_slots = next;
     }
 }
+
+function setSnoozeSlot(index: number, minutes: string): void {
+    const next = [...form.schedule.snooze_time_slots];
+    next[index] = minutes;
+    form.schedule.snooze_time_slots = next;
+}
+
+watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true });
 </script>
 
 <template>
@@ -104,10 +128,10 @@ function ensureSnoozeSlot(index: number): void {
                     </Label>
                     <select
                         :id="`${idPrefix}-schedule-snooze-time-${index}`"
-                        v-model="form.schedule.snooze_time_slots[index]"
+                        :value="form.schedule.snooze_time_slots[index] ?? String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES)"
                         :class="cn(patientFormSelectBaseClass, patientFormSelectChevronStyle)"
                         :aria-invalid="Boolean(form.errors['schedule.snooze_time'])"
-                        @focus="ensureSnoozeSlot(index)"
+                        @change="setSnoozeSlot(index, ($event.target as HTMLSelectElement).value)"
                     >
                         <option
                             v-for="minutes in MEDICATION_SCHEDULE_SNOOZE_MINUTE_OPTIONS"

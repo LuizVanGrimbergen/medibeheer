@@ -168,7 +168,7 @@ const sortedDoseTimes = computed((): string[] => {
         }
 
         for (const segment of raw.split(',')) {
-            const part = segment.trim().split('|', 1)[0]?.trim() ?? '';
+            const part = segment.trim();
 
             if (part.length > 0) {
                 seen.add(part);
