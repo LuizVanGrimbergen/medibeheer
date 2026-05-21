@@ -55,6 +55,17 @@ class HandleInertiaRequests extends Middleware
             $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
         }
 
+        if ($user instanceof User && $user->isPatient()) {
+            $publicKey = config('webpush.vapid.public_key');
+
+            $shared['webpush'] = [
+                'publicKey' => is_string($publicKey) && $publicKey !== '' ? $publicKey : null,
+                'subscribed' => $user->pushSubscriptions()
+                    ->where('endpoint', 'not like', '%push.example.test%')
+                    ->exists(),
+            ];
+        }
+
         return $shared;
     }
 }
