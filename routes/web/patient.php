@@ -11,11 +11,13 @@ use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Medications\AckPatientPushMedicationMarkController;
 use App\Http\Controllers\Patient\Medications\MarkPatientMedicationIntakeFromPushController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
+use App\Http\Controllers\Patient\Medications\ShowPatientPushMedicationMarkSuccessController;
 use App\Http\Controllers\Patient\PushSubscriptions\DestroyPatientPushSubscriptionController;
 use App\Http\Controllers\Patient\PushSubscriptions\StorePatientPushSubscriptionController;
 use App\Http\Middleware\EnsurePatient;
@@ -97,8 +99,16 @@ Route::middleware([
         Route::post('daily-checkins', [PatientDailyCheckinController::class, 'store'])
             ->name('daily-checkins.store');
 
+        /* Medication Intakes routes */
         Route::post('medication-intakes', [PatientMedicationIntakeController::class, 'store'])
             ->name('medication-intakes.store');
+
+        /* Medication Push routes */
+        Route::get('medication-push-mark/success', ShowPatientPushMedicationMarkSuccessController::class)
+            ->name('medication-push-mark.success');
+
+        Route::post('medication-push-mark/ack', AckPatientPushMedicationMarkController::class)
+            ->name('medication-push-mark.ack');
 
         Route::post('push-subscriptions', StorePatientPushSubscriptionController::class)
             ->name('push-subscriptions.store');
