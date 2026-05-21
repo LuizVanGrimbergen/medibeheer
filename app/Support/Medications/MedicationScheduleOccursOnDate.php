@@ -47,7 +47,10 @@ final class MedicationScheduleOccursOnDate
 
     public function sortedDoseTimes(MedicationSchedule $schedule): array
     {
-        return MedicationScheduleDoseTimes::sortedTimes((string) $schedule->dose_time);
+        return MedicationScheduleDoseTimes::sortedTimes(
+            (string) $schedule->dose_time,
+            $schedule->snooze_time,
+        );
     }
 
     public function hasScheduledDoseOn(
