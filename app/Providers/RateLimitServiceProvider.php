@@ -68,6 +68,10 @@ class RateLimitServiceProvider extends ServiceProvider
         RateLimiter::for('family-invitation-revoke', function (Request $request): Limit {
             return Limit::perMinute(30)->by(self::userOrIpKey($request));
         });
+
+        RateLimiter::for('medication-intake-from-push', function (Request $request): Limit {
+            return Limit::perMinute(30)->by((string) $request->ip());
+        });
     }
 
     private static function userOrIpKey(Request $request): string

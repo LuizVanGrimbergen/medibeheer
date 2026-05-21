@@ -11,6 +11,7 @@ use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Medications\MarkPatientMedicationIntakeFromPushController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
@@ -24,6 +25,14 @@ use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 // appointments controller
 use Illuminate\Support\Facades\Route;
+
+Route::match(
+    ['get', 'post'],
+    'patient/medication-intakes/mark-from-push/{medicationSchedule}',
+    MarkPatientMedicationIntakeFromPushController::class,
+)
+    ->middleware(['signed', 'throttle:medication-intake-from-push'])
+    ->name('patient.medication-intakes.mark-from-push');
 
 Route::middleware([
     Authenticate::class,
