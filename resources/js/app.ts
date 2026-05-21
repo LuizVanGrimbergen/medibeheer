@@ -8,6 +8,10 @@ import { createApp, h } from 'vue';
 import { i18n } from '@/i18n';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { configureEcho } from '@laravel/echo-vue';
+import {
+    listenForMedicationPushServiceWorkerUpdates,
+    registerMedicationPushServiceWorker,
+} from '@/lib/medicationPushServiceWorker';
 
 configureEcho({
     broadcaster: 'pusher',
@@ -47,5 +51,7 @@ const bootstrapApp = () => {
 };
 
 if (globalThis.window !== undefined) {
+    listenForMedicationPushServiceWorkerUpdates();
+    void registerMedicationPushServiceWorker();
     bootstrapApp();
 }
