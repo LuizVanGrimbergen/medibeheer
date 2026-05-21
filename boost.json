@@ -9,6 +9,8 @@
     "skills": [
         "laravel-best-practices",
         "pest-testing",
-        "inertia-vue-development"
+        "inertia-vue-development",
+        "echo-vue-development",
+        "echo-development"
     ]
 }
