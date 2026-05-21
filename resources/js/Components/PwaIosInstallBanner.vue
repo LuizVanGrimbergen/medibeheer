@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { PageProps } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
 import { Button } from '@/Components/ui/button';
 
 const dismissedStorageKey = 'medibeheer:pwa-ios-install-banner-dismissed';
 
 const { t } = useI18n();
+const page = usePage<PageProps>();
 const showBanner = ref(false);
+
+const showMedicationReminderNote = computed(
+    () => page.props.auth.user?.role === 'patient',
+);
 
 function hasDebugInstallBannerFlag(): boolean {
     if (globalThis.window === undefined) {
@@ -113,6 +120,13 @@ function dismiss(): void {
 
             <p class="text-base leading-relaxed text-text-muted sm:text-lg">
                 {{ t('app.pwa.iosInstallHelp') }}
+            </p>
+
+            <p
+                v-if="showMedicationReminderNote"
+                class="rounded-xl border border-primary/25 bg-primary/8 px-4 py-3 text-base font-medium leading-relaxed text-text sm:text-lg"
+            >
+                {{ t('app.pwa.iosInstallMedicationNote') }}
             </p>
 
             <div class="flex justify-end pt-1">
