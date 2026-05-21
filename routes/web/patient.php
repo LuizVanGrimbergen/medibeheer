@@ -15,6 +15,7 @@ use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
+use App\Http\Controllers\Patient\PushSubscriptions\StorePatientPushSubscriptionController;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -88,5 +89,8 @@ Route::middleware([
 
         Route::post('medication-intakes', [PatientMedicationIntakeController::class, 'store'])
             ->name('medication-intakes.store');
+
+        Route::post('push-subscriptions', StorePatientPushSubscriptionController::class)
+            ->name('push-subscriptions.store');
 
     });
