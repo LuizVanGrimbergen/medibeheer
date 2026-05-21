@@ -43,6 +43,7 @@ class MedicationSchedule extends Model
         'times_per_day',
         'dose_quantity',
         'dose_time',
+        'snooze_time',
         'start_date',
         'end_date',
     ];
@@ -54,6 +55,7 @@ class MedicationSchedule extends Model
             'intake_frequency' => 'encrypted',
             'dose_quantity' => 'encrypted',
             'dose_time' => 'encrypted',
+            'snooze_time' => 'encrypted',
             'times_per_day' => 'encrypted',
             'start_date' => 'date',
             'end_date' => 'date',

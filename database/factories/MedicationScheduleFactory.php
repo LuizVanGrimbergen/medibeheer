@@ -6,6 +6,7 @@ use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
 use App\Models\Medication;
 use App\Models\MedicationSchedule;
+use App\Support\Medications\MedicationScheduleDoseTimes;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,6 +53,7 @@ class MedicationScheduleFactory extends Factory
             'times_per_day' => (string) fake()->numberBetween(1, 4),
             'dose_quantity' => (string) fake()->randomFloat(1, 0.5, 2),
             'dose_time' => fake()->time('H:i'),
+            'snooze_time' => (string) MedicationScheduleDoseTimes::DEFAULT_SNOOZE_MINUTES,
             'start_date' => now()->toDateString(),
             'end_date' => now()->addDays(fake()->numberBetween(0, 30))->toDateString(),
         ];
