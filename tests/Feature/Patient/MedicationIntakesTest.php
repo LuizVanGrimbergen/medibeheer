@@ -42,6 +42,7 @@ test('patient dashboard includes today medication intake slots', function () {
         'times_per_day' => '2',
         'dose_quantity' => '1',
         'dose_time' => '08:00, 20:00',
+        'snooze_time' => '30, 30',
         'start_date' => '2026-05-01',
         'end_date' => '2026-12-31',
     ]);
@@ -219,7 +220,8 @@ test('patients can mark an intake as taken after the snooze window with late int
 
     $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
         'intake_frequency' => MedicationIntakeFrequency::DAILY,
-        'dose_time' => '18:30|30',
+        'dose_time' => '18:30',
+        'snooze_time' => '30',
         'start_date' => '2026-05-01',
         'end_date' => null,
     ]);
@@ -248,7 +250,8 @@ test('patients can register a custom taken time after the snooze window', functi
 
     $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
         'intake_frequency' => MedicationIntakeFrequency::DAILY,
-        'dose_time' => '18:30|30',
+        'dose_time' => '18:30',
+        'snooze_time' => '30',
         'start_date' => '2026-05-01',
         'end_date' => null,
     ]);
@@ -283,7 +286,8 @@ test('intake outside the snooze window is rejected without late intake or custom
 
     $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
         'intake_frequency' => MedicationIntakeFrequency::DAILY,
-        'dose_time' => '18:30|30',
+        'dose_time' => '18:30',
+        'snooze_time' => '30',
         'start_date' => '2026-05-01',
         'end_date' => null,
     ]);
