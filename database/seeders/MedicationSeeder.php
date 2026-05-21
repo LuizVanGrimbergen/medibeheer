@@ -11,6 +11,7 @@ use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
 use App\Models\Patient;
 use App\Support\Medications\MedicationScheduleOccursOnDate;
+use App\Support\MedicationScheduleDoseTimeFields;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
@@ -48,6 +49,7 @@ class MedicationSeeder extends Seeder
             ));
 
             $normalized = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($scheduleRaw);
+            $normalized = MedicationScheduleDoseTimeFields::normalizeNestedSchedule($normalized);
             $weekdayList = $normalized['intake_weekdays'];
             $scheduleAttrs = Arr::except($normalized, ['intake_weekdays']);
 
@@ -89,6 +91,7 @@ class MedicationSeeder extends Seeder
                     'times_per_day' => '1',
                     'dose_quantity' => '75',
                     'dose_time' => '06:45',
+                    'snooze_time' => '30',
                     'start_date' => $today->copy()->subYears(2)->toDateString(),
                     'end_date' => $today->copy()->addYear()->toDateString(),
                 ],
@@ -108,6 +111,7 @@ class MedicationSeeder extends Seeder
                     'times_per_day' => '1',
                     'dose_quantity' => '500',
                     'dose_time' => '12:30',
+                    'snooze_time' => '30',
                     'start_date' => $today->copy()->subYear()->toDateString(),
                     'end_date' => $today->copy()->addMonths(6)->toDateString(),
                 ],
@@ -127,6 +131,7 @@ class MedicationSeeder extends Seeder
                     'times_per_day' => '1',
                     'dose_quantity' => '1',
                     'dose_time' => '18:30',
+                    'snooze_time' => '30',
                     'start_date' => $today->copy()->subMonths(2)->toDateString(),
                     'end_date' => $today->copy()->addMonths(3)->toDateString(),
                 ],
@@ -146,6 +151,7 @@ class MedicationSeeder extends Seeder
                     'times_per_day' => '1',
                     'dose_quantity' => '40',
                     'dose_time' => '22:00',
+                    'snooze_time' => '30',
                     'start_date' => $today->copy()->subYear()->toDateString(),
                     'end_date' => $today->copy()->addYear()->toDateString(),
                 ],

@@ -140,6 +140,7 @@ final class UserDataExportService
                     'times_per_day' => $schedule->times_per_day,
                     'dose_quantity' => $schedule->dose_quantity,
                     'dose_time' => $schedule->dose_time,
+                    'snooze_time' => $schedule->snooze_time,
                     'start_date' => $schedule->start_date?->toDateString(),
                     'end_date' => $schedule->end_date?->toDateString(),
                     'weekdays' => $schedule->intakeWeekdays,

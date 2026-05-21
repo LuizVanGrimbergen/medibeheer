@@ -120,6 +120,7 @@ class PatientMedicationController extends Controller
                     'times_per_day',
                     'dose_quantity',
                     'dose_time',
+                    'snooze_time',
                     'start_date',
                     'end_date',
                 ]);
