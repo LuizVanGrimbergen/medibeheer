@@ -46,7 +46,8 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
                 class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
             >
                 <output
-                    class="rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-text"
+                    class="block rounded-xl border border-success/40 bg-success/10 px-4 py-4 text-base font-medium leading-relaxed text-text sm:text-lg"
+                    role="status"
                 >
                     {{ flashSuccess }}
                 </output>
