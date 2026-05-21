@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('times_per_day');
             $table->text('dose_quantity');
             $table->text('dose_time');
+            $table->text('snooze_time');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->timestamps();
