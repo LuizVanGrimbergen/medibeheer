@@ -5,15 +5,21 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import type { PageProps } from '@/lib/types';
+import type { PageProps, SecurityActivityPaginator } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import PrivacyDataForm from './Partials/PrivacyDataForm.vue';
 import SecurityActivityLog from './Partials/SecurityActivityLog.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
+import PatientMedicationRemindersForm from './Partials/PatientMedicationRemindersForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import type { SecurityActivityPaginator } from '@/lib/types';
 
-type SettingsSection = 'information' | 'password' | 'delete' | 'security-activity' | 'privacy-data';
+type SettingsSection =
+    | 'information'
+    | 'password'
+    | 'delete'
+    | 'security-activity'
+    | 'privacy-data'
+    | 'medication-reminders';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
@@ -22,9 +28,15 @@ const sectionKeys = new Set<SettingsSection>([
     'information',
     'password',
     'privacy-data',
+    'medication-reminders',
     'delete',
     'security-activity',
 ]);
+
+const isPatient = computed(() => page.props.auth.user?.role === 'patient');
+const showMedicationRemindersSettings = computed(
+    () => isPatient.value && page.props.webpush !== undefined,
+);
 const selectedSection = computed<SettingsSection | null>(() => {
     const [, search = ''] = page.url.split('?');
     const section = new URLSearchParams(search).get('section');
@@ -105,6 +117,18 @@ const props = defineProps<{
                     </SettingsWidgetLink>
 
                     <SettingsWidgetLink
+                        v-if="showMedicationRemindersSettings"
+                        :href="route('settings.edit', { section: 'medication-reminders' })"
+                    >
+                        <p class="text-lg font-semibold text-primary">
+                            {{ t('patient.medicationReminders.settingsTitle') }}
+                        </p>
+                        <p class="mt-1 text-sm text-text-muted">
+                            {{ t('patient.medicationReminders.settingsLinkDescription') }}
+                        </p>
+                    </SettingsWidgetLink>
+
+                    <SettingsWidgetLink
                         :href="route('settings.edit', { section: 'security-activity' })"
                     >
                         <p class="text-lg font-semibold text-primary">
@@ -152,6 +176,10 @@ const props = defineProps<{
 
                         <PrivacyDataForm
                             v-if="selectedSection === 'privacy-data'"
+                        />
+
+                        <PatientMedicationRemindersForm
+                            v-if="selectedSection === 'medication-reminders' && showMedicationRemindersSettings"
                         />
 
                         <SecurityActivityLog
