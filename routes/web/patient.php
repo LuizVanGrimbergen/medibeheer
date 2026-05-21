@@ -15,6 +15,7 @@ use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
+use App\Http\Controllers\Patient\PushSubscriptions\DestroyPatientPushSubscriptionController;
 use App\Http\Controllers\Patient\PushSubscriptions\StorePatientPushSubscriptionController;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\RedirectIfEmailUnverified;
@@ -92,5 +93,8 @@ Route::middleware([
 
         Route::post('push-subscriptions', StorePatientPushSubscriptionController::class)
             ->name('push-subscriptions.store');
+
+        Route::delete('push-subscriptions', DestroyPatientPushSubscriptionController::class)
+            ->name('push-subscriptions.destroy');
 
     });
