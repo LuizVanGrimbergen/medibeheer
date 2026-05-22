@@ -126,17 +126,15 @@ const footerLabelClass = computed(() =>
 
 <template>
     <AuthenticatedLayout>
-        <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div
-                class="relative mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col overflow-x-hidden"
-                :class="shellPaddingX"
+                class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
                 <div
-                    class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+                    class="relative mx-auto w-full max-w-7xl pt-4 pb-4 sm:pt-6 sm:pb-6"
+                    :class="shellPaddingX"
                 >
-                    <div class="pt-4 pb-4 sm:pt-6 sm:pb-6">
-                        <slot />
-                    </div>
+                    <slot />
                 </div>
             </div>
 
