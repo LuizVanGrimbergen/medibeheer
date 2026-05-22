@@ -127,9 +127,18 @@
         }
     }
 
+    html {
+        height: 100%;
+    }
+
     body {
         @apply bg-bg text-text antialiased;
         font-family: var(--font-body);
+        min-height: 100%;
+    }
+
+    #app {
+        min-height: 100dvh;
     }
 
     h1,
