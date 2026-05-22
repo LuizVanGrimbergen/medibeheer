@@ -15,7 +15,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
 
 <template>
     <div
-        class="flex h-svh min-h-svh flex-col overflow-hidden bg-bg"
+        class="flex h-svh max-h-svh min-h-0 flex-col overflow-hidden bg-bg"
     >
         <AppNavbar :user-name="authenticatedUserName" />
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -31,7 +31,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
             </div>
         </header>
 
-        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain">
+        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-hidden">
             <div
                 v-if="flashError"
                 class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
@@ -52,7 +52,9 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
                     {{ flashSuccess }}
                 </output>
             </div>
-            <slot />
+            <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+                <slot />
+            </div>
         </main>
     </div>
 </template>

@@ -69,8 +69,11 @@ const props = defineProps<{
     </Head>
 
     <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
+        <div
+            class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+        >
+            <div class="py-12">
+                <div class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
                 <div
                     v-if="selectedSection === null"
                     class="space-y-4"
@@ -202,6 +205,7 @@ const props = defineProps<{
                     >
                         {{ t('app.navigation.logout') }}
                     </Link>
+                </div>
                 </div>
             </div>
         </div>

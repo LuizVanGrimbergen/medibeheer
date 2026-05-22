@@ -2,7 +2,7 @@ export default {
     title: 'Welzijn',
     heading: 'Welzijn',
     notLinked:
-        'Je ziet hier het welzijn van de patiënt zodra je bent gekoppeld. Gebruik je uitnodigingscode op het overzicht.',
+        'U ziet hier het welzijn van de patiënt zodra u bent gekoppeld. Gebruik uw uitnodigingscode op het overzicht.',
     empty: 'Er zijn nog geen dagelijkse check-ins voor deze patiënt.',
     selectedDayHeading: 'Geselecteerde dag',
     selectedDayNoCheckin: 'Geen check-in op deze dag.',

@@ -4,7 +4,7 @@ export default {
     plannedToggle: 'Gepland',
     completedToggle: 'Voltooid',
     notLinked:
-        'Je ziet hier afspraken zodra je bent gekoppeld aan een patiënt. Gebruik je uitnodigingscode op het overzicht.',
+        'U ziet hier afspraken zodra u bent gekoppeld aan een patiënt. Gebruik uw uitnodigingscode op het overzicht.',
     empty: 'Er zijn nog geen afspraken voor de actieve patiënt.',
     emptyPlanned: 'Er zijn geen geplande afspraken.',
     emptyCompleted: 'Er zijn nog geen voltooide afspraken.',

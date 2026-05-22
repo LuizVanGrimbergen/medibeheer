@@ -31,8 +31,10 @@ final class PatientMedicationDueRemindersService
     {
         return $this->sendReminders(
             self::DUE_CACHE_KEY_PREFIX,
-            fn (User $user, array $slot): mixed => Notification::send($user, new MedicationIntakeDueNotification($slot)),
-            fn (callable $onReminder) => $this->dueCandidates->eachDueNow($onReminder),
+            function (User $user, array $slot): void {
+                Notification::send($user, new MedicationIntakeDueNotification($slot));
+            },
+            $this->dueCandidates->eachDueNow(...),
         );
     }
 
@@ -40,8 +42,10 @@ final class PatientMedicationDueRemindersService
     {
         return $this->sendReminders(
             self::MISSED_CACHE_KEY_PREFIX,
-            fn (User $user, array $slot): mixed => Notification::send($user, new MedicationIntakeMissedNotification($slot)),
-            fn (callable $onReminder) => $this->dueCandidates->eachMissedNow($onReminder),
+            function (User $user, array $slot): void {
+                Notification::send($user, new MedicationIntakeMissedNotification($slot));
+            },
+            $this->dueCandidates->eachMissedNow(...),
         );
     }
 

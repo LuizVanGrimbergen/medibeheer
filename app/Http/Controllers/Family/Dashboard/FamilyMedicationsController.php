@@ -37,7 +37,7 @@ final class FamilyMedicationsController extends Controller
 
         return Inertia::render(
             'Family/Medications',
-            $screen->buildProps($patient, $calendarMonth),
+            $screen->buildProps($request, $patient, $calendarMonth),
         );
     }
 }

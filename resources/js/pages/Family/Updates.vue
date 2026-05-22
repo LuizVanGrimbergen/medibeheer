@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
+import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyUpdatesEchoListener from '@/Components/Family/Updates/FamilyUpdatesEchoListener.vue';
 import FamilyUpdatesMedicationDayGroup from '@/Components/Family/Updates/FamilyUpdatesMedicationDayGroup.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
@@ -56,14 +56,11 @@ function onPeriodToggleUpdate(next: string): void {
             :patient-id="activePatientId"
         />
 
-        <div class="flex min-w-0 flex-col gap-6">
-            <div class="space-y-2">
-                <h1 class="text-2xl font-semibold text-text-heading">
-                    {{ t('family.updates.heading') }}
-                </h1>
-                <ActivePatientBadge :family="props.family" />
-            </div>
-
+        <FamilyPageShell
+            :title="t('family.updates.heading')"
+            :family="props.family"
+            :show-active-patient="props.family.has_linked_patient"
+        >
             <SegmentedToggle
                 v-if="props.family.has_linked_patient"
                 :model-value="periodToggleValue"
@@ -103,7 +100,7 @@ function onPeriodToggleUpdate(next: string): void {
                     v-if="hasCheckins"
                     class="space-y-4"
                 >
-                    <h2 class="text-lg font-semibold text-text-heading">
+                    <h2 class="text-lg font-semibold text-text-heading md:text-base">
                         {{ t('family.updates.wellbeingHeading') }}
                     </h2>
 
@@ -118,7 +115,7 @@ function onPeriodToggleUpdate(next: string): void {
                     v-if="hasMedicationIntakes"
                     class="space-y-4"
                 >
-                    <h2 class="text-lg font-semibold text-text-heading">
+                    <h2 class="text-lg font-semibold text-text-heading md:text-base">
                         {{ t('family.updates.medicationsHeading') }}
                     </h2>
 
@@ -130,6 +127,6 @@ function onPeriodToggleUpdate(next: string): void {
                     />
                 </section>
             </template>
-        </div>
+        </FamilyPageShell>
     </FamilyLayout>
 </template>
