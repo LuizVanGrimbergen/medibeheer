@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
+import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
 import FamilyWellbeingMonthCalendar from '@/Components/Family/Wellbeing/FamilyWellbeingMonthCalendar.vue';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
@@ -45,14 +45,11 @@ const selectedDayCheckin = computed(() => {
 </script>
 
 <template>
-    <div class="flex min-w-0 flex-col gap-6">
-        <div class="space-y-2">
-            <h1 class="text-2xl font-semibold text-text-heading">
-                {{ t('family.wellbeing.heading') }}
-            </h1>
-            <ActivePatientBadge :family="props.family" />
-        </div>
-
+    <FamilyPageShell
+        :title="t('family.wellbeing.heading')"
+        :family="props.family"
+        :show-active-patient="props.family.has_linked_patient"
+    >
         <p
             v-if="!props.family.has_linked_patient"
             class="max-w-prose text-sm leading-relaxed text-text-muted"
@@ -98,7 +95,7 @@ const selectedDayCheckin = computed(() => {
                 v-else
                 class="space-y-4"
             >
-                <h2 class="text-lg font-semibold text-text-heading">
+                <h2 class="text-lg font-semibold text-text-heading md:text-base">
                     {{ t('family.wellbeing.listHeading') }}
                 </h2>
                 <FamilyWellbeingCheckinCard
@@ -115,6 +112,6 @@ const selectedDayCheckin = computed(() => {
                 />
             </div>
         </div>
-    </div>
+    </FamilyPageShell>
 </template>
 
