@@ -84,7 +84,7 @@ export default {
         edit: 'Wijzigen',
     },
     deleteConfirm:
-        'Weet je zeker dat je deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+        'Weet u zeker dat u deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
     labels: {
         when: 'Wanneer',
         time: 'Tijd',
