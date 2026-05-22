@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
-import ActivePatientBadge from '@/Components/Family/ActivePatientBadge.vue';
+import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
@@ -16,14 +17,58 @@ import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type {
     FamilyAppointmentsScreenProps,
 } from '@/lib/family/appointments/familyAppointmentsScreenProps';
+import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
 
 const props = defineProps<FamilyAppointmentsScreenProps>();
 
 const { t } = useI18n();
+const page = usePage();
+
+const paginationQuery = computed((): Record<string, string | number> => {
+    const query: Record<string, string | number> = {
+        view: props.appointment_view,
+    };
+
+    const appointment = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointment !== null) {
+        query.appointment = appointment;
+    }
+
+    return query;
+});
 
 function onAppointmentViewUpdate(next: string): void {
     setAppointmentViewFromToggle(next, props.appointment_view);
 }
+
+function scrollToDeepLinkedAppointment(): void {
+    const appointmentId = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointmentId === null) {
+        return;
+    }
+
+    const id = Number(appointmentId);
+
+    if (! props.appointments.data.some((appointment) => appointment.id === id)) {
+        return;
+    }
+
+    nextTick(() => {
+        document
+            .getElementById(`family-appointment-${id}`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+watch(
+    () => [page.url, props.appointments.data] as const,
+    () => {
+        scrollToDeepLinkedAppointment();
+    },
+    { immediate: true, deep: true },
+);
 </script>
 
 <template>
@@ -32,14 +77,11 @@ function onAppointmentViewUpdate(next: string): void {
     </Head>
 
     <FamilyLayout>
-        <div class="flex flex-col gap-6">
-            <div class="space-y-2">
-                <h1 class="text-2xl font-semibold text-text-heading">
-                    {{ t('family.appointments.heading') }}
-                </h1>
-                <ActivePatientBadge :family="props.family" />
-            </div>
-
+        <FamilyPageShell
+            :title="t('family.appointments.heading')"
+            :family="props.family"
+            :show-active-patient="props.family.has_linked_patient"
+        >
             <div
                 v-if="props.family.has_linked_patient"
             >
@@ -91,6 +133,7 @@ function onAppointmentViewUpdate(next: string): void {
                     class="space-y-3"
                 >
                     <AppointmentCard
+                        :anchor-id="`family-appointment-${appointment.id}`"
                         :appointment="{
                             id: appointment.id,
                             doctor_type: appointment.doctor_type,
@@ -150,9 +193,9 @@ function onAppointmentViewUpdate(next: string): void {
                     v-if="props.appointments.meta.last_page > 1"
                     route-name="family.appointments"
                     :meta="props.appointments.meta"
-                    :query="{ view: props.appointment_view }"
+                    :query="paginationQuery"
                 />
             </div>
-        </div>
+        </FamilyPageShell>
     </FamilyLayout>
 </template>

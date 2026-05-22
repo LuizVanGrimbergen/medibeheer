@@ -15,6 +15,7 @@ import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import { Card, CardContent } from '@/Components/ui/card';
+import { cn } from '@/lib/utils';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type {
@@ -50,6 +51,7 @@ const props = defineProps<{
     doneSummaryLabel?: string;
     completeFormHref?: string;
     cancelFormHref?: string;
+    anchorId?: string;
 }>();
 
 const showActionsToolbar = computed(() => props.showActions ?? true);
@@ -67,7 +69,12 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]"
+        :id="props.anchorId"
+        :class="
+            cn(
+                'min-w-0 w-full scroll-mt-6 rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]',
+            )
+        "
     >
         <CardContent class="relative space-y-6 p-6 sm:p-7">
             <div
