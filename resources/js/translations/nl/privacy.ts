@@ -6,27 +6,27 @@ export default {
     sections: {
         controller: {
             title: '1. Wie is verantwoordelijk?',
-            body: 'Medibeheer verwerkt persoonsgegevens als verwerkingsverantwoordelijke voor deze website (PWA). Voor vragen over privacy kun je contact opnemen via het e-mailadres dat in de app wordt vermeld.',
+            body: 'Medibeheer verwerkt persoonsgegevens als verwerkingsverantwoordelijke voor deze website (PWA). Voor vragen over privacy kunt u contact opnemen via het e-mailadres dat in de app wordt vermeld.',
         },
         data: {
             title: '2. Welke gegevens verwerken we?',
-            body: 'We verwerken accountgegevens (naam, e-mailadres), gezondheidsgegevens die je zelf invoert (medicatie, innames, afspraken, dagelijkse check-ins) en technische gegevens die nodig zijn voor beveiliging (bijv. sessie, beveiligingslog).',
+            body: 'We verwerken accountgegevens (naam, e-mailadres), gezondheidsgegevens die u zelf invoert (medicatie, innames, afspraken, dagelijkse check-ins) en technische gegevens die nodig zijn voor beveiliging (bijv. sessie, beveiligingslog).',
         },
         purpose: {
             title: '3. Waarvoor gebruiken we deze gegevens?',
-            body: 'Gegevens worden uitsluitend gebruikt om de dienst te leveren: medicatiebeheer, afspraken, familie-toegang waar je die zelf toestaat, en beveiliging van je account.',
+            body: 'Gegevens worden uitsluitend gebruikt om de dienst te leveren: medicatiebeheer, afspraken, familie-toegang waar u die zelf toestaat, en beveiliging van uw account.',
         },
         legalBasis: {
             title: '4. Op welke grondslag?',
-            body: 'Voor gezondheidsgegevens vragen we uitdrukkelijke toestemming bij registratie. Voor je account en beveiliging baseren we ons op de uitvoering van de overeenkomst en gerechtvaardigd belang (fraude- en misbruikpreventie).',
+            body: 'Voor gezondheidsgegevens vragen we uitdrukkelijke toestemming bij registratie. Voor uw account en beveiliging baseren we ons op de uitvoering van de overeenkomst en gerechtvaardigd belang (fraude- en misbruikpreventie).',
         },
         retention: {
             title: '5. Bewaartermijn',
-            body: 'Account- en patiëntgegevens bewaren we zolang je account actief is. Na verwijdering worden gekoppelde gegevens verwijderd. Beveiligingslogs en sessies worden na een beperkte termijn automatisch opgeschoond.',
+            body: 'Account- en patiëntgegevens bewaren we zolang uw account actief is. Na verwijdering worden gekoppelde gegevens verwijderd. Beveiligingslogs en sessies worden na een beperkte termijn automatisch opgeschoond.',
         },
         rights: {
-            title: '6. Jouw rechten',
-            body: 'Je hebt recht op inzage, rectificatie, verwijdering en dataportabiliteit. In Instellingen kun je je gegevens exporteren en je account verwijderen. Je kunt bezwaar maken tegen verwerking of een klacht indienen bij de Autoriteit Persoonsgegevens.',
+            title: '6. Uw rechten',
+            body: 'U hebt recht op inzage, rectificatie, verwijdering en dataportabiliteit. In Instellingen kunt u uw gegevens exporteren en uw account verwijderen. U kunt bezwaar maken tegen verwerking of een klacht indienen bij de Autoriteit Persoonsgegevens.',
         },
         processors: {
             title: '7. Verwerkers en doorgifte',
@@ -39,11 +39,11 @@ export default {
         sections: {
             necessary: {
                 title: '1. Strikt noodzakelijke cookies',
-                body: 'We gebruiken een sessiecookie om je ingelogd te houden. Deze cookie is noodzakelijk voor de werking van de website en vereist geen aparte toestemming.',
+                body: 'We gebruiken een sessiecookie om u ingelogd te houden. Deze cookie is noodzakelijk voor de werking van de website en vereist geen aparte toestemming.',
             },
             storage: {
                 title: '2. Lokale opslag (PWA)',
-                body: 'De PWA kan technische gegevens in de browser cache opslaan voor snellere weergave. We slaan geen patiëntdossier lokaal op buiten wat de server levert tijdens je sessie.',
+                body: 'De PWA kan technische gegevens in de browser cache opslaan voor snellere weergave. We slaan geen patiëntdossier lokaal op buiten wat de server levert tijdens uw sessie.',
             },
             analytics: {
                 title: '3. Analyse en marketing',
@@ -61,10 +61,10 @@ export default {
     },
     settings: {
         title: 'Privacy en gegevens',
-        description: 'Bekijk het beleid, exporteer je gegevens of verwijder je account.',
+        description: 'Bekijk het beleid, exporteer uw gegevens of verwijder uw account.',
         exportTitle: 'Gegevens exporteren',
         exportDescription:
-            'Download een JSON-bestand met je accountgegevens en, voor patiënten, je medicatie- en gezondheidsgegevens.',
+            'Download een JSON-bestand met uw accountgegevens en, voor patiënten, uw medicatie- en gezondheidsgegevens.',
         exportAction: 'Download mijn gegevens',
         legalLinksTitle: 'Beleid',
         privacyLink: 'Privacybeleid',
