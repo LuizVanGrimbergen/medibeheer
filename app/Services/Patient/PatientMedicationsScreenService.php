@@ -26,10 +26,10 @@ final class PatientMedicationsScreenService
         ];
     }
 
-    public function buildFamilyMedicationsProps(Patient $patient): array
+    public function buildFamilyMedicationsProps(Patient $patient, int $page = 1): array
     {
         return [
-            'medications' => $this->paginateMedicationRegister($patient, self::MEDICATION_LIST_WITH),
+            'medications' => $this->paginateMedicationRegister($patient, self::MEDICATION_LIST_WITH, $page),
         ];
     }
 
@@ -49,13 +49,13 @@ final class PatientMedicationsScreenService
     }
 
     /** @param list<string> $with */
-    private function paginateMedicationRegister(Patient $patient, array $with): array
+    private function paginateMedicationRegister(Patient $patient, array $with, int $page = 1): array
     {
         $paginator = $patient->medications()
             ->withTrashed()
             ->with($with)
             ->orderByDesc('id')
-            ->paginate(InertiaPagination::PER_PAGE)
+            ->paginate(InertiaPagination::PER_PAGE, ['*'], 'page', $page)
             ->withQueryString();
 
         return InertiaPagination::payload(
