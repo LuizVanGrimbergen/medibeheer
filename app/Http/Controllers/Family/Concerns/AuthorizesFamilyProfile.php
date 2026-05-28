@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Family\Concerns;
 
 use App\Models\Family;
+use App\Models\MedicationPlanProposal;
 use Illuminate\Http\Request;
 
 trait AuthorizesFamilyProfile
@@ -18,5 +19,12 @@ trait AuthorizesFamilyProfile
         $this->authorize('view', $family);
 
         return $family;
+    }
+
+    protected function authorizeMedicationPlanProposalForFamily(
+        Family $family,
+        MedicationPlanProposal $proposal,
+    ): void {
+        abort_unless((int) $proposal->family_id === (int) $family->id, 404);
     }
 }

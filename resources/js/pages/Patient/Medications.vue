@@ -9,6 +9,7 @@ import MedicationRemoveFromListDialog from '@/Components/Patient/Medications/Med
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientMedicationsPage } from '@/composables/usePatientMedicationsPage';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 
@@ -46,7 +47,7 @@ const {
     </Head>
 
     <PatientLayout>
-        <div class="flex min-w-0 w-full flex-col gap-8">
+        <PatientPageShell :title="t('patient.medications.title')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"
                 @new-medication-click="createDialogOpen = true"
@@ -94,7 +95,7 @@ const {
                     </CardContent>
                 </Card>
             </section>
-        </div>
+        </PatientPageShell>
 
         <MedicationFormDialog
             v-if="canCreateMedication"

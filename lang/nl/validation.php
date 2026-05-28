@@ -1,0 +1,63 @@
+<?php
+
+return [
+    'accepted' => 'Het veld :attribute moet geaccepteerd worden.',
+    'active_url' => 'Het veld :attribute is geen geldige URL.',
+    'after' => 'Het veld :attribute moet een datum zijn na :date.',
+    'after_or_equal' => 'Het veld :attribute moet een datum zijn na of gelijk aan :date.',
+    'alpha' => 'Het veld :attribute mag alleen letters bevatten.',
+    'alpha_dash' => 'Het veld :attribute mag alleen letters, cijfers, streepjes en underscores bevatten.',
+    'alpha_num' => 'Het veld :attribute mag alleen letters en cijfers bevatten.',
+    'array' => 'Het veld :attribute moet een array zijn.',
+    'before' => 'Het veld :attribute moet een datum zijn vóór :date.',
+    'before_or_equal' => 'Het veld :attribute moet een datum zijn vóór of gelijk aan :date.',
+    'between' => [
+        'array' => 'Het veld :attribute moet tussen :min en :max items bevatten.',
+        'file' => 'Het veld :attribute moet tussen :min en :max kilobytes zijn.',
+        'numeric' => 'Het veld :attribute moet tussen :min en :max zijn.',
+        'string' => 'Het veld :attribute moet tussen :min en :max tekens zijn.',
+    ],
+    'boolean' => 'Het veld :attribute moet true of false zijn.',
+    'confirmed' => 'De bevestiging van :attribute komt niet overeen.',
+    'date' => 'Het veld :attribute is geen geldige datum.',
+    'date_format' => 'Het veld :attribute komt niet overeen met het formaat :format.',
+    'different' => 'De velden :attribute en :other moeten verschillend zijn.',
+    'digits' => 'Het veld :attribute moet :digits cijfers bevatten.',
+    'digits_between' => 'Het veld :attribute moet tussen :min en :max cijfers bevatten.',
+    'email' => 'Vul een geldig e-mailadres in.',
+    'filled' => 'Het veld :attribute is verplicht.',
+    'gt' => [
+        'array' => 'Het veld :attribute moet meer dan :value items bevatten.',
+        'file' => 'Het veld :attribute moet groter zijn dan :value kilobytes.',
+        'numeric' => 'Het veld :attribute moet groter zijn dan :value.',
+        'string' => 'Het veld :attribute moet langer zijn dan :value tekens.',
+    ],
+    'gte' => [
+        'array' => 'Het veld :attribute moet :value items of meer bevatten.',
+        'file' => 'Het veld :attribute moet groter of gelijk zijn aan :value kilobytes.',
+        'numeric' => 'Het veld :attribute moet groter of gelijk zijn aan :value.',
+        'string' => 'Het veld :attribute moet minimaal :value tekens bevatten.',
+    ],
+    'in' => 'De geselecteerde :attribute is ongeldig.',
+    'integer' => 'Het veld :attribute moet een geheel getal zijn.',
+    'max' => [
+        'array' => 'Het veld :attribute mag niet meer dan :max items bevatten.',
+        'file' => 'Het veld :attribute mag niet groter zijn dan :max kilobytes.',
+        'numeric' => 'Het veld :attribute mag niet groter zijn dan :max.',
+        'string' => 'Het veld :attribute mag niet meer dan :max tekens bevatten.',
+    ],
+    'min' => [
+        'array' => 'Het veld :attribute moet minimaal :min items bevatten.',
+        'file' => 'Het veld :attribute moet minimaal :min kilobytes zijn.',
+        'numeric' => 'Het veld :attribute moet minimaal :min zijn.',
+        'string' => 'Het veld :attribute moet minimaal :min tekens bevatten.',
+    ],
+    'numeric' => 'Het veld :attribute moet een getal zijn.',
+    'required' => 'Dit veld is verplicht.',
+    'string' => 'Het veld :attribute moet een tekst zijn.',
+    'unique' => 'Deze waarde is al in gebruik.',
+
+    'attributes' => [
+        'email' => 'e-mailadres',
+    ],
+];

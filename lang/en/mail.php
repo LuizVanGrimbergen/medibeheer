@@ -23,4 +23,14 @@ return [
         'footer' => 'If you did not expect this invitation, you can ignore this email.',
         'salutation' => 'Kind regards,',
     ],
+    'medication_plan_proposal' => [
+        'subject' => 'Medication plan to review in Medibeheer',
+        'greeting' => 'Hello!',
+        'line' => 'A family member shared a medication plan (:medication) with you.',
+        'action' => 'Review medication plan',
+        'review_hint' => 'Sign in with this email address on the Family page to review, accept, or decline the plan.',
+        'expires' => 'You can respond until :datetime.',
+        'footer' => 'If you did not expect this medication plan, you can ignore this email.',
+        'salutation' => 'Kind regards,',
+    ],
 ];

@@ -23,4 +23,14 @@ return [
         'footer' => 'Als u deze uitnodiging niet verwacht, kunt u deze e-mail negeren.',
         'salutation' => 'Met vriendelijke groet,',
     ],
+    'medication_plan_proposal' => [
+        'subject' => 'Medicatieplan om te beoordelen in Medibeheer',
+        'greeting' => 'Hallo!',
+        'line' => 'Een familielid heeft een medicatieplan (:medication) met u gedeeld.',
+        'action' => 'Medicatieplan bekijken',
+        'review_hint' => 'Log in met dit e-mailadres op de Familie-pagina om het plan te bekijken, accepteren of weigeren.',
+        'expires' => 'U kunt reageren tot :datetime.',
+        'footer' => 'Als u dit medicatieplan niet verwacht, kunt u deze e-mail negeren.',
+        'salutation' => 'Met vriendelijke groet,',
+    ],
 ];

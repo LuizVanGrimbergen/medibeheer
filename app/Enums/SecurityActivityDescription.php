@@ -19,6 +19,10 @@ enum SecurityActivityDescription: string
     case FAMILY_INVITATION_CREATED = 'family_invitation_created';
     case FAMILY_INVITATION_REVOKED = 'family_invitation_revoked';
     case FAMILY_INVITATION_ACCEPTED = 'family_invitation_accepted';
+    case MEDICATION_PLAN_PROPOSAL_PUBLISHED = 'medication_plan_proposal_published';
+    case MEDICATION_PLAN_PROPOSAL_REVOKED = 'medication_plan_proposal_revoked';
+    case MEDICATION_PLAN_PROPOSAL_REDEEMED = 'medication_plan_proposal_redeemed';
+    case MEDICATION_PLAN_PROPOSAL_DECLINED = 'medication_plan_proposal_declined';
     case TRANSPORT_INVITATION_ACCEPTED = 'transport_invitation_accepted';
     case TRANSPORT_INVITATION_DECLINED = 'transport_invitation_declined';
     case AUTHORIZATION_DENIED = 'authorization_denied';
