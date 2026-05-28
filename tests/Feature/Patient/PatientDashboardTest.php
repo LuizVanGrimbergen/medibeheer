@@ -10,6 +10,15 @@ test('verified patients can visit the patient dashboard', function () {
     $response->assertOk();
 });
 
+test('patient dashboard reports whether the patient has medications', function () {
+    $user = User::factory()->create(['role' => 'patient']);
+
+    $this->actingAs($user)
+        ->get(route('patient.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('has_medications', false));
+});
+
 test('verified patients can visit patient medications', function () {
     $user = User::factory()->create(['role' => 'patient']);
 
