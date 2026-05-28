@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Services\Medications\PatientMedicationDueRemindersService;
 use App\Services\Medications\PatientScheduledIntakesQuery;
+use App\Support\Medications\DoseTime;
 use App\Support\Medications\MedicationIntakeClock;
 use App\Support\Medications\MedicationIntakeReminderTiming;
 use Carbon\CarbonInterface;
@@ -39,9 +40,10 @@ final class DiagnosePatientMedicationPushRemindersCommand extends Command
         $this->line('Queue: '.config('queue.default'));
         $this->line('Pending queue jobs: '.Queue::size());
         $this->line('Failed jobs: '.DB::table('failed_jobs')->count());
-        $this->line('Scheduler: run `php artisan schedule:work` (or cron every minute).');
+        $this->line('Scheduled in routes/console.php: patient:send-medication-due-reminders (every minute).');
+        $this->line('Local: `php artisan schedule:work` (or `composer run dev`). Production: cron `schedule:run` every minute.');
         $this->line('Queue worker: not required for medication push (sent directly from scheduler).');
-        $this->line('Test command (`patient:send-test-push-notification`) bypasses scheduler and exact minute.');
+        $this->line('Manual test: `patient:send-test-push-notification` bypasses scheduler and exact minute.');
         $this->newLine();
 
         $user = $this->resolveUser();
@@ -130,7 +132,7 @@ final class DiagnosePatientMedicationPushRemindersCommand extends Command
             }
 
             $doseTime = (string) ($slot['dose_time'] ?? '');
-            $parsed = \App\Support\Medications\DoseTime::tryFrom($doseTime);
+            $parsed = DoseTime::tryFrom($doseTime);
 
             if ($parsed === null) {
                 continue;
