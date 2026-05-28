@@ -31,7 +31,7 @@ function horizontalPaddingX(
     });
 }
 
-const shellPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-4');
+const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
 const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
 
 type PatientNavItem = {
@@ -131,7 +131,7 @@ const footerLabelClass = computed(() =>
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
                 <div
-                    class="relative mx-auto w-full max-w-7xl pt-4 pb-4 sm:pt-6 sm:pb-6"
+                    class="relative mx-auto w-full max-w-7xl pt-6 pb-4"
                     :class="shellPaddingX"
                 >
                     <slot />
@@ -139,7 +139,7 @@ const footerLabelClass = computed(() =>
             </div>
 
             <nav
-                class="z-100 shrink-0 border-t border-border bg-surface"
+                class="z-40 shrink-0 border-t border-border bg-surface"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div

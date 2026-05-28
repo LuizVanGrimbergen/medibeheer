@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import MedicationInventoryStockCard from '@/Components/Patient/Inventory/form/MedicationInventoryStockCard.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationInventoryListItems } from '@/lib/patient/inventory/medicationInventoryListSortRank';
 import type { PatientInventoryScreenProps } from '@/lib/patient/inventory/patientInventoryScreenProps';
@@ -29,7 +30,8 @@ const sortedInventoryMedications = computed((): MedicationListItem[] => {
     </Head>
 
     <PatientLayout>
-        <section class="flex min-w-0 w-full flex-col space-y-5">
+        <PatientPageShell :title="t('patient.inventory.listHeading')">
+            <section class="flex min-w-0 w-full flex-col space-y-5">
             <h1 class="text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
                 {{ t('patient.inventory.listHeading') }}
             </h1>
@@ -66,6 +68,7 @@ const sortedInventoryMedications = computed((): MedicationListItem[] => {
                     {{ t('patient.inventory.empty') }}
                 </CardContent>
             </Card>
-        </section>
+            </section>
+        </PatientPageShell>
     </PatientLayout>
 </template>
