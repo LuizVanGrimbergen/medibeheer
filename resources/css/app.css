@@ -49,9 +49,9 @@
     --color-role-patient: #2f6fae;
     --color-role-doctor: #10b981;
     --color-role-family: #ec4899;
-    --color-role-patient-active: color-mix(in srgb, var(--color-role-patient) 58%, black);
-    --color-role-doctor-active: color-mix(in srgb, var(--color-role-doctor) 58%, black);
-    --color-role-family-active: color-mix(in srgb, var(--color-role-family) 58%, black);
+    --color-role-patient-active: color-mix(in srgb, var(--color-role-patient) 70%, black);
+    --color-role-doctor-active: color-mix(in srgb, var(--color-role-doctor) 70%, black);
+    --color-role-family-active: color-mix(in srgb, var(--color-role-family) 70%, black);
     --color-success: #10b981;
     --color-warning: #f4b740;
     --color-warning-text: #5b3a1a;
