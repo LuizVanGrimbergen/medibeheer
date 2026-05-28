@@ -5,7 +5,6 @@ import { useI18n } from 'vue-i18n';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyAcceptedTransportAppointmentsSection from '@/Components/Family/Overview/FamilyAcceptedTransportAppointmentsSection.vue';
 import FamilyPendingTransportAppointmentsSection from '@/Components/Family/Overview/FamilyPendingTransportAppointmentsSection.vue';
-import FamilyInvitationAcceptSection from '@/Components/Family/Overview/FamilyInvitationAcceptSection.vue';
 import FamilyLinkedPatientsSection from '@/Components/Family/Overview/FamilyLinkedPatientsSection.vue';
 import FamilyLowStockPatientsSection from '@/Components/Family/Overview/FamilyLowStockPatientsSection.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
@@ -47,7 +46,6 @@ const lowStockPatientIds = computed(() =>
                 :appointments="props.accepted_transport_appointments"
             />
 
-            <FamilyInvitationAcceptSection />
         </FamilyPageShell>
     </FamilyLayout>
 </template>
