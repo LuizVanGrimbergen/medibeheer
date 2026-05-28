@@ -39,4 +39,8 @@ return [
         'expiry_days' => (int) env('FAMILY_INVITATION_EXPIRY_DAYS', 14),
     ],
 
+    'medication_plan_proposal' => [
+        'expiry_days' => (int) env('MEDICATION_PLAN_PROPOSAL_EXPIRY_DAYS', 14),
+    ],
+
 ];
