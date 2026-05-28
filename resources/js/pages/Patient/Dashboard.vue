@@ -5,8 +5,10 @@ import { computed, onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DailyCheckinCard from '@/Components/Patient/DailyCheckins/form/DailyCheckinCard.vue';
 import DailyCheckinSuccessScreen from '@/Components/Patient/DailyCheckins/form/DailyCheckinSuccessScreen.vue';
+import PatientMedicationOnboardingShortcuts from '@/Components/Patient/Medications/PatientMedicationOnboardingShortcuts.vue';
 import PatientMedicationReminderPrompt from '@/Components/Patient/Medications/PatientMedicationReminderPrompt.vue';
 import TodayMedicationIntakesSection from '@/Components/Patient/Medications/TodayMedicationIntakesSection.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type {
     DailyCheckin,
@@ -18,12 +20,24 @@ import type {
 const { t } = useI18n();
 const page = usePage<PageProps>();
 
-const props = defineProps<{
-    today_date: string;
-    today_checkin: DailyCheckin | null;
-    today_medication_intakes: TodayMedicationIntakeSlot[];
-    pending_push_medication_mark: string | null;
-}>();
+const props = withDefaults(
+    defineProps<{
+        today_date: string;
+        today_checkin: DailyCheckin | null;
+        today_medication_intakes: TodayMedicationIntakeSlot[];
+        pending_push_medication_mark: string | null;
+        has_medications?: boolean;
+        can_create_medication?: boolean;
+    }>(),
+    {
+        has_medications: false,
+        can_create_medication: false,
+    },
+);
+
+const showMedicationOnboardingShortcuts = computed(
+    () => !props.has_medications,
+);
 
 const PUSH_MARK_SUCCESS_ROUTE = route('patient.medication-push-mark.success');
 
@@ -158,17 +172,22 @@ const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
     </Head>
 
     <PatientLayout>
-        <DailyCheckinSuccessScreen :mood="dailyCheckinMoodFlash" />
+        <PatientPageShell :title="t('patient.dashboard.heading')">
+            <DailyCheckinSuccessScreen :mood="dailyCheckinMoodFlash" />
 
-        <div class="flex flex-col gap-4 sm:gap-8">
             <DailyCheckinCard
                 :today_date="props.today_date"
                 :today_checkin="props.today_checkin"
             />
 
+            <PatientMedicationOnboardingShortcuts
+                v-if="showMedicationOnboardingShortcuts"
+                :can-create-medication="props.can_create_medication"
+            />
+
             <PatientMedicationReminderPrompt />
 
             <TodayMedicationIntakesSection :slots="props.today_medication_intakes" />
-        </div>
+        </PatientPageShell>
     </PatientLayout>
 </template>
