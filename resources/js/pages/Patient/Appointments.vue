@@ -8,6 +8,7 @@ import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 
@@ -42,7 +43,7 @@ const {
     </Head>
 
     <PatientLayout>
-        <div class="flex min-w-0 w-full flex-col gap-10">
+        <PatientPageShell :title="t('patient.appointments.heading')">
             <div
                 class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
             >
@@ -50,7 +51,7 @@ const {
                     <h1 class="text-3xl font-bold leading-tight text-text-heading">
                         {{ t('patient.appointments.heading') }}
                     </h1>
-                    <p class="mt-3 max-w-2xl text-base leading-relaxed text-text-muted">
+                    <p class="mt-3 max-w-prose text-base leading-relaxed text-text-muted">
                         {{ t('patient.appointments.plannedDescription') }}
                     </p>
                 </div>
@@ -128,7 +129,7 @@ const {
                     </CardContent>
                 </Card>
             </section>
-        </div>
+        </PatientPageShell>
 
         <AppointmentFormDialog
             :open="createDialogOpen"

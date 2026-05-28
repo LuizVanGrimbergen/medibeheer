@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import AppNavbar from '@/Components/AppNavbar.vue';
 import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
 import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
+import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 import type { PageProps } from '@/lib/types';
 
 const page = usePage<PageProps>();
@@ -45,12 +46,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
                 v-if="flashSuccess"
                 class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
             >
-                <output
-                    class="block rounded-xl border border-success/40 bg-success/10 px-4 py-4 text-base font-medium leading-relaxed text-text sm:text-lg"
-                    role="status"
-                >
-                    {{ flashSuccess }}
-                </output>
+                <FlashSuccessBanner :message="flashSuccess" />
             </div>
             <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <slot />

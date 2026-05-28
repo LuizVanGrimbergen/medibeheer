@@ -11,6 +11,9 @@ use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\MedicationPlans\AcceptPatientMedicationPlanProposalController;
+use App\Http\Controllers\Patient\MedicationPlans\DeclinePatientMedicationPlanProposalController;
+use App\Http\Controllers\Patient\MedicationPlans\ShowPatientMedicationPlanProposalReviewController;
 use App\Http\Controllers\Patient\Medications\AckPatientPushMedicationMarkController;
 use App\Http\Controllers\Patient\Medications\MarkPatientMedicationIntakeFromPushController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
@@ -65,6 +68,17 @@ Route::middleware([
         Route::resource('medications.stocks', PatientMedicationStockController::class)
             ->only(['store', 'update', 'destroy'])
             ->scoped();
+
+        /* Medication plan proposals */
+        Route::get('medication-plans/{medication_plan_proposal}/review', ShowPatientMedicationPlanProposalReviewController::class)
+            ->name('medication-plans.review');
+        Route::post('medication-plans/{medication_plan_proposal}/accept', AcceptPatientMedicationPlanProposalController::class)
+            ->middleware('throttle:medication-plan-proposal-redeem')
+            ->name('medication-plans.accept');
+        Route::post('medication-plans/{medication_plan_proposal}/decline', DeclinePatientMedicationPlanProposalController::class)
+            ->middleware('throttle:medication-plan-proposal-redeem')
+            ->name('medication-plans.decline');
+
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
         Route::get('family', PatientFamilyController::class)->name('family');
 

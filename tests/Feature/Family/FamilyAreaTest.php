@@ -10,6 +10,22 @@ test('verified family members can visit family overview', function () {
     $response->assertOk();
 });
 
+test('verified family members can visit family link page', function () {
+    $user = User::factory()->familyMember()->create();
+
+    $response = $this->actingAs($user)->get(route('family.link'));
+
+    $response->assertOk();
+});
+
+test('family medication plans index redirects to link page', function () {
+    $user = User::factory()->familyMember()->create();
+
+    $this->actingAs($user)
+        ->get(route('family.medication-plans.index'))
+        ->assertRedirect(route('family.link'));
+});
+
 test('verified family members can visit family updates', function () {
     $user = User::factory()->familyMember()->create();
 

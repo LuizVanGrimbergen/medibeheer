@@ -50,6 +50,54 @@ function resolvePushManager(registration: ServiceWorkerRegistration): PushManage
     return registration.pushManager;
 }
 
+async function unsubscribeInBrowser(): Promise<void> {
+    if (!('serviceWorker' in navigator)) {
+        return;
+    }
+
+    const registration = await navigator.serviceWorker.getRegistration('/');
+
+    if (registration == null) {
+        return;
+    }
+
+    const subscription = await resolvePushManager(registration).getSubscription();
+
+    if (subscription === null) {
+        return;
+    }
+
+    await subscription.unsubscribe();
+}
+
+async function subscribeWithApplicationServerKey(
+    registration: ServiceWorkerRegistration,
+    vapidPublicKey: string,
+): Promise<PushSubscription> {
+    const pushManager = resolvePushManager(registration);
+    const applicationServerKey = urlBase64ToUint8Array(
+        vapidPublicKey,
+    ) as BufferSource;
+
+    try {
+        return await pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey,
+        });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : '';
+
+        if (!message.includes('applicationServerKey')) {
+            throw error;
+        }
+
+        return pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey,
+        });
+    }
+}
+
 export function usePatientMedicationPushReminders() {
     const page = usePage<PageProps>();
 
@@ -138,26 +186,6 @@ export function usePatientMedicationPushReminders() {
         }
     }
 
-    async function unsubscribeInBrowser(): Promise<void> {
-        if (!('serviceWorker' in navigator)) {
-            return;
-        }
-
-        const registration = await navigator.serviceWorker.getRegistration('/');
-
-        if (registration == null) {
-            return;
-        }
-
-        const subscription = await resolvePushManager(registration).getSubscription();
-
-        if (subscription === null) {
-            return;
-        }
-
-        await subscription.unsubscribe();
-    }
-
     async function storeSubscriptionOnServer(subscription: PushSubscription): Promise<void> {
         const json = subscription.toJSON() as PushSubscriptionJson;
         const csrfToken = readCsrfToken();
@@ -216,12 +244,12 @@ export function usePatientMedicationPushReminders() {
                 return;
             }
 
-            const subscription = await resolvePushManager(registration).subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(
-                    publicKey.value,
-                ) as BufferSource,
-            });
+            await unsubscribeInBrowser();
+
+            const subscription = await subscribeWithApplicationServerKey(
+                registration,
+                publicKey.value,
+            );
 
             await storeSubscriptionOnServer(subscription);
 

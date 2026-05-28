@@ -69,6 +69,16 @@ class RateLimitServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by(self::userOrIpKey($request));
         });
 
+        RateLimiter::for('medication-plan-proposal-publish', function (Request $request): Limit {
+            $proposalKey = (string) $request->route('medication_plan_proposal');
+
+            return Limit::perMinute(10)->by(self::userOrIpKey($request).':proposal:'.$proposalKey);
+        });
+
+        RateLimiter::for('medication-plan-proposal-redeem', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
         RateLimiter::for('medication-intake-from-push', function (Request $request): Limit {
             return Limit::perMinute(30)->by((string) $request->ip());
         });

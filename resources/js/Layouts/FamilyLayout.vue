@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Bell, CalendarDays, LayoutGrid, Pill, Smile } from 'lucide-vue-next';
+import { Bell, CalendarDays, LayoutGrid, Link2, Pill, Smile } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -41,12 +41,14 @@ type FamilyNavItem = {
         | 'family.overview'
         | 'family.appointments'
         | 'family.medications'
+        | 'family.link'
         | 'family.wellbeing'
         | 'family.updates';
     labelKey:
         | 'family.navigation.overview'
         | 'family.navigation.appointments'
         | 'family.navigation.medications'
+        | 'family.navigation.link'
         | 'family.navigation.wellbeing'
         | 'family.navigation.updates';
     icon: LucideIcon;
@@ -70,6 +72,11 @@ const allFamilyNavItems: readonly FamilyNavItem[] = [
         routeName: 'family.overview',
         labelKey: 'family.navigation.overview',
         icon: LayoutGrid,
+    },
+    {
+        routeName: 'family.link',
+        labelKey: 'family.navigation.link',
+        icon: Link2,
     },
     {
         routeName: 'family.appointments',
@@ -113,6 +120,13 @@ const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
 
 const activeFamilyNavRoute = computed((): FamilyNavItem['routeName'] | undefined => {
     const pathname = pathOnly(page.url);
+
+    if (
+        pathname === pathOnly(route('family.link') as string)
+        || pathname.startsWith('/family/medication-plans')
+    ) {
+        return 'family.link';
+    }
 
     return visibleFamilyNavItems.value.find(
         (item) => pathname === pathOnly(route(item.routeName) as string),

@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { PatientAppointmentOutcomePageProps } from '@/lib/patient/appointments/screen/patientAppointmentOutcomePageProps';
@@ -45,7 +46,7 @@ function submit(): void {
     </Head>
 
     <PatientLayout>
-        <div class="flex flex-col gap-8">
+        <PatientPageShell :title="t('patient.appointments.doneDialog.title')">
             <div class="space-y-3">
                 <Link
                     :href="route('patient.appointments')"
@@ -158,6 +159,6 @@ function submit(): void {
                     </Button>
                 </div>
             </form>
-        </div>
+        </PatientPageShell>
     </PatientLayout>
 </template>

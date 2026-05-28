@@ -1,5 +1,5 @@
 import { router, useForm } from '@inertiajs/vue3';
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
@@ -126,6 +126,28 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
         void nextTick(() => {
             document.getElementById('patient-medication-edit-create-summary-title')?.focus();
         });
+    });
+
+    onMounted(() => {
+        if (!props.can_create_medication) {
+            return;
+        }
+
+        const params = new URLSearchParams(globalThis.location.search);
+
+        if (params.get('create') !== '1') {
+            return;
+        }
+
+        createDialogOpen.value = true;
+
+        params.delete('create');
+        const query = params.toString();
+        const nextUrl = query.length > 0
+            ? `${globalThis.location.pathname}?${query}`
+            : globalThis.location.pathname;
+
+        globalThis.history.replaceState({}, '', nextUrl);
     });
 
     function openEditMedication(medication: MedicationListItem): void {

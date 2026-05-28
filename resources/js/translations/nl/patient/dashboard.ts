@@ -1,6 +1,20 @@
 export default {
     title: 'Home',
     heading: 'Home',
+    medicationSetup: {
+        heading: 'Uw medicatie toevoegen',
+        pickOne: 'Kies een van de volgende opties om uw medicatie toe te voegen.',
+        optionsAriaLabel: 'Twee manieren om medicatie toe te voegen',
+        orDivider: 'of',
+        optionOne: {
+            title: 'Medicatie toevoegen',
+        },
+        optionTwo: {
+            title: 'Medicatieplan van familie',
+            description: 'Heeft een familielid u een medicatieplan per e-mail gestuurd? Bekijk het op de pagina Familie.',
+            cta: 'Naar Familie',
+        },
+    },
     dailyCheckins: {
         title: 'Hoe voelt u zich vandaag?',
         description: 'Tik op een smiley om aan te geven hoe u zich voelt vandaag.',
