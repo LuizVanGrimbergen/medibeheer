@@ -22,4 +22,14 @@ export default {
     transportToggle: 'Vervoer tonen of verbergen',
     transportCollapsedSummaryOne: '1 afspraak',
     transportCollapsedSummaryMany: '{count} afspraken',
+    medicationPlansHeading: 'Medicatieplannen',
+    medicationPlansToggle: 'Medicatieplannen tonen of verbergen',
+    medicationPlansCollapsedEmpty: 'Nog geen medicatieplannen.',
+    medicationPlansCollapsedOne: '1 medicatieplan',
+    medicationPlansCollapsedMany: '{count} medicatieplannen',
+    medicationPlansIntro:
+        'Maak een medicatieplan voor de patiënt en verstuur het per e-mail.',
+    medicationPlansEmpty: 'U heeft nog geen medicatieplannen. Maak een nieuw plan aan.',
+    medicationPlansViewAll: 'Alle plannen bekijken',
+    medicationPlansAcceptedBy: 'Geïmporteerd door {name}',
 };

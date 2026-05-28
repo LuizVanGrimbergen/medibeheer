@@ -3,6 +3,7 @@ export default {
     overview: 'Overzicht',
     appointments: 'Afspraken',
     medications: 'Medicatie',
+    link: 'Koppel',
     wellbeing: 'Welzijn',
     updates: 'Updates',
     wellbeingAriaNoCheckin: 'Welzijn, geen check-in vandaag',
