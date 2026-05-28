@@ -34,6 +34,7 @@ export type UseMedicationFormWizardOptions = {
     form: () => MedicationCreateFormWithErrors;
     idPrefix: () => string;
     onSubmit: () => void;
+    initialStep?: () => MedicationFormWizardStep;
 };
 
 function rejectWizardAdvanceWithFieldErrors(
@@ -237,6 +238,35 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         }
     }
 
+    function focusWizardStepField(step: MedicationFormWizardStep): void {
+        const idPrefix = options.idPrefix();
+
+        if (step === 7) {
+            focusMedicationWizardSummaryTitleField(idPrefix);
+
+            return;
+        }
+
+        if (step === 2) {
+            focusMedicationWizardMealTimingField(
+                idPrefix,
+                options.form().schedule.meal_timing,
+            );
+
+            return;
+        }
+
+        focusMedicationWizardNameField(idPrefix);
+    }
+
+    function resetWizardToInitialStep(): void {
+        currentStep.value = options.initialStep?.() ?? 1;
+
+        void nextTick(() => {
+            focusWizardStepField(currentStep.value);
+        });
+    }
+
     watch(
         () => options.open(),
         (isOpen) => {
@@ -246,11 +276,7 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
                 return;
             }
 
-            currentStep.value = 1;
-
-            void nextTick(() => {
-                focusMedicationWizardNameField(options.idPrefix());
-            });
+            resetWizardToInitialStep();
         },
         { flush: 'post' },
     );
@@ -291,5 +317,6 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         handleSubmit,
         handleMedicationFormFooterBack,
         goToMedicationWizardStepFromSummary,
+        resetWizardToInitialStep,
     };
 }

@@ -23,9 +23,25 @@ export type Auth = {
 
 export type PendingFamilyInvitation = {
     id: number;
-    invited_email: string;
     expires_at: string;
     revoke_url: string;
+};
+
+export type PendingMedicationPlanProposal = {
+    id: number;
+    medication_name: string | null;
+    family_member_name: string;
+    expires_at: string | null;
+    accept_url: string;
+    decline_url: string;
+    review_url: string;
+};
+
+export type AcceptedMedicationPlanProposal = {
+    id: number;
+    medication_name: string | null;
+    family_member_name: string;
+    accepted_at: string | null;
 };
 
 export const DAILY_MOOD_SCORE_VALUES = [
