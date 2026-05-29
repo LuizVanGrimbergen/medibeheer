@@ -35,7 +35,7 @@ final class MedicationPlanProposalPatientService
 
         return MedicationPlanProposal::query()
             ->redeemable()
-            ->whereIn('invited_patient_email_hash', $emailHashes)
+            ->whereIn('invited_patient_email_hash', $emailHashes, 'and', false)
             ->where(function ($query) use ($user): void {
                 $patientId = $user->patient?->id;
 
@@ -66,7 +66,6 @@ final class MedicationPlanProposalPatientService
             ->get();
     }
 
-    /** @return array<string, mixed> */
     public function reviewProps(User $user, MedicationPlanProposal $proposal): array
     {
         if (! $proposal->isRedeemable()) {
