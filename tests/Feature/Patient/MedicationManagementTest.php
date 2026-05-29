@@ -146,6 +146,36 @@ test('patient medications page splits active and previously used medications', f
         ->missing('previously_used_medications'));
 });
 
+test('patients can view active medications on the pharmacist overview page', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $activeMedication = Medication::factory()->for($patient)->create(['name' => 'Metformine']);
+    MedicationSchedule::factory()->forMedication($activeMedication)->create([
+        'end_date' => '2026-12-31',
+    ]);
+
+    $response = $this->actingAs($user)->get(route('patient.medications.pharmacist-overview'));
+
+    $response->assertOk();
+    assertInertiaRootComponent($response, 'Patient/Medications/PharmacistOverview');
+    $response->assertInertia(fn ($page) => $page
+        ->where('medication_names', ['Metformine']));
+});
+
+test('patients without active medications are redirected from the pharmacist overview page', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->get(route('patient.medications.pharmacist-overview'));
+
+    $response->assertRedirect(route('patient.medications'));
+});
+
 test('patients cannot update medications that are no longer active on the list', function () {
     CarbonImmutable::setTestNow('2026-05-19 10:00:00');
 
