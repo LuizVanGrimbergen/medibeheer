@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Enums\SecurityActivityDescription;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use App\Services\Audit\SecurityActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -38,7 +40,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|SymfonyResponse
     {
         if (Auth::check()) {
             Auth::guard('web')->logout();
@@ -56,11 +58,13 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('login');
         }
 
-        if (! $authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->intended(route('verification.notice'));
+        $redirectUrl = $this->resolvePostAuthenticationRedirectUrl($request, $authenticatedUser);
+
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($redirectUrl);
         }
 
-        return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());
+        return redirect()->to($redirectUrl);
     }
 
     /**
@@ -87,5 +91,20 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    private function resolvePostAuthenticationRedirectUrl(Request $request, User $user): string
+    {
+        if (! $user->hasVerifiedEmail()) {
+            return route('verification.notice', absolute: false);
+        }
+
+        $intended = $request->session()->pull('url.intended');
+
+        if ($intended !== null) {
+            return $intended;
+        }
+
+        return $user->defaultAuthenticatedHomeUrl();
     }
 }
