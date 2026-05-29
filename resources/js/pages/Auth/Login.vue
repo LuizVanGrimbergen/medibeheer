@@ -121,7 +121,7 @@ const selectedRoleNoticeClass = computed(() => {
         return 'text-role-family';
     }
 
-    return 'text-text-muted';
+    return 'text-text';
 });
 
 const loginRoleHighlightLine = computed((): string | null => {
@@ -188,11 +188,14 @@ const submit = () => {
         />
 
         <div
-            v-if="loginRoleHighlightLine !== null"
             class="mb-4 text-center text-sm font-semibold"
             :class="selectedRoleNoticeClass"
         >
-            {{ loginRoleHighlightLine }}
+            {{
+                loginRoleHighlightLine !== null
+                    ? loginRoleHighlightLine
+                    : t('auth.login.roleRequired')
+            }}
         </div>
 
         <FlashSuccessBanner
