@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { cn } from '@/lib/utils';
 
-defineProps<{
-    selectedDate: string | null;
-    heading: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        selectedDate: string | null;
+        heading: string;
+        density?: 'default' | 'compact';
+        showHeading?: boolean;
+    }>(),
+    {
+        density: 'default',
+        showHeading: true,
+    },
+);
 
 const sectionRef = ref<HTMLElement | null>(null);
 
@@ -21,11 +30,20 @@ defineExpose({
     <section
         v-if="selectedDate !== null"
         ref="sectionRef"
-        class="scroll-mt-24 space-y-3"
+        :class="props.density === 'compact' ? 'scroll-mt-20 space-y-2' : 'scroll-mt-24 space-y-3'"
+        :aria-label="props.showHeading ? undefined : props.heading"
         tabindex="-1"
     >
-        <h2 class="text-lg font-semibold text-text-heading">
-            {{ heading }}
+        <h2
+            v-if="props.showHeading"
+            :class="
+                cn(
+                    'font-semibold text-text-heading',
+                    props.density === 'compact' ? 'text-base' : 'text-lg',
+                )
+            "
+        >
+            {{ props.heading }}
         </h2>
         <slot />
     </section>
