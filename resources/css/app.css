@@ -1,3 +1,203 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@import './fonts.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views/**/*.blade.php';
+@source '../js/**/*.{js,ts,vue}';
+
+@plugin '@tailwindcss/forms';
+
+@theme {
+
+    /* Fonts */
+    --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+    --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+
+    /* Typography scale */
+    --text-2xs: 0.6875rem;
+    --text-2xs--line-height: 1rem;
+    --text-xs: 0.75rem;
+    --text-xs--line-height: 1rem;
+    --text-sm: 0.875rem;
+    --text-sm--line-height: 1.25rem;
+    --text-base: 1rem;
+    --text-base--line-height: 1.5rem;
+    --text-lg: 1.125rem;
+    --text-lg--line-height: 1.75rem;
+    --text-xl: 1.25rem;
+    --text-xl--line-height: 1.75rem;
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: 2rem;
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: 2.25rem;
+    --text-4xl: 2.25rem;
+    --text-4xl--line-height: 2.5rem;
+
+    /* Colors */
+    --color-*: initial;
+    --color-white: #ffffff;
+    --color-bg: #f7f9fc;
+    --color-surface: #ffffff;
+    --color-surface-2: #eef3f8;
+    --color-text: #1f334a;
+    --color-text-muted: #667d94;
+    --color-text-default: var(--color-text);
+    --color-text-subtle: var(--color-text-muted);
+    --color-primary: #2f6fae;
+    --color-role-patient: #2f6fae;
+    --color-role-doctor: #10b981;
+    --color-role-family: #ec4899;
+    --color-role-patient-active: color-mix(in srgb, var(--color-role-patient) 70%, black);
+    --color-role-doctor-active: color-mix(in srgb, var(--color-role-doctor) 70%, black);
+    --color-role-family-active: color-mix(in srgb, var(--color-role-family) 70%, black);
+    --color-success: #10b981;
+    --color-warning: #f4b740;
+    --color-warning-text: #5b3a1a;
+    --color-danger: #c65a58;
+    --color-stock-near: #ea580c;
+    --color-stock-near-dark: #fb923c;
+    --color-focus: #2f6fae;
+    --color-border: #d7e1ec;
+    --color-disabled-bg: #ebf0f6;
+    --color-disabled-text: #8a9caf;
+    --color-surface-hover: #e6edf5;
+
+    /* Text colors */
+    --color-text-heading: #1a2b40;
+    --color-text-body: #1f334a;
+    --color-text-strong: var(--color-text-heading);
+    --color-text-placeholder: #8aa0b5;
+
+    /* Form elements */
+    --color-input-bg: #ffffff;
+    --color-input-border: #d7e1ec;
+    --color-input-border-focus: #2f6fae;
+    --color-input-text: #1f334a;
+    --color-input-placeholder: #2f6fae;
+
+    --animate-supply-alert-flicker: supply-alert-flicker 1.4s ease-in-out infinite;
+    --animate-collapsible-down: collapsible-down 0.2s ease-out;
+    --animate-collapsible-up: collapsible-up 0.2s ease-out;
+
+}
+
+@keyframes supply-alert-flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+@keyframes collapsible-down {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: var(--reka-collapsible-content-height);
+    }
+}
+
+@keyframes collapsible-up {
+    from {
+        height: var(--reka-collapsible-content-height);
+    }
+
+    to {
+        height: 0;
+    }
+}
+
+.font-lexend {
+    --font-body: 'Lexend', sans-serif;
+    --font-headers: 'Lexend', sans-serif;
+    font-family: var(--font-body);
+}
+
+@layer base {
+    @media (width >= 48rem) {
+        html {
+            font-size: clamp(0.875rem, 0.14vw + 0.80625rem, 0.9375rem);
+        }
+    }
+
+    html {
+        height: 100%;
+    }
+
+    body {
+        @apply bg-bg text-text antialiased;
+        font-family: var(--font-body);
+        min-height: 100%;
+    }
+
+    #app {
+        min-height: 100dvh;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-headers);
+        line-height: 1;
+    }
+
+    button,
+    input,
+    select,
+    textarea,
+    option {
+        font: inherit;
+    }
+}
+
+#nprogress,
+#nprogress .bar {
+    z-index: 99999 !important;
+}
+
+@layer components {
+    .native-picker-input::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        margin-inline-end: 0.125rem;
+    }
+
+    .daily-checkin-mood-step-title {
+        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+    }
+
+    .daily-checkin-mood-step-description {
+        @apply text-base leading-relaxed text-text sm:text-lg;
+    }
+
+    .daily-checkin-step-title {
+        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+    }
+
+    .daily-checkin-step-description {
+        @apply text-base leading-relaxed text-text sm:text-lg;
+    }
+
+    .daily-checkin-step-label {
+        @apply text-base font-semibold leading-snug text-text-heading sm:text-lg;
+    }
+
+    .daily-checkin-symptom-chip {
+        @apply min-h-14 w-full justify-start rounded-xl px-4 py-3 text-left font-semibold whitespace-normal sm:min-h-16 sm:w-auto sm:justify-center sm:rounded-2xl sm:px-5 sm:py-3 sm:text-center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .animate-supply-alert-flicker {
+            animation: none;
+        }
+    }
+}

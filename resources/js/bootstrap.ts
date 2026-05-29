@@ -1,4 +1,6 @@
 import axios from 'axios';
 
-window.axios = axios;
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+if (globalThis.window !== undefined) {
+    globalThis.window.axios = axios;
+    globalThis.window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+}

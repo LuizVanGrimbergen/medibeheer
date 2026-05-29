@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { useI18n } from 'vue-i18n';
+import { AuthPageContainer } from '@/Components/ui/auth-page';
+import { Button } from '@/Components/ui/button';
+import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 
 const props = defineProps<{
     status?: string;
 }>();
 
 const form = useForm({});
+const { t } = useI18n();
 
 const submit = () => {
     form.post(route('verification.send'));
@@ -17,43 +20,44 @@ const submit = () => {
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',
 );
+
+const verificationLinkSentMessage = computed(() =>
+    verificationLinkSent.value ? t('auth.verifyEmail.linkSent') : null,
+);
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Email Verification" />
+    <Head>
+        <title>{{ t('auth.verifyEmail.metaTitle') }}</title>
+    </Head>
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Thanks for signing up! Before getting started, could you verify your
-            email address by clicking on the link we just emailed to you? If you
-            didn't receive the email, we will gladly send you another.
-        </div>
+    <AuthPageContainer
+        title-key="auth.verifyEmail.title"
+        subtitle-key="auth.verifyEmail.intro"
+    >
+        <FlashSuccessBanner
+            class="mb-4"
+            :message="verificationLinkSentMessage"
+        />
 
-        <div
-            class="mb-4 text-sm font-medium text-green-600 dark:text-green-400"
-            v-if="verificationLinkSent"
-        >
-            A new verification link has been sent to the email address you
-            provided during registration.
-        </div>
+        <form class="space-y-3" @submit.prevent="submit">
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                size="lg"
+                class="w-full text-xl"
+            >
+                {{ t('auth.verifyEmail.resendAction') }}
+            </Button>
 
-        <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Resend Verification Email
-                </PrimaryButton>
-
-                <Link
-                    :href="route('logout')"
-                    method="post"
-                    as="button"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                    >Log Out</Link
-                >
-            </div>
+            <Link
+                :href="route('logout')"
+                method="post"
+                as="button"
+                class="block w-full rounded-xl border border-border bg-surface px-4 py-3 text-center text-base font-semibold text-text transition hover:bg-surface-hover"
+            >
+                {{ t('auth.verifyEmail.logoutAction') }}
+            </Link>
         </form>
-    </GuestLayout>
+    </AuthPageContainer>
 </template>

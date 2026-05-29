@@ -2,51 +2,72 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\SecurityActivityDescription;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use App\Services\Audit\SecurityActivityLogger;
+use App\Services\Privacy\UserConsentRecorder;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+        private readonly UserConsentRecorder $userConsentRecorder,
+    ) {}
+
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create(Request $request, ResolveSelectedRole $resolveSelectedRole): Response
     {
-        return Inertia::render('Auth/Register');
+        return Inertia::render('Auth/Register', [
+            'selectedRole' => $resolveSelectedRole($request),
+            'privacyPolicyVersion' => config('privacy.policy_version'),
+        ]);
     }
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request): RedirectResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+            'role' => $validated['role'],
         ]);
 
         event(new Registered($user));
 
-        Auth::login($user);
+        $this->userConsentRecorder->recordRegistrationConsents($user, $request);
 
-        return redirect(route('dashboard', absolute: false));
+        Auth::login($user, true);
+        $request->session()->regenerate();
+
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::AUTH_REGISTRATION_SUCCEEDED,
+            causer: $user,
+            subject: $user,
+            properties: [
+                'public_id' => $user->public_id,
+                'role' => $user->role->value,
+            ],
+        );
+
+        return redirect()->route('verification.notice');
     }
 }

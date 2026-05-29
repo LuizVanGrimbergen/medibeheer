@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +14,11 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->uuid('public_id')->unique();
+            $table->string('role')->default(UserRole::PATIENT->value)->index();
+            $table->text('name_encrypted');
+            $table->text('email_encrypted');
+            $table->char('email_hash', 64)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -22,7 +26,8 @@ return new class extends Migration
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            // The password broker expects this column name, but we store the email hash value.
+            $table->char('email', 64)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

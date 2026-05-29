@@ -5,19 +5,42 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ConfirmablePasswordController extends Controller
 {
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Show the confirm password view.
      */
-    public function show(): Response
+    public function show(Request $request): Response
     {
-        return Inertia::render('Auth/ConfirmPassword');
+        $authenticatedUser = $request->user();
+        $fallbackHome = $authenticatedUser !== null
+            ? route($authenticatedUser->defaultAuthenticatedHomeRoute())
+            : route('home');
+
+        $backUrl = url()->previous();
+        $applicationHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $backUrlHost = parse_url($backUrl, PHP_URL_HOST);
+
+        if ($backUrl === $request->url()) {
+            $backUrl = $fallbackHome;
+        }
+
+        if ($applicationHost !== null && $backUrlHost !== null && $applicationHost !== $backUrlHost) {
+            $backUrl = $fallbackHome;
+        }
+
+        return Inertia::render('Auth/ConfirmPassword', [
+            'backUrl' => $backUrl,
+        ]);
     }
 
     /**
@@ -25,17 +48,16 @@ class ConfirmablePasswordController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        if (! Auth::guard('web')->validate([
-            'email' => $request->user()->email,
-            'password' => $request->password,
-        ])) {
+        $authenticatedUser = $request->user();
+
+        if (! Hash::check($request->string('password')->toString(), $authenticatedUser->password)) {
             throw ValidationException::withMessages([
-                'password' => __('auth.password'),
+                'password' => trans('auth.password'),
             ]);
         }
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());
     }
 }

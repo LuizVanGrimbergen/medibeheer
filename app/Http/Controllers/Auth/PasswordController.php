@@ -2,27 +2,46 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\SecurityActivityDescription;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\UpdatePasswordRequest;
+use App\Services\Audit\SecurityActivityLogger;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Auth;
 
 class PasswordController extends Controller
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+    ) {}
+
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Update the user's password.
      */
-    public function update(Request $request): RedirectResponse
+    public function update(UpdatePasswordRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+        $authenticatedUser = $request->user();
+
+        $validated = $request->validated();
+
+        Auth::logoutOtherDevices($validated['current_password']);
+
+        $authenticatedUser->update([
+            'password' => $validated['password'],
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::AUTH_PASSWORD_UPDATED,
+            causer: $authenticatedUser,
+            subject: $authenticatedUser,
+            properties: [
+                'public_id' => $authenticatedUser->public_id,
+            ],
+        );
 
         return back();
     }

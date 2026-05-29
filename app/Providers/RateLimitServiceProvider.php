@@ -1,0 +1,148 @@
+<?php
+
+namespace App\Providers;
+
+use App\Models\User;
+use App\Support\RateLimiting\AuthRateLimits;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\ServiceProvider;
+
+class RateLimitServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        RateLimiter::for('login', function (Request $request): Limit {
+            return Limit::perMinute(AuthRateLimits::LOGIN_MAX_ATTEMPTS)
+                ->by(AuthRateLimits::loginKey($request));
+        });
+
+        RateLimiter::for('forgot-password', function (Request $request): Limit {
+            return Limit::perMinute(AuthRateLimits::FORGOT_PASSWORD_MAX_ATTEMPTS)
+                ->by(AuthRateLimits::forgotPasswordKey($request));
+        });
+
+        RateLimiter::for('register', function (Request $request): Limit {
+            return Limit::perMinute(5)->by((string) $request->ip());
+        });
+
+        RateLimiter::for('reset-password', function (Request $request): Limit {
+            return Limit::perMinute(3)->by((string) $request->ip());
+        });
+
+        RateLimiter::for('email-verification', function (Request $request): Limit {
+            return Limit::perMinute(6)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('account-delete', function (Request $request): Limit {
+            return Limit::perMinute(5)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('data-export', function (Request $request): Limit {
+            return Limit::perMinute(3)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('confirm-password', $this->passwordActionRateLimiter());
+        RateLimiter::for('update-password', $this->passwordActionRateLimiter());
+
+        RateLimiter::for('authenticated-area', function (Request $request): Limit {
+            return Limit::perMinute(120)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('family-invitation-accept', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('family-transport-invitation', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('family-active-patient-switch', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('invitation-entry', function (Request $request): Limit {
+            return Limit::perMinute(60)->by((string) $request->ip());
+        });
+
+        RateLimiter::for('family-invitation-send', fn (Request $request): array => self::invitationSendLimits(
+            $request,
+            'family_invitation',
+            'family-invitation-recipient',
+        ));
+
+        RateLimiter::for('family-invitation-revoke', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('doctor-invitation-accept', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('doctor-invitation-send', fn (Request $request): array => self::invitationSendLimits(
+            $request,
+            'doctor_invitation',
+            'doctor-invitation-recipient',
+        ));
+
+        RateLimiter::for('doctor-invitation-revoke', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('patient-care-team-unlink', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('medication-plan-proposal-publish', function (Request $request): Limit {
+            $proposalKey = (string) $request->route('medication_plan_proposal');
+
+            return Limit::perMinute(10)->by(self::userOrIpKey($request).':proposal:'.$proposalKey);
+        });
+
+        RateLimiter::for('medication-plan-proposal-redeem', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('medication-intake-from-push', function (Request $request): Limit {
+            return Limit::perMinute(30)->by((string) $request->ip());
+        });
+    }
+
+    private static function userOrIpKey(Request $request): string
+    {
+        $user = $request->user();
+
+        if ($user !== null) {
+            return "user:{$user->id}";
+        }
+
+        return (string) $request->ip();
+    }
+
+    private static function invitationSendLimits(Request $request, string $configKey, string $recipientKeyPrefix): array
+    {
+        $senderKey = self::userOrIpKey($request);
+
+        $limits = [
+            Limit::perMinute(5)->by($senderKey),
+            Limit::perDay((int) config("services.{$configKey}.daily_max", 20))->by($senderKey),
+        ];
+
+        $email = User::normalizeEmail((string) $request->input('email', ''));
+
+        if ($email !== '') {
+            $limits[] = Limit::perDay((int) config("services.{$configKey}.recipient_daily_max", 10))
+                ->by("{$recipientKeyPrefix}:".User::hashEmail($email));
+        }
+
+        return $limits;
+    }
+
+    private function passwordActionRateLimiter(): \Closure
+    {
+        return function (Request $request): Limit {
+            return Limit::perMinute(5)->by(self::userOrIpKey($request));
+        };
+    }
+}

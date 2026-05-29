@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Medibeheer'),
 
     /*
     |--------------------------------------------------------------------------
@@ -78,11 +78,11 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'nl'),
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'nl'),
 
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'nl_NL'),
 
     /*
     |--------------------------------------------------------------------------
@@ -102,6 +102,14 @@ return [
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', '')),
+        ),
+    ],
+
+    'email_hash_key' => env('EMAIL_HASH_KEY', env('APP_KEY')),
+
+    'email_hash_previous_keys' => [
+        ...array_filter(
+            explode(',', (string) env('EMAIL_HASH_PREVIOUS_KEYS', env('APP_PREVIOUS_KEYS', ''))),
         ),
     ],
 

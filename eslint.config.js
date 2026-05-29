@@ -84,10 +84,8 @@ export default defineConfigWithVueTs(
             '**/*.d.ts',
             'tailwind.config.js',
             'vite.config.ts',
-            'resources/js/actions/**',
             'resources/js/components/ui/*',
-            'resources/js/routes/**',
-            'resources/js/wayfinder/**',
+            'stubs/**',
         ],
     },
     prettier, // Turn off all rules that might conflict with Prettier

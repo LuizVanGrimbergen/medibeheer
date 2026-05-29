@@ -2,38 +2,70 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Support\FamilyDashboardState;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
-
-    /**
-     * Define the props that are shared by default.
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
-        return [
+        $user = $request->user();
+
+        $shared = [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => function () use ($request, $user): ?array {
+                    if ($user === null) {
+                        return null;
+                    }
+
+                    $email = null;
+
+                    if ($request->routeIs('settings.edit')) {
+                        $email = $user->email;
+                    }
+
+                    return [
+                        'public_id' => $user->public_id,
+                        'name' => $user->name,
+                        'email' => $email,
+                        'role' => $user->role?->value,
+                        'email_verified_at' => $user->email_verified_at?->toISOString(),
+                    ];
+                },
+            ],
+            'flash' => [
+                'error' => fn () => $request->session()->get('error'),
+                'success' => fn () => $request->session()->get('success'),
+                'rateLimitSeconds' => fn () => $request->session()->get('rate_limit_seconds'),
+                'daily_checkin_mood' => fn () => $request->session()->get('daily_checkin_mood'),
+            ],
+            'legal' => [
+                'privacyUrl' => route('legal.privacy', absolute: false),
+                'cookiesUrl' => route('legal.cookies', absolute: false),
+                'policyVersion' => config('privacy.policy_version'),
             ],
         ];
+
+        if ($user instanceof User && $user->isFamilyMember() && $request->routeIs('family.*')) {
+            $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
+        }
+
+        if ($user instanceof User && $user->isPatient()) {
+            $publicKey = config('webpush.vapid.public_key');
+
+            $shared['webpush'] = [
+                'publicKey' => is_string($publicKey) && $publicKey !== '' ? $publicKey : null,
+                'subscribed' => $user->pushSubscriptions()
+                    ->where('endpoint', 'not like', '%push.example.test%')
+                    ->exists(),
+            ];
+        }
+
+        return $shared;
     }
 }

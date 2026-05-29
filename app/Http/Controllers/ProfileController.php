@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SecurityActivityDescription;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
+use App\Services\Audit\SecurityActivityLogger;
+use App\Services\Audit\UserSecurityActivityScreenService;
+use App\Services\Privacy\UserDataErasureService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,15 +18,35 @@ use Inertia\Response;
 
 class ProfileController extends Controller
 {
+    public function __construct(
+        private readonly SecurityActivityLogger $securityActivityLogger,
+        private readonly UserSecurityActivityScreenService $userSecurityActivityScreenService,
+        private readonly UserDataErasureService $userDataErasureService,
+    ) {}
+
+    /**************************************/
+    /*              Actions */
+    /**************************************/
+
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+        $user = $request->user();
+        $this->authorize('view', $user);
+
+        $payload = [
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-        ]);
+            'securityActivities' => null,
+        ];
+
+        if ($request->string('section')->toString() === 'security-activity') {
+            $payload['securityActivities'] = $this->userSecurityActivityScreenService->paginatedForUser($user);
+        }
+
+        return Inertia::render('Settings/Edit', $payload);
     }
 
     /**
@@ -29,15 +54,39 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $this->authorize('update', $request->user());
 
-        if ($request->user()->isDirty('email')) {
+        $previousEmailHash = $request->user()->email_hash;
+        $previousName = $request->user()->name;
+
+        $emailChanged = false;
+
+        $request->user()->fill($request->safe()->except('current_password'));
+
+        if ($previousEmailHash !== $request->user()->email_hash) {
             $request->user()->email_verified_at = null;
+            $emailChanged = true;
         }
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::USER_PROFILE_UPDATED,
+            causer: $request->user(),
+            subject: $request->user(),
+            properties: [
+                'public_id' => $request->user()->public_id,
+                'name_changed' => $previousName !== $request->user()->name,
+                'email_changed' => $emailChanged,
+            ],
+        );
+
+        if ($emailChanged) {
+            $request->user()->sendEmailVerificationNotification();
+            $request->session()->flash('status', 'verification-link-sent');
+        }
+
+        return Redirect::route('settings.edit');
     }
 
     /**
@@ -45,15 +94,31 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        $this->authorize('delete', $request->user());
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
 
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
         Auth::logout();
 
-        $user->delete();
+        $this->securityActivityLogger->record(
+            SecurityActivityDescription::USER_ACCOUNT_DELETED,
+            causer: $user,
+            subject: $user,
+            properties: [
+                'public_id' => $user->public_id,
+            ],
+        );
+
+        $this->userDataErasureService->eraseUserRelatedRecords($user);
+
+        User::destroy($user->getKey());
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

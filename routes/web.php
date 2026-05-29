@@ -1,27 +1,44 @@
 <?php
 
+use App\Http\Controllers\Doctor\Invitations\DoctorInvitationEntryController;
+use App\Http\Controllers\Family\Invitations\FamilyInvitationEntryController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Legal\ShowCookiePolicyController;
+use App\Http\Controllers\Legal\ShowPrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\Settings\ExportUserDataController;
+use App\Http\Middleware\RedirectIfEmailUnverified;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', HomeController::class)->name('home');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('privacy', ShowPrivacyPolicyController::class)->name('legal.privacy');
+Route::get('cookies', ShowCookiePolicyController::class)->name('legal.cookies');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::get('family/invitation', FamilyInvitationEntryController::class)
+    ->middleware('throttle:invitation-entry')
+    ->name('family.invitation.entry');
+Route::get('doctor/invitation', DoctorInvitationEntryController::class)
+    ->middleware('throttle:invitation-entry')
+    ->name('doctor.invitation.entry');
+
+require __DIR__.'/web/patient.php';
+require __DIR__.'/web/family.php';
+require __DIR__.'/web/doctor.php';
+
+Route::middleware([Authenticate::class, RedirectIfEmailUnverified::class])->group(function () {
+    Broadcast::routes();
+
+    Route::get('settings', [ProfileController::class, 'edit'])->name('settings.edit');
+    Route::patch('settings', [ProfileController::class, 'update'])->name('settings.update');
+    Route::get('settings/export', ExportUserDataController::class)
+        ->middleware(['throttle:data-export'])
+        ->name('settings.export');
+    Route::delete('settings', [ProfileController::class, 'destroy'])
+        ->middleware(['throttle:account-delete'])
+        ->name('settings.destroy');
 });
 
 require __DIR__.'/auth.php';
