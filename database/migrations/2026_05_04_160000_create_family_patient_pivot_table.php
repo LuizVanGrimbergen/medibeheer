@@ -16,19 +16,10 @@ return new class extends Migration
 
             $table->unique(['family_id', 'patient_id']);
         });
-
-        Schema::table('families', function (Blueprint $table) {
-            $table->dropForeign(['patient_id']);
-            $table->dropColumn('patient_id');
-        });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('family_patient');
-
-        Schema::table('families', function (Blueprint $table) {
-            $table->foreignId('patient_id')->nullable()->constrained()->cascadeOnDelete();
-        });
     }
 };
