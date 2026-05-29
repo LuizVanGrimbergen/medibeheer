@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\FamilyInvitationMail;
+use App\Models\Family;
 use App\Models\FamilyInvitation;
 use App\Models\Patient;
 use App\Models\User;
@@ -128,6 +129,25 @@ test('patients can invite the same email again after revoking the pending invita
 
     $response->assertRedirect(route('patient.family'));
     Mail::assertSent(FamilyInvitationMail::class, 2);
+});
+
+test('patients cannot invite a family member who is already linked', function () {
+    Mail::fake();
+
+    $patientUser = User::factory()->patient()->create();
+    $patient = $patientUser->patient;
+    expect($patient)->not->toBeNull();
+
+    $familyUser = User::factory()->familyMember()->create();
+    $family = Family::query()->firstOrCreate(['user_id' => $familyUser->id]);
+    $family->patients()->syncWithoutDetaching([(int) $patient->id]);
+
+    $response = $this->actingAs($patientUser)->post(route('patient.family.invitations.store'), [
+        'email' => $familyUser->email,
+    ]);
+
+    $response->assertSessionHasErrors('email');
+    Mail::assertNothingSent();
 });
 
 test('patients cannot invite their own email address', function () {

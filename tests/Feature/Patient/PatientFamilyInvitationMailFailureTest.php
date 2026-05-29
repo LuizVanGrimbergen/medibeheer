@@ -25,7 +25,9 @@ test('when sending mail fails the invitation is removed and the user sees an err
         ],
     );
 
-    $response->assertSessionHasErrors('email');
+    $response->assertSessionHasErrors([
+        'email' => trans('family_invitation.flash.mail_failed'),
+    ]);
 
     expect(
         FamilyInvitation::query()
