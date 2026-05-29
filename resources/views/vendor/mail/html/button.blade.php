@@ -21,7 +21,7 @@
 
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
     <tr>
-        <td align="{{ $align }}" style="padding: 16px 0 6px 0;">
+        <td align="{{ $align }}" style="padding: 28px 0;">
             <a
                 href="{{ $url }}"
                 style="
