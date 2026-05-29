@@ -10,11 +10,13 @@ class VerifyEmailNotification extends VerifyEmail
     protected function buildMailMessage($url): MailMessage
     {
         return (new MailMessage)
-            ->from((string) config('mail.from.address'), 'Medibeheer')
+            ->markdown('mail.auth-notification')
+            ->from((string) config('mail.from.address'), (string) config('mail.from.name'))
             ->subject(trans('mail.verify_email.subject'))
             ->greeting(trans('mail.verify_email.greeting'))
             ->line(trans('mail.verify_email.line'))
             ->action(trans('mail.verify_email.action'), $url)
-            ->line(trans('mail.verify_email.footer'));
+            ->line(trans('mail.verify_email.footer'))
+            ->salutation(trans('mail.verify_email.salutation')."\n\n".config('mail.brand'));
     }
 }

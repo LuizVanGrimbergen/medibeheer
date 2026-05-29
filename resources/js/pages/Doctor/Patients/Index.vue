@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import DoctorIncomingPatientInvitationsSection from '@/Components/Doctor/Patients/DoctorIncomingPatientInvitationsSection.vue';
+import DoctorLinkedPatientsSection from '@/Components/Doctor/Patients/DoctorLinkedPatientsSection.vue';
 import DoctorLayout from '@/Layouts/DoctorLayout.vue';
+import type { IncomingDoctorInvitation, LinkedPatient } from '@/lib/types';
 
-defineProps<{
-    patients: { public_id: string; name: string }[];
-}>();
+withDefaults(
+    defineProps<{
+        patients: LinkedPatient[];
+        incoming_invitations?: IncomingDoctorInvitation[];
+    }>(),
+    {
+        incoming_invitations: () => [],
+    },
+);
 
 const { t } = useI18n();
 </script>
@@ -16,28 +25,16 @@ const { t } = useI18n();
     </Head>
 
     <DoctorLayout>
-        <h1 class="text-2xl font-semibold text-text-heading">
-            {{ t('doctor.patients.heading') }}
-        </h1>
+        <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:gap-5">
+            <h1 class="text-2xl font-semibold text-text-heading">
+                {{ t('doctor.patients.heading') }}
+            </h1>
 
-        <ul
-            v-if="patients.length > 0"
-            class="mt-6 divide-y divide-border rounded-xl border border-border bg-surface"
-        >
-            <li
-                v-for="patient in patients"
-                :key="patient.public_id"
-                class="px-4 py-3 text-text-body first:rounded-t-xl last:rounded-b-xl"
-            >
-                {{ patient.name }}
-            </li>
-        </ul>
+            <DoctorLinkedPatientsSection :patients="patients" />
 
-        <p
-            v-else
-            class="mt-6 text-text-muted"
-        >
-            {{ t('doctor.patients.empty') }}
-        </p>
+            <DoctorIncomingPatientInvitationsSection
+                :invitations="incoming_invitations"
+            />
+        </div>
     </DoctorLayout>
 </template>

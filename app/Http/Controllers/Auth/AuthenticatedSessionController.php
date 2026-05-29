@@ -57,7 +57,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if (! $authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
+            return redirect()->intended(route('verification.notice'));
         }
 
         return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());

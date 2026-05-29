@@ -18,9 +18,7 @@ class DestroyPatientFamilyInvitationController extends Controller
         FamilyInvitation $familyInvitation,
         FamilyInvitationService $service,
     ): RedirectResponse {
-        $patient = $this->authorizePatientProfile($request);
-
-        abort_unless((int) $familyInvitation->patient_id === (int) $patient->id, 404);
+        $this->authorizePatientProfile($request);
 
         $service->revoke($familyInvitation, $request->user());
 

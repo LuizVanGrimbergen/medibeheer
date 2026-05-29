@@ -90,8 +90,7 @@ export default {
         title: 'Verifieer uw e-mailadres',
         intro:
             'Bedankt voor uw registratie! Voordat u verdergaat, verifieer uw e-mailadres via de link die we u net hebben gemaild. Geen e-mail ontvangen? Dan sturen we met plezier een nieuwe.',
-        linkSent:
-            'Er is een nieuwe verificatielink verstuurd naar het e-mailadres dat u tijdens registratie hebt opgegeven.',
+        linkSent: 'Nieuwe verificatielink naar uw e-mailadres verstuurd.',
         resendAction: 'Verificatiemail opnieuw versturen',
         logoutAction: 'Uitloggen',
     },

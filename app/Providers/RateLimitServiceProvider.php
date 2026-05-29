@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Support\RateLimiting\AuthRateLimits;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -61,11 +62,35 @@ class RateLimitServiceProvider extends ServiceProvider
             return Limit::perMinute(30)->by(self::userOrIpKey($request));
         });
 
-        RateLimiter::for('family-invitation-send', function (Request $request): Limit {
-            return Limit::perMinute(5)->by(self::userOrIpKey($request));
+        RateLimiter::for('invitation-entry', function (Request $request): Limit {
+            return Limit::perMinute(60)->by((string) $request->ip());
         });
 
+        RateLimiter::for('family-invitation-send', fn (Request $request): array => self::invitationSendLimits(
+            $request,
+            'family_invitation',
+            'family-invitation-recipient',
+        ));
+
         RateLimiter::for('family-invitation-revoke', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('doctor-invitation-accept', function (Request $request): Limit {
+            return Limit::perMinute(10)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('doctor-invitation-send', fn (Request $request): array => self::invitationSendLimits(
+            $request,
+            'doctor_invitation',
+            'doctor-invitation-recipient',
+        ));
+
+        RateLimiter::for('doctor-invitation-revoke', function (Request $request): Limit {
+            return Limit::perMinute(30)->by(self::userOrIpKey($request));
+        });
+
+        RateLimiter::for('patient-care-team-unlink', function (Request $request): Limit {
             return Limit::perMinute(30)->by(self::userOrIpKey($request));
         });
 
@@ -93,6 +118,25 @@ class RateLimitServiceProvider extends ServiceProvider
         }
 
         return (string) $request->ip();
+    }
+
+    private static function invitationSendLimits(Request $request, string $configKey, string $recipientKeyPrefix): array
+    {
+        $senderKey = self::userOrIpKey($request);
+
+        $limits = [
+            Limit::perMinute(5)->by($senderKey),
+            Limit::perDay((int) config("services.{$configKey}.daily_max", 20))->by($senderKey),
+        ];
+
+        $email = User::normalizeEmail((string) $request->input('email', ''));
+
+        if ($email !== '') {
+            $limits[] = Limit::perDay((int) config("services.{$configKey}.recipient_daily_max", 10))
+                ->by("{$recipientKeyPrefix}:".User::hashEmail($email));
+        }
+
+        return $limits;
     }
 
     private function passwordActionRateLimiter(): \Closure

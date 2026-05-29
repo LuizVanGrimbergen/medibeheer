@@ -18,6 +18,7 @@ test('doctors receive the doctor dashboard inertia page from the doctor dashboar
 
     $response->assertOk();
     assertInertiaRootComponent($response, 'Doctor/Dashboard');
+    $response->assertInertia(fn ($page) => $page->has('patients'));
 });
 
 test('family members receive the family overview inertia page from the family overview route', function () {

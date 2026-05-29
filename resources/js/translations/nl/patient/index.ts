@@ -1,5 +1,6 @@
 import appointments from './appointments';
 import dashboard from './dashboard';
+import doctors from './doctors';
 import family from './family';
 import inventory from './inventory';
 import medicationPlans from './medicationPlans';
@@ -10,6 +11,7 @@ import navigation from './navigation';
 export default {
     appointments,
     dashboard,
+    doctors,
     family,
     inventory,
     medicationPlans,

@@ -1,4 +1,3 @@
 export default {
-    title: 'Home',
-    heading: 'Home',
+    title: 'Data',
 };

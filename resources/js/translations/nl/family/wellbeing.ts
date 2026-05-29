@@ -7,12 +7,14 @@ export default {
     selectedDayHeading: 'Geselecteerde dag',
     selectedDayNoCheckin: 'Geen check-in op deze dag.',
     listHeading: 'Alle check-ins',
+    noteLabel: 'Notitie',
     mood: {
         bad: 'Slecht',
         ok: 'Gaat wel',
         good: 'Goed',
     },
     calendar: {
+        title: 'Stemming per dag',
         prevMonth: 'Vorige maand',
         nextMonth: 'Volgende maand',
         gridAria: 'Stemming per dag in {month}',

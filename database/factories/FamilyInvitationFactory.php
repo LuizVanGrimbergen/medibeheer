@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\FamilyInvitation;
 use App\Models\Patient;
 use App\Models\User;
-use App\Services\Family\FamilyInvitationService;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FamilyInvitationFactory extends Factory
@@ -16,24 +15,15 @@ class FamilyInvitationFactory extends Factory
     {
         $email = fake()->unique()->safeEmail();
         $normalized = User::normalizeEmail($email);
-        $plainToken = bin2hex(random_bytes(20));
 
         return [
             'patient_id' => Patient::factory(),
             'invited_email' => $normalized,
             'invited_email_hash' => User::hashEmail($normalized),
-            'token_hash' => hash('sha256', FamilyInvitationService::normalizeInviteCode($plainToken)),
             'expires_at' => now()->addDays(7),
             'accepted_at' => null,
             'revoked_at' => null,
         ];
-    }
-
-    public function withPlainToken(string $plainToken): static
-    {
-        return $this->state(fn (array $attributes): array => [
-            'token_hash' => hash('sha256', FamilyInvitationService::normalizeInviteCode($plainToken)),
-        ]);
     }
 
     public function expired(): static

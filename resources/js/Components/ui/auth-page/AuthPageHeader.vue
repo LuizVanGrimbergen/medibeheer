@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Separator } from '@/Components/ui/separator';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -57,7 +56,6 @@ const isHeroHeader = computed(() => !props.showSubtitle);
             <p class="mt-2 text-lg text-text-muted">
                 {{ t(props.subtitleKey) }}
             </p>
-            <Separator class="mx-auto mt-4 w-24 bg-border" />
         </template>
     </header>
 </template>

@@ -2,21 +2,19 @@
 
 <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
     <tr>
-        <td style="padding: 0;">
+        <td align="center" style="padding: 0;">
             <a
                 href="{{ $url }}"
-                style="
-                    display: inline-block;
-                    font-size: 18px;
-                    font-weight: 800;
-                    letter-spacing: 0.2px;
-                    text-decoration: none;
-                    color: #1a2b40;
-                "
+                style="display: inline-block; text-decoration: none;"
             >
-                {{ $slot }}
+                <img
+                    src="{{ url('/images/medibeheer-pwa.png') }}"
+                    alt="{{ trim($slot) !== '' ? trim($slot) : config('mail.brand') }}"
+                    width="56"
+                    height="56"
+                    style="display: block; margin: 0 auto; border: 0; outline: none; text-decoration: none;"
+                >
             </a>
         </td>
     </tr>
 </table>
-

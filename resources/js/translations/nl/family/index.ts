@@ -1,5 +1,4 @@
 import appointments from './appointments';
-import invitation from './invitation';
 import link from './link';
 import medicationPlans from './medicationPlans';
 import medications from './medications';
@@ -10,7 +9,6 @@ import wellbeing from './wellbeing';
 
 export default {
     appointments,
-    invitation,
     link,
     medicationPlans,
     medications,

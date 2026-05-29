@@ -4,179 +4,76 @@ declare(strict_types=1);
 
 namespace App\Services\Family;
 
-use App\Enums\SecurityActivityDescription;
-use App\Mail\FamilyInvitationMail;
 use App\Models\Family;
 use App\Models\FamilyInvitation;
 use App\Models\Patient;
 use App\Models\User;
 use App\Services\Audit\SecurityActivityLogger;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Validation\ValidationException;
+use App\Services\Invitations\Concerns\HandlesPatientCareTeamInvitations;
+use App\Services\Invitations\PatientCareTeamInvitationDefinition;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 
 final class FamilyInvitationService
 {
+    use HandlesPatientCareTeamInvitations;
+
     public function __construct(
         private readonly SecurityActivityLogger $securityActivityLogger,
     ) {}
 
-    public static function normalizeInviteCode(string $code): string
-    {
-        return strtolower(preg_replace('/\s+/', '', trim($code)));
-    }
-
     public function create(Patient $patient, string $email, User $invitedBy): void
     {
-        $normalized = User::normalizeEmail($email);
-
-        $emailHash = User::hashEmail($normalized);
-
-        $plainToken = bin2hex(random_bytes(20));
-        $tokenHash = hash('sha256', $plainToken);
-        $expiresAt = now()->addDays((int) config('services.family_invitation.expiry_days', 14));
-
-        $invitation = DB::transaction(function () use ($patient, $normalized, $emailHash, $tokenHash, $expiresAt): FamilyInvitation {
-            Patient::query()->whereKey($patient->id)->lockForUpdate()->firstOrFail();
-
-            if ($this->patientHasPendingInvitationForEmail($patient, $emailHash, lockForUpdate: true)) {
-                throw ValidationException::withMessages([
-                    'email' => [trans('family_invitation.validation.duplicate_pending')],
-                ]);
-            }
-
-            return FamilyInvitation::create([
-                'patient_id' => $patient->id,
-                'invited_email' => $normalized,
-                'invited_email_hash' => $emailHash,
-                'token_hash' => $tokenHash,
-                'expires_at' => $expiresAt,
-            ]);
-        });
-
-        try {
-            Mail::to($normalized)->send(new FamilyInvitationMail(
-                plainToken: $plainToken,
-                expiresAt: $expiresAt,
-            ));
-        } catch (\Throwable $e) {
-            report($e);
-
-            $invitation->delete();
-
-            throw ValidationException::withMessages([
-                'email' => [trans('family_invitation.flash.mail_failed')],
-            ]);
-        }
-
-        $this->securityActivityLogger->record(
-            SecurityActivityDescription::FAMILY_INVITATION_CREATED,
-            causer: $invitedBy,
-            subject: $invitation,
-            properties: [
-                'patient_id' => $patient->id,
-                'invited_email_hash' => $emailHash,
-            ],
-        );
+        $this->createCareTeamInvitation($patient, $email, $invitedBy);
     }
 
     public function revoke(FamilyInvitation $invitation, User $revokedBy): void
     {
-        if ($invitation->accepted_at !== null || $invitation->revoked_at !== null) {
-            return;
-        }
-
-        $invitation->forceFill(['revoked_at' => now()])->save();
-
-        $this->securityActivityLogger->record(
-            SecurityActivityDescription::FAMILY_INVITATION_REVOKED,
-            causer: $revokedBy,
-            subject: $invitation,
-            properties: [
-                'patient_id' => $invitation->patient_id,
-            ],
-        );
+        $this->revokeCareTeamInvitation($invitation, $revokedBy);
     }
 
-    public function accept(User $user, string $plainCode): void
+    public function acceptInvitation(User $user, FamilyInvitation $invitation): void
     {
-        $tokenHash = $this->validatedAcceptTokenHash($user, $plainCode);
-
-        DB::transaction(function () use ($user, $tokenHash): void {
-            $invitation = $this->findLockablePendingInvitation($tokenHash);
-
-            if (! $this->invitationMatchesUserEmail($user, $invitation)) {
-                throw $this->invalidCodeException();
-            }
-
-            $this->linkFamilyProfileFromInvitation($user, $invitation);
-
-            $this->securityActivityLogger->record(
-                SecurityActivityDescription::FAMILY_INVITATION_ACCEPTED,
-                causer: $user,
-                subject: $invitation,
-                properties: [
-                    'patient_id' => $invitation->patient_id,
-                ],
-            );
-        });
+        $this->acceptCareTeamInvitation($user, $invitation);
     }
 
-    private function invalidCodeException(): ValidationException
+    public function pendingIncomingForFamilyMember(User $user): Collection
     {
-        return ValidationException::withMessages([
-            'code' => [trans('family_invitation.accept.invalid')],
-        ]);
+        return $this->pendingIncomingForInvitee($user);
     }
 
-    private function validatedAcceptTokenHash(User $user, string $plainCode): string
+    protected function careTeamInvitationDefinition(): PatientCareTeamInvitationDefinition
     {
-        if (! $user->isFamilyMember()) {
-            throw $this->invalidCodeException();
-        }
-
-        if ($user->email_verified_at === null) {
-            throw $this->invalidCodeException();
-        }
-
-        $normalizedCode = self::normalizeInviteCode($plainCode);
-
-        if (strlen($normalizedCode) !== 40 || ! ctype_xdigit($normalizedCode)) {
-            throw $this->invalidCodeException();
-        }
-
-        return hash('sha256', $normalizedCode);
+        return PatientCareTeamInvitationDefinition::family();
     }
 
-    private function findLockablePendingInvitation(string $tokenHash): FamilyInvitation
+    protected function securityActivityLogger(): SecurityActivityLogger
     {
-        $invitation = FamilyInvitation::query()
-            ->where('token_hash', $tokenHash)
-            ->whereNull('accepted_at', 'and', false)
-            ->whereNull('revoked_at', 'and', false)
-            ->where('expires_at', '>', now())
-            ->lockForUpdate()
-            ->first();
-
-        if ($invitation === null) {
-            throw $this->invalidCodeException();
-        }
-
-        return $invitation;
+        return $this->securityActivityLogger;
     }
 
-    private function invitationMatchesUserEmail(User $user, FamilyInvitation $invitation): bool
+    protected function userMayAcceptInvitation(User $user): bool
     {
-        foreach (User::emailHashCandidates($user->email) as $candidate) {
-            if (hash_equals($invitation->invited_email_hash, $candidate)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $user->isFamilyMember();
     }
 
-    private function linkFamilyProfileFromInvitation(User $user, FamilyInvitation $invitation): void
+    /** @return SupportCollection<int, int|string> */
+    protected function linkedPatientIdsForInvitee(User $user): SupportCollection
+    {
+        return $user->family?->patients()->pluck('patients.id') ?? collect();
+    }
+
+    protected function patientAlreadyLinkedToInviteeEmail(Patient $patient, string $normalizedEmail): bool
+    {
+        $emailHashes = User::emailHashCandidates($normalizedEmail);
+
+        return $patient->families()
+            ->whereHas('user', static fn ($query) => $query->whereIn('email_hash', $emailHashes))
+            ->exists();
+    }
+
+    protected function linkInviteeProfileFromInvitation(User $user, Model $invitation): void
     {
         $family = Family::query()->firstOrCreate(
             ['user_id' => $user->id],
@@ -191,21 +88,5 @@ final class FamilyInvitationService
         $family->patients()->syncWithoutDetaching([(int) $invitation->patient_id]);
 
         $invitation->forceFill(['accepted_at' => now()])->save();
-    }
-
-    private function patientHasPendingInvitationForEmail(Patient $patient, string $emailHash, bool $lockForUpdate = false): bool
-    {
-        $query = FamilyInvitation::query()
-            ->where('patient_id', $patient->id)
-            ->where('invited_email_hash', $emailHash)
-            ->whereNull('accepted_at', 'and', false)
-            ->whereNull('revoked_at', 'and', false)
-            ->where('expires_at', '>', now());
-
-        if ($lockForUpdate) {
-            $query->lockForUpdate();
-        }
-
-        return $query->exists();
     }
 }

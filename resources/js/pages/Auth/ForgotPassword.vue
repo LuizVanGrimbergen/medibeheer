@@ -3,6 +3,7 @@ import { Head, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
+import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
@@ -31,9 +32,10 @@ const submit = () => {
         title-key="auth.forgotPwd.title"
         subtitle-key="auth.forgotPwd.intro"
     >
-        <div v-if="props.status" class="mb-4 rounded-lg bg-success/10 px-4 py-3 text-sm font-medium text-success">
-            {{ props.status }}
-        </div>
+        <FlashSuccessBanner
+            class="mb-4"
+            :message="props.status ?? null"
+        />
 
         <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>

@@ -56,6 +56,11 @@ class Patient extends Model
         return $this->hasMany(FamilyInvitation::class);
     }
 
+    public function doctorInvitations(): HasMany
+    {
+        return $this->hasMany(DoctorInvitation::class);
+    }
+
     public function families(): BelongsToMany
     {
         return $this->belongsToMany(Family::class, 'family_patient')

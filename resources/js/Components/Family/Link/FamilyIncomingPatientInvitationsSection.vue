@@ -1,0 +1,92 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3';
+import { UserPlus } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import { Button } from '@/Components/ui/button';
+import type { IncomingCareTeamInvitation } from '@/lib/types';
+import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
+
+const props = defineProps<{
+    invitations: IncomingCareTeamInvitation[];
+}>();
+
+const { t } = useI18n();
+const isOpen = ref(true);
+
+const hasInvitations = computed(() => props.invitations.length > 0);
+
+const collapsedSummary = computed((): string => {
+    if (!hasInvitations.value) {
+        return t('family.link.incomingInvitationsEmpty');
+    }
+
+    if (props.invitations.length === 1) {
+        return t('family.link.incomingInvitationsCollapsedOne');
+    }
+
+    return t('family.link.incomingInvitationsCollapsedMany', {
+        count: String(props.invitations.length),
+    });
+});
+
+function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
+    router.post(invitation.accept_url, {}, { preserveScroll: true });
+}
+</script>
+
+<template>
+    <FamilyOverviewCollapsibleSection
+        v-model:open="isOpen"
+        :heading="t('family.link.incomingInvitationsHeading')"
+        :toggle-label="t('family.link.incomingInvitationsToggle')"
+        :collapsed-summary="collapsedSummary"
+        collapsed-summary-class="line-clamp-2"
+        icon-wrapper-class="bg-primary/12 text-primary"
+        content-class="flex flex-col gap-4 border-t border-border px-4 pb-4 pt-4 md:gap-3 md:px-5 md:pb-5 md:pt-4"
+    >
+        <template #icon>
+            <UserPlus class="size-5" />
+        </template>
+
+        <p class="text-sm leading-relaxed text-text-muted">
+            {{ t('family.link.incomingInvitationsIntro') }}
+        </p>
+
+        <ul
+            v-if="hasInvitations"
+            class="flex flex-col gap-3"
+        >
+            <li
+                v-for="invitation in props.invitations"
+                :key="invitation.public_id"
+                class="flex flex-col gap-3 rounded-xl border border-border bg-surface-2/50 p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+                <div class="min-w-0">
+                    <p class="text-base font-semibold text-text-heading">
+                        {{ t('family.link.incomingInvitationsFrom', { name: invitation.patient_name }) }}
+                    </p>
+                    <p class="mt-1 text-sm text-text-muted">
+                        {{ t('family.link.incomingInvitationsExpires', { date: formatCareTeamExpiry(invitation.expires_at) }) }}
+                    </p>
+                </div>
+
+                <Button
+                    type="button"
+                    class="w-full shrink-0 sm:w-auto"
+                    @click="acceptInvitation(invitation)"
+                >
+                    {{ t('family.link.incomingInvitationsAccept') }}
+                </Button>
+            </li>
+        </ul>
+
+        <p
+            v-else
+            class="text-sm leading-relaxed text-text-muted"
+        >
+            {{ t('family.link.incomingInvitationsEmpty') }}
+        </p>
+    </FamilyOverviewCollapsibleSection>
+</template>

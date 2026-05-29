@@ -76,6 +76,7 @@ const selectedDayCheckin = computed(() => {
                 <FamilyWellbeingCheckinCard
                     v-if="selectedDayCheckin !== undefined"
                     :checkin="selectedDayCheckin"
+                    density="compact"
                 />
                 <p
                     v-else

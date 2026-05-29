@@ -21,11 +21,38 @@ export type Auth = {
     user: User | null;
 };
 
-export type PendingFamilyInvitation = {
-    id: number;
+export type PendingCareTeamInvitation = {
+    public_id: string;
     expires_at: string;
     revoke_url: string;
 };
+
+export type IncomingCareTeamInvitation = {
+    public_id: string;
+    patient_name: string;
+    expires_at: string;
+    accept_url: string;
+};
+
+export type LinkedCareTeamMember = {
+    public_id: string;
+    name: string;
+    unlink_url: string;
+};
+
+export type PendingFamilyInvitation = PendingCareTeamInvitation;
+
+export type PendingDoctorInvitation = PendingCareTeamInvitation;
+
+export type IncomingFamilyInvitation = IncomingCareTeamInvitation;
+
+export type LinkedDoctor = LinkedCareTeamMember;
+
+export type LinkedPatient = LinkedCareTeamMember;
+
+export type LinkedFamilyMember = LinkedCareTeamMember;
+
+export type IncomingDoctorInvitation = IncomingCareTeamInvitation;
 
 export type PendingMedicationPlanProposal = {
     id: number;

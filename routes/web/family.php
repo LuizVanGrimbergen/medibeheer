@@ -9,7 +9,7 @@ use App\Http\Controllers\Family\Dashboard\FamilyUpdatesController;
 use App\Http\Controllers\Family\Dashboard\FamilyWellbeingController;
 use App\Http\Controllers\Family\Dashboard\SwitchActivePatientController;
 use App\Http\Controllers\Family\Invitations\AcceptAppointmentTransportInvitationController;
-use App\Http\Controllers\Family\Invitations\AcceptFamilyInvitationController;
+use App\Http\Controllers\Family\Invitations\AcceptIncomingFamilyInvitationController;
 use App\Http\Controllers\Family\Invitations\DeclineAppointmentTransportInvitationController;
 use App\Http\Controllers\Family\MedicationPlans\DuplicateFamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\FamilyMedicationPlanProposalController;
@@ -75,9 +75,9 @@ Route::middleware([
         Route::get('wellbeing', FamilyWellbeingController::class)->name('wellbeing');
 
         /* Family Invitations */
-        Route::post('invitations/accept', AcceptFamilyInvitationController::class)
+        Route::post('invitations/{incomingFamilyInvitation}/accept-incoming', AcceptIncomingFamilyInvitationController::class)
             ->middleware('throttle:family-invitation-accept')
-            ->name('invitations.accept');
+            ->name('invitations.incoming.accept');
 
         /* Appointment Transport Invitations */
         Route::post('transport-invitations/{transportInvitation}/accept', AcceptAppointmentTransportInvitationController::class)
