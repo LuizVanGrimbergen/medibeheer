@@ -4,6 +4,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
+import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 
 const props = defineProps<{
     status?: string;
@@ -19,6 +20,10 @@ const submit = () => {
 const verificationLinkSent = computed(
     () => props.status === 'verification-link-sent',
 );
+
+const verificationLinkSentMessage = computed(() =>
+    verificationLinkSent.value ? t('auth.verifyEmail.linkSent') : null,
+);
 </script>
 
 <template>
@@ -30,12 +35,10 @@ const verificationLinkSent = computed(
         title-key="auth.verifyEmail.title"
         subtitle-key="auth.verifyEmail.intro"
     >
-        <div
-            v-if="verificationLinkSent"
-            class="mb-4 rounded-lg bg-success/10 px-4 py-3 text-sm font-medium text-success"
-        >
-            {{ t('auth.verifyEmail.linkSent') }}
-        </div>
+        <FlashSuccessBanner
+            class="mb-4"
+            :message="verificationLinkSentMessage"
+        />
 
         <form class="space-y-3" @submit.prevent="submit">
             <Button

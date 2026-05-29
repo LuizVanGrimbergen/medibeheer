@@ -1,9 +1,24 @@
 <?php
 
 use App\Models\User;
+use App\Notifications\Auth\VerifyEmailNotification;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\URL;
+
+test('verification email does not include the action url subcopy block', function () {
+    $user = User::factory()->unverified()->create();
+
+    $html = (string) (new VerifyEmailNotification)->toMail($user)->render();
+
+    expect($html)->not->toContain('having trouble clicking');
+    expect($html)->not->toContain('copy and paste the URL');
+    expect($html)->toContain(url('/images/medibeheer-pwa.png'));
+    expect($html)->not->toContain('Laravel');
+    expect($html)->not->toContain('<pre');
+    expect($html)->toContain('<h1');
+    expect($html)->toContain('E-mailadres bevestigen');
+});
 
 test('email verification screen can be rendered', function () {
     $user = User::factory()->unverified()->create();
