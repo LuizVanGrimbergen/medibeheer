@@ -33,8 +33,6 @@ class MedicationResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'patient_id' => $this->patient_id,
-            'family_id' => $this->family_id,
             'list_status' => $listStatus->value,
             'name' => (string) $this->name,
             'dose' => filled($this->dose) ? (string) $this->dose : null,

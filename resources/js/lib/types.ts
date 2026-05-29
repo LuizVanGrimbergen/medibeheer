@@ -295,13 +295,10 @@ export const MEDICATION_INTAKE_FREQUENCY_VALUES = [
 export type MedicationIntakeFrequencyValue = (typeof MEDICATION_INTAKE_FREQUENCY_VALUES)[number];
 
 export type MedicationScheduleListItem = {
-    id: number;
-    medication_id: number;
     meal_timing: MedicationMealTimingValue;
     intake_frequency: MedicationIntakeFrequencyValue;
     intake_weekdays: number[] | null;
     times_per_day: string;
-    dose_quantity: string;
     dose_time: string;
     snooze_time: string;
     start_date: string | null;
@@ -310,7 +307,6 @@ export type MedicationScheduleListItem = {
 
 export type MedicationStockListItem = {
     id: number;
-    medication_id: number;
     current_stock: string;
 };
 
@@ -355,8 +351,6 @@ export type TodayMedicationIntakeSlot = {
 
 export type MedicationListItem = {
     id: number;
-    patient_id: number;
-    family_id: number | null;
     list_status: MedicationListStatusValue;
     name: string;
     dose: string | null;

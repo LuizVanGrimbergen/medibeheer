@@ -13,7 +13,6 @@ class MedicationStockResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'medication_id' => $this->medication_id,
             'current_stock' => (string) $this->current_stock,
         ];
     }
