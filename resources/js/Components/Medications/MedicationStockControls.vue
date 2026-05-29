@@ -35,9 +35,7 @@ const dialogContentClass = patientShellDialogContentClass('md');
 const primaryStock = computed(() => props.medication.stocks[0]);
 
 const resolvedIdPrefix = computed(
-    () =>
-        props.idPrefix ??
-        `medication-stock-${props.medication.id}-${primaryStock.value?.id ?? 0}`,
+    () => props.idPrefix ?? `medication-stock-${props.medication.id}`,
 );
 
 const stockFormId = computed(() => `${resolvedIdPrefix.value}-form`);
