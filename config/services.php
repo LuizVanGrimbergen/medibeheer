@@ -37,6 +37,14 @@ return [
 
     'family_invitation' => [
         'expiry_days' => (int) env('FAMILY_INVITATION_EXPIRY_DAYS', 14),
+        'daily_max' => (int) env('FAMILY_INVITATION_DAILY_MAX', 20),
+        'recipient_daily_max' => (int) env('FAMILY_INVITATION_RECIPIENT_DAILY_MAX', 10),
+    ],
+
+    'doctor_invitation' => [
+        'expiry_days' => (int) env('DOCTOR_INVITATION_EXPIRY_DAYS', 14),
+        'daily_max' => (int) env('DOCTOR_INVITATION_DAILY_MAX', 20),
+        'recipient_daily_max' => (int) env('DOCTOR_INVITATION_RECIPIENT_DAILY_MAX', 10),
     ],
 
     'medication_plan_proposal' => [
