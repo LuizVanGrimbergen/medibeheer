@@ -48,6 +48,16 @@ final class PatientMedicationsScreenService
         );
     }
 
+    /** @return list<string> */
+    public function activeMedicationNamesFor(Patient $patient): array
+    {
+        return $patient->medications()
+            ->activeOnMedicationList()
+            ->orderBy('name')
+            ->pluck('name')
+            ->all();
+    }
+
     /** @param list<string> $with */
     private function paginateMedicationRegister(Patient $patient, array $with, int $page = 1): array
     {

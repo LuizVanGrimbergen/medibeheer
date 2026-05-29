@@ -61,7 +61,7 @@ const selectedRoleNoticeClass = computed(() => {
         return 'text-role-family';
     }
 
-    return 'text-text-muted';
+    return 'text-text';
 });
 
 const bannerErrorMessage = computed(() => {
@@ -111,11 +111,14 @@ const submit = () => {
         </p>
 
         <div
-            v-if="selectedRoleLabel"
             class="mb-4 text-center text-sm font-semibold"
             :class="selectedRoleNoticeClass"
         >
-            {{ t('auth.register.roleNotice', { role: selectedRoleLabel }) }}
+            {{
+                selectedRoleLabel
+                    ? t('auth.register.roleNotice', { role: selectedRoleLabel })
+                    : t('auth.register.roleRequired')
+            }}
         </div>
 
         <form class="space-y-5" novalidate @submit.prevent="submit">

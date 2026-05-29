@@ -17,9 +17,14 @@ const periodIcons: Record<TodayMedicationIntakeDayPeriodValue, LucideIcon> = {
     night: Moon,
 };
 
-const props = defineProps<{
-    slots: TodayMedicationIntakeSlot[];
-}>();
+const props = withDefaults(
+    defineProps<{
+        slots?: TodayMedicationIntakeSlot[];
+    }>(),
+    {
+        slots: () => [],
+    },
+);
 
 const { t } = useI18n();
 

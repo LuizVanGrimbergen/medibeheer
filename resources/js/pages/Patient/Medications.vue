@@ -50,14 +50,11 @@ const {
         <PatientPageShell :title="t('patient.medications.title')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"
+                :has-active-medications="props.active_medications.meta.total > 0"
                 @new-medication-click="createDialogOpen = true"
             />
 
             <section class="space-y-5">
-                <h1 class="text-2xl font-bold leading-tight text-text-heading sm:text-3xl sm:leading-tight">
-                    {{ t('patient.medications.listHeading') }}
-                </h1>
-
                 <ul
                     v-if="props.active_medications.data.length > 0"
                     class="flex min-w-0 w-full flex-col gap-5"

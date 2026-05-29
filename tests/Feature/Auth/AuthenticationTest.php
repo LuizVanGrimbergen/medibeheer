@@ -48,6 +48,37 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('patient.dashboard', absolute: false));
 });
 
+test('inertia login uses a location visit after successful authentication', function () {
+    $user = User::factory()->create(['role' => 'patient']);
+
+    $response = $this
+        ->withHeader('X-Inertia', 'true')
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'role' => 'patient',
+        ]);
+
+    $this->assertAuthenticated();
+    $response->assertStatus(409);
+    $response->assertHeader('X-Inertia-Location', route('patient.dashboard', absolute: false));
+});
+
+test('login redirects to the dashboard when the intended url points to login', function () {
+    $user = User::factory()->create(['role' => 'patient']);
+
+    $response = $this
+        ->withSession(['url.intended' => route('login', ['role' => 'patient'])])
+        ->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+            'role' => 'patient',
+        ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('patient.dashboard', absolute: false));
+});
+
 test('unverified users are redirected to email verification notice after login', function () {
     $user = User::factory()->unverified()->create(['role' => 'patient']);
 

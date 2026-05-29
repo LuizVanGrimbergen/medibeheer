@@ -3,6 +3,12 @@ export default {
     metaDescription:
         'Overzicht van uw medicatie in Medibeheer. Voeg medicaties toe en beheer later inname en voorraad.',
     newMedication: 'Medicatie toevoegen',
+    pharmacistOverview: {
+        button: 'Actieve medicatie',
+        title: 'Actieve medicatie',
+        description: 'Toon dit scherm aan uw apotheker.',
+        back: 'Terug',
+    },
     dialogEditTitle: 'Medicatie wijzigen',
     deleteConfirm: {
         title: 'Medicatie verwijderen?',
@@ -13,7 +19,7 @@ export default {
     },
     empty:
         'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
-    listHeading: 'Uw medicatie van vandaag',
+    listHeading: 'Uw medicatie',
     listStatus: {
         ended: 'Afgelopen',
         removed: 'Verwijderd',

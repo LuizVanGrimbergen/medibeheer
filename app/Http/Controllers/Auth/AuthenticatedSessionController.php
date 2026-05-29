@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Enums\SecurityActivityDescription;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use App\Services\Audit\SecurityActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -38,7 +40,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request): RedirectResponse|SymfonyResponse
     {
         if (Auth::check()) {
             Auth::guard('web')->logout();
@@ -56,11 +58,13 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('login');
         }
 
-        if (! $authenticatedUser->hasVerifiedEmail()) {
-            return redirect()->intended(route('verification.notice'));
+        $redirectUrl = $this->resolvePostAuthenticationRedirectUrl($request, $authenticatedUser);
+
+        if ($request->header('X-Inertia')) {
+            return Inertia::location($redirectUrl);
         }
 
-        return redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl());
+        return redirect()->to($redirectUrl);
     }
 
     /**
@@ -87,5 +91,42 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('home');
+    }
+
+    private function resolvePostAuthenticationRedirectUrl(Request $request, User $user): string
+    {
+        if (! $user->hasVerifiedEmail()) {
+            return route('verification.notice', absolute: false);
+        }
+
+        $default = $user->defaultAuthenticatedHomeUrl();
+        $intended = $request->session()->pull('url.intended');
+
+        if ($intended !== null && ! $this->isAuthenticationRedirectUrl($intended)) {
+            return $intended;
+        }
+
+        return $default;
+    }
+
+    private function isAuthenticationRedirectUrl(string $url): bool
+    {
+        $path = '/'.ltrim((string) parse_url($url, PHP_URL_PATH), '/');
+
+        $authenticationPaths = collect([
+            route('login', absolute: false),
+            route('register', absolute: false),
+            route('verification.notice', absolute: false),
+            route('password.request', absolute: false),
+            route('password.confirm', absolute: false),
+        ])
+            ->map(static fn (string $authenticationRoute): string => '/'.ltrim((string) parse_url($authenticationRoute, PHP_URL_PATH), '/'))
+            ->all();
+
+        if (in_array($path, $authenticationPaths, true)) {
+            return true;
+        }
+
+        return str_starts_with($path, '/reset-password');
     }
 }

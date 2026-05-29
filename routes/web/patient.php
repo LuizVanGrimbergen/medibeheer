@@ -25,6 +25,7 @@ use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
+use App\Http\Controllers\Patient\Medications\ShowPatientActiveMedicationsPharmacistOverviewController;
 use App\Http\Controllers\Patient\Medications\ShowPatientPushMedicationMarkSuccessController;
 use App\Http\Controllers\Patient\PushSubscriptions\DestroyPatientPushSubscriptionController;
 use App\Http\Controllers\Patient\PushSubscriptions\StorePatientPushSubscriptionController;
@@ -57,6 +58,9 @@ Route::middleware([
 
         /* navigation routes */
         Route::get('/', PatientDashboardController::class)->name('dashboard');
+        Route::get('medications/pharmacist-overview', ShowPatientActiveMedicationsPharmacistOverviewController::class)
+            ->name('medications.pharmacist-overview');
+
         Route::resource('medications', PatientMedicationController::class)
             ->only(['index', 'store', 'update', 'destroy'])
             ->names([
