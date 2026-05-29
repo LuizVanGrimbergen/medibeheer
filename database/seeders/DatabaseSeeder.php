@@ -88,6 +88,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PatientWebPushDemoSeeder::class, false, [
             'patientUser' => $primaryPatientUser,
         ]);
+        $this->call(DoctorDemoSeeder::class);
 
         $primaryPatient->refresh();
         $checkinCount = $primaryPatient->dailyCheckins()->count();
@@ -101,13 +102,15 @@ class DatabaseSeeder extends Seeder
                 ->join(', ');
 
             $this->command->info(sprintf(
-                'Demo: familie %s (%s) met %d gekoppelde patiënten (%s). Primair: %s (%s). Wachtwoord: password. Push-test: %s.',
+                'Demo: familie %s (%s) met %d gekoppelde patiënten (%s). Primair: %s (%s). Dokter: %s (%s). Wachtwoord: password. Push-test: %s.',
                 $familyUser->name,
                 $familyUser->email,
                 count($linkedPatients),
                 $linkedPatientNames,
                 $primaryPatientUser?->name ?? 'Patient',
                 $primaryPatientUser?->email ?? self::DEMO_PATIENT_EMAIL,
+                DoctorDemoSeeder::DEMO_DOCTOR_NAME,
+                DoctorDemoSeeder::DEMO_DOCTOR_EMAIL,
                 self::DEMO_PATIENT_EMAIL,
             ));
         }
