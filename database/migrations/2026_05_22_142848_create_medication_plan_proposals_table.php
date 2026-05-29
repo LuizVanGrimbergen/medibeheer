@@ -11,18 +11,22 @@ return new class extends Migration
     {
         Schema::create('medication_plan_proposals', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('patient_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('family_id')->constrained()->cascadeOnDelete();
+            $table->text('invited_patient_email')->nullable();
+            $table->string('invited_patient_email_hash', 64)->nullable();
             $table->string('status')->default(MedicationPlanProposalStatus::DRAFT->value);
             $table->string('token_hash', 64)->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamp('accepted_at')->nullable();
+            $table->timestamp('declined_at')->nullable();
             $table->timestamp('revoked_at')->nullable();
             $table->timestamps();
 
             $table->unique('token_hash');
             $table->index(['patient_id', 'family_id', 'status']);
+            $table->index('invited_patient_email_hash');
         });
     }
 
