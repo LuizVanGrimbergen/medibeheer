@@ -99,12 +99,34 @@ class AuthenticatedSessionController extends Controller
             return route('verification.notice', absolute: false);
         }
 
+        $default = $user->defaultAuthenticatedHomeUrl();
         $intended = $request->session()->pull('url.intended');
 
-        if ($intended !== null) {
+        if ($intended !== null && ! $this->isAuthenticationRedirectUrl($intended)) {
             return $intended;
         }
 
-        return $user->defaultAuthenticatedHomeUrl();
+        return $default;
+    }
+
+    private function isAuthenticationRedirectUrl(string $url): bool
+    {
+        $path = '/'.ltrim((string) parse_url($url, PHP_URL_PATH), '/');
+
+        $authenticationPaths = collect([
+            route('login', absolute: false),
+            route('register', absolute: false),
+            route('verification.notice', absolute: false),
+            route('password.request', absolute: false),
+            route('password.confirm', absolute: false),
+        ])
+            ->map(static fn (string $authenticationRoute): string => '/'.ltrim((string) parse_url($authenticationRoute, PHP_URL_PATH), '/'))
+            ->all();
+
+        if (in_array($path, $authenticationPaths, true)) {
+            return true;
+        }
+
+        return str_starts_with($path, '/reset-password');
     }
 }
