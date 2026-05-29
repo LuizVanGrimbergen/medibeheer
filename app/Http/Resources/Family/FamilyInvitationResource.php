@@ -12,9 +12,9 @@ class FamilyInvitationResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
+            'public_id' => $this->public_id,
             'expires_at' => $this->expires_at->toISOString(),
-            'revoke_url' => route('patient.family.invitations.destroy', ['familyInvitation' => $this->id], absolute: false),
+            'revoke_url' => route('patient.family.invitations.destroy', ['familyInvitation' => $this->public_id], absolute: false),
         ];
     }
 }

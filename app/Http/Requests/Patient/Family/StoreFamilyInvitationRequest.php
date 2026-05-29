@@ -2,41 +2,18 @@
 
 namespace App\Http\Requests\Patient\Family;
 
-use App\Models\User;
-use Closure;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
+use App\Enums\UserRole;
+use App\Http\Requests\Patient\StorePatientCareTeamInvitationRequest;
 
-class StoreFamilyInvitationRequest extends FormRequest
+class StoreFamilyInvitationRequest extends StorePatientCareTeamInvitationRequest
 {
-    /**************************************/
-    /*           Authorization */
-    /**************************************/
-    public function authorize(): bool
+    protected function inviteeRole(): UserRole
     {
-        return $this->user() !== null && $this->user()->isPatient();
+        return UserRole::FAMILY_MEMBER;
     }
 
-    /**************************************/
-    /*          Validation Rules */
-    /**************************************/
-    public function rules(): array
+    protected function translationKey(): string
     {
-        return [
-            'email' => ['required', 'email', 'max:255',
-                function (string $attribute, mixed $value, Closure $fail, Validator $_): void {
-                    if ($attribute === '') {
-                        return;
-                    }
-
-                    $normalized = User::normalizeEmail((string) $value);
-                    $self = User::normalizeEmail($this->user()->email);
-
-                    if ($normalized === $self) {
-                        $fail(trans('family_invitation.validation.not_self'));
-                    }
-                },
-            ],
-        ];
+        return 'family_invitation';
     }
 }

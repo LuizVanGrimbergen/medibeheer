@@ -15,8 +15,8 @@ class FamilyInvitationMail extends Mailable
     use SerializesModels;
 
     public function __construct(
-        public string $plainToken,
         public CarbonInterface $expiresAt,
+        public string $patientName,
     ) {}
 
     public function envelope(): Envelope
@@ -31,8 +31,9 @@ class FamilyInvitationMail extends Mailable
         return new Content(
             markdown: 'mail.family-invitation',
             with: [
-                'inviteCode' => $this->plainToken,
+                'acceptUrl' => route('family.invitation.entry', absolute: true),
                 'expiresAt' => $this->expiresAt,
+                'patientName' => $this->patientName,
             ],
         );
     }
