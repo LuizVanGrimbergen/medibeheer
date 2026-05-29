@@ -173,6 +173,7 @@ export default {
         selectedDayNoSchedule: 'Geen geplande innames op deze dag.',
         selectedDayNoIntakes: 'Geen innames gevonden voor deze dag.',
         calendar: {
+            title: 'Inname per dag',
             prevMonth: 'Vorige maand',
             nextMonth: 'Volgende maand',
             gridAria: 'Inname per dag in {month}',

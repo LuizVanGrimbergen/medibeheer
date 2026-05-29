@@ -16,10 +16,16 @@ const props = withDefaults(
         selectedDate?: string | null;
         navigateRouteName: string;
         navigateQueryKey?: string;
+        density?: 'default' | 'compact';
+        showMonthNavigation?: boolean;
+        headerTitle?: string;
     }>(),
     {
         selectedDate: null,
         navigateQueryKey: 'calendar_month',
+        density: 'default',
+        showMonthNavigation: true,
+        headerTitle: undefined,
     },
 );
 
@@ -71,6 +77,9 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         :selected-date="props.selectedDate"
         :navigate-route-name="props.navigateRouteName"
         :navigate-query-key="props.navigateQueryKey"
+        :density="props.density"
+        :show-month-navigation="props.showMonthNavigation"
+        :header-title="props.headerTitle"
         grid-caption-key="patient.medications.history.calendar.gridAria"
         :prev-month-aria-label="t('patient.medications.history.calendar.prevMonth')"
         :next-month-aria-label="t('patient.medications.history.calendar.nextMonth')"

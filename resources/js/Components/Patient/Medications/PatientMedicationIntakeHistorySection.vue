@@ -11,16 +11,23 @@ import type {
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import { compareTodayMedicationIntakeSlots } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
 
-const props = defineProps<{
-    calendarMonth: string;
-    calendarDays: MedicationIntakeCalendarDay[];
-    calendarSlots: MedicationIntakeHistorySlot[];
-    navigateRouteName: string;
-    navigateQueryKey?: string;
-    selectedDayHeadingKey: string;
-    selectedDayNoScheduleKey: string;
-    selectedDayNoIntakesKey: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        calendarMonth: string;
+        calendarDays: MedicationIntakeCalendarDay[];
+        calendarSlots: MedicationIntakeHistorySlot[];
+        navigateRouteName: string;
+        navigateQueryKey?: string;
+        selectedDayHeadingKey: string;
+        selectedDayNoScheduleKey: string;
+        selectedDayNoIntakesKey: string;
+        slotCardDensity?: 'default' | 'compact';
+    }>(),
+    {
+        navigateQueryKey: 'calendar_month',
+        slotCardDensity: 'default',
+    },
+);
 
 const { t } = useI18n();
 
@@ -110,6 +117,7 @@ const selectedDayHasSchedule = computed((): boolean => {
                     v-for="slot in selectedDaySlots"
                     :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
                     :slot="slot"
+                    :density="props.slotCardDensity"
                 />
             </div>
         </HistorySelectedDaySection>

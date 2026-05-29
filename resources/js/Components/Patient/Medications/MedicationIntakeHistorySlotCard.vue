@@ -10,10 +10,17 @@ import {
     medicationTypeLabel,
 } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
+import { cn } from '@/lib/utils';
 
-const props = defineProps<{
-    slot: MedicationIntakeHistorySlot;
-}>();
+const props = withDefaults(
+    defineProps<{
+        slot: MedicationIntakeHistorySlot;
+        density?: 'default' | 'compact';
+    }>(),
+    {
+        density: 'default',
+    },
+);
 
 const { t } = useI18n();
 
@@ -28,7 +35,13 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medicati
 
 <template>
     <Card class="min-w-0 w-full rounded-2xl border border-border bg-surface text-text shadow-sm">
-        <CardContent class="flex flex-col gap-4 p-5 sm:gap-5 sm:p-6">
+        <CardContent
+            :class="
+                cn(
+                    props.density === 'compact' ? 'p-4' : 'flex flex-col gap-4 p-5 sm:gap-5 sm:p-6',
+                )
+            "
+        >
             <div class="flex min-w-0 items-start gap-4">
                 <div
                     class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 sm:size-14"
@@ -67,40 +80,42 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medicati
                 </span>
             </div>
 
-            <div
-                class="grid min-w-0 gap-3"
-                :class="doseLine !== null ? 'grid-cols-2' : 'grid-cols-1'"
-            >
+            <template v-if="props.density === 'default'">
                 <div
-                    v-if="doseLine !== null"
-                    class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5"
+                    class="grid min-w-0 gap-3"
+                    :class="doseLine !== null ? 'grid-cols-2' : 'grid-cols-1'"
                 >
-                    <span class="text-xs font-semibold text-text-muted">
-                        {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
-                    </span>
-                    <span class="text-base font-bold tabular-nums text-text-heading">
-                        {{ doseLine }}
-                    </span>
+                    <div
+                        v-if="doseLine !== null"
+                        class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5"
+                    >
+                        <span class="text-xs font-semibold text-text-muted">
+                            {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
+                        </span>
+                        <span class="text-base font-bold tabular-nums text-text-heading">
+                            {{ doseLine }}
+                        </span>
+                    </div>
+                    <div class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5">
+                        <span class="text-xs font-semibold text-text-muted">
+                            {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
+                        </span>
+                        <span class="text-base font-bold tabular-nums text-text-heading">
+                            {{ slot.dose_time }}
+                        </span>
+                    </div>
                 </div>
-                <div class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5">
-                    <span class="text-xs font-semibold text-text-muted">
-                        {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
-                    </span>
-                    <span class="text-base font-bold tabular-nums text-text-heading">
-                        {{ slot.dose_time }}
-                    </span>
-                </div>
-            </div>
 
-            <p
-                v-if="notePreview !== null"
-                class="min-w-0 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-text"
-            >
-                <span class="font-semibold text-text-muted">
-                    {{ t('patient.dashboard.todayMedications.intakeCard.note') }}:
-                </span>
-                {{ notePreview }}
-            </p>
+                <p
+                    v-if="notePreview !== null"
+                    class="min-w-0 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-text"
+                >
+                    <span class="font-semibold text-text-muted">
+                        {{ t('patient.dashboard.todayMedications.intakeCard.note') }}:
+                    </span>
+                    {{ notePreview }}
+                </p>
+            </template>
         </CardContent>
     </Card>
 </template>
