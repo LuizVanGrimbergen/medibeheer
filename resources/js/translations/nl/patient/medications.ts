@@ -19,7 +19,7 @@ export default {
     },
     empty:
         'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
-    listHeading: 'Uw medicatie van vandaag',
+    listHeading: 'Uw medicatie',
     listStatus: {
         ended: 'Afgelopen',
         removed: 'Verwijderd',
