@@ -13,10 +13,16 @@ const props = withDefaults(
         moodsByDate: Record<string, DailyMoodScoreValue>;
         selectedDate?: string | null;
         navigateRouteName?: string;
+        density?: 'default' | 'compact';
+        showMonthNavigation?: boolean;
+        headerTitle?: string;
     }>(),
     {
         selectedDate: null,
         navigateRouteName: 'family.wellbeing',
+        density: 'default',
+        showMonthNavigation: true,
+        headerTitle: undefined,
     },
 );
 
@@ -58,6 +64,9 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         :calendar-month="props.calendarMonth"
         :selected-date="props.selectedDate"
         :navigate-route-name="props.navigateRouteName"
+        :density="props.density"
+        :show-month-navigation="props.showMonthNavigation"
+        :header-title="props.headerTitle"
         grid-caption-key="family.wellbeing.calendar.gridAria"
         :prev-month-aria-label="t('family.wellbeing.calendar.prevMonth')"
         :next-month-aria-label="t('family.wellbeing.calendar.nextMonth')"

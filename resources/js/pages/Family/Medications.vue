@@ -117,6 +117,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                     selected-day-heading-key="patient.medications.history.selectedDayHeading"
                     selected-day-no-schedule-key="patient.medications.history.selectedDayNoSchedule"
                     selected-day-no-intakes-key="patient.medications.history.selectedDayNoIntakes"
+                    slot-card-density="compact"
                 />
 
                 <section class="space-y-4">

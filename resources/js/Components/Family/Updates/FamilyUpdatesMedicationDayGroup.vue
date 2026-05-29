@@ -31,6 +31,7 @@ const dateLabel = computed((): string =>
                 v-for="intake in props.intakes"
                 :key="`${intake.medication_schedule_id}-${intake.dose_time}`"
                 :slot="intake"
+                density="compact"
             />
         </div>
     </section>
