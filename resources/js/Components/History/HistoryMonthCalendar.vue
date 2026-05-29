@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Button } from '@/Components/ui/button';
+import HistoryMonthNavigation from '@/Components/History/HistoryMonthNavigation.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import { useHistoryMonthCalendarGrid } from '@/composables/useHistoryMonthCalendarGrid';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
@@ -20,10 +18,16 @@ const props = withDefaults(
         nextMonthAriaLabel: string;
         openDayDetailsAriaLabel: string;
         dayAriaLabel: (cell: HistoryMonthCalendarCell) => string;
+        density?: 'default' | 'compact';
+        showMonthNavigation?: boolean;
+        headerTitle?: string;
     }>(),
     {
         selectedDate: null,
         navigateQueryKey: 'calendar_month',
+        density: 'default',
+        showMonthNavigation: true,
+        headerTitle: undefined,
     },
 );
 
@@ -35,40 +39,12 @@ const { t } = useI18n();
 
 const calendarMonthRef = toRef(props, 'calendarMonth');
 
-const { monthTitle, weekdayLabels, calendarWeeks, shiftMonth } =
+const { monthTitle, weekdayLabels, calendarWeeks } =
     useHistoryMonthCalendarGrid(calendarMonthRef);
 
 const gridCaption = computed(() =>
     t(props.gridCaptionKey, { month: monthTitle.value }),
 );
-
-const preservedQuery = computed((): Record<string, string> => {
-    if (typeof globalThis.window === 'undefined') {
-        return {};
-    }
-
-    const params = new URLSearchParams(globalThis.window.location.search);
-    const query: Record<string, string> = {};
-
-    params.forEach((value, key) => {
-        if (key !== props.navigateQueryKey) {
-            query[key] = value;
-        }
-    });
-
-    return query;
-});
-
-function visitMonth(delta: number): void {
-    router.get(
-        route(props.navigateRouteName),
-        {
-            ...preservedQuery.value,
-            [props.navigateQueryKey]: shiftMonth(delta),
-        },
-        { preserveScroll: true },
-    );
-}
 
 function onDayActivate(cell: HistoryMonthCalendarCell): void {
     if (cell.dateKey === null) {
@@ -83,7 +59,10 @@ function dayButtonClass(cell: HistoryMonthCalendarCell): string {
         cell.dateKey !== null && props.selectedDate === cell.dateKey;
 
     return cn(
-        'flex min-h-14 w-full max-w-full min-w-0 flex-col items-center justify-start rounded-lg border px-0.5 py-1 text-center transition-colors sm:min-h-16',
+        'flex w-full max-w-full min-w-0 flex-col items-center justify-start rounded-lg border px-0.5 py-0.5 text-center transition-colors',
+        props.density === 'compact'
+            ? 'min-h-10 sm:min-h-11'
+            : 'min-h-14 py-1 sm:min-h-16',
         'border-transparent bg-surface-hover/40 hover:bg-surface-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary',
         selected && 'ring-2 ring-inset ring-primary/40',
     );
@@ -96,41 +75,49 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
 
 <template>
     <Card class="min-w-0 border-border">
-        <CardHeader class="pb-4 pt-6">
-            <div class="grid w-full grid-cols-[auto_1fr_auto] items-center gap-2">
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    class="justify-self-start"
-                    :aria-label="props.prevMonthAriaLabel"
-                    @click="visitMonth(-1)"
-                >
-                    <ChevronLeft
-                        class="size-4"
-                        aria-hidden="true"
-                    />
-                </Button>
-                <CardTitle class="truncate text-center text-base font-semibold">
-                    {{ monthTitle }}
-                </CardTitle>
-                <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    class="justify-self-end"
-                    :aria-label="props.nextMonthAriaLabel"
-                    @click="visitMonth(1)"
-                >
-                    <ChevronRight
-                        class="size-4"
-                        aria-hidden="true"
-                    />
-                </Button>
-            </div>
+        <CardHeader
+            v-if="props.showMonthNavigation || props.headerTitle !== undefined"
+            :class="props.density === 'compact' ? 'pb-2 pt-4' : 'pb-4 pt-6'"
+        >
+            <HistoryMonthNavigation
+                v-if="props.showMonthNavigation"
+                :calendar-month="props.calendarMonth"
+                :navigate-route-name="props.navigateRouteName"
+                :navigate-query-key="props.navigateQueryKey"
+                :prev-month-aria-label="props.prevMonthAriaLabel"
+                :next-month-aria-label="props.nextMonthAriaLabel"
+                :density="props.density"
+            />
+            <CardTitle
+                v-else
+                :class="
+                    cn(
+                        'font-semibold',
+                        props.density === 'compact' ? 'text-sm' : 'text-base',
+                    )
+                "
+            >
+                {{ props.headerTitle }}
+            </CardTitle>
         </CardHeader>
-        <CardContent class="space-y-4 pb-6 pt-0">
-            <div class="min-w-0 rounded-xl border border-border bg-bg px-1 py-2 sm:px-3 sm:py-3">
+        <CardContent
+            :class="
+                cn(
+                    'pt-0',
+                    props.density === 'compact' ? 'space-y-3 pb-4' : 'space-y-4 pb-6',
+                )
+            "
+        >
+            <div
+                :class="
+                    cn(
+                        'min-w-0 rounded-xl border border-border bg-bg',
+                        props.density === 'compact'
+                            ? 'px-1 py-1.5'
+                            : 'px-1 py-2 sm:px-3 sm:py-3',
+                    )
+                "
+            >
                 <table class="w-full table-fixed border-collapse">
                     <caption class="sr-only">
                         {{ gridCaption }}
@@ -155,7 +142,7 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
                             <td
                                 v-for="(cell, cellIndex) in week"
                                 :key="`${weekIndex}-${cellIndex}`"
-                                class="p-0.5 align-top sm:p-1"
+                                class="p-0.5 align-top"
                                 :aria-hidden="cell.dayNum === null ? true : undefined"
                             >
                                 <button
@@ -166,7 +153,16 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
                                     :aria-pressed="selectedDate === cell.dateKey"
                                     @click="onDayActivate(cell)"
                                 >
-                                    <span class="text-2xs font-semibold leading-none text-text-heading sm:text-xs">
+                                    <span
+                                        :class="
+                                            cn(
+                                                'font-semibold leading-none text-text-heading',
+                                                props.density === 'compact'
+                                                    ? 'text-2xs'
+                                                    : 'text-2xs sm:text-xs',
+                                            )
+                                        "
+                                    >
                                         {{ cell.dayNum }}
                                     </span>
                                     <span class="mt-auto flex flex-1 flex-col items-center justify-center pb-0.5 pt-1">
@@ -184,7 +180,14 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
 
             <div
                 v-if="$slots.legend"
-                class="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-4 text-xs text-text-muted"
+                :class="
+                    cn(
+                        'flex flex-wrap items-center border-t border-border text-text-muted',
+                        props.density === 'compact'
+                            ? 'gap-x-3 gap-y-1.5 pt-3 text-2xs'
+                            : 'gap-x-4 gap-y-2 pt-4 text-xs',
+                    )
+                "
                 aria-hidden="true"
             >
                 <slot name="legend" />
