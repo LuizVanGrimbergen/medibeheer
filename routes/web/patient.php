@@ -7,7 +7,12 @@ use App\Http\Controllers\Patient\Appointments\ShowPatientAppointmentCompletePage
 use App\Http\Controllers\Patient\Appointments\ShowPatientAppointmentScheduleNextPageController;
 use App\Http\Controllers\Patient\DailyCheckins\PatientDailyCheckinController;
 use App\Http\Controllers\Patient\Dashboard\PatientDashboardController;
+use App\Http\Controllers\Patient\Doctors\DestroyPatientDoctorInvitationController;
+use App\Http\Controllers\Patient\Doctors\DestroyPatientLinkedDoctorController;
+use App\Http\Controllers\Patient\Doctors\PatientDoctorsController;
+use App\Http\Controllers\Patient\Doctors\StorePatientDoctorInvitationController;
 use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Family\DestroyPatientLinkedFamilyMemberController;
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
@@ -81,6 +86,20 @@ Route::middleware([
 
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
         Route::get('family', PatientFamilyController::class)->name('family');
+        Route::get('doctors', PatientDoctorsController::class)->name('doctors');
+
+        /* Doctor Invitations routes */
+        Route::post('doctors/invitations', StorePatientDoctorInvitationController::class)
+            ->middleware('throttle:doctor-invitation-send')
+            ->name('doctors.invitations.store');
+
+        Route::delete('doctors/invitations/{doctorInvitation}', DestroyPatientDoctorInvitationController::class)
+            ->middleware('throttle:doctor-invitation-revoke')
+            ->name('doctors.invitations.destroy');
+
+        Route::delete('doctors/links/{linkedDoctor}', DestroyPatientLinkedDoctorController::class)
+            ->middleware('throttle:patient-care-team-unlink')
+            ->name('doctors.links.destroy');
 
         /* Family Invitations routes */
         Route::post('family/invitations', StorePatientFamilyInvitationController::class)
@@ -90,6 +109,10 @@ Route::middleware([
         Route::delete('family/invitations/{familyInvitation}', DestroyPatientFamilyInvitationController::class)
             ->middleware('throttle:family-invitation-revoke')
             ->name('family.invitations.destroy');
+
+        Route::delete('family/members/{linkedFamilyMember}', DestroyPatientLinkedFamilyMemberController::class)
+            ->middleware('throttle:patient-care-team-unlink')
+            ->name('family.members.destroy');
 
         /* Appointments routes */
         Route::get('appointments/{appointment}/complete', ShowPatientAppointmentCompletePageController::class)
