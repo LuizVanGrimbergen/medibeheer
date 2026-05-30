@@ -66,7 +66,7 @@ test('family members can accept an incoming patient invitation from the link pag
 
     $response->assertRedirect(route('family.link'));
 
-    Mail::assertSent(FamilyInvitationAcceptedMail::class, function (FamilyInvitationAcceptedMail $mail) use ($patientUser, $familyUser): bool {
+    Mail::assertQueued(FamilyInvitationAcceptedMail::class, function (FamilyInvitationAcceptedMail $mail) use ($patientUser, $familyUser): bool {
         return $mail->hasTo($patientUser->email)
             && $mail->accepterName === $familyUser->name;
     });
