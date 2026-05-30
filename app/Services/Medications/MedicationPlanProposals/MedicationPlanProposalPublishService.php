@@ -58,7 +58,7 @@ final class MedicationPlanProposalPublishService
         $medicationName = (string) ($proposal->items->first()?->name ?? trans('medication_plan_proposal.unnamed_medication'));
 
         try {
-            Mail::to($normalizedEmail)->send(new MedicationPlanProposalMail(
+            Mail::to($normalizedEmail)->sendNow(new MedicationPlanProposalMail(
                 expiresAt: $expiresAt,
                 medicationName: $medicationName,
                 familyPageUrl: route('patient.family', absolute: true),
