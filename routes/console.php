@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schedule;
 |--------------------------------------------------------------------------
 |
 | Local: `php artisan schedule:work` (included in `composer run dev`).
-| Production: cron `* * * * * php /path/to/artisan schedule:run`.
+| Production (Combell): cron every minute → `scripts/run-scheduler.sh`.
+| Queue worker cron: `scripts/run-queue-worker.sh` (see deploy/combell-production.md).
 |
 */
 
