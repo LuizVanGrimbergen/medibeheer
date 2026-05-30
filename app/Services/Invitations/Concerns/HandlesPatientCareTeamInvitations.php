@@ -70,7 +70,7 @@ trait HandlesPatientCareTeamInvitations
         });
 
         try {
-            Mail::to($normalized)->send(new $definition->invitationMailableClass(
+            Mail::to($normalized)->sendNow(new $definition->invitationMailableClass(
                 expiresAt: $expiresAt,
                 patientName: (string) $patient->user->name,
             ));
@@ -195,7 +195,7 @@ trait HandlesPatientCareTeamInvitations
         $patientEmail = $invitation->patient->user->email;
 
         if ($patientEmail !== null && $patientEmail !== '') {
-            Mail::to($patientEmail)->send(new $definition->acceptedMailableClass(
+            Mail::to($patientEmail)->queue(new $definition->acceptedMailableClass(
                 accepterName: (string) $user->name,
             ));
         }
