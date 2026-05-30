@@ -66,7 +66,7 @@ test('doctors can accept an incoming patient invitation from the patients page',
 
     $response->assertRedirect(route('doctor.patients'));
 
-    Mail::assertSent(DoctorInvitationAcceptedMail::class, function (DoctorInvitationAcceptedMail $mail) use ($patientUser, $doctorUser): bool {
+    Mail::assertQueued(DoctorInvitationAcceptedMail::class, function (DoctorInvitationAcceptedMail $mail) use ($patientUser, $doctorUser): bool {
         return $mail->hasTo($patientUser->email)
             && $mail->accepterName === $doctorUser->name;
     });
