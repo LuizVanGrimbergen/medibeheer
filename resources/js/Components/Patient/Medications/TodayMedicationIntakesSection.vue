@@ -84,7 +84,7 @@ function periodIcon(period: TodayMedicationIntakeDayPeriodValue): LucideIcon {
                     <TodayMedicationIntakeCard
                         v-for="slot in group.slots"
                         :key="slotKey(slot)"
-                        :slot="slot"
+                        :intake-slot="slot"
                     />
                 </div>
             </section>
@@ -102,7 +102,7 @@ function periodIcon(period: TodayMedicationIntakeDayPeriodValue): LucideIcon {
                     <TodayMedicationIntakeCard
                         v-for="slot in takenSlots"
                         :key="slotKey(slot)"
-                        :slot="slot"
+                        :intake-slot="slot"
                     />
                 </div>
             </section>

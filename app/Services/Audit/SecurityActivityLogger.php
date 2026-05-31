@@ -13,7 +13,6 @@ use Throwable;
 
 final class SecurityActivityLogger
 {
-
     public function record(
         SecurityActivityDescription $description,
         ?User $causer = null,

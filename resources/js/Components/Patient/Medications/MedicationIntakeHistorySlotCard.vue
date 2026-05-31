@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
-        slot: MedicationIntakeHistorySlot;
+        intakeSlot: MedicationIntakeHistorySlot;
         density?: 'default' | 'compact';
     }>(),
     {
@@ -24,13 +24,13 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const isTaken = computed(() => props.slot.taken_at !== null);
+const isTaken = computed(() => props.intakeSlot.taken_at !== null);
 
-const doseLine = computed(() => medicationIntakeDoseLine(t, props.slot));
+const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 
-const notePreview = computed(() => medicationIntakeNotePreview(props.slot));
+const notePreview = computed(() => medicationIntakeNotePreview(props.intakeSlot));
 
-const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medication));
+const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_medication));
 </script>
 
 <template>
@@ -47,13 +47,13 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medicati
                     class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 sm:size-14"
                 >
                     <MedicationTypeLeadIcon
-                        :medication-type="slot.type_medication"
+                        :medication-type="intakeSlot.type_medication"
                         icon-tone-class="text-primary"
                     />
                 </div>
                 <div class="min-w-0 flex-1">
                     <h4 class="wrap-break-word text-lg font-bold leading-snug text-text-heading">
-                        {{ slot.name }}
+                        {{ intakeSlot.name }}
                     </h4>
                     <p class="mt-1 text-sm font-medium text-text-muted">
                         {{ typeLabel }}
@@ -101,7 +101,7 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medicati
                             {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
                         </span>
                         <span class="text-base font-bold tabular-nums text-text-heading">
-                            {{ slot.dose_time }}
+                            {{ intakeSlot.dose_time }}
                         </span>
                     </div>
                 </div>

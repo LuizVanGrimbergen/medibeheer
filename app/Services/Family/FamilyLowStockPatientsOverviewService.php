@@ -8,7 +8,6 @@ use App\Models\Family;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Services\Medications\MedicationSupplyEstimateService;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 final class FamilyLowStockPatientsOverviewService
 {

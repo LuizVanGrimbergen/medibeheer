@@ -15,4 +15,9 @@ useEcho(channelName, [...familyUpdateEvents], () => {
 });
 </script>
 
-<template />
+<template>
+    <span
+        class="hidden"
+        aria-hidden="true"
+    />
+</template>

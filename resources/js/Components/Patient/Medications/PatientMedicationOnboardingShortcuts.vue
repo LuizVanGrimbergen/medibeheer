@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import PatientMedicationOnboardingOption from '@/Components/Patient/Medications/PatientMedicationOnboardingOption.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 
-const props = defineProps<{
+defineProps<{
     canCreateMedication: boolean;
 }>();
 

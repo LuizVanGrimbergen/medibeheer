@@ -1,5 +1,4 @@
 import type { MedicationDoseUnitValue } from '@/lib/types';
-import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 
 export const MEDICATION_STOCK_UNIT_SUFFIX_DOSE_UNITS = [
     'milligram',
