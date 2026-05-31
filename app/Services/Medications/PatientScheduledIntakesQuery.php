@@ -132,7 +132,8 @@ final class PatientScheduledIntakesQuery
     ): Collection {
         return MedicationIntake::query()
             ->where('patient_id', $patient->id)
-            ->whereBetween('intake_date', [$from->toDateString(), $to->toDateString()], 'and')
+            ->whereDate('intake_date', '>=', $from->toDateString(), 'and')
+            ->whereDate('intake_date', '<=', $to->toDateString(), 'and')
             ->get()
             ->groupBy(
                 fn (MedicationIntake $intake): string => $intake->intake_date->toDateString(),
