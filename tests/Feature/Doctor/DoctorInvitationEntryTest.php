@@ -41,7 +41,7 @@ test('doctor invitation entry redirects family members away with an error instea
         ->assertSessionHas('error', trans('doctor_invitation.entry.wrong_account'));
 });
 
-test('login continues to email verification link for unverified doctors', function () {
+test('email verification link verifies guest doctors and logs them in', function () {
     $user = User::factory()->doctor()->unverified()->create();
 
     $verificationUrl = URL::temporarySignedRoute(
@@ -50,17 +50,12 @@ test('login continues to email verification link for unverified doctors', functi
         ['id' => $user->id, 'hash' => sha1($user->email)],
     );
 
-    $this->get($verificationUrl)->assertRedirect(route('login'));
+    $this->assertGuest();
 
-    $this->post(route('login'), [
-        'email' => $user->email,
-        'password' => 'password',
-        'role' => 'doctor',
-    ])->assertRedirect($verificationUrl);
+    $response = $this->get($verificationUrl);
 
-    $this->get($verificationUrl)
-        ->assertRedirect(route('doctor.dashboard', absolute: false).'?verified=1');
-
+    $response->assertRedirect(route('doctor.dashboard', absolute: false).'?verified=1');
+    $this->assertAuthenticatedAs($user);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
 });
 
