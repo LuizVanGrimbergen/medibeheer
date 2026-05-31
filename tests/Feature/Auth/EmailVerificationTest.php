@@ -39,10 +39,32 @@ test('email can be verified', function () {
         ['id' => $user->id, 'hash' => sha1($user->email)]
     );
 
-    $response = $this->actingAs($user)->get($verificationUrl);
+    $response = $this->get($verificationUrl);
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $this->assertAuthenticatedAs($user);
+    $response->assertRedirect(route('patient.dashboard', absolute: false).'?verified=1');
+});
+
+test('guest can verify email from the signed link without an existing session', function () {
+    $user = User::factory()->unverified()->create(['role' => 'patient']);
+
+    Event::fake();
+
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $user->id, 'hash' => sha1($user->email)]
+    );
+
+    $this->assertGuest();
+
+    $response = $this->get($verificationUrl);
+
+    Event::assertDispatched(Verified::class);
+    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $this->assertAuthenticatedAs($user);
     $response->assertRedirect(route('patient.dashboard', absolute: false).'?verified=1');
 });
 
@@ -57,10 +79,11 @@ test('email can be verified for doctors', function () {
         ['id' => $user->id, 'hash' => sha1($user->email)]
     );
 
-    $response = $this->actingAs($user)->get($verificationUrl);
+    $response = $this->get($verificationUrl);
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $this->assertAuthenticatedAs($user);
     $response->assertRedirect(route('doctor.dashboard', absolute: false).'?verified=1');
 });
 
@@ -75,10 +98,11 @@ test('email can be verified for family members', function () {
         ['id' => $user->id, 'hash' => sha1($user->email)]
     );
 
-    $response = $this->actingAs($user)->get($verificationUrl);
+    $response = $this->get($verificationUrl);
 
     Event::assertDispatched(Verified::class);
     expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
+    $this->assertAuthenticatedAs($user);
     $response->assertRedirect(route('family.overview', absolute: false).'?verified=1');
 });
 
@@ -91,7 +115,7 @@ test('email is not verified with invalid hash', function () {
         ['id' => $user->id, 'hash' => sha1('wrong-email')]
     );
 
-    $this->actingAs($user)->get($verificationUrl);
+    $this->get($verificationUrl)->assertForbidden();
 
     expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
 });
