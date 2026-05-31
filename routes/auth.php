@@ -31,12 +31,12 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('login', [AuthenticatedSessionController::class, 'store']);
+Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    ->middleware(['signed', 'throttle:email-verification'])
+    ->name('verification.verify');
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationNoticeController::class)
         ->name('verification.notice');
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:email-verification'])
-        ->name('verification.verify');
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:email-verification')
         ->name('verification.send');
