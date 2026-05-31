@@ -39,4 +39,3 @@ class AppointmentTransportInvitationPolicy
         return Response::allow();
     }
 }
-

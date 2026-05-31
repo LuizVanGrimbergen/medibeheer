@@ -2,14 +2,14 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientFamilyCareTeamCollapsibleSection from '@/Components/Patient/Family/PatientFamilyCareTeamCollapsibleSection.vue';
+import PatientFamilyCareTeamRowItem from '@/Components/Patient/Family/PatientFamilyCareTeamRowItem.vue';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import PatientFamilyCareTeamCollapsibleSection from '@/Components/Patient/Family/PatientFamilyCareTeamCollapsibleSection.vue';
-import PatientFamilyCareTeamRowItem from '@/Components/Patient/Family/PatientFamilyCareTeamRowItem.vue';
-import type { LinkedCareTeamMember, PendingCareTeamInvitation } from '@/lib/types';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
+import type { LinkedCareTeamMember, PendingCareTeamInvitation } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 
@@ -32,8 +32,6 @@ const pendingFamilyInvitationsOpen = ref(false);
 const linkedFamilyMembersOpen = ref(false);
 
 const sectionHeadingClass = 'text-xl font-bold leading-snug text-text-heading md:text-2xl';
-
-const bodyTextClass = 'text-base leading-relaxed text-text-muted';
 
 const labelClass =
     'mb-2 block text-base font-semibold leading-snug text-text-heading md:text-lg';

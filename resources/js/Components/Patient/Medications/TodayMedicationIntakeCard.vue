@@ -28,14 +28,14 @@ import type { TodayMedicationIntakeSlot } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
-    slot: TodayMedicationIntakeSlot;
+    intakeSlot: TodayMedicationIntakeSlot;
 }>();
 
 const { t } = useI18n();
 
-const isTaken = computed(() => props.slot.taken_at !== null);
+const isTaken = computed(() => props.intakeSlot.taken_at !== null);
 
-const intakeWindowState = computed(() => props.slot.intake_window_state);
+const intakeWindowState = computed(() => props.intakeSlot.intake_window_state);
 
 const showPastSnoozeActions = computed(
     () => !isTaken.value && intakeWindowState.value === 'past',
@@ -64,20 +64,20 @@ const form = useForm<{
     late_intake?: boolean;
     taken_at?: string;
 }>({
-    medication_schedule_id: props.slot.medication_schedule_id,
-    dose_time: props.slot.dose_time,
+    medication_schedule_id: props.intakeSlot.medication_schedule_id,
+    dose_time: props.intakeSlot.dose_time,
 });
 
-const doseLine = computed(() => medicationIntakeDoseLine(t, props.slot));
+const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 
-const notePreview = computed(() => medicationIntakeNotePreview(props.slot));
+const notePreview = computed(() => medicationIntakeNotePreview(props.intakeSlot));
 
-const typeLabel = computed(() => medicationTypeLabel(t, props.slot.type_medication));
+const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_medication));
 
 const stockProgressTone = computed(() =>
     medicationVisualToneFromContext({
-        supply_estimate_days: props.slot.supply_estimate_days,
-        supply_estimate_quality: props.slot.supply_estimate_quality,
+        supply_estimate_days: props.intakeSlot.supply_estimate_days,
+        supply_estimate_quality: props.intakeSlot.supply_estimate_quality,
     }),
 );
 
@@ -93,8 +93,8 @@ const showCriticalSupplyAlert = computed(() => isCriticalSupply.value);
 
 const markTakenAriaLabel = computed(() =>
     t('patient.dashboard.todayMedications.markTakenAria', {
-        name: props.slot.name,
-        time: props.slot.dose_time,
+        name: props.intakeSlot.name,
+        time: props.intakeSlot.dose_time,
     }),
 );
 
@@ -187,7 +187,7 @@ function confirmCustomTakenTime(): void {
                 >
                     <span class="sr-only">{{ typeLabel }}</span>
                     <MedicationTypeLeadIcon
-                        :medication-type="slot.type_medication"
+                        :medication-type="intakeSlot.type_medication"
                         :icon-tone-class="intakeCardToneClasses.pillIcon"
                     />
                 </div>
@@ -196,7 +196,7 @@ function confirmCustomTakenTime(): void {
                     <h4
                         class="wrap-break-word text-xl font-bold leading-snug text-text-heading sm:text-2xl"
                     >
-                        {{ slot.name }}
+                        {{ intakeSlot.name }}
                     </h4>
                     <p class="mt-1 text-base font-medium leading-snug text-text-muted sm:text-lg">
                         {{ typeLabel }}
@@ -232,7 +232,7 @@ function confirmCustomTakenTime(): void {
                         <span
                             class="text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
                         >
-                            {{ slot.dose_time }}
+                            {{ intakeSlot.dose_time }}
                         </span>
                     </div>
                 </div>
@@ -312,13 +312,13 @@ function confirmCustomTakenTime(): void {
                     class="space-y-3 rounded-2xl border border-border/70 bg-bg p-4 sm:p-5"
                 >
                     <Label
-                        :for="`intake-custom-time-${slot.medication_schedule_id}-${slot.dose_time}`"
+                        :for="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
                         :class="patientFormLabelClass"
                     >
                         {{ t('patient.dashboard.todayMedications.customTakenTimeLabel') }}
                     </Label>
                     <input
-                        :id="`intake-custom-time-${slot.medication_schedule_id}-${slot.dose_time}`"
+                        :id="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
                         v-model="customTakenTime"
                         type="time"
                         step="60"

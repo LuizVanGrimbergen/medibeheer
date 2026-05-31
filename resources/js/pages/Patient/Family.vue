@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { Button, buttonVariants } from '@/Components/ui/button';
 import PatientFamilyDoctorsSection from '@/Components/Patient/Family/PatientFamilyDoctorsSection.vue';
 import PatientFamilyMembersSection from '@/Components/Patient/Family/PatientFamilyMembersSection.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import { buttonVariants } from '@/Components/ui/button';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
+import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
 import type {
     AcceptedMedicationPlanProposal,
     LinkedCareTeamMember,
     PendingCareTeamInvitation,
     PendingMedicationPlanProposal,
 } from '@/lib/types';
-import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(

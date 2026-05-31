@@ -8,7 +8,6 @@ use Illuminate\Validation\Rule;
 
 trait ValidatesMedicationStrengthField
 {
-
     protected function rulesMedicationStrengthField(bool $sometimes = false): array
     {
         return [

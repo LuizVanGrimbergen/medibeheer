@@ -116,7 +116,7 @@ const selectedDayHasSchedule = computed((): boolean => {
                 <MedicationIntakeHistorySlotCard
                     v-for="slot in selectedDaySlots"
                     :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
-                    :slot="slot"
+                    :intake-slot="slot"
                     :density="props.slotCardDensity"
                 />
             </div>

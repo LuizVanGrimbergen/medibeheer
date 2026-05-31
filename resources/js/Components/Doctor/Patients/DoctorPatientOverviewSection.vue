@@ -8,10 +8,10 @@ import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySe
 import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
 import { useHistorySelectedDay } from '@/composables/useHistorySelectedDay';
-import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
 import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
-import { compareTodayMedicationIntakeSlots } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
+import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
 import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
+import { compareTodayMedicationIntakeSlots } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
 
 const props = defineProps<DoctorPatientOverviewScreenProps>();
 
@@ -135,7 +135,7 @@ const selectedDayCheckin = computed(() => {
                         <MedicationIntakeHistorySlotCard
                             v-for="slot in selectedDaySlots"
                             :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
-                            :slot="slot"
+                            :intake-slot="slot"
                             density="compact"
                         />
                     </div>
