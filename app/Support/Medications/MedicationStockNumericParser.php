@@ -42,15 +42,10 @@ final class MedicationStockNumericParser
     private function stripUnitSuffix(string $value, MedicationDoseUnit $doseUnit): string
     {
         $pattern = match ($doseUnit) {
-            MedicationDoseUnit::MILLIGRAM => '/\s*(?:mg|milligram(?:men)?)\s*$/iu',
-            MedicationDoseUnit::GRAM => '/\s*(?:g|gram(?:men)?)\s*$/iu',
             MedicationDoseUnit::MILLILITER => '/\s*(?:ml|milliliter)\s*$/iu',
             MedicationDoseUnit::PIECE => '/\s*(?:stuk|stuks)\s*$/iu',
             MedicationDoseUnit::DROP => '/\s*(?:druppel|druppels)\s*$/iu',
-            MedicationDoseUnit::INJECTION => '/\s*(?:injectie|injecties)\s*$/iu',
             MedicationDoseUnit::UNIT => '/\s*(?:eenheid|eenheden)\s*$/iu',
-            MedicationDoseUnit::SACHET => '/\s*(?:zakje|zakjes)\s*$/iu',
-            MedicationDoseUnit::OTHER => null,
         };
 
         if ($pattern === null) {
