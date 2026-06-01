@@ -9,6 +9,7 @@ import PatientMedicationOnboardingShortcuts from '@/Components/Patient/Medicatio
 import PatientMedicationReminderPrompt from '@/Components/Patient/Medications/PatientMedicationReminderPrompt.vue';
 import TodayMedicationIntakesSection from '@/Components/Patient/Medications/TodayMedicationIntakesSection.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import { Card, CardContent } from '@/Components/ui/card';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type {
     DailyCheckin,
@@ -23,7 +24,7 @@ const page = usePage<PageProps>();
 const props = withDefaults(
     defineProps<{
         today_date: string;
-        today_checkin: DailyCheckin | null;
+        today_checkin?: DailyCheckin | null;
         today_medication_intakes?: TodayMedicationIntakeSlot[];
         pending_push_medication_mark: string | null;
         has_medications?: boolean;
@@ -38,6 +39,8 @@ const props = withDefaults(
 const showMedicationOnboardingShortcuts = computed(
     () => !props.has_medications,
 );
+
+const isTodayCheckinLoading = computed(() => props.today_checkin === undefined);
 
 const PUSH_MARK_SUCCESS_ROUTE = route('patient.medication-push-mark.success');
 
@@ -77,7 +80,7 @@ watch(documentVisibility, (state) => {
     maybeReloadWhenCalendarDayAdvanced();
 
     router.reload({
-        only: ['today_medication_intakes', 'pending_push_medication_mark'],
+        only: ['today_checkin', 'today_medication_intakes', 'pending_push_medication_mark'],
         onSuccess: (reloadedPage) => {
             redirectToPushSuccessIfPending(
                 reloadedPage.props.pending_push_medication_mark as string | null | undefined,
@@ -175,9 +178,21 @@ const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
         <PatientPageShell :title="t('patient.dashboard.heading')">
             <DailyCheckinSuccessScreen :mood="dailyCheckinMoodFlash" />
 
+            <Card
+                v-if="isTodayCheckinLoading"
+                class="animate-pulse rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                aria-busy="true"
+            >
+                <CardContent class="space-y-4 p-5 sm:p-6 md:p-7">
+                    <div class="h-7 w-2/3 max-w-xs rounded-xl bg-surface-2" />
+                    <div class="h-24 rounded-2xl bg-surface-2" />
+                </CardContent>
+            </Card>
+
             <DailyCheckinCard
+                v-else
                 :today_date="props.today_date"
-                :today_checkin="props.today_checkin"
+                :today_checkin="props.today_checkin ?? null"
             />
 
             <PatientMedicationOnboardingShortcuts
