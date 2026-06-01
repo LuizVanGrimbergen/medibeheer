@@ -2,7 +2,7 @@
 /* eslint-disable vue/no-mutating-props */
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationStockAmountField from '@/Components/Patient/Medications/form/MedicationStockAmountField.vue';
+import MedicationStockBoxCalculator from '@/Components/Patient/Medications/form/MedicationStockBoxCalculator.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { InputError } from '@/Components/ui/input-error';
@@ -38,17 +38,23 @@ const stockDisplayDoseUnit = computed(() =>
             v-if="props.showStockFields"
             class="space-y-8"
         >
-            <MedicationStockAmountField
-                v-model="props.form.current_stock"
-                :id-prefix="props.idPrefix"
-                field-id-suffix="current-stock"
-                label-key="patient.medications.fields.currentStock"
-                placeholder-example-amount="200"
-                fallback-placeholder-key="patient.medications.fields.currentStockPlaceholder"
-                :dose-unit="stockDisplayDoseUnit ?? ''"
-                :maxlength="500"
-                :error-message="props.form.errors.current_stock"
-            />
+            <fieldset>
+                <legend :class="cn(patientFormLabelClass, 'text-xl')">
+                    {{ t('patient.medications.fields.currentStock') }}
+                </legend>
+                <MedicationStockBoxCalculator
+                    v-model="props.form.current_stock"
+                    v-model:pieces-per-package="props.form.stock_pieces_per_package"
+                    :id-prefix="props.idPrefix"
+                    :medication-type="props.form.type_medication"
+                    :dose-unit="stockDisplayDoseUnit ?? ''"
+                    :error-message="
+                        props.form.errors.current_stock ||
+                        props.form.errors.stock_pieces_per_package
+                    "
+                    class="mt-3"
+                />
+            </fieldset>
         </div>
         <div>
             <Label

@@ -72,13 +72,29 @@ export default {
         stockPlaceholderAmountOnly: 'Bijv. {example}',
         notePlaceholder: 'Optioneel. Bijvoorbeeld: innemen met veel water.',
     },
+    stockCalculator: {
+        hint: 'Hoeveel doosjes heeft u, en hoeveel stuks zitten er per doosje in?',
+        numberOfBoxes: 'Aantal doosjes',
+        piecesPerBox: 'Stuks per doosje',
+        boxesPlaceholder: 'Bijv. 2',
+        piecesPlaceholder: 'Bijv. 100',
+        totalStockLabel: 'Uw totale voorraad',
+        calculationExplanation: '{boxes} doosje(s) × {pieces} stuks = {total} stuks totaal',
+        liquid: {
+            hint: 'Hoeveel flesjes heeft u, en hoeveel ml zit er per flesje in?',
+            numberOfBottles: 'Aantal flesjes',
+            mlPerBottle: 'Aantal ml',
+            bottlesPlaceholder: 'Bijv. 2',
+            mlPlaceholder: 'Bijv. 100',
+            calculationExplanation:
+                '{bottles} flesje(s) × {milliliters} ml = {total} ml totaal',
+        },
+    },
     types: {
         pill: 'Tablet / pil',
         liquid: 'Vloeistof',
         injection: 'Injectie',
-        cream: 'Zalf / crème',
         sachets: 'Zakjes',
-        other: 'Anders',
     },
     mealTimings: {
         before_food: 'Voor de maaltijd',
@@ -121,15 +137,10 @@ export default {
         7: 'zo',
     },
     doseUnitLabels: {
-        milligram: { chip: 'mg', chipPlural: 'mg' },
-        gram: { chip: 'g', chipPlural: 'g' },
         milliliter: { chip: 'ml', chipPlural: 'ml' },
         piece: { chip: 'stuk', chipPlural: 'stuks' },
         drop: { chip: 'druppel', chipPlural: 'druppels' },
-        injection: { chip: 'injectie', chipPlural: 'injecties' },
         unit: { chip: 'eenheid', chipPlural: 'eenheden' },
-        sachet: { chip: 'zakje', chipPlural: 'zakjes' },
-        other: { chip: 'overig', chipPlural: 'overig' },
     },
     stepValidation: {
         nameRequired: 'Vul de naam van het medicatie in.',
@@ -161,6 +172,9 @@ export default {
         noteMax: 'De notitie mag maximaal 2000 tekens zijn.',
         stockCurrentMax: 'De huidige voorraad mag maximaal 500 tekens zijn.',
         stockCurrentRequired: 'Vul de huidige voorraad in.',
+        stockPiecesPerPackageRequired: 'Vul het aantal stuks per doosje in.',
+        stockPiecesPerPackageInvalid: 'Stuks per doosje moet een geheel getal zijn.',
+        stockPiecesPerPackageMax: 'Stuks per doosje mag maximaal 9999 zijn.',
     },
     actions: {
         save: 'Opslaan',

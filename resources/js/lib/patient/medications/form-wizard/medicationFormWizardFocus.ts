@@ -30,6 +30,14 @@ export function focusMedicationWizardScheduleStartDateField(idPrefix: string): v
 }
 
 export function focusMedicationWizardStockOrNoteField(idPrefix: string): void {
+    const stockBoxesEl = document.getElementById(`${idPrefix}-stock-boxes`);
+
+    if (stockBoxesEl !== null) {
+        stockBoxesEl.focus({ preventScroll: true });
+
+        return;
+    }
+
     const stockAmountEl = document.getElementById(`${idPrefix}-current-stock`);
 
     if (stockAmountEl !== null) {
