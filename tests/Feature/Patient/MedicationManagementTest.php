@@ -35,6 +35,7 @@ function validNewMedicationStockPayload(): array
 {
     return [
         'current_stock' => '20',
+        'stock_pieces_per_package' => 10,
     ];
 }
 
@@ -319,10 +320,12 @@ test('patients can create a medication and name is encrypted at rest', function 
     $stock = MedicationStock::query()->where('medication_id', $medication->id)->first();
     expect($stock)->not->toBeNull();
     expect($stock->current_stock)->toBe('20');
+    expect((int) $medication->stock_pieces_per_package)->toBe(10);
 
     $raw = DB::table('medications')->where('id', $medication->id)->first();
     expect($raw->name)->not->toBe('Ibuprofen');
     expect($raw->dose)->not->toBe('400');
+    expect($raw->stock_pieces_per_package)->not->toBe('10');
 });
 
 test('patients can create a medication with an optional trimmed note', function () {
@@ -394,7 +397,7 @@ test('patients cannot store a medication without stock fields', function () {
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
 
-    $response->assertSessionHasErrors('current_stock');
+    $response->assertSessionHasErrors(['current_stock', 'stock_pieces_per_package']);
 });
 
 test('patients creating a medication links it to the first linked family when present', function () {
