@@ -2,21 +2,14 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
-import { Input } from '@/Components/ui/input';
-import { InputError } from '@/Components/ui/input-error';
-import { Label } from '@/Components/ui/label';
-import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import type { MedicationStockListItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -26,12 +19,16 @@ const props = withDefaults(
         medicationId: number;
         doseUnit: string | null;
         stock: MedicationStockListItem;
+        stockProgressTone?: MedicationStockProgressTone | null;
+        stockPiecesPerPackage?: number | null;
         formId: string;
         idPrefix: string;
         dialogContentClass: string;
         updateRouteName?: string;
     }>(),
     {
+        stockProgressTone: null,
+        stockPiecesPerPackage: null,
         updateRouteName: 'patient.medications.stocks.update',
     },
 );
@@ -191,84 +188,17 @@ function submitStock(): void {
                         >
                             <CardContent class="p-0">
                                 <div
-                                    class="space-y-8 rounded-2xl bg-surface px-4 py-4 md:rounded-3xl md:px-5 md:py-5 lg:px-7 lg:py-7"
+                                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 md:space-y-6 md:rounded-3xl md:px-5 md:py-5 lg:px-7 lg:py-7"
                                 >
-                                    <div>
-                                        <Label
-                                            :for="`${props.idPrefix}-current-stock`"
-                                            :class="cn(patientFormLabelClass, 'text-xl')"
-                                        >
-                                            {{ t('patient.medications.fields.currentStock') }}
-                                        </Label>
-                                        <input
-                                            :id="`${props.idPrefix}-current-stock`"
-                                            type="text"
-                                            readonly
-                                            :value="serverCurrentStockAtOpen"
-                                            :aria-readonly="true"
-                                            :aria-invalid="Boolean(form.errors.current_stock)"
-                                            :aria-describedby="
-                                                form.errors.current_stock
-                                                    ? `${props.idPrefix}-current-stock-error`
-                                                    : undefined
-                                            "
-                                            autocomplete="off"
-                                            :class="
-                                                cn(
-                                                    patientFormFieldInputClass,
-                                                    patientFormLargeTouchFieldClass,
-                                                    'mt-2 cursor-default bg-surface-2/80 text-text-heading',
-                                                    form.errors.current_stock
-                                                        ? patientFormFieldInvalidClass
-                                                        : null,
-                                                )
-                                            "
-                                        />
-                                        <InputError
-                                            :id="`${props.idPrefix}-current-stock-error`"
-                                            :message="form.errors.current_stock"
-                                        />
-                                        <div class="mt-4 space-y-2">
-                                            <Label
-                                                :for="`${props.idPrefix}-stock-to-add`"
-                                                :class="cn(patientFormLabelClass, 'text-base font-semibold')"
-                                            >
-                                                {{ t('patient.inventory.addStockAmountLabel') }}
-                                            </Label>
-                                            <Input
-                                                :id="`${props.idPrefix}-stock-to-add`"
-                                                v-model="stockToAdd"
-                                                type="text"
-                                                inputmode="decimal"
-                                                autocomplete="off"
-                                                maxlength="64"
-                                                :placeholder="
-                                                    t('patient.inventory.addStockAmountPlaceholder')
-                                                "
-                                                :class="
-                                                    cn(
-                                                        patientFormFieldInputClass,
-                                                        patientFormLargeTouchFieldClass,
-                                                        'min-h-12',
-                                                        addStockError
-                                                            ? patientFormFieldInvalidClass
-                                                            : null,
-                                                    )
-                                                "
-                                                :aria-invalid="Boolean(addStockError)"
-                                                :aria-describedby="
-                                                    addStockError
-                                                        ? `${props.idPrefix}-stock-to-add-error`
-                                                        : undefined
-                                                "
-                                            />
-                                            <InputError
-                                                v-if="addStockError.length > 0"
-                                                :id="`${props.idPrefix}-stock-to-add-error`"
-                                                :message="addStockError"
-                                            />
-                                        </div>
-                                    </div>
+                                    <MedicationStockBoxRefillCalculator
+                                        v-model:amount-to-add="stockToAdd"
+                                        :id-prefix="props.idPrefix"
+                                        :dose-unit="props.doseUnit"
+                                        :current-stock="serverCurrentStockAtOpen"
+                                        :stock-progress-tone="props.stockProgressTone"
+                                        :stock-pieces-per-package="props.stockPiecesPerPackage"
+                                        :error-message="addStockError || form.errors.current_stock"
+                                    />
                                 </div>
                             </CardContent>
                         </Card>

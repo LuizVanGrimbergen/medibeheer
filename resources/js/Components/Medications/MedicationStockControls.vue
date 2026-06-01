@@ -278,6 +278,8 @@ const currentStockDisplayLine = computed((): string =>
             :medication-id="medication.id"
             :dose-unit="stockDisplayDoseUnit"
             :stock="primaryStock"
+            :stock-progress-tone="stockProgressTone"
+            :stock-pieces-per-package="props.medication.stock_pieces_per_package"
             :form-id="stockFormId"
             :id-prefix="resolvedIdPrefix"
             :dialog-content-class="dialogContentClass"

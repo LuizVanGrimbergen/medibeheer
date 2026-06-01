@@ -12,10 +12,76 @@ export default {
     addStockAmountPlaceholder: 'Bijv. 30',
     addStockInvalidAmount: 'Voer een geldig aantal groter dan 0 in.',
     addStockInvalidBase: 'Voorraad moet een geldig getal zijn.',
+    addStockBoxesHint: 'Hoeveel doosjes heeft u gehaald?',
+    addStockBoxesLabel: 'Aantal doosjes toevoegen',
+    addStockBoxesPlaceholder: 'Bijv. 1',
+    addStockPiecesPerBoxLabel: 'Stuks per doosje',
+    addStockPiecesPerBoxPlaceholder: 'Bijv. 30',
+    addStockCalculatedTotal: 'Toe te voegen',
+    addStockCalculationExplanation: '{boxes} × {pieces} = {total} stuks erbij',
+    addStockNewTotal: 'Nieuwe voorraad',
+    addStockNewTotalExplanation: '{current} + {added} = {newTotal} stuks',
     stockProgressAria: 'Geschatte voorraad in dagen: nog {days} dagen.',
     supplyEstimateApproxOneDay: 'Nog 1 dag over.',
     supplyEstimateApproxDays: 'Nog {days} dagen over.',
     supplyEstimateApproxLessThanDay: 'Geen dagen meer over',
     supplyEstimateUnknown:
         'Aantal resterende dagen is niet te bepalen op basis van uw inname.',
+    vacationButton: 'Vakantie',
+    vacationBackToInventory: 'Terug naar voorraad',
+    vacationDialogTitle: 'Medicatie voor op reis',
+    vacationDialogDescription:
+        'Kies uw vertrek- en terugkomstdatum. Wij berekenen hoeveel medicatie u extra moet halen voor die periode.',
+    vacationStartsOnLabel: 'Vertrekdatum',
+    vacationEndsOnLabel: 'Terugkomstdatum',
+    vacationDateFormatHint: 'dd-mm-jjjj',
+    vacationCalculate: 'Bereken wat ik moet halen',
+    vacationBackToDates: 'Datums aanpassen',
+    vacationSave: 'Opslaan',
+    vacationSaveToPhotos: "Opslaan in Foto's",
+    vacationDone: 'Gereed',
+    vacationSaving: 'Bezig met opslaan…',
+    vacationSaveFailed:
+        'Opslaan is niet gelukt. Probeer het opnieuw of maak een schermafbeelding.',
+    vacationSaveShareHint:
+        'Kies in het menu “Bewaar in Foto’s” om de lijst op te slaan.',
+    vacationSaveShareHintMultiple:
+        'Alle {count} afbeeldingen zijn aangeboden. Controleer in de Foto’s-app of u ze allemaal heeft.',
+    vacationShareStepPrompt:
+        'Afbeelding {current} van {total}. Tik op de knop, kies “Bewaar in Foto’s”, en ga daarna door met de volgende.',
+    vacationShareStepButton: 'Bewaar afbeelding {current} van {total}',
+    vacationShareStepProgress:
+        '{saved} van {total} afbeeldingen aangeboden via het deelmenu.',
+    vacationResultsTitle: 'Het aantal medicatie dat u moet halen',
+    vacationResultsPeriodHeading: 'Uw reisperiode',
+    vacationResultsDaysValue: '{days} dagen',
+    vacationResultsDaysValueOne: '1 dag',
+    vacationResultsDepartureLabel: 'Vertrek',
+    vacationResultsReturnLabel: 'Terugkomst',
+    vacationPickupQuantity: 'Halen: {amount}',
+    vacationNeededForPeriod: 'Nodig voor reis: {amount}',
+    vacationSharePickupLabel: 'Te halen',
+    vacationShareNeededLabel: 'Nodig voor reis',
+    vacationShareCurrentStockLabel: 'Uw voorraad',
+    vacationCalculationFormula: 'Te halen = nodig voor reis − uw voorraad',
+    vacationPickupCalculator: {
+        hint: 'Hoeveel doosjes moet u minimaal halen, en hoeveel stuks zitten er per doosje?',
+        savedPiecesHint:
+            'Op basis van uw opgeslagen verpakking berekenen wij hoeveel doosjes u minimaal moet halen.',
+        minimumBoxesLabel: 'Doosjes om te halen',
+        totalLabel: 'Totaal',
+        totalMismatch: 'U heeft {target} nodig voor deze reis.',
+        liquid: {
+            hint: 'Hoeveel flesjes moet u minimaal halen, en hoeveel ml zit er per flesje?',
+            savedPiecesHint:
+                'Op basis van uw opgeslagen flesinhoud berekenen wij hoeveel flesjes u minimaal moet halen.',
+        },
+    },
+    vacationEmptyResults:
+        'U hoeft niets extra te halen voor deze periode. Uw huidige voorraad is voldoende.',
+    vacationSkippedNote:
+        '{count} medicatie(s) konden niet worden berekend (geen voorraad of inname onbekend).',
+    vacationInvalidDates: 'Kies een geldige vertrek- en terugkomstdatum.',
+    vacationEndsBeforeStart: 'De terugkomstdatum moet op of na de vertrekdatum liggen.',
+    vacationLoading: 'Bezig met berekenen…',
 };
