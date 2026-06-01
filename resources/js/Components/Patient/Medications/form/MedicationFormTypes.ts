@@ -30,6 +30,7 @@ export type MedicationCreateFormState = {
     strength_amount: string;
     strength_unit: MedicationStrengthUnitValue | '';
     current_stock: string;
+    stock_pieces_per_package: string;
     note: string;
     schedule: MedicationScheduleFormSlice;
 };

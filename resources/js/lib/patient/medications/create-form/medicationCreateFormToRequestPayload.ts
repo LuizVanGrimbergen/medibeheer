@@ -25,6 +25,7 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     type_medication: MedicationCreateFormState['type_medication'];
     strength: string | null;
     current_stock: string;
+    stock_pieces_per_package: number;
     note: string | null;
     schedule: {
         meal_timing: MedicationCreateFormState['schedule']['meal_timing'];
@@ -47,6 +48,7 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         type_medication: data.type_medication,
         strength: resolveMedicationStrengthForPayload(data),
         current_stock: data.current_stock.trim(),
+        stock_pieces_per_package: Number.parseInt(data.stock_pieces_per_package, 10),
         note: noteTrimmed === '' ? null : noteTrimmed,
         schedule: {
             meal_timing: data.schedule.meal_timing,
