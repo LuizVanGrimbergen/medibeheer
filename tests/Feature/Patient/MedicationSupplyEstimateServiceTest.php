@@ -183,18 +183,18 @@ it('parses decimal stock with comma', function () {
     expect($result['days'])->toBe(3);
 });
 
-it('parses stock with milligram unit suffix for supply estimate', function () {
+it('parses stock with piece unit suffix for supply estimate', function () {
     $patient = Patient::factory()->create();
     $medication = Medication::factory()->for($patient)->create([
-        'dose_unit' => MedicationDoseUnit::MILLIGRAM,
+        'dose_unit' => MedicationDoseUnit::PIECE,
     ]);
     MedicationStock::factory()->forMedication($medication)->create([
-        'current_stock' => '200 mg',
+        'current_stock' => '30 stuks',
     ]);
     MedicationSchedule::factory()->forMedication($medication)->create([
         'intake_frequency' => MedicationIntakeFrequency::DAILY,
         'times_per_day' => '1',
-        'dose_quantity' => '20',
+        'dose_quantity' => '2',
         'start_date' => now()->subDay(),
         'end_date' => now()->addMonth(),
     ]);
@@ -203,7 +203,7 @@ it('parses stock with milligram unit suffix for supply estimate', function () {
     $result = app(MedicationSupplyEstimateService::class)->estimate($medication);
 
     expect($result['quality'])->toBe('approx');
-    expect($result['days'])->toBe(10);
+    expect($result['days'])->toBe(15);
 });
 
 it('returns zero days when floored supply is less than one day at the estimated rate', function () {
