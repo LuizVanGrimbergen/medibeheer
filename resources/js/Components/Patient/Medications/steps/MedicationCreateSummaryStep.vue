@@ -235,7 +235,7 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.strength')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(1, 'strength')"
+                            @click="activateSummaryRow(1, 'strength_amount')"
                         >
                             <Pencil
                                 class="size-5"

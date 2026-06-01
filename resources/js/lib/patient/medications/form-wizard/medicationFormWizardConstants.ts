@@ -26,7 +26,7 @@ export const medicationFormFieldDomSuffix: Record<MedicationFormWizardScrollFiel
     type_medication: 'type',
     dose: 'dose',
     dose_unit: 'dose-unit-select',
-    strength: 'strength',
+    strength: 'strength-amount',
     strength_amount: 'strength-amount',
     strength_unit: 'strength-unit-select',
     current_stock: 'current-stock',
