@@ -15,7 +15,9 @@ use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController
 use App\Http\Controllers\Patient\Family\DestroyPatientLinkedFamilyMemberController;
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Inventory\CalculatePatientInventoryVacationSupplyController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Inventory\ShowPatientInventoryVacationPageController;
 use App\Http\Controllers\Patient\MedicationPlans\AcceptPatientMedicationPlanProposalController;
 use App\Http\Controllers\Patient\MedicationPlans\DeclinePatientMedicationPlanProposalController;
 use App\Http\Controllers\Patient\MedicationPlans\ShowPatientMedicationPlanProposalReviewController;
@@ -89,6 +91,10 @@ Route::middleware([
             ->name('medication-plans.decline');
 
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
+        Route::get('inventory/vacation', ShowPatientInventoryVacationPageController::class)
+            ->name('inventory.vacation');
+        Route::post('inventory/vacation', CalculatePatientInventoryVacationSupplyController::class)
+            ->name('inventory.vacation.store');
         Route::get('family', PatientFamilyController::class)->name('family');
         Route::get('doctors', PatientDoctorsController::class)->name('doctors');
 
