@@ -3,6 +3,7 @@ import { Head, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentScheduleNextPageProps } from '@/lib/patient/appointments/screen/patientAppointmentScheduleNextPageProps';
 import {
@@ -36,7 +37,7 @@ const descriptionKey =
     <PatientLayout>
         <PatientPageShell :title="t('patient.appointments.scheduleNext.title')">
             <div class="space-y-3">
-                <h1 class="text-3xl font-bold leading-tight text-text-heading">
+                <h1 :class="patientPageTitleClass">
                     {{ t('patient.appointments.scheduleNext.title') }}
                 </h1>
                 <p class="max-w-prose text-base leading-relaxed text-text-muted">

@@ -6,6 +6,7 @@ import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentD
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { PatientAppointmentOutcomePageProps } from '@/lib/patient/appointments/screen/patientAppointmentOutcomePageProps';
@@ -54,7 +55,7 @@ function submit(): void {
                 >
                     {{ t('patient.appointments.outcomePages.backToAppointments') }}
                 </Link>
-                <h1 class="text-3xl font-bold leading-tight text-text-heading">
+                <h1 :class="patientPageTitleClass">
                     {{ t('patient.appointments.cancelDialog.title') }}
                 </h1>
                 <p class="max-w-prose text-base leading-relaxed text-text-muted">
