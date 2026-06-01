@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import { Palmtree } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationInventoryStockCard from '@/Components/Patient/Inventory/form/MedicationInventoryStockCard.vue';
+import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationInventoryListItems } from '@/lib/patient/inventory/medicationInventoryListSortRank';
 import type { PatientInventoryScreenProps } from '@/lib/patient/inventory/patientInventoryScreenProps';
+import {
+    patientPageHeaderRowClass,
+    patientPageTitleClass,
+} from '@/lib/patient/patientPageTypography';
 import type { MedicationListItem } from '@/lib/types';
 
 const props = defineProps<PatientInventoryScreenProps>();
@@ -32,9 +38,26 @@ const sortedInventoryMedications = computed((): MedicationListItem[] => {
     <PatientLayout>
         <PatientPageShell :title="t('patient.inventory.listHeading')">
             <section class="flex min-w-0 w-full flex-col space-y-5">
-            <h1 class="text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
-                {{ t('patient.inventory.listHeading') }}
-            </h1>
+            <div :class="patientPageHeaderRowClass">
+                <h1 :class="patientPageTitleClass">
+                    {{ t('patient.inventory.listHeading') }}
+                </h1>
+
+                <Button
+                    v-if="props.medications.meta.total > 0"
+                    as-child
+                    size="lg"
+                    class="min-h-14 w-full touch-manipulation gap-2.5 self-stretch px-6 text-lg sm:w-auto sm:self-center sm:px-8"
+                >
+                    <Link :href="route('patient.inventory.vacation')">
+                        <Palmtree
+                            class="size-6 shrink-0"
+                            aria-hidden="true"
+                        />
+                        {{ t('patient.inventory.vacationButton') }}
+                    </Link>
+                </Button>
+            </div>
 
             <ul
                 v-if="props.medications.data.length > 0"

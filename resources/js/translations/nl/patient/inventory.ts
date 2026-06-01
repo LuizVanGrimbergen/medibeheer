@@ -7,7 +7,7 @@ export default {
     lowStockBadge: 'Dringend bijbestellen',
     warningStockIconAria: 'Uw voorraad is bijna op.',
     adjustStock: 'Voorraad aanvullen',
-    editStockDialogTitle: 'Voorraad aanpassen',
+    editStockDialogTitle: 'Voorraad aanvullen',
     addStockAmountLabel: 'Medicatie toevoegen',
     addStockAmountPlaceholder: 'Bijv. 30',
     addStockInvalidAmount: 'Voer een geldig aantal groter dan 0 in.',
