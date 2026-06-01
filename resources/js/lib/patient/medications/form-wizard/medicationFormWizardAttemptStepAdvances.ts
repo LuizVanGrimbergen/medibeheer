@@ -89,6 +89,7 @@ export function attemptMedicationWizardAdvanceFromStep6(
     const check = tryMedicationWizardNoteStockStep({
         note: form.note,
         current_stock: form.current_stock,
+        stock_pieces_per_package: form.stock_pieces_per_package,
     });
 
     if (!check.ok) {
