@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('sort_order')->default(0);
             $table->text('name');
             $table->text('dose');
-            $table->string('dose_unit', 32)->default(MedicationDoseUnit::OTHER->value);
+            $table->string('dose_unit', 32)->default(MedicationDoseUnit::PIECE->value);
             $table->text('type_medication');
             $table->text('strength')->nullable();
             $table->text('note')->nullable();
