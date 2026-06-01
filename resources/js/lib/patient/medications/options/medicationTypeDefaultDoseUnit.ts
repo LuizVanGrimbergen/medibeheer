@@ -17,15 +17,11 @@ export function defaultDoseUnitForMedicationType(
     }
 
     if (type === 'injection') {
-        return 'injection';
-    }
-
-    if (type === 'cream') {
-        return 'gram';
+        return 'piece';
     }
 
     if (type === 'sachets') {
-        return 'sachet';
+        return 'piece';
     }
 
     return null;

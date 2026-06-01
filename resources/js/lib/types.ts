@@ -200,14 +200,10 @@ export const MEDICATION_TYPE_VALUES = [
 export type MedicationTypeValue = (typeof MEDICATION_TYPE_VALUES)[number];
 
 export const MEDICATION_DOSE_UNIT_VALUES = [
-    'milligram',
-    'gram',
     'milliliter',
     'piece',
     'drop',
-    'injection',
     'unit',
-    'sachet',
 ] as const;
 
 export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
@@ -355,6 +351,7 @@ export type MedicationListItem = {
     type_medication: MedicationTypeValue;
     strength: string | null;
     note: string | null;
+    stock_pieces_per_package: number | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];
     supply_estimate_days: number | null;
