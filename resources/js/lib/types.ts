@@ -194,9 +194,7 @@ export const MEDICATION_TYPE_VALUES = [
     'pill',
     'liquid',
     'injection',
-    'cream',
     'sachets',
-    'other',
 ] as const;
 
 export type MedicationTypeValue = (typeof MEDICATION_TYPE_VALUES)[number];
@@ -210,7 +208,6 @@ export const MEDICATION_DOSE_UNIT_VALUES = [
     'injection',
     'unit',
     'sachet',
-    'other',
 ] as const;
 
 export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];

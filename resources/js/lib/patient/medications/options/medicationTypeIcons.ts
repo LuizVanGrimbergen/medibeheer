@@ -1,9 +1,6 @@
-import { jar } from '@lucide/lab';
 import type { LucideIcon } from 'lucide-vue-next';
 import {
-    createLucideIcon,
     Droplets,
-    MoreHorizontal,
     Package2,
     Pill,
     Syringe,
@@ -11,15 +8,11 @@ import {
 import type { MedicationTypeValue } from '@/lib/types';
 import { MEDICATION_TYPE_VALUES } from '@/lib/types';
 
-const MedicationCreamJarIcon = createLucideIcon('MedicationCreamJar', jar);
-
 const MEDICATION_TYPE_ICON: Record<MedicationTypeValue, LucideIcon> = {
     pill: Pill,
     liquid: Droplets,
     injection: Syringe,
-    cream: MedicationCreamJarIcon,
     sachets: Package2,
-    other: MoreHorizontal,
 };
 
 export const medicationTypeIcon = (type: MedicationTypeValue): LucideIcon =>

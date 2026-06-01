@@ -12,7 +12,5 @@ enum MedicationType: string implements Castable
     case PILL = 'pill';
     case LIQUID = 'liquid';
     case INJECTION = 'injection';
-    case CREAM = 'cream';
     case SACHETS = 'sachets';
-    case OTHER = 'other';
 }
