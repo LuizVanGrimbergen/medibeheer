@@ -1,4 +1,3 @@
-import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { buildMedicationStrengthFromParts } from '@/lib/patient/medications/strength/buildMedicationStrengthFromParts';
 
 export function medicationStrengthDisplayValue(data: {
@@ -7,14 +6,14 @@ export function medicationStrengthDisplayValue(data: {
     strength_amount: string;
     strength_unit: string;
 }): string {
-    if (medicationDoseUnitRequiresStrength(data.dose_unit)) {
-        return (
-            buildMedicationStrengthFromParts(
-                data.dose_unit,
-                data.strength_amount,
-                data.strength_unit,
-            ) ?? ''
-        );
+    const fromParts = buildMedicationStrengthFromParts(
+        data.dose_unit,
+        data.strength_amount,
+        data.strength_unit,
+    );
+
+    if (fromParts !== null) {
+        return fromParts;
     }
 
     return data.strength.trim();
