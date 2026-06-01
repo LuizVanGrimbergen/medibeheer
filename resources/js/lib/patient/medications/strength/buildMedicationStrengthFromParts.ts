@@ -1,4 +1,3 @@
-import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import {
     MEDICATION_STRENGTH_UNIT_VALUES,
     medicationStrengthUnitStorageLabel,
@@ -25,12 +24,7 @@ export function buildMedicationStrengthFromParts(
     const unitLabel = medicationStrengthUnitStorageLabel(
         strengthUnit as MedicationStrengthUnitValue,
     );
-    const suffix =
-        doseUnit === 'drop'
-            ? ' per druppel'
-            : doseUnit === 'injection'
-              ? ' per injectie'
-              : '';
+    const suffix = doseUnit === 'drop' ? ' per druppel' : '';
 
     return `${amountTrimmed} ${unitLabel}${suffix}`;
 }
@@ -41,12 +35,14 @@ export function resolveMedicationStrengthForPayload(data: {
     strength_amount: string;
     strength_unit: string;
 }): string | null {
-    if (medicationDoseUnitRequiresStrength(data.dose_unit)) {
-        return buildMedicationStrengthFromParts(
-            data.dose_unit,
-            data.strength_amount,
-            data.strength_unit,
-        );
+    const fromParts = buildMedicationStrengthFromParts(
+        data.dose_unit,
+        data.strength_amount,
+        data.strength_unit,
+    );
+
+    if (fromParts !== null) {
+        return fromParts;
     }
 
     const trimmed = data.strength.trim();

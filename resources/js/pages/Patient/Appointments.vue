@@ -11,6 +11,12 @@ import { usePatientAppointmentsPage } from '@/composables/usePatientAppointments
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
+import {
+    patientPageHeaderRowClass,
+    patientPageIntroClass,
+    patientPageSectionTitleClass,
+    patientPageTitleClass,
+} from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
@@ -44,14 +50,12 @@ const {
 
     <PatientLayout>
         <PatientPageShell :title="t('patient.appointments.heading')">
-            <div
-                class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
-            >
-                <div class="min-w-0">
-                    <h1 class="text-3xl font-bold leading-tight text-text-heading">
+            <div :class="patientPageHeaderRowClass">
+                <div class="min-w-0 space-y-3">
+                    <h1 :class="patientPageTitleClass">
                         {{ t('patient.appointments.heading') }}
                     </h1>
-                    <p class="mt-3 max-w-prose text-base leading-relaxed text-text-muted">
+                    <p :class="[patientPageIntroClass, 'max-w-prose']">
                         {{ t('patient.appointments.plannedDescription') }}
                     </p>
                 </div>
@@ -70,7 +74,7 @@ const {
             </div>
 
             <section class="space-y-5">
-                <h2 class="text-2xl font-bold leading-tight text-text-heading">
+                <h2 :class="patientPageSectionTitleClass">
                     {{ t('patient.appointments.plannedHeading') }}
                 </h2>
 

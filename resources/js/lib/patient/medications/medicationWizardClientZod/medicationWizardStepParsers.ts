@@ -23,7 +23,7 @@ import type {
     MedicationWizardSubmitClientValidationResult,
 } from './types';
 import { medicationWizardStepValidation } from './wizardStepMessages';
-import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
+import { trimmedNonEmptyMax, trimmedPositiveIntegerMax } from './wizardStringFieldPatterns';
 
 export function tryMedicationWizardDetailsStep(
     data: Pick<
@@ -128,7 +128,10 @@ export function tryMedicationWizardDurationStep(
 }
 
 export function tryMedicationWizardNoteStockStep(
-    data: Pick<MedicationCreateFormState, 'note' | 'current_stock'>,
+    data: Pick<
+        MedicationCreateFormState,
+        'note' | 'current_stock' | 'stock_pieces_per_package'
+    >,
 ): MedicationWizardClientParseResult {
     const parsed = z
         .object({
@@ -142,6 +145,12 @@ export function tryMedicationWizardNoteStockStep(
                 }
             }),
             current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
+            stock_pieces_per_package: trimmedPositiveIntegerMax(
+                9999,
+                'stockPiecesPerPackageRequired',
+                'stockPiecesPerPackageInvalid',
+                'stockPiecesPerPackageMax',
+            ),
         })
         .safeParse(data);
 

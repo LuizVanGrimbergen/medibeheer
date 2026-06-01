@@ -80,8 +80,9 @@ class MedicationSeeder extends Seeder
             [
                 'name' => 'Levothyroxine',
                 'dose' => '75',
-                'dose_unit' => MedicationDoseUnit::OTHER,
+                'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
+                'stock_pieces_per_package' => 75,
                 'strength' => '75 microgram',
                 'note' => 'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
                 'schedule' => [
@@ -100,8 +101,9 @@ class MedicationSeeder extends Seeder
             [
                 'name' => 'Metformine',
                 'dose' => '500',
-                'dose_unit' => MedicationDoseUnit::MILLIGRAM,
+                'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
+                'stock_pieces_per_package' => 100,
                 'strength' => '500 mg',
                 'note' => 'Tijdens of direct na de lunch innemen om maag-darmklachten te beperken.',
                 'schedule' => [
@@ -113,15 +115,16 @@ class MedicationSeeder extends Seeder
                     'dose_time' => '12:30',
                     'snooze_time' => '30',
                     'start_date' => $today->copy()->subYear()->toDateString(),
-                    'end_date' => $today->copy()->addMonths(6)->toDateString(),
+                    'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
                 'stock' => ['current_stock' => '5000'],
             ],
             [
                 'name' => 'Magnesiumcitraat',
                 'dose' => '1',
-                'dose_unit' => MedicationDoseUnit::SACHET,
+                'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::SACHETS,
+                'stock_pieces_per_package' => 30,
                 'strength' => '375 mg per zakje',
                 'note' => 'Zakje oplossen in een glas water; bij het avondeten innemen.',
                 'schedule' => [
@@ -133,15 +136,16 @@ class MedicationSeeder extends Seeder
                     'dose_time' => '18:30',
                     'snooze_time' => '30',
                     'start_date' => $today->copy()->subMonths(2)->toDateString(),
-                    'end_date' => $today->copy()->addMonths(3)->toDateString(),
+                    'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
                 'stock' => ['current_stock' => '5'],
             ],
             [
                 'name' => 'Atorvastatine',
                 'dose' => '40',
-                'dose_unit' => MedicationDoseUnit::MILLIGRAM,
+                'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
+                'stock_pieces_per_package' => 110,
                 'strength' => '40 mg',
                 'note' => '’s Avonds voor het slapengaan innemen. Meld onverklaarde spierpijn of donkere urine aan huisarts.',
                 'schedule' => [
@@ -156,6 +160,27 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addYear()->toDateString(),
                 ],
                 'stock' => ['current_stock' => '440'],
+            ],
+            [
+                'name' => 'Ibuprofen suspensie',
+                'dose' => '5',
+                'dose_unit' => MedicationDoseUnit::MILLILITER,
+                'type_medication' => MedicationType::LIQUID,
+                'stock_pieces_per_package' => 100,
+                'strength' => '20 mg per ml',
+                'note' => 'Goed schudden voor gebruik. Meet de dosis af met de bijgeleverde maatbeker.',
+                'schedule' => [
+                    'meal_timing' => MedicationMealTiming::WITH_FOOD,
+                    'intake_frequency' => MedicationIntakeFrequency::DAILY,
+                    'intake_weekdays' => null,
+                    'times_per_day' => '3',
+                    'dose_quantity' => '5',
+                    'dose_time' => '08:00, 14:00, 20:00',
+                    'snooze_time' => '30, 30, 30',
+                    'start_date' => $today->copy()->subMonths(6)->toDateString(),
+                    'end_date' => $today->copy()->addYear()->toDateString(),
+                ],
+                'stock' => ['current_stock' => '300'],
             ],
         ];
     }

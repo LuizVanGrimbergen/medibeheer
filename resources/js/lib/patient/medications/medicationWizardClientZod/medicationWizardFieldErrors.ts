@@ -73,7 +73,8 @@ export function medicationWizardStepAfterFullClientParseFailure(
     const hasDoseSlotErrors =
         hasKey('schedule.dose_time') || hasKey('schedule.snooze_time');
     const hasDurationErrors = hasKey('schedule.start_date') || hasKey('schedule.end_date');
-    const hasStepSixErrors = hasKey('note') || hasKey('current_stock');
+    const hasStepSixErrors =
+        hasKey('note') || hasKey('current_stock') || hasKey('stock_pieces_per_package');
 
     if (hasDetailErrors) {
         return 1;

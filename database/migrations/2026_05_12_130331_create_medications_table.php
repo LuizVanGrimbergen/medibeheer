@@ -15,10 +15,11 @@ return new class extends Migration
             $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
             $table->text('name');
             $table->text('dose');
-            $table->string('dose_unit', 32)->default(MedicationDoseUnit::OTHER->value);
+            $table->string('dose_unit', 32)->default(MedicationDoseUnit::PIECE->value);
             $table->text('strength')->nullable();
             $table->text('type_medication');
             $table->text('note')->nullable();
+            $table->text('stock_pieces_per_package')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

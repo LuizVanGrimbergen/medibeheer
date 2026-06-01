@@ -28,6 +28,19 @@ trait ValidatesMedicationStrengthField
         ];
     }
 
+    /** @return array<int, mixed> */
+    protected function rulesMedicationDoseUnitFieldForCreate(bool $sometimes = false): array
+    {
+        return [
+            ...($sometimes ? ['sometimes'] : []),
+            'required',
+            Rule::enum(MedicationDoseUnit::class)->except([
+                MedicationDoseUnit::UNIT,
+                MedicationDoseUnit::DROP,
+            ]),
+        ];
+    }
+
     protected function medicationStrengthIsRequired(): bool
     {
         if ($this->has('dose_unit')) {

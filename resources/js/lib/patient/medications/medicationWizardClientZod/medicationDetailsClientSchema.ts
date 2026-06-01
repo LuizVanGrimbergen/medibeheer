@@ -15,7 +15,10 @@ export const medicationWizardDetailsSchema = z
         name: trimmedNonEmptyMax(500, 'nameRequired', 'nameMax'),
         dose: trimmedNonEmptyMax(500, 'doseRequired', 'doseMax'),
         dose_unit: z.string().superRefine((val, ctx) => {
-            if (val === '' || !isMemberOf(MEDICATION_DOSE_UNIT_FORM_VALUES, val)) {
+            const allowed =
+                val === 'drop' || val === 'unit' || isMemberOf(MEDICATION_DOSE_UNIT_FORM_VALUES, val);
+
+            if (val === '' || !allowed) {
                 ctx.addIssue({
                     code: 'custom',
                     message: medicationWizardStepValidation('doseUnitRequired'),
@@ -35,36 +38,29 @@ export const medicationWizardDetailsSchema = z
         strength_unit: z.string(),
     })
     .superRefine((data, ctx) => {
-        if (medicationDoseUnitRequiresStrength(data.dose_unit)) {
-            const amountTrimmed = data.strength_amount.trim();
+        const amountTrimmed = data.strength_amount.trim();
+        const strengthRequired = medicationDoseUnitRequiresStrength(data.dose_unit);
 
-            if (amountTrimmed.length < 1) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: medicationWizardStepValidation('strengthAmountRequired'),
-                    path: ['strength_amount'],
-                });
-            }
+        if (strengthRequired && amountTrimmed.length < 1) {
+            ctx.addIssue({
+                code: 'custom',
+                message: medicationWizardStepValidation('strengthAmountRequired'),
+                path: ['strength_amount'],
+            });
+        }
 
-            if (
-                data.strength_unit === '' ||
-                !isMemberOf(MEDICATION_STRENGTH_UNIT_VALUES, data.strength_unit)
-            ) {
-                ctx.addIssue({
-                    code: 'custom',
-                    message: medicationWizardStepValidation('strengthUnitRequired'),
-                    path: ['strength_unit'],
-                });
-            }
-
+        if (amountTrimmed.length < 1) {
             return;
         }
 
-        if (data.strength.length > 500) {
+        if (
+            data.strength_unit === '' ||
+            !isMemberOf(MEDICATION_STRENGTH_UNIT_VALUES, data.strength_unit)
+        ) {
             ctx.addIssue({
                 code: 'custom',
-                message: medicationWizardStepValidation('strengthMax'),
-                path: ['strength'],
+                message: medicationWizardStepValidation('strengthUnitRequired'),
+                path: ['strength_unit'],
             });
         }
     });

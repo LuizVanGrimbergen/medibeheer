@@ -8,6 +8,7 @@ use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
+use App\Models\Medication;
 use App\Models\Patient;
 use App\Models\User;
 use App\Support\Medications\MedicationIntakeClock;
@@ -80,6 +81,8 @@ final class PatientWebPushDemoSeeder extends Seeder
                 ]);
             }
 
+            $this->ensureDemoPushMedicationStock($existing);
+
             return;
         }
 
@@ -88,6 +91,7 @@ final class PatientWebPushDemoSeeder extends Seeder
             'dose' => '1',
             'dose_unit' => MedicationDoseUnit::PIECE,
             'type_medication' => MedicationType::PILL,
+            'stock_pieces_per_package' => 30,
             'note' => 'Alleen voor lokaal testen van web push herinneringen.',
         ]);
 
@@ -104,5 +108,20 @@ final class PatientWebPushDemoSeeder extends Seeder
         ]);
 
         $schedule->syncIntakeWeekdays(null);
+
+        $this->ensureDemoPushMedicationStock($medication);
+    }
+
+    private function ensureDemoPushMedicationStock(Medication $medication): void
+    {
+        if ($medication->stocks()->exists()) {
+            return;
+        }
+
+        $medication->stocks()->create([
+            'patient_id' => $medication->patient_id,
+            'family_id' => $medication->family_id,
+            'current_stock' => '30',
+        ]);
     }
 }

@@ -52,10 +52,12 @@ export function medicationWizardStepForInertiaFormErrors(
 
     const noteError = errors.note;
     const currentStockError = errors.current_stock;
+    const stockPiecesPerPackageError = errors.stock_pieces_per_package;
 
     if (
         (noteError !== undefined && noteError.length > 0) ||
-        (currentStockError !== undefined && currentStockError.length > 0)
+        (currentStockError !== undefined && currentStockError.length > 0) ||
+        (stockPiecesPerPackageError !== undefined && stockPiecesPerPackageError.length > 0)
     ) {
         return 6;
     }

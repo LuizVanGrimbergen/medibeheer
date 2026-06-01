@@ -48,11 +48,12 @@ class StoreMedicationRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:500'],
             'dose' => ['required', 'string', 'max:500'],
-            'dose_unit' => $this->rulesMedicationDoseUnitField(),
+            'dose_unit' => $this->rulesMedicationDoseUnitFieldForCreate(),
             'type_medication' => ['required', Rule::enum(MedicationType::class)],
             'strength' => $this->rulesMedicationStrengthField(),
             'note' => ['nullable', 'string', 'max:2000'],
             'current_stock' => ['required', 'string', 'max:500'],
+            'stock_pieces_per_package' => ['required', 'integer', 'min:1', 'max:9999'],
             'schedule' => ['required', 'array'],
             ...$this->rulesMedicationScheduleFields(prefix: 'schedule.'),
         ];

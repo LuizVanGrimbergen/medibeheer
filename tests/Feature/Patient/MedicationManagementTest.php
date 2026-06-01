@@ -35,6 +35,7 @@ function validNewMedicationStockPayload(): array
 {
     return [
         'current_stock' => '20',
+        'stock_pieces_per_package' => 10,
     ];
 }
 
@@ -289,7 +290,7 @@ test('patients can create a medication and name is encrypted at rest', function 
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Ibuprofen',
         'dose' => '400',
-        'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
@@ -301,7 +302,7 @@ test('patients can create a medication and name is encrypted at rest', function 
     expect($medication)->not->toBeNull();
     expect($medication->name)->toBe('Ibuprofen');
     expect($medication->dose)->toBe('400');
-    expect($medication->dose_unit)->toBe(MedicationDoseUnit::MILLIGRAM);
+    expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($medication->family_id)->toBeNull();
 
     $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
@@ -319,10 +320,12 @@ test('patients can create a medication and name is encrypted at rest', function 
     $stock = MedicationStock::query()->where('medication_id', $medication->id)->first();
     expect($stock)->not->toBeNull();
     expect($stock->current_stock)->toBe('20');
+    expect((int) $medication->stock_pieces_per_package)->toBe(10);
 
     $raw = DB::table('medications')->where('id', $medication->id)->first();
     expect($raw->name)->not->toBe('Ibuprofen');
     expect($raw->dose)->not->toBe('400');
+    expect($raw->stock_pieces_per_package)->not->toBe('10');
 });
 
 test('patients can create a medication with an optional trimmed note', function () {
@@ -333,7 +336,7 @@ test('patients can create a medication with an optional trimmed note', function 
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Aspirine',
         'dose' => '100',
-        'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
         'note' => '  Na het eten innemen  ',
         ...validNewMedicationStockPayload(),
@@ -359,7 +362,7 @@ test('patients can create a medication with optional strength separate from inta
         'name' => 'Paracetamol',
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE->value,
-        'strength' => '1000 mg per tablet',
+        'strength' => '1000 mg',
         'type_medication' => MedicationType::PILL->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
@@ -371,14 +374,14 @@ test('patients can create a medication with optional strength separate from inta
     expect($medication)->not->toBeNull();
     expect($medication->dose)->toBe('1');
     expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($medication->strength)->toBe('1000 mg per tablet');
+    expect($medication->strength)->toBe('1000 mg');
 
     $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
     expect($schedule)->not->toBeNull();
     expect($schedule->dose_quantity)->toBe('1');
 
     $raw = DB::table('medications')->where('id', $medication->id)->first();
-    expect((string) $raw->strength)->not->toBe('1000 mg per tablet');
+    expect((string) $raw->strength)->not->toBe('1000 mg');
 });
 
 test('patients cannot store a medication without stock fields', function () {
@@ -394,7 +397,7 @@ test('patients cannot store a medication without stock fields', function () {
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
 
-    $response->assertSessionHasErrors('current_stock');
+    $response->assertSessionHasErrors(['current_stock', 'stock_pieces_per_package']);
 });
 
 test('patients creating a medication links it to the first linked family when present', function () {
@@ -408,7 +411,7 @@ test('patients creating a medication links it to the first linked family when pr
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Vitamine C',
         'dose' => '1000',
-        'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
         ...validNewMedicationStockPayload(),
         'schedule' => validNewMedicationSchedulePayload(),
@@ -485,7 +488,7 @@ test('patients store schedule dose quantity from medication dose', function () {
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Gekoppelde hoeveelheid',
         'dose' => '250',
-        'dose_unit' => MedicationDoseUnit::MILLIGRAM->value,
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
         ...validNewMedicationStockPayload(),
         'schedule' => $schedule,
@@ -623,7 +626,7 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     $metformin = $medications->firstWhere('name', 'Metformine');
     expect($metformin)->not->toBeNull();
     expect($metformin->dose)->toBe('500');
-    expect($metformin->dose_unit)->toBe(MedicationDoseUnit::MILLIGRAM);
+    expect($metformin->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($metformin->family_id)->toBe($family->id);
     expect($metformin->schedules()->first()?->dose_time)->toBe('12:30');
     expect($metformin->stocks()->first()?->current_stock)->toBe('5000');

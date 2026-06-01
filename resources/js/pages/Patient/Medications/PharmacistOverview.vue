@@ -5,6 +5,10 @@ import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
+import {
+    patientPageIntroClass,
+    patientPageTitleClass,
+} from '@/lib/patient/patientPageTypography';
 
 const props = withDefaults(
     defineProps<{
@@ -26,10 +30,10 @@ const { t } = useI18n();
     <PatientLayout>
         <PatientPageShell :title="t('patient.medications.pharmacistOverview.title')">
             <div class="space-y-3">
-                <h1 class="text-2xl font-bold leading-tight text-text-heading md:text-3xl">
+                <h1 :class="patientPageTitleClass">
                     {{ t('patient.medications.pharmacistOverview.title') }}
                 </h1>
-                <p class="text-base leading-relaxed text-text-muted md:text-lg">
+                <p :class="patientPageIntroClass">
                     {{ t('patient.medications.pharmacistOverview.description') }}
                 </p>
             </div>

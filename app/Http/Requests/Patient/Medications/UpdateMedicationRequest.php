@@ -62,6 +62,7 @@ class UpdateMedicationRequest extends FormRequest
             'strength' => $this->rulesMedicationStrengthField(sometimes: true),
             'note' => ['sometimes', 'nullable', 'string', 'max:2000'],
             'current_stock' => ['sometimes', 'required', 'string', 'max:500'],
+            'stock_pieces_per_package' => ['sometimes', 'required', 'integer', 'min:1', 'max:9999'],
             'schedule' => ['sometimes', 'required', 'array'],
             ...$this->rulesMedicationScheduleFields(
                 prefix: 'schedule.',
