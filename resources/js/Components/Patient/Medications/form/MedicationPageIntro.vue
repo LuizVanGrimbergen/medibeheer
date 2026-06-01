@@ -4,6 +4,10 @@ import { ClipboardList, Pill } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import {
+    patientPageHeaderRowClass,
+    patientPageTitleClass,
+} from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<{
     canCreateMedication: boolean;
@@ -25,10 +29,8 @@ const actionButtonClass =
 </script>
 
 <template>
-    <div
-        class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
-    >
-        <h1 class="min-w-0 text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
+    <div :class="patientPageHeaderRowClass">
+        <h1 :class="patientPageTitleClass">
             {{ t('patient.medications.listHeading') }}
         </h1>
 
