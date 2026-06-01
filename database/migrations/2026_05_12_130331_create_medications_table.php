@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('strength')->nullable();
             $table->text('type_medication');
             $table->text('note')->nullable();
+            $table->text('stock_pieces_per_package')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

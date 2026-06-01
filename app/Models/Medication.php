@@ -44,6 +44,7 @@ class Medication extends Model
         'type_medication',
         'strength',
         'note',
+        'stock_pieces_per_package',
     ];
 
     protected function casts(): array
@@ -55,6 +56,7 @@ class Medication extends Model
             'type_medication' => MedicationType::class,
             'strength' => 'encrypted',
             'note' => 'encrypted',
+            'stock_pieces_per_package' => 'encrypted',
         ];
     }
 

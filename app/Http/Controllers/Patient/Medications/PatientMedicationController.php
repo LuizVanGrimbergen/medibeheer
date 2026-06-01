@@ -94,6 +94,7 @@ class PatientMedicationController extends Controller
             'type_medication',
             'strength',
             'note',
+            'stock_pieces_per_package',
         ]);
 
         DB::transaction(function () use ($medication, $validated, $medicationPayload, $patient): void {
