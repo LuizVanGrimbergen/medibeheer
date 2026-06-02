@@ -1,10 +1,10 @@
 export default {
     title: 'Afspraken',
+    metaDescription:
+        'Overzicht van uw geplande afspraken in Medibeheer. Voeg nieuwe afspraken toe en beheer transport.',
     heading: 'Afspraken',
     newAppointment: 'Nieuwe afspraak',
     plannedHeading: 'Geplande afspraken',
-    plannedDescription:
-        'Geplande afspraken staan op volgorde van datum. Als een afspraak is afgerond of geannuleerd, verdwijnt deze uit dit overzicht.',
     cardActionsAriaLabel: 'Acties voor deze afspraak',
     cardExpandHint: 'Tik voor meer details',
     cardCollapseHint: 'Tik om te sluiten',
