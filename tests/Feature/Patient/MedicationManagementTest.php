@@ -7,6 +7,7 @@ use App\Enums\MedicationMealTiming;
 use App\Enums\MedicationType;
 use App\Models\Family;
 use App\Models\Medication;
+use App\Models\MedicationPrescription;
 use App\Models\MedicationSchedule;
 use App\Models\MedicationScheduleWeekday;
 use App\Models\MedicationStock;
@@ -328,6 +329,22 @@ test('patients can create a medication and name is encrypted at rest', function 
     expect($raw->stock_pieces_per_package)->not->toBe('10');
 });
 
+test('medication prescriptions are stored separately from medications', function () {
+    $medication = Medication::factory()->create();
+
+    MedicationPrescription::factory()->forMedication($medication)->create([
+        'prescription_expiry_date' => '2026-12-31',
+    ]);
+
+    $medication->load('prescription');
+
+    expect($medication->prescription?->prescription_expiry_date?->format('Y-m-d'))->toBe('2026-12-31');
+
+    $rawMedicationColumns = array_keys((array) DB::table('medications')->where('id', $medication->id)->first());
+
+    expect($rawMedicationColumns)->not->toContain('prescription_expiry_date');
+});
+
 test('patients can create a medication with an optional trimmed note', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
@@ -351,46 +368,6 @@ test('patients can create a medication with an optional trimmed note', function 
 
     $raw = DB::table('medications')->where('id', $medication->id)->first();
     expect($raw->note)->not->toBe('Na het eten innemen');
-});
-
-test('patients can create a medication with an optional prescription expiry date', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Metformine',
-        'dose' => '1',
-        'dose_unit' => MedicationDoseUnit::PIECE->value,
-        'type_medication' => MedicationType::PILL->value,
-        'prescription_expiry_date' => '2026-12-31',
-        ...validNewMedicationStockPayload(),
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
-    $response->assertRedirect(route('patient.medications'));
-
-    $medication = Medication::query()->where('patient_id', $patient->id)->first();
-    expect($medication)->not->toBeNull();
-    expect($medication->prescription_expiry_date?->format('Y-m-d'))->toBe('2026-12-31');
-});
-
-test('patients cannot store a medication with an invalid prescription expiry date', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Ongeldige vervaldatum',
-        'dose' => '1',
-        'dose_unit' => MedicationDoseUnit::PIECE->value,
-        'type_medication' => MedicationType::PILL->value,
-        'prescription_expiry_date' => '31-12-2026',
-        ...validNewMedicationStockPayload(),
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
-    $response->assertSessionHasErrors(['prescription_expiry_date']);
 });
 
 test('patients cannot store a medication without a schedule start date', function () {
