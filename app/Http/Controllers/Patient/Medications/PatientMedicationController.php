@@ -94,7 +94,6 @@ class PatientMedicationController extends Controller
             'type_medication',
             'strength',
             'note',
-            'prescription_expiry_date',
             'stock_pieces_per_package',
         ]);
 
