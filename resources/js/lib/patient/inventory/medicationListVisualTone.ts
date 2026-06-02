@@ -4,30 +4,18 @@ import type {
 } from '@/lib/types';
 
 import {
-    MEDICATION_SUPPLY_CRITICAL_MAX_DAYS,
-    MEDICATION_SUPPLY_WARNING_MAX_DAYS,
-} from './medicationSupplyDayThresholds';
+    medicationUrgencyToneFromDaysRemaining,
+    type MedicationUrgencyTone,
+} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 
-export type MedicationStockProgressTone = 'critical' | 'warning' | 'safe';
+export type MedicationStockProgressTone = MedicationUrgencyTone;
 
 export type MedicationVisualToneContext = {
     supply_estimate_days: number | null;
     supply_estimate_quality: MedicationSupplyEstimateQuality;
 };
 
-export function medicationSupplyProgressToneFromDays(
-    days: number,
-): MedicationStockProgressTone {
-    if (days <= MEDICATION_SUPPLY_CRITICAL_MAX_DAYS) {
-        return 'critical';
-    }
-
-    if (days <= MEDICATION_SUPPLY_WARNING_MAX_DAYS) {
-        return 'warning';
-    }
-
-    return 'safe';
-}
+export { medicationUrgencyToneFromDaysRemaining as medicationSupplyProgressToneFromDays };
 
 /** Card tone from supply days when known. */
 export function medicationVisualToneFromContext(
@@ -37,7 +25,7 @@ export function medicationVisualToneFromContext(
         context.supply_estimate_quality === 'approx'
         && context.supply_estimate_days !== null
     ) {
-        return medicationSupplyProgressToneFromDays(context.supply_estimate_days);
+        return medicationUrgencyToneFromDaysRemaining(context.supply_estimate_days);
     }
 
     return null;
