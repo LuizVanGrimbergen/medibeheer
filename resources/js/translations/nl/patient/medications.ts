@@ -7,7 +7,7 @@ export default {
         button: 'Actieve medicatie',
         title: 'Actieve medicatie',
         description: 'Toon dit scherm aan uw apotheker.',
-        back: 'Terug',
+        done: 'Gereed',
     },
     dialogEditTitle: 'Medicatie wijzigen',
     deleteConfirm: {
@@ -111,7 +111,7 @@ export default {
         before_food: 'Voor de maaltijd',
         after_food: 'Na de maaltijd',
         with_food: 'Bij de maaltijd',
-        unrelated: 'Los van maaltijden',
+        unrelated: 'Maakt niet uit',
     },
     snoozeTime: {
         minutes: '{count} minuten',

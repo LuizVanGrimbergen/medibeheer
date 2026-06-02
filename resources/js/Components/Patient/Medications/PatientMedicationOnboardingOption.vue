@@ -36,13 +36,13 @@ const showsHeadingBlock = computed(() => props.description !== undefined || prop
             <div class="min-w-0 space-y-1 sm:space-y-1.5">
                 <h3
                     :id="titleId"
-                    class="text-lg font-semibold leading-snug text-text-heading"
+                    class="daily-checkin-mood-step-title"
                 >
                     {{ title }}
                 </h3>
                 <p
                     v-if="description"
-                    class="text-base leading-relaxed text-text"
+                    class="daily-checkin-mood-step-description"
                 >
                     {{ description }}
                 </p>
