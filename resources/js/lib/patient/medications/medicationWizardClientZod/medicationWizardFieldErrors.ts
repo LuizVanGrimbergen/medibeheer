@@ -95,7 +95,6 @@ export function medicationWizardStepAfterFullClientParseFailure(
     const hasDoseSlotErrors =
         hasKey('schedule.dose_time') || hasKey('schedule.snooze_time');
     const hasDurationErrors =
-        hasKey('prescription_expiry_date') ||
         hasKey('schedule.start_date') ||
         hasKey('schedule.end_date');
     const hasStepSixErrors =

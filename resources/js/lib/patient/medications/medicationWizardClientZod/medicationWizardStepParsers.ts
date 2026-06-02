@@ -6,7 +6,7 @@ import type {
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { medicationWizardDetailsSchema } from './medicationDetailsClientSchema';
 import {
-    medicationWizardDurationStepSchema,
+    medicationWizardDurationFieldsSchema,
     medicationWizardDoseTimesFieldsSchema,
     medicationWizardScheduleTimingFieldsSchema,
     medicationWizardTimesPerDayOnlySchema,
@@ -109,10 +109,9 @@ export function tryMedicationWizardDoseTimesStep(
 }
 
 export function tryMedicationWizardDurationStep(
-    form: Pick<MedicationCreateFormState, 'prescription_expiry_date' | 'schedule'>,
+    form: Pick<MedicationCreateFormState, 'schedule'>,
 ): MedicationWizardClientParseResult {
-    const parsed = medicationWizardDurationStepSchema.safeParse({
-        prescription_expiry_date: form.prescription_expiry_date,
+    const parsed = medicationWizardDurationFieldsSchema.safeParse({
         start_date: form.schedule.start_date,
         end_date: form.schedule.end_date,
     });
