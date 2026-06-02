@@ -7,6 +7,7 @@ import medicationPlans from './medicationPlans';
 import medicationReminders from './medicationReminders';
 import medications from './medications';
 import navigation from './navigation';
+import prescriptions from './prescriptions';
 
 export default {
     appointments,
@@ -18,4 +19,5 @@ export default {
     medicationReminders,
     medications,
     navigation,
+    prescriptions,
 };
