@@ -6,6 +6,10 @@ export default {
     plannedDescription:
         'Geplande afspraken staan op volgorde van datum. Als een afspraak is afgerond of geannuleerd, verdwijnt deze uit dit overzicht.',
     cardActionsAriaLabel: 'Acties voor deze afspraak',
+    cardExpandHint: 'Tik voor meer details',
+    cardCollapseHint: 'Tik om te sluiten',
+    showDetails: 'Details tonen',
+    hideDetails: 'Details verbergen',
     empty: 'U heeft nog geen afspraken. Tik op de knop “Nieuwe afspraak” om te beginnen.',
     emptyPlanned:
         'Er zijn momenteel geen geplande afspraken. Nieuwe afspraken verschijnen hier zodra u ze toevoegt.',
@@ -99,7 +103,6 @@ export default {
         notNeeded: 'Niet nodig',
     },
     doneToggle: {
-        groupLabel: 'Afronden of annuleren',
         markDone: 'Afgerond',
         markCancelled: 'Geannuleerd',
         markUndone: 'Terug naar gepland',
