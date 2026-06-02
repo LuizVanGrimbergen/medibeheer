@@ -412,29 +412,6 @@ function summaryRowAria(fieldTranslationKey: string): string {
                         </IconActionButton>
                     </dd>
                 </div>
-                <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">
-                        {{ t('patient.medications.fields.prescriptionExpiryDate') }}
-                    </dt>
-                    <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{
-                            props.form.prescription_expiry_date.trim().length > 0
-                                ? props.form.prescription_expiry_date.trim()
-                                : '—'
-                        }}</span>
-                        <IconActionButton
-                            v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.prescriptionExpiryDate')"
-                            :disabled="props.form.processing"
-                            @click="activateSummaryRow(5, 'prescription-expiry-date')"
-                        >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
-                        </IconActionButton>
-                    </dd>
-                </div>
             </dl>
         </div>
     </div>
