@@ -63,7 +63,7 @@ const unitDescribedBy = computed((): string | undefined => {
 <template>
     <fieldset class="min-w-0 border-0 p-0">
         <legend :class="cn(patientFormLabelClass, 'text-lg md:text-xl')">
-            {{ legend }}
+            {{ legend }}<span v-if="amountRequired || unitRequired" class="text-danger"> *</span>
         </legend>
         <div
             :id="groupId"

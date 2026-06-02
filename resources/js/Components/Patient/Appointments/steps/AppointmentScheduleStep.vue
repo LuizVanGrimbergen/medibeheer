@@ -64,7 +64,7 @@ const minStartsAtTimeHm = computed(() => {
                         :for="`${idPrefix}-starts-at-date`"
                         class="mb-2 block text-xl font-semibold leading-snug text-text-heading"
                     >
-                        {{ t('patient.appointments.fields.startsAtDate') }}
+                        {{ t('patient.appointments.fields.startsAtDate') }} <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-starts-at-date`"
@@ -94,7 +94,7 @@ const minStartsAtTimeHm = computed(() => {
                         :for="`${idPrefix}-starts-at-time`"
                         class="mb-2 block text-xl font-semibold leading-snug text-text-heading"
                     >
-                        {{ t('patient.appointments.fields.startsAtTime') }}
+                        {{ t('patient.appointments.fields.startsAtTime') }} <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-starts-at-time`"

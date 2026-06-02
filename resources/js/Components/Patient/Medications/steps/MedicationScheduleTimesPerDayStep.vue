@@ -111,7 +111,7 @@ const timesPerDayCustomSelect = computed({
             :for="`${idPrefix}-schedule-times-per-day-custom`"
             :class="cn(patientFormLabelClass, 'text-xl')"
         >
-            {{ t('patient.medications.fields.timesPerDay') }}
+            {{ t('patient.medications.fields.timesPerDay') }} <span class="text-danger">*</span>
         </Label>
         <div
             :id="`${idPrefix}-schedule-times-per-day`"
