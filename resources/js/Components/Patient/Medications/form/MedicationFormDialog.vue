@@ -81,7 +81,13 @@ const {
                     class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] touch-pan-y"
                 >
                     <div class="space-y-3 md:space-y-3">
+                        <MedicationScheduleMealsAndFrequencyStep
+                            v-if="currentStep === 2"
+                            :form="props.form"
+                            :id-prefix="props.idPrefix"
+                        />
                         <Card
+                            v-else
                             class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
                         >
                             <CardContent class="p-0">
@@ -90,11 +96,6 @@ const {
                                 >
                                     <MedicationDetailsStep
                                         v-if="currentStep === 1"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationScheduleMealsAndFrequencyStep
-                                        v-else-if="currentStep === 2"
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
                                     />
