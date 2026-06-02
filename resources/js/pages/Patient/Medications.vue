@@ -47,7 +47,7 @@ const {
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.medications.title')">
+        <PatientPageShell :title="t('patient.medications.listHeading')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"
                 :has-active-medications="props.active_medications.meta.total > 0"
