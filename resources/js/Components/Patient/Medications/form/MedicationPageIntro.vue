@@ -5,8 +5,9 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
 import {
-    patientPageHeaderRowClass,
-    patientPageTitleClass,
+    patientPageActionsBarClass,
+    patientPageActionsGridClass,
+    patientPageIntroButtonClass,
 } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<{
@@ -24,24 +25,18 @@ const hasActions = computed(
     () => props.canCreateMedication || props.hasActiveMedications,
 );
 
-const actionButtonClass =
-    'min-h-14 w-full touch-manipulation gap-2.5 px-6 font-body text-lg font-bold sm:px-8';
 </script>
 
 <template>
-    <div :class="patientPageHeaderRowClass">
-        <h1 :class="patientPageTitleClass">
-            {{ t('patient.medications.listHeading') }}
-        </h1>
-
-        <div
-            v-if="hasActions"
-            class="grid w-full shrink-0 grid-cols-1 gap-3 sm:ml-auto sm:w-max"
-        >
+    <div
+        v-if="hasActions"
+        :class="patientPageActionsBarClass"
+    >
+        <div :class="patientPageActionsGridClass">
             <Button
                 v-if="canCreateMedication"
                 size="lg"
-                :class="actionButtonClass"
+                :class="patientPageIntroButtonClass"
                 type="button"
                 @click="emit('newMedicationClick')"
             >
@@ -57,7 +52,7 @@ const actionButtonClass =
                 as-child
                 variant="outline"
                 size="lg"
-                :class="actionButtonClass"
+                :class="patientPageIntroButtonClass"
             >
                 <Link :href="route('patient.medications.pharmacist-overview')">
                     <ClipboardList

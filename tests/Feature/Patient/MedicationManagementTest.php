@@ -353,6 +353,64 @@ test('patients can create a medication with an optional trimmed note', function 
     expect($raw->note)->not->toBe('Na het eten innemen');
 });
 
+test('patients can create a medication with an optional prescription expiry date', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Metformine',
+        'dose' => '1',
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
+        'type_medication' => MedicationType::PILL->value,
+        'prescription_expiry_date' => '2026-12-31',
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertRedirect(route('patient.medications'));
+
+    $medication = Medication::query()->where('patient_id', $patient->id)->first();
+    expect($medication)->not->toBeNull();
+    expect($medication->prescription_expiry_date?->format('Y-m-d'))->toBe('2026-12-31');
+});
+
+test('patients cannot store a medication with an invalid prescription expiry date', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Ongeldige vervaldatum',
+        'dose' => '1',
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
+        'type_medication' => MedicationType::PILL->value,
+        'prescription_expiry_date' => '31-12-2026',
+        ...validNewMedicationStockPayload(),
+        'schedule' => validNewMedicationSchedulePayload(),
+    ]);
+
+    $response->assertSessionHasErrors(['prescription_expiry_date']);
+});
+
+test('patients cannot store a medication without a schedule start date', function () {
+    $user = User::factory()->patient()->create();
+
+    $schedule = validNewMedicationSchedulePayload();
+    unset($schedule['start_date']);
+
+    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
+        'name' => 'Zonder startdatum',
+        'dose' => '1',
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
+        'type_medication' => MedicationType::PILL->value,
+        ...validNewMedicationStockPayload(),
+        'schedule' => $schedule,
+    ]);
+
+    $response->assertSessionHasErrors(['schedule.start_date']);
+});
+
 test('patients can create a medication with optional strength separate from intake dose', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;

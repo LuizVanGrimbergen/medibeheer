@@ -74,7 +74,7 @@ export function attemptMedicationWizardAdvanceFromStep4(
 export function attemptMedicationWizardAdvanceFromStep5(
     form: MedicationCreateFormState,
 ): MedicationWizardStepAdvanceResult {
-    const check = tryMedicationWizardDurationStep(form.schedule);
+    const check = tryMedicationWizardDurationStep(form);
 
     if (!check.ok) {
         return { ok: false, fieldErrors: check.fieldErrors };

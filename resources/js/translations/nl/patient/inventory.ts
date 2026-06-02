@@ -1,5 +1,7 @@
 export default {
     title: 'Voorraad',
+    metaDescription:
+        'Overzicht van uw medicatievoorraad in Medibeheer. Zie hoeveel u nog heeft en plan vakantie.',
     listHeading: 'Uw voorraad per medicatie',
     empty:
         'U heeft nog geen medicaties. Voeg eerst medicaties toe om hier uw voorraad te zien.',

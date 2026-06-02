@@ -116,7 +116,7 @@ watch(
                 :id="`${idPrefix}-schedule-duration-intake-period`"
                 :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
             >
-                {{ t('patient.medications.fields.intakePeriod') }}
+                {{ t('patient.medications.fields.intakePeriod') }} <span class="text-danger">*</span>
             </legend>
             <div
                 :class="
@@ -262,5 +262,41 @@ watch(
                 "
             />
         </fieldset>
+
+        <div>
+            <Label
+                :for="`${idPrefix}-prescription-expiry-date`"
+                :class="cn(patientFormLabelClass, 'text-xl')"
+            >
+                {{ t('patient.medications.fields.prescriptionExpiryDate') }}
+            </Label>
+            <Input
+                :id="`${idPrefix}-prescription-expiry-date`"
+                v-model="form.prescription_expiry_date"
+                type="date"
+                name="prescription_expiry_date"
+                autocomplete="off"
+                :class="
+                    cn(
+                        patientFormFieldInputClass,
+                        patientFormLargeTouchFieldClass,
+                        'mt-2',
+                        form.errors.prescription_expiry_date
+                            ? patientFormFieldInvalidClass
+                            : null,
+                    )
+                "
+                :aria-invalid="Boolean(form.errors.prescription_expiry_date)"
+                :aria-describedby="
+                    form.errors.prescription_expiry_date
+                        ? `${idPrefix}-prescription-expiry-date-error`
+                        : undefined
+                "
+            />
+            <InputError
+                :id="`${idPrefix}-prescription-expiry-date-error`"
+                :message="form.errors.prescription_expiry_date"
+            />
+        </div>
     </div>
 </template>

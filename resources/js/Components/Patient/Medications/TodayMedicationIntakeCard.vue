@@ -4,8 +4,10 @@ import { AlertTriangle, Check } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { medicationVisualToneFromContext } from '@/lib/patient/inventory/medicationListVisualTone';
@@ -13,6 +15,7 @@ import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicat
 import {
     medicationIntakeDoseLine,
     medicationIntakeNotePreview,
+    medicationTodayIntakeHeaderSummary,
     medicationTypeLabel,
 } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import {
@@ -24,6 +27,7 @@ import {
     patientFormLabelClass,
     patientFormNativeDateTimeInputClass,
 } from '@/lib/patient/patientFormFieldClasses';
+import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
 import type { TodayMedicationIntakeSlot } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -51,6 +55,7 @@ const showBeforeWindowState = computed(
 
 const showCustomTimePanel = ref(false);
 const customTakenTime = ref(currentMedicationIntakeTimeHHmm());
+const isOpen = ref(false);
 
 watch(showPastSnoozeActions, (visible) => {
     if (!visible) {
@@ -73,6 +78,8 @@ const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 const notePreview = computed(() => medicationIntakeNotePreview(props.intakeSlot));
 
 const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_medication));
+
+const headerSummary = computed(() => medicationTodayIntakeHeaderSummary(t, props.intakeSlot));
 
 const stockProgressTone = computed(() =>
     medicationVisualToneFromContext({
@@ -177,84 +184,110 @@ function confirmCustomTakenTime(): void {
                 :aria-label="t('patient.inventory.lowStockBadge')"
             />
 
-            <div
-                class="flex min-w-0 items-start gap-4"
-                :class="showCriticalSupplyAlert ? 'pr-8 sm:pr-10' : null"
-            >
+            <Collapsible v-model:open="isOpen">
                 <div
-                    class="flex size-14 shrink-0 items-center justify-center rounded-2xl sm:size-16"
-                    :class="intakeCardToneClasses.pillWrap"
-                >
-                    <span class="sr-only">{{ typeLabel }}</span>
-                    <MedicationTypeLeadIcon
-                        :medication-type="intakeSlot.type_medication"
-                        :icon-tone-class="intakeCardToneClasses.pillIcon"
-                    />
-                </div>
-
-                <div class="min-w-0 flex-1">
-                    <h4
-                        class="wrap-break-word text-xl font-bold leading-snug text-text-heading sm:text-2xl"
-                    >
-                        {{ intakeSlot.name }}
-                    </h4>
-                    <p class="mt-1 text-base font-medium leading-snug text-text-muted sm:text-lg">
-                        {{ typeLabel }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-4 sm:gap-5">
-                <div
-                    class="grid min-w-0 gap-3 sm:gap-4"
-                    :class="doseLine !== null ? 'grid-cols-2' : 'grid-cols-1'"
+                    class="flex min-w-0 items-start gap-4"
+                    :class="showCriticalSupplyAlert ? 'pr-8 sm:pr-10' : null"
                 >
                     <div
-                        v-if="doseLine !== null"
-                        class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
+                        class="flex size-14 shrink-0 items-center justify-center rounded-2xl sm:size-16"
+                        :class="intakeCardToneClasses.pillWrap"
                     >
-                        <span class="text-sm font-semibold leading-snug text-text-muted sm:text-base">
-                            {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
-                        </span>
-                        <span
-                            class="wrap-break-word text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
-                        >
-                            {{ doseLine }}
-                        </span>
+                        <span class="sr-only">{{ typeLabel }}</span>
+                        <MedicationTypeLeadIcon
+                            :medication-type="intakeSlot.type_medication"
+                            :icon-tone-class="intakeCardToneClasses.pillIcon"
+                        />
                     </div>
 
-                    <div
-                        class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
-                    >
-                        <span class="text-sm font-semibold leading-snug text-text-muted sm:text-base">
-                            {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
-                        </span>
-                        <span
-                            class="text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
+                    <div class="min-w-0 flex-1">
+                        <h4
+                            class="wrap-break-word text-xl font-bold leading-snug text-text-heading sm:text-2xl"
                         >
-                            {{ intakeSlot.dose_time }}
-                        </span>
+                            {{ intakeSlot.name }}
+                        </h4>
+                        <p
+                            v-if="!isOpen"
+                            :class="cn('mt-1', patientPageCardHeaderSummaryClass)"
+                        >
+                            {{ headerSummary }}
+                        </p>
                     </div>
                 </div>
 
-                <div
-                    v-if="notePreview !== null"
-                    class="flex flex-col gap-1.5"
-                >
-                    <span class="text-sm font-semibold text-text-muted sm:text-base">
-                        {{ t('patient.dashboard.todayMedications.intakeCard.note') }}
-                    </span>
-                    <p
-                        class="min-w-0 whitespace-pre-wrap wrap-break-word text-base leading-relaxed text-text sm:text-lg"
-                    >
-                        {{ notePreview }}
-                    </p>
-                </div>
-            </div>
+                <PatientListCardDetailsToggle
+                    v-if="!isOpen"
+                    mode="expand"
+                    :label="t('patient.medications.cardExpandHint')"
+                    :ariaLabel="t('patient.medications.showDetails')"
+                />
+
+                <CollapsibleContent>
+                    <div class="space-y-5 pt-4">
+                        <div class="flex flex-col gap-4 sm:gap-5">
+                            <div
+                                class="grid min-w-0 gap-3 sm:gap-4"
+                                :class="doseLine !== null ? 'grid-cols-2' : 'grid-cols-1'"
+                            >
+                                <div
+                                    v-if="doseLine !== null"
+                                    class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
+                                >
+                                    <span
+                                        class="text-sm font-semibold leading-snug text-text-muted sm:text-base"
+                                    >
+                                        {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
+                                    </span>
+                                    <span
+                                        class="wrap-break-word text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
+                                    >
+                                        {{ doseLine }}
+                                    </span>
+                                </div>
+
+                                <div
+                                    class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
+                                >
+                                    <span
+                                        class="text-sm font-semibold leading-snug text-text-muted sm:text-base"
+                                    >
+                                        {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
+                                    </span>
+                                    <span
+                                        class="text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
+                                    >
+                                        {{ intakeSlot.dose_time }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div
+                                v-if="notePreview !== null"
+                                class="flex flex-col gap-1.5"
+                            >
+                                <span class="text-sm font-semibold text-text-muted sm:text-base">
+                                    {{ t('patient.dashboard.todayMedications.intakeCard.note') }}
+                                </span>
+                                <p
+                                    class="min-w-0 whitespace-pre-wrap wrap-break-word text-base leading-relaxed text-text sm:text-lg"
+                                >
+                                    {{ notePreview }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <PatientListCardDetailsToggle
+                            mode="collapse"
+                            :label="t('patient.medications.cardCollapseHint')"
+                            :ariaLabel="t('patient.medications.hideDetails')"
+                        />
+                    </div>
+                </CollapsibleContent>
+            </Collapsible>
 
             <div
                 v-if="showBeforeWindowState"
-                class="flex flex-col gap-3"
+                class="mt-5 flex flex-col gap-3"
             >
                 <Button
                     type="button"
@@ -268,7 +301,7 @@ function confirmCustomTakenTime(): void {
 
             <div
                 v-else-if="showStandardTakeButton"
-                class="flex flex-col gap-2"
+                class="mt-5 flex flex-col gap-2"
             >
                 <Button
                     type="button"
@@ -284,7 +317,7 @@ function confirmCustomTakenTime(): void {
 
             <div
                 v-else-if="showPastSnoozeActions"
-                class="flex flex-col gap-3"
+                class="mt-5 flex flex-col gap-3"
             >
                 <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Button
@@ -350,7 +383,7 @@ function confirmCustomTakenTime(): void {
             <Button
                 v-else-if="isTaken"
                 type="button"
-                class="min-h-14 w-full touch-manipulation rounded-2xl border-2 border-success bg-success/10 text-lg font-bold text-text-heading hover:bg-success/10 sm:min-h-12 sm:text-base"
+                class="mt-5 min-h-14 w-full touch-manipulation rounded-2xl border-2 border-success bg-success/10 text-lg font-bold text-text-heading hover:bg-success/10 sm:min-h-12 sm:text-base"
                 variant="outline"
                 disabled
                 :aria-pressed="true"

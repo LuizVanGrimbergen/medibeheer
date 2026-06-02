@@ -30,7 +30,7 @@ const isEmpty = computed(() => model.value.trim() === '');
             :for="id"
             :class="cn(patientFormLabelClass, 'text-xl')"
         >
-            {{ label }}
+            {{ label }} <span class="text-danger">*</span>
         </Label>
 
         <div class="relative">

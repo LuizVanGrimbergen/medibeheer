@@ -178,7 +178,11 @@ function applyMedicationWizardDurationRefinement(
     if (startTrimmed.length < 1) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleStartDateRequired'),
+            message: medicationWizardStepValidation(
+                endTrimmed.length < 1
+                    ? 'scheduleIntakePeriodRequired'
+                    : 'scheduleStartDateRequired',
+            ),
             path: ['start_date'],
         });
     } else if (medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null) {
@@ -252,12 +256,48 @@ export const medicationWizardDoseTimesFieldsSchema = z
     .superRefine(applyMedicationWizardDoseTimesRefinement)
     .superRefine(applyMedicationWizardSnoozeTimesRefinement);
 
+export function applyMedicationWizardPrescriptionExpiryRefinement(
+    data: { prescription_expiry_date: string },
+    ctx: z.core.$RefinementCtx,
+): void {
+    const trimmed = data.prescription_expiry_date.trim();
+
+    if (trimmed.length < 1) {
+        return;
+    }
+
+    if (medicationScheduleEndDateIsoInclusiveLocal(trimmed, 1) === null) {
+        ctx.addIssue({
+            code: 'custom',
+            message: medicationWizardStepValidation('prescriptionExpiryDateInvalid'),
+            path: ['prescription_expiry_date'],
+        });
+    }
+}
+
 export const medicationWizardDurationFieldsSchema = z
     .object({
         start_date: z.string(),
         end_date: z.string(),
     })
     .superRefine(applyMedicationWizardDurationRefinement);
+
+export const medicationWizardDurationStepSchema = z
+    .object({
+        prescription_expiry_date: z.string(),
+        start_date: z.string(),
+        end_date: z.string(),
+    })
+    .superRefine((data, ctx) => {
+        applyMedicationWizardPrescriptionExpiryRefinement(
+            { prescription_expiry_date: data.prescription_expiry_date },
+            ctx,
+        );
+        applyMedicationWizardDurationRefinement(
+            { start_date: data.start_date, end_date: data.end_date },
+            ctx,
+        );
+    });
 
 export const medicationWizardScheduleSliceSchema = z
     .object({

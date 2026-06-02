@@ -135,7 +135,7 @@ function defaultStrengthUnitForMedicationType(
                 :for="`${idPrefix}-name`"
                 :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
             >
-                {{ t('patient.medications.fields.name') }}
+                {{ t('patient.medications.fields.name') }} <span class="text-danger">*</span>
             </Label>
             <Input
                 :id="`${idPrefix}-name`"
@@ -169,7 +169,7 @@ function defaultStrengthUnitForMedicationType(
                 :id="`${idPrefix}-type-label`"
                 :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
             >
-                {{ t('patient.medications.fields.type') }}
+                {{ t('patient.medications.fields.type') }} <span class="text-danger">*</span>
             </p>
             <div
                 :id="`${idPrefix}-type`"

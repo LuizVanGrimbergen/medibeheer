@@ -42,10 +42,12 @@ export function medicationWizardStepForInertiaFormErrors(
 
     const startDateError = errors['schedule.start_date'];
     const endDateError = errors['schedule.end_date'];
+    const prescriptionExpiryDateError = errors.prescription_expiry_date;
 
     if (
         (startDateError !== undefined && startDateError.length > 0) ||
-        (endDateError !== undefined && endDateError.length > 0)
+        (endDateError !== undefined && endDateError.length > 0) ||
+        (prescriptionExpiryDateError !== undefined && prescriptionExpiryDateError.length > 0)
     ) {
         return 5;
     }

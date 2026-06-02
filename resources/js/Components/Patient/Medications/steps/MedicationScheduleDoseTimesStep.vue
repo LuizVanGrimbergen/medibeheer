@@ -78,7 +78,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
             :id="`${idPrefix}-schedule-dose-times-label`"
             :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
         >
-            {{ t('patient.medications.fields.doseTime') }}
+            {{ t('patient.medications.fields.doseTime') }} <span class="text-danger">*</span>
         </legend>
         <div class="mt-4 space-y-4">
             <div
@@ -94,7 +94,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
                         :for="`${idPrefix}-schedule-dose-time-${index}`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.medications.fields.doseTimeAt') }}
+                        {{ t('patient.medications.fields.doseTimeAt') }} <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-schedule-dose-time-${index}`"
@@ -124,7 +124,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
                         :for="`${idPrefix}-schedule-snooze-time-${index}`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.medications.fields.snoozeTime') }}
+                        {{ t('patient.medications.fields.snoozeTime') }} <span class="text-danger">*</span>
                     </Label>
                     <select
                         :id="`${idPrefix}-schedule-snooze-time-${index}`"

@@ -66,7 +66,7 @@ const { t } = useI18n();
                     class="min-h-14 w-full touch-manipulation gap-2.5 px-6 font-body text-lg font-bold"
                 >
                     <Link :href="route('patient.medications')">
-                        {{ t('patient.medications.pharmacistOverview.back') }}
+                        {{ t('patient.medications.pharmacistOverview.done') }}
                     </Link>
                 </Button>
             </div>

@@ -1,22 +1,16 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { CalendarPlus } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
-import { Button } from '@/Components/ui/button';
+import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
-import {
-    patientPageHeaderRowClass,
-    patientPageIntroClass,
-    patientPageSectionTitleClass,
-    patientPageTitleClass,
-} from '@/lib/patient/patientPageTypography';
+import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
@@ -46,32 +40,15 @@ const {
 <template>
     <Head>
         <title>{{ t('patient.appointments.title') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.appointments.metaDescription')"
+        />
     </Head>
 
     <PatientLayout>
         <PatientPageShell :title="t('patient.appointments.heading')">
-            <div :class="patientPageHeaderRowClass">
-                <div class="min-w-0 space-y-3">
-                    <h1 :class="patientPageTitleClass">
-                        {{ t('patient.appointments.heading') }}
-                    </h1>
-                    <p :class="[patientPageIntroClass, 'max-w-prose']">
-                        {{ t('patient.appointments.plannedDescription') }}
-                    </p>
-                </div>
-
-                <Button
-                    size="lg"
-                    class="min-h-14 w-full touch-manipulation gap-2.5 self-stretch px-6 text-lg sm:w-auto sm:self-center sm:px-8"
-                    @click="createDialogOpen = true"
-                >
-                    <CalendarPlus
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
-                    {{ t('patient.appointments.newAppointment') }}
-                </Button>
-            </div>
+            <AppointmentsPageIntro @new-appointment-click="createDialogOpen = true" />
 
             <section class="space-y-5">
                 <h2 :class="patientPageSectionTitleClass">

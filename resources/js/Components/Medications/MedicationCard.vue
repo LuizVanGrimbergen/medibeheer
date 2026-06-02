@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { Calendar, Clock, Package, Pencil, Scale, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { Calendar, CalendarClock, Clock, Package, Scale } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockControls from '@/Components/Medications/MedicationStockControls.vue';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
-import PatientListCardDetailRow from '@/Components/Patient/PatientListCardDetailRow.vue';
+import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
+import PatientListCardDetailsGroup from '@/Components/Patient/PatientListCardDetailsGroup.vue';
+import PatientListCardDetailsGroupItem from '@/Components/Patient/PatientListCardDetailsGroupItem.vue';
+import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Card, CardContent } from '@/Components/ui/card';
-import { IconActionButton } from '@/Components/ui/icon-action-button';
+import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
 import {
+    medicationCardHeaderSummary,
     medicationIntakeDoseLine,
     medicationIntakeNotePreview,
     medicationTypeLabel,
 } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
+import {
+    patientPageCardDetailValueClass,
+    patientPageCardHeaderSummaryClass,
+    patientPageCardHeaderWithActionsClass,
+} from '@/lib/patient/patientPageTypography';
 import type { MedicationListItem } from '@/lib/types';
 
 const props = withDefaults(
@@ -24,6 +33,7 @@ const props = withDefaults(
         stockUpdateRouteName?: string;
         listStatusEndedLabelKey?: string;
         listStatusRemovedLabelKey?: string;
+        defaultOpen?: boolean;
     }>(),
     {
         showActions: true,
@@ -31,8 +41,11 @@ const props = withDefaults(
         stockUpdateRouteName: 'patient.medications.stocks.update',
         listStatusEndedLabelKey: 'patient.medications.listStatus.ended',
         listStatusRemovedLabelKey: 'patient.medications.listStatus.removed',
+        defaultOpen: false,
     },
 );
+
+const isOpen = ref(props.defaultOpen);
 
 const emit = defineEmits<{
     edit: [];
@@ -67,7 +80,7 @@ const canDelete = computed(
     () => props.showActions && props.medication.list_status === 'active',
 );
 
-const showCardToolbar = computed(() => canEdit.value || canDelete.value);
+const hasEditOrDeleteActions = computed(() => canEdit.value || canDelete.value);
 
 const formatYmdForMedicationCard = (ymd: string): string => {
     const parts = ymd.split('-').map(Number);
@@ -97,6 +110,7 @@ const formatYmdForMedicationCard = (ymd: string): string => {
 };
 
 const scheduleDateRow = computed((): {
+    rangeDisplay: string;
     startDisplay: string;
     endDisplay: string;
     startIso: string | null;
@@ -124,6 +138,10 @@ const scheduleDateRow = computed((): {
             : formatYmdForMedicationCard(endTrimmed);
 
     return {
+        rangeDisplay: t('patient.medications.cardIntakePeriodRange', {
+            start: startDisplay,
+            end: endDisplay,
+        }),
         startDisplay,
         endDisplay,
         startIso: startTrimmed.length < 1 ? null : startTrimmed,
@@ -132,6 +150,21 @@ const scheduleDateRow = computed((): {
             start: startDisplay,
             end: endDisplay,
         }),
+    };
+});
+
+const doseTimesDisplay = computed(() => sortedDoseTimes.value.join(', '));
+
+const prescriptionExpiryDateRow = computed((): { display: string; iso: string } | null => {
+    const trimmed = props.medication.prescription_expiry_date?.trim() ?? '';
+
+    if (trimmed.length < 1) {
+        return null;
+    }
+
+    return {
+        display: formatYmdForMedicationCard(trimmed),
+        iso: trimmed,
     };
 });
 
@@ -207,7 +240,26 @@ const doseLine = computed(() =>
 
 const strengthLine = computed(() => props.medication.strength?.trim() || null);
 
+const hasMedicationDetailsGroup = computed(
+    () =>
+        doseLine.value !== null
+        || strengthLine.value !== null
+        || sortedDoseTimes.value.length > 0
+        || scheduleDateRow.value !== null
+        || prescriptionExpiryDateRow.value !== null,
+);
+
 const typeLabel = computed(() => medicationTypeLabel(t, props.medication.type_medication));
+
+const headerSummary = computed(() =>
+    medicationCardHeaderSummary(t, {
+        dose: props.medication.dose,
+        dose_unit: props.medication.dose_unit,
+        note: props.medication.note,
+        type_medication: props.medication.type_medication,
+        doseTimes: sortedDoseTimes.value,
+    }),
+);
 
 const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
 
@@ -234,40 +286,25 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
             isInactiveListItem ? 'opacity-90' : null,
         ]"
     >
-        <CardContent class="relative space-y-6 p-6 sm:p-7">
-            <div
-                v-if="showCardToolbar"
-                class="absolute right-6 top-6 z-10 flex flex-row items-center gap-0.5 sm:right-7 sm:top-7"
-                role="toolbar"
-                :aria-label="t('patient.medications.cardActionsAriaLabel')"
-            >
-                <IconActionButton
-                    v-if="canEdit"
-                    :ariaLabel="t('patient.medications.actions.edit')"
-                    @click="emit('edit')"
-                >
-                    <Pencil
-                        class="size-5"
-                        aria-hidden="true"
-                    />
-                </IconActionButton>
-                <IconActionButton
-                    v-if="canDelete"
-                    tone="danger"
-                    :ariaLabel="t('patient.medications.actions.delete')"
-                    @click="emit('delete')"
-                >
-                    <Trash2
-                        class="size-5"
-                        aria-hidden="true"
-                    />
-                </IconActionButton>
-            </div>
+        <CardContent class="relative p-6 sm:p-7">
+            <Collapsible v-model:open="isOpen">
+                <PatientListCardActionsToolbar
+                    v-if="hasEditOrDeleteActions"
+                    :ariaLabel="t('patient.medications.cardActionsAriaLabel')"
+                    :showEdit="canEdit"
+                    :showDelete="canDelete"
+                    :editAriaLabel="t('patient.medications.actions.edit')"
+                    :deleteAriaLabel="t('patient.medications.actions.delete')"
+                    @edit="emit('edit')"
+                    @delete="emit('delete')"
+                />
 
-            <div
-                class="flex min-w-0 items-start gap-4"
-                :class="showCardToolbar ? 'pr-21 sm:pr-28' : null"
-            >
+                <div
+                    class="flex min-w-0 items-start gap-4"
+                    :class="
+                        hasEditOrDeleteActions ? patientPageCardHeaderWithActionsClass : null
+                    "
+                >
                     <div
                         class="flex size-12 shrink-0 items-center justify-center rounded-xl"
                         :class="medicationPillWrapToneClass"
@@ -279,142 +316,138 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                             :icon-tone-class="medicationPillIconClass"
                         />
                     </div>
-                    <div class="min-w-0 flex-1 overflow-hidden space-y-1">
+                    <div class="min-w-0 flex-1 space-y-1.5">
                         <p
                             class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
                         >
                             {{ medication.name }}
                         </p>
-                        <p class="text-base font-normal leading-snug text-text-muted">
-                            {{ typeLabel }}
+                        <p
+                            v-if="!isOpen"
+                            :class="patientPageCardHeaderSummaryClass"
+                        >
+                            {{ headerSummary }}
                         </p>
                         <p
                             v-if="listStatusLabel !== null"
-                            class="pt-1 text-sm font-semibold leading-snug text-text-muted"
+                            class="text-base font-semibold leading-snug text-text-muted"
                         >
                             {{ listStatusLabel }}
                         </p>
                     </div>
-            </div>
+                </div>
 
-            <div class="space-y-5">
-                <PatientListCardDetailRow
-                    v-if="doseLine !== null"
-                    :label="t('patient.medications.overview.amountPerIntake')"
-                >
-                    <template #icon>
-                        <Package
-                            class="mt-0.5 size-6 shrink-0 text-primary"
-                            :stroke-width="2"
-                            aria-hidden="true"
-                        />
-                    </template>
-                    {{ doseLine }}
-                </PatientListCardDetailRow>
+                <PatientListCardDetailsToggle
+                    v-if="!isOpen"
+                    mode="expand"
+                    :label="t('patient.medications.cardExpandHint')"
+                    :ariaLabel="t('patient.medications.showDetails')"
+                />
 
-                <PatientListCardDetailRow
-                    v-if="strengthLine !== null"
-                    :label="t('patient.medications.fields.strength')"
-                >
-                    <template #icon>
-                        <Scale
-                            class="mt-0.5 size-6 shrink-0 text-primary"
-                            :stroke-width="2"
-                            aria-hidden="true"
-                        />
-                    </template>
-                    {{ strengthLine }}
-                </PatientListCardDetailRow>
+                <CollapsibleContent>
+                    <div class="space-y-6 pt-4">
+                        <PatientListCardDetailsGroup v-if="hasMedicationDetailsGroup">
+                            <PatientListCardDetailsGroupItem
+                                v-if="doseLine !== null"
+                                :label="t('patient.medications.overview.amountPerIntake')"
+                            >
+                                <template #icon>
+                                    <Package
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ doseLine }}
+                            </PatientListCardDetailsGroupItem>
 
-                <div
-                    v-if="sortedDoseTimes.length > 0"
-                    class="flex gap-4 sm:gap-5"
-                >
-                    <Clock
-                        class="mt-1 size-6 shrink-0 self-start text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p class="text-base font-semibold leading-tight text-text-heading">
-                            {{ t('patient.medications.fields.doseTime') }}
-                        </p>
+                            <PatientListCardDetailsGroupItem
+                                v-if="strengthLine !== null"
+                                :label="t('patient.medications.fields.strength')"
+                            >
+                                <template #icon>
+                                    <Scale
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ strengthLine }}
+                            </PatientListCardDetailsGroupItem>
+
+                            <PatientListCardDetailsGroupItem
+                                v-if="sortedDoseTimes.length > 0"
+                                :label="t('patient.medications.fields.doseTime')"
+                            >
+                                <template #icon>
+                                    <Clock
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ doseTimesDisplay }}
+                            </PatientListCardDetailsGroupItem>
+
+                            <PatientListCardDetailsGroupItem
+                                v-if="scheduleDateRow !== null"
+                                :label="t('patient.medications.fields.intakePeriod')"
+                                raw-value
+                            >
+                                <template #icon>
+                                    <Calendar
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                <p
+                                    :class="patientPageCardDetailValueClass"
+                                    :aria-label="scheduleDateRow.ariaLabel"
+                                >
+                                    {{ scheduleDateRow.rangeDisplay }}
+                                </p>
+                            </PatientListCardDetailsGroupItem>
+
+                            <PatientListCardDetailsGroupItem
+                                v-if="prescriptionExpiryDateRow !== null"
+                                :label="t('patient.medications.fields.prescriptionExpiryDateShort')"
+                                raw-value
+                            >
+                                <template #icon>
+                                    <CalendarClock
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                <p :class="patientPageCardDetailValueClass">
+                                    <time :datetime="prescriptionExpiryDateRow.iso">
+                                        {{ prescriptionExpiryDateRow.display }}
+                                    </time>
+                                </p>
+                            </PatientListCardDetailsGroupItem>
+                        </PatientListCardDetailsGroup>
+
                         <p
-                            v-for="time in sortedDoseTimes"
-                            :key="time"
-                            class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
+                            v-if="notePreview !== null"
+                            class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
                         >
-                            {{ time }}
+                            {{ notePreview }}
                         </p>
-                    </div>
-                </div>
 
-                <div
-                    v-if="scheduleDateRow !== null"
-                    class="flex gap-4 sm:gap-5"
-                    :aria-label="scheduleDateRow.ariaLabel"
-                >
-                    <Calendar
-                        class="mt-1 size-6 shrink-0 self-start text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
+                        <MedicationStockControls
+                            v-if="props.showStock"
+                            :medication="medication"
+                            :update-route-name="props.stockUpdateRouteName"
+                            :id-prefix="`medication-card-stock-${medication.id}`"
+                            :can-adjust-stock="medication.list_status === 'active'"
+                            class="border-t border-border/70 pt-5"
+                        />
+                    </div>
+
+                    <PatientListCardDetailsToggle
+                        mode="collapse"
+                        :label="t('patient.medications.cardCollapseHint')"
+                        :ariaLabel="t('patient.medications.hideDetails')"
                     />
-                    <div class="min-w-0 flex-1 space-y-3">
-                            <div>
-                                <p class="text-base font-semibold leading-tight text-text-heading">
-                                    {{ t('patient.medications.fields.startDate') }}
-                                </p>
-                                <time
-                                    v-if="scheduleDateRow.startIso !== null"
-                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
-                                    :datetime="scheduleDateRow.startIso"
-                                >
-                                    {{ scheduleDateRow.startDisplay }}
-                                </time>
-                                <p
-                                    v-else
-                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
-                                >
-                                    {{ scheduleDateRow.startDisplay }}
-                                </p>
-                            </div>
-                            <div>
-                                <p class="text-base font-semibold leading-tight text-text-heading">
-                                    {{ t('patient.medications.fields.endDate') }}
-                                </p>
-                                <time
-                                    v-if="scheduleDateRow.endIso !== null"
-                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
-                                    :datetime="scheduleDateRow.endIso"
-                                >
-                                    {{ scheduleDateRow.endDisplay }}
-                                </time>
-                                <p
-                                    v-else
-                                    class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
-                                >
-                                    {{ scheduleDateRow.endDisplay }}
-                                </p>
-                            </div>
-                    </div>
-                </div>
-            </div>
-
-            <p
-                v-if="notePreview !== null"
-                class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
-            >
-                {{ notePreview }}
-            </p>
-
-            <MedicationStockControls
-                v-if="props.showStock"
-                :medication="medication"
-                :update-route-name="props.stockUpdateRouteName"
-                :id-prefix="`medication-card-stock-${medication.id}`"
-                :can-adjust-stock="medication.list_status === 'active'"
-                class="border-t border-border/70 pt-5"
-            />
+                </CollapsibleContent>
+            </Collapsible>
         </CardContent>
     </Card>
 </template>

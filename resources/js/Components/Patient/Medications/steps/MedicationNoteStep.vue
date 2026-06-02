@@ -40,7 +40,7 @@ const stockDisplayDoseUnit = computed(() =>
         >
             <fieldset>
                 <legend :class="cn(patientFormLabelClass, 'text-xl')">
-                    {{ t('patient.medications.fields.currentStock') }}
+                    {{ t('patient.medications.fields.currentStock') }} <span class="text-danger">*</span>
                 </legend>
                 <MedicationStockBoxCalculator
                     v-model="props.form.current_stock"

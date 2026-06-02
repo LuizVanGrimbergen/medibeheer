@@ -52,7 +52,7 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     :for="`${idPrefix}-doctor-type`"
                     :class="patientFormLabelClass"
                 >
-                    {{ t('patient.appointments.fields.doctorType') }}
+                    {{ t('patient.appointments.fields.doctorType') }} <span class="text-danger">*</span>
                 </Label>
                 <select
                     :id="`${idPrefix}-doctor-type`"
@@ -102,7 +102,7 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     :for="`${idPrefix}-provider-name`"
                     :class="patientFormLabelClass"
                 >
-                    {{ t('patient.appointments.fields.providerName') }}
+                    {{ t('patient.appointments.fields.providerName') }} <span class="text-danger">*</span>
                 </Label>
                 <Input
                     :id="`${idPrefix}-provider-name`"

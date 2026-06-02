@@ -16,6 +16,7 @@ export const medicationFormErrorScrollOrder = [
     'schedule.intake_weekdays',
     'schedule.times_per_day',
     'schedule.dose_time',
+    'prescription_expiry_date',
     'schedule.start_date',
     'schedule.end_date',
 ] as const;
@@ -38,6 +39,7 @@ export const medicationFormFieldDomSuffix: Record<MedicationFormWizardScrollFiel
     'schedule.intake_weekdays': 'schedule-intake-weekdays',
     'schedule.times_per_day': 'schedule-times-per-day',
     'schedule.dose_time': 'schedule-dose-time-0',
+    prescription_expiry_date: 'prescription-expiry-date',
     'schedule.start_date': 'schedule-start-date',
     'schedule.end_date': 'schedule-end-date',
 };

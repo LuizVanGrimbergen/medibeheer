@@ -41,6 +41,7 @@ class StoreMedicationRequest extends FormRequest
         $this->mergeTrimmedOrNull('note');
         $this->mergeTrimmedOrNull('strength');
         $this->mergeTrimmedOrNull('current_stock');
+        $this->mergeTrimmedOrNull('prescription_expiry_date');
     }
 
     public function rules(): array
@@ -52,6 +53,7 @@ class StoreMedicationRequest extends FormRequest
             'type_medication' => ['required', Rule::enum(MedicationType::class)],
             'strength' => $this->rulesMedicationStrengthField(),
             'note' => ['nullable', 'string', 'max:2000'],
+            'prescription_expiry_date' => ['nullable', 'date', 'date_format:Y-m-d'],
             'current_stock' => ['required', 'string', 'max:500'],
             'stock_pieces_per_package' => ['required', 'integer', 'min:1', 'max:9999'],
             'schedule' => ['required', 'array'],
