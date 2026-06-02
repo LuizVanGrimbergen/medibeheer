@@ -6,13 +6,14 @@ import type {
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { medicationWizardDetailsSchema } from './medicationDetailsClientSchema';
 import {
-    medicationWizardDurationFieldsSchema,
+    medicationWizardDurationStepSchema,
     medicationWizardDoseTimesFieldsSchema,
     medicationWizardScheduleTimingFieldsSchema,
     medicationWizardTimesPerDayOnlySchema,
 } from './medicationScheduleClientSchema';
 import {
     hasNonEmptyFieldMessage,
+    mapMedicationWizardDurationStepFieldErrors,
     medicationWizardStepAfterFullClientParseFailure,
     medicationWizardZodIssuesToFlatFieldErrors,
     prefixScheduleFieldErrors,
@@ -108,11 +109,12 @@ export function tryMedicationWizardDoseTimesStep(
 }
 
 export function tryMedicationWizardDurationStep(
-    schedule: MedicationCreateFormState['schedule'],
+    form: Pick<MedicationCreateFormState, 'prescription_expiry_date' | 'schedule'>,
 ): MedicationWizardClientParseResult {
-    const parsed = medicationWizardDurationFieldsSchema.safeParse({
-        start_date: schedule.start_date,
-        end_date: schedule.end_date,
+    const parsed = medicationWizardDurationStepSchema.safeParse({
+        prescription_expiry_date: form.prescription_expiry_date,
+        start_date: form.schedule.start_date,
+        end_date: form.schedule.end_date,
     });
 
     if (parsed.success) {
@@ -121,7 +123,7 @@ export function tryMedicationWizardDurationStep(
 
     return {
         ok: false,
-        fieldErrors: prefixScheduleFieldErrors(
+        fieldErrors: mapMedicationWizardDurationStepFieldErrors(
             medicationWizardZodIssuesToFlatFieldErrors(parsed.error.issues),
         ),
     };

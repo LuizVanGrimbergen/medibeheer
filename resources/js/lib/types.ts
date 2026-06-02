@@ -354,6 +354,7 @@ export type MedicationListItem = {
     type_medication: MedicationTypeValue;
     strength: string | null;
     note: string | null;
+    prescription_expiry_date: string | null;
     stock_pieces_per_package: number | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];

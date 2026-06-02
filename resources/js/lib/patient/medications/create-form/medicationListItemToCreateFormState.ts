@@ -23,6 +23,11 @@ export function medicationListItemToCreateFormState(
     base.strength_amount = parsedStrength.strength_amount;
     base.strength_unit = parsedStrength.strength_unit;
     base.note = item.note ?? '';
+    base.prescription_expiry_date = item.prescription_expiry_date ?? '';
+
+    if (item.stock_pieces_per_package !== null && item.stock_pieces_per_package > 0) {
+        base.stock_pieces_per_package = String(item.stock_pieces_per_package);
+    }
 
     const firstStock = item.stocks[0];
 
