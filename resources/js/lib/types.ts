@@ -362,6 +362,36 @@ export type MedicationListItem = {
     supply_estimate_quality: MedicationSupplyEstimateQuality;
 };
 
+export type MedicationPrescriptionListItem = {
+    id: number;
+    medication_id: number;
+    prescription_expiry_date: string | null;
+    is_last_in_batch: boolean;
+    pickup_status: MedicationPrescriptionPickupStatusValue;
+    medication: {
+        id: number;
+        name: string;
+        type_medication: MedicationTypeValue;
+    };
+};
+
+export type MedicationPrescriptionPickupStatusValue = 'pending' | 'picked_up';
+
+export type MedicationPrescriptionGroupPrescriptionItem = {
+    id: number;
+    prescription_expiry_date: string | null;
+    pickup_status: MedicationPrescriptionPickupStatusValue;
+};
+
+export type MedicationPrescriptionGroupListItem = {
+    medication: {
+        id: number;
+        name: string;
+        type_medication: MedicationTypeValue;
+    };
+    prescriptions: MedicationPrescriptionGroupPrescriptionItem[];
+};
+
 export type Appointment = {
     id: number;
     doctor_type: AppointmentDoctorType;
