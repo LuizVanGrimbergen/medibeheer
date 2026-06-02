@@ -331,6 +331,9 @@ export type TodayMedicationIntakeSlot = {
     snooze_minutes: number;
     intake_window_state: MedicationIntakeWindowState;
     day_period: TodayMedicationIntakeDayPeriodValue;
+    meal_timing: MedicationMealTimingValue;
+    intake_frequency: MedicationIntakeFrequencyValue;
+    intake_weekdays: number[] | null;
     name: string;
     type_medication: MedicationTypeValue;
     dose: string | null;
