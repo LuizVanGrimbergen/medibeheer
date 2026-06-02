@@ -12,7 +12,6 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
         current_stock: '',
         stock_pieces_per_package: '',
         note: '',
-        prescription_expiry_date: '',
         schedule: {
             meal_timing: '',
             intake_frequency: '',

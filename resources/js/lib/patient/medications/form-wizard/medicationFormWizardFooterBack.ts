@@ -31,7 +31,7 @@ export function handleMedicationWizardFooterBack(params: {
     }
 
     if (currentStep.value === 5) {
-        inertiaForm.clearErrors('prescription_expiry_date', 'schedule.start_date', 'schedule.end_date');
+        inertiaForm.clearErrors('schedule.start_date', 'schedule.end_date');
         currentStep.value = 4;
 
         return;

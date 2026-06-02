@@ -43,6 +43,14 @@ test('verified patients can visit patient inventory', function () {
     $response->assertOk();
 });
 
+test('verified patients can visit patient prescriptions', function () {
+    $user = User::factory()->create(['role' => 'patient']);
+
+    $response = $this->actingAs($user)->get(route('patient.prescriptions'));
+
+    $response->assertOk();
+});
+
 test('verified patients can visit patient family', function () {
     $user = User::factory()->create(['role' => 'patient']);
 
@@ -75,6 +83,14 @@ test('doctors cannot visit patient inventory', function () {
     $response->assertForbidden();
 });
 
+test('doctors cannot visit patient prescriptions', function () {
+    $user = User::factory()->create(['role' => 'doctor']);
+
+    $response = $this->actingAs($user)->get(route('patient.prescriptions'));
+
+    $response->assertForbidden();
+});
+
 test('doctors cannot visit patient family', function () {
     $user = User::factory()->create(['role' => 'doctor']);
 
@@ -97,6 +113,12 @@ test('guests are redirected when visiting patient medications', function () {
 
 test('guests are redirected when visiting patient inventory', function () {
     $response = $this->get(route('patient.inventory'));
+
+    $response->assertRedirect(route('login'));
+});
+
+test('guests are redirected when visiting patient prescriptions', function () {
+    $response = $this->get(route('patient.prescriptions'));
 
     $response->assertRedirect(route('login'));
 });

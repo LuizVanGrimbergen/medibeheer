@@ -34,6 +34,11 @@ class MedicationPolicy
         return $user->isFamilyLinkedToPatient($medication->patient);
     }
 
+    public function storePrescription(User $user, Medication $medication): bool
+    {
+        return $this->canMutateActiveMedication($user, $medication);
+    }
+
     public function delete(User $user, Medication $medication): bool
     {
         return $this->canMutateActiveMedication($user, $medication);

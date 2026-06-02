@@ -3,6 +3,7 @@ export default {
     mobileFooterAriaLabel: 'Patient hoofdmenu',
     home: 'Home',
     medications: 'Medicatie',
+    prescriptions: 'Voorschrift',
     inventory: 'Voorraad',
     appointments: 'Afspraken',
     family: 'Familie',

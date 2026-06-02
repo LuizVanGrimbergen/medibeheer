@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { AlertTriangle, Layers, PackagePlus } from 'lucide-vue-next';
+import { Layers, PackagePlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
+import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
 import { Button } from '@/Components/ui/button';
-import { Progress } from '@/Components/ui/progress';
-import {
-    medicationStockCurrentStockIconWrapClass,
-    medicationStockCurrentStockPanelClass,
-} from '@/lib/patient/inventory/medicationStockCurrentStockPanelClasses';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
-import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    medicationUrgencyOutlineButtonClass,
+    medicationUrgencyPanelClass,
+    medicationUrgencyPanelIconWrapClass,
+} from '@/lib/patient/medications/urgency/medicationUrgencyPanelClasses';
 import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
+import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationListItem } from '@/lib/types';
 
 const props = withDefaults(
@@ -44,11 +45,7 @@ const resolvedIdPrefix = computed(
 
 const stockFormId = computed(() => `${resolvedIdPrefix.value}-form`);
 
-const showSupplyAlertRow = computed((): boolean => {
-    const tone = stockProgressTone.value;
-
-    return tone === 'critical' || tone === 'warning';
-});
+const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
 
 const stockProgressPercent = computed((): number | null => {
     const stock = primaryStock.value;
@@ -63,53 +60,16 @@ const stockProgressPercent = computed((): number | null => {
     );
 });
 
-const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
-
-const stockProgressIndicatorClass = computed((): string | undefined => {
-    const tone = stockProgressTone.value;
-
-    if (tone === 'critical') {
-        return 'bg-danger';
-    }
-
-    if (tone === 'warning') {
-        return 'bg-stock-near dark:bg-stock-near-dark';
-    }
-
-    if (tone === 'safe') {
-        return 'bg-success';
-    }
-
-    return undefined;
-});
-
-const adjustStockButtonClass = computed((): string => {
-    const tone = stockProgressTone.value;
-
-    const base =
-        'rounded-3xl border-2 bg-surface text-text-heading hover:bg-surface-hover';
-
-    if (tone === 'critical') {
-        return `${base} border-danger/70 hover:bg-danger/[0.06] dark:border-danger/80 dark:hover:bg-danger/[0.1] [&_svg]:text-danger`;
-    }
-
-    if (tone === 'warning') {
-        return `${base} border-stock-near/70 hover:bg-stock-near/[0.06] dark:border-stock-near-dark/75 dark:hover:bg-stock-near-dark/[0.1] [&_svg]:text-stock-near dark:[&_svg]:text-stock-near-dark`;
-    }
-
-    if (tone === 'safe') {
-        return `${base} border-success/55 hover:bg-success/[0.06] dark:border-success/65 dark:hover:bg-success/[0.1] [&_svg]:text-success`;
-    }
-
-    return `${base} border-border/80 [&_svg]:text-text-heading`;
-});
+const adjustStockButtonClass = computed((): string =>
+    medicationUrgencyOutlineButtonClass(stockProgressTone.value),
+);
 
 const currentStockPanelClass = computed((): string =>
-    medicationStockCurrentStockPanelClass(stockProgressTone.value),
+    medicationUrgencyPanelClass(stockProgressTone.value),
 );
 
 const currentStockIconWrapClass = computed((): string =>
-    medicationStockCurrentStockIconWrapClass(stockProgressTone.value),
+    medicationUrgencyPanelIconWrapClass(stockProgressTone.value),
 );
 
 const supplyEstimateLine = computed((): string => {
@@ -131,23 +91,11 @@ const supplyEstimateLine = computed((): string => {
     return t('patient.inventory.supplyEstimateUnknown');
 });
 
-const supplyEstimateLineClass = computed((): string => {
-    const tone = stockProgressTone.value;
-
-    if (tone === 'critical') {
-        return 'text-danger';
-    }
-
-    if (tone === 'warning') {
-        return 'text-stock-near dark:text-stock-near-dark';
-    }
-
-    if (tone === 'safe') {
-        return 'text-success';
-    }
-
-    return 'text-text-heading';
-});
+const stockProgressAriaLabel = computed((): string =>
+    t('patient.inventory.stockProgressAria', {
+        days: String(props.medication.supply_estimate_days ?? 0),
+    }),
+);
 
 const primaryStockAmountTrimmed = computed((): string => primaryStock.value?.current_stock.trim() ?? '');
 
@@ -172,45 +120,22 @@ const currentStockDisplayLine = computed((): string =>
 <template>
     <div class="space-y-3.5">
         <template v-if="primaryStock !== undefined">
-            <Progress
+            <MedicationUrgencyProgressSection
                 v-if="stockProgressPercent !== null"
-                :model-value="stockProgressPercent"
-                :indicator-class="stockProgressIndicatorClass"
-                :aria-label="
-                    t('patient.inventory.stockProgressAria', {
-                        days: String(props.medication.supply_estimate_days ?? 0),
-                    })
-                "
-                class="h-4 w-full sm:h-5"
+                :tone="stockProgressTone"
+                :progress-percent="stockProgressPercent"
+                :status-line="supplyEstimateLine"
+                :progress-aria-label="stockProgressAriaLabel"
+                :critical-alert-label="t('patient.inventory.lowStockBadge')"
+                :warning-alert-label="t('patient.inventory.warningStockIconAria')"
             />
 
-            <div
-                class="flex min-w-0 items-start gap-3 sm:items-center sm:gap-3"
-                :role="showSupplyAlertRow ? 'alert' : undefined"
+            <p
+                v-else
+                class="text-base font-semibold leading-relaxed text-text-heading sm:text-lg"
             >
-                <template v-if="showSupplyAlertRow">
-                    <span class="sr-only">{{
-                        stockProgressTone === 'critical'
-                            ? t('patient.inventory.lowStockBadge')
-                            : t('patient.inventory.warningStockIconAria')
-                    }}</span>
-                    <AlertTriangle
-                        class="mt-0.5 size-6 shrink-0 sm:mt-0 sm:size-7"
-                        :class="
-                            stockProgressTone === 'critical'
-                                ? 'text-danger'
-                                : 'text-stock-near dark:text-stock-near-dark'
-                        "
-                        aria-hidden="true"
-                    />
-                </template>
-                <p
-                    class="min-w-0 text-base font-semibold leading-relaxed sm:text-lg"
-                    :class="supplyEstimateLineClass"
-                >
-                    {{ supplyEstimateLine }}
-                </p>
-            </div>
+                {{ supplyEstimateLine }}
+            </p>
 
             <div class="flex w-full min-w-0 justify-start">
                 <div

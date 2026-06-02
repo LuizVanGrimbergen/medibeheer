@@ -26,7 +26,7 @@ export const patientPageWideButtonClass =
     'h-auto min-h-14 w-full min-w-0 touch-manipulation';
 
 /** Primary/secondary actions in page intros (Medicatie toevoegen, Vakantie, …). */
-export const patientPageIntroButtonClass = `${patientPageWideButtonClass} gap-2.5 justify-center px-6 font-body text-lg font-bold sm:px-8`;
+export const patientPageIntroButtonClass = `${patientPageWideButtonClass} gap-2.5 justify-center px-6 font-body text-lg font-bold sm:px-8 [&_svg]:size-6`;
 
 /** Expand/collapse toggle on patient list cards (Tik voor meer details / Tik om te sluiten). */
 export const patientPageCardDetailsButtonClass = `${patientPageWideButtonClass} group justify-between gap-3 rounded-2xl border-0 bg-surface-2/80 px-4 py-3 text-base font-semibold text-text-heading shadow-none transition-colors hover:bg-primary/8 hover:opacity-100 focus-visible:ring-primary/20`;
