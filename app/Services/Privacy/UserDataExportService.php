@@ -130,6 +130,7 @@ final class UserDataExportService
             'type_medication' => $medication->type_medication?->value,
             'strength' => $medication->strength,
             'note' => $medication->note,
+            'prescription_expiry_date' => $medication->prescription_expiry_date?->toDateString(),
             'deleted_at' => $medication->deleted_at?->toIso8601String(),
             'created_at' => $medication->created_at?->toIso8601String(),
             'schedules' => $medication->schedules

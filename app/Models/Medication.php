@@ -44,6 +44,7 @@ class Medication extends Model
         'type_medication',
         'strength',
         'note',
+        'prescription_expiry_date',
         'stock_pieces_per_package',
     ];
 
@@ -56,6 +57,7 @@ class Medication extends Model
             'type_medication' => MedicationType::class,
             'strength' => 'encrypted',
             'note' => 'encrypted',
+            'prescription_expiry_date' => 'date',
             'stock_pieces_per_package' => 'encrypted',
         ];
     }

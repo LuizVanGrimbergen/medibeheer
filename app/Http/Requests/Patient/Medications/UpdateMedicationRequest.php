@@ -35,6 +35,7 @@ class UpdateMedicationRequest extends FormRequest
         $this->mergeTrimmedOrNullIfPresent('note');
         $this->mergeTrimmedOrNullIfPresent('strength');
         $this->mergeTrimmedOrNullIfPresent('current_stock');
+        $this->mergeTrimmedOrNullIfPresent('prescription_expiry_date');
     }
 
     public function authorize(): bool
@@ -61,6 +62,7 @@ class UpdateMedicationRequest extends FormRequest
             'type_medication' => ['sometimes', 'required', Rule::enum(MedicationType::class)],
             'strength' => $this->rulesMedicationStrengthField(sometimes: true),
             'note' => ['sometimes', 'nullable', 'string', 'max:2000'],
+            'prescription_expiry_date' => ['sometimes', 'nullable', 'date', 'date_format:Y-m-d'],
             'current_stock' => ['sometimes', 'required', 'string', 'max:500'],
             'stock_pieces_per_package' => ['sometimes', 'required', 'integer', 'min:1', 'max:9999'],
             'schedule' => ['sometimes', 'required', 'array'],
