@@ -27,7 +27,6 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
     current_stock: string;
     stock_pieces_per_package: number;
     note: string | null;
-    prescription_expiry_date: string | null;
     schedule: {
         meal_timing: MedicationCreateFormState['schedule']['meal_timing'];
         intake_frequency: MedicationCreateFormState['schedule']['intake_frequency'];
@@ -51,11 +50,6 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         current_stock: data.current_stock.trim(),
         stock_pieces_per_package: Number.parseInt(data.stock_pieces_per_package, 10),
         note: noteTrimmed === '' ? null : noteTrimmed,
-        prescription_expiry_date: (() => {
-            const trimmed = data.prescription_expiry_date.trim();
-
-            return trimmed === '' ? null : trimmed;
-        })(),
         schedule: {
             meal_timing: data.schedule.meal_timing,
             intake_frequency: data.schedule.intake_frequency,

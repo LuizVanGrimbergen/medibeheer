@@ -32,7 +32,6 @@ export type MedicationCreateFormState = {
     current_stock: string;
     stock_pieces_per_package: string;
     note: string;
-    prescription_expiry_date: string;
     schedule: MedicationScheduleFormSlice;
 };
 
