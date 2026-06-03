@@ -2,9 +2,13 @@
 import { Loader2 } from 'lucide-vue-next';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import {
+    animateLoadingScreenExit
+    
+} from '@/lib/motion/gsapMotion';
+import type {GsapTween} from '@/lib/motion/gsapMotion';
 import type { LoadingScreenMessageKey } from '@/lib/navigation/inertiaLoadingScreenPolicy';
 import { loadingScreenMinVisibleMs } from '@/lib/navigation/inertiaLoadingScreenPolicy';
-import { animateLoadingScreenExit } from '@/lib/motion/gsapMotion';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -32,7 +36,7 @@ const description = computed(() =>
 
 let shownAtMs = 0;
 let hideDelayTimeoutId: ReturnType<typeof globalThis.setTimeout> | null = null;
-let exitTween: ReturnType<typeof animateLoadingScreenExit> | null = null;
+let exitTween: GsapTween | null = null;
 
 const clearHideDelayTimeout = (): void => {
     if (hideDelayTimeoutId === null) {
@@ -68,7 +72,9 @@ const scheduleHideOverlay = (): void => {
         }
 
         exitTween?.kill();
-        exitTween = animateLoadingScreenExit(overlay, hideOverlay);
+        void animateLoadingScreenExit(overlay, hideOverlay).then((tween) => {
+            exitTween = tween;
+        });
     }, remainingMs);
 };
 
