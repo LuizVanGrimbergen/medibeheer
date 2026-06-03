@@ -6,11 +6,16 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Legal\ShowCookiePolicyController;
 use App\Http\Controllers\Legal\ShowPrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Seo\ShowRobotsTxtController;
+use App\Http\Controllers\Seo\ShowSitemapController;
 use App\Http\Controllers\Settings\ExportUserDataController;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+Route::get('robots.txt', ShowRobotsTxtController::class)->name('seo.robots');
+Route::get('sitemap.xml', ShowSitemapController::class)->name('seo.sitemap');
 
 Route::get('/', HomeController::class)->name('home');
 
