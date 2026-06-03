@@ -2,8 +2,8 @@
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
+import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import PatientMedicationIntakeHistorySection from '@/Components/Patient/Medications/PatientMedicationIntakeHistorySection.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';

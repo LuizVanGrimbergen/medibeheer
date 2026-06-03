@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { useI18n } from 'vue-i18n';
+import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyMedicationPlanProposalActionsPanel from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalActionsPanel.vue';
 import FamilyMedicationPlanProposalFormCard from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalFormCard.vue';
-import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
-import FamilyLayout from '@/Layouts/FamilyLayout.vue';
+import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { useFamilyMedicationPlanProposalFormPage } from '@/composables/useFamilyMedicationPlanProposalFormPage';
+import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { MedicationPlanProposalFormInitial } from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 

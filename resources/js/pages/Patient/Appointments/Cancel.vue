@@ -3,10 +3,9 @@ import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Stethoscope } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { PatientAppointmentOutcomePageProps } from '@/lib/patient/appointments/screen/patientAppointmentOutcomePageProps';
@@ -14,6 +13,7 @@ import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentOutcomePageProps>();
 

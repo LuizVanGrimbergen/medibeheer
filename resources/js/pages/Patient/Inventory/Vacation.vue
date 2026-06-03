@@ -4,37 +4,37 @@ import { Images, Loader2, Package, PillBottle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import InventoryVacationDateField from '@/Components/Patient/Inventory/InventoryVacationDateField.vue';
-import InventoryVacationPickupBoxCalculator from '@/Components/Patient/Inventory/InventoryVacationPickupBoxCalculator.vue';
 import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
+import InventoryVacationPickupBoxCalculator from '@/Components/Patient/Inventory/InventoryVacationPickupBoxCalculator.vue';
 import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/InventoryVacationShareStepPanel.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { InputError } from '@/Components/ui/input-error';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import { useInventoryVacationShareToPhotos } from '@/composables/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
-import { useInventoryVacationShareToPhotos } from '@/composables/useInventoryVacationShareToPhotos';
 import { buildInventoryVacationShareImagePayload } from '@/lib/patient/inventory/buildInventoryVacationShareImagePayload';
 import { formatInventoryVacationDateLabel } from '@/lib/patient/inventory/formatInventoryVacationDateLabel';
-import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
-import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
-import type { MedicationDoseUnitValue } from '@/lib/types';
-import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
-import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/patientInventoryVacationPageProps';
 import {
     inventoryVacationMetricGridClass,
     inventoryVacationResultsCardClass,
 } from '@/lib/patient/inventory/inventoryVacationUiClasses';
+import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/patientInventoryVacationPageProps';
+import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import {
     patientPageIntroClass,
     patientPageSectionTitleClass,
     patientPageTitleClass,
 } from '@/lib/patient/patientPageTypography';
+import type { MedicationDoseUnitValue } from '@/lib/types';
+import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 const props = defineProps<PatientInventoryVacationPageProps>();
 
 const { t } = useI18n();
