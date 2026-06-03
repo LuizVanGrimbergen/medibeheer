@@ -1,18 +1,13 @@
-import gsap from 'gsap';
-import {
-    animateFooterNavIndicator,
-    type FooterNavIndicatorMetrics,
+import type {
+    FooterNavIndicatorMetrics,
+    GsapTween,
 } from '@/lib/motion/gsapMotion';
+import { animateFooterNavIndicator } from '@/lib/motion/gsapMotion';
+import { loadGsap } from '@/lib/motion/loadGsap';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
 import type { PatientFooterNavRouteName } from '@/lib/patient/navigation/patientFooterNavClasses';
-import {
-    nextTick,
-    onMounted,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export type FooterNavLinkRefs = Partial<
     Record<PatientFooterNavRouteName, HTMLElement>
@@ -24,7 +19,7 @@ export function useGsapFooterNavIndicator(
     activeRoute: Ref<PatientFooterNavRouteName | undefined>,
     linkRefs: FooterNavLinkRefs,
 ): void {
-    let tween: ReturnType<typeof animateFooterNavIndicator> | null = null;
+    let tween: GsapTween | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let resizeFrameId: number | null = null;
     let allowAnimation = false;
@@ -85,12 +80,13 @@ export function useGsapFooterNavIndicator(
         tween?.kill();
 
         if (metrics === null) {
+            const gsap = await loadGsap();
             gsap.set(indicator, { opacity: 0 });
 
             return;
         }
 
-        tween = animateFooterNavIndicator(
+        tween = await animateFooterNavIndicator(
             indicator,
             metrics,
             allowAnimation,

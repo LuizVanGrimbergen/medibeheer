@@ -1,4 +1,20 @@
-import gsap from 'gsap';
+import { getGsapSync, loadGsap } from '@/lib/motion/loadGsap';
+import type gsap from 'gsap';
+
+export interface GsapKillable {
+    kill(): void;
+}
+
+export type GsapTween = GsapKillable;
+export type GsapTimeline = GsapKillable;
+
+function asGsapTween(tween: gsap.core.Tween): GsapTween {
+    return tween as GsapTween;
+}
+
+function asGsapTimeline(timeline: gsap.core.Timeline): GsapTimeline {
+    return timeline as GsapTimeline;
+}
 
 const ACTION_CONFIRM_DURATION_SECONDS = 0.2;
 const ATTENTION_PULSE_DURATION_SECONDS = 0.55;
@@ -24,16 +40,15 @@ const PROGRESS_WIDTH_PROPS = 'width';
 const FOOTER_NAV_INDICATOR_PROPS = 'left,top,width,height,opacity';
 
 function killTweenProps(
+    gsapInstance: typeof gsap,
     target: gsap.TweenTarget,
     props: string,
 ): void {
-    gsap.killTweensOf(target, props);
+    gsapInstance.killTweensOf(target, props);
 }
 
 export function prefersReducedMotion(): boolean {
-    return globalThis
-        .matchMedia('(prefers-reduced-motion: reduce)')
-        .matches;
+    return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 export function motionDurationSeconds(defaultSeconds: number): number {
@@ -45,238 +60,309 @@ export function motionDurationSeconds(defaultSeconds: number): number {
 }
 
 export function resetActionConfirmVisibility(target: Element): void {
-    killTweenProps(target, ACTION_CONFIRM_PROPS);
-    gsap.set(target, { opacity: 1, scale: 1, clearProps: 'transform' });
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, ACTION_CONFIRM_PROPS);
+    gsapInstance.set(target, { opacity: 1, scale: 1, clearProps: 'transform' });
 }
 
 export type WizardStepDirection = 'forward' | 'backward';
 
 export function resetWizardStepEnterVisibility(target: Element): void {
-    killTweenProps(target, WIZARD_STEP_PROPS);
-    gsap.set(target, { opacity: 1, x: 0, clearProps: 'transform,opacity' });
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, WIZARD_STEP_PROPS);
+    gsapInstance.set(target, {
+        opacity: 1,
+        x: 0,
+        clearProps: 'transform,opacity',
+    });
 }
 
-export function animateWizardStepEnter(
+export async function animateWizardStepEnter(
     target: Element,
     direction: WizardStepDirection,
-): gsap.core.Tween {
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
     const duration = motionDurationSeconds(WIZARD_STEP_ENTER_DURATION_SECONDS);
     const xOffset =
         direction === 'forward'
             ? WIZARD_STEP_ENTER_X_OFFSET_PX
             : -WIZARD_STEP_ENTER_X_OFFSET_PX;
 
-    killTweenProps(target, WIZARD_STEP_PROPS);
+    killTweenProps(gsapInstance, target, WIZARD_STEP_PROPS);
 
     if (duration === 0) {
         resetWizardStepEnterVisibility(target);
 
-        return gsap.to(target, { duration: 0 });
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
     }
 
-    return gsap.fromTo(
-        target,
-        { opacity: 0, x: xOffset },
-        {
-            opacity: 1,
-            x: 0,
-            duration,
-            ease: 'power2.out',
-            overwrite: 'auto',
-            clearProps: 'transform,opacity',
-            onComplete: () => {
-                resetWizardStepEnterVisibility(target);
+    return asGsapTween(
+        gsapInstance.fromTo(
+            target,
+            { opacity: 0, x: xOffset },
+            {
+                opacity: 1,
+                x: 0,
+                duration,
+                ease: 'power2.out',
+                overwrite: 'auto',
+                clearProps: 'transform,opacity',
+                onComplete: () => {
+                    resetWizardStepEnterVisibility(target);
+                },
+                onInterrupt: () => {
+                    resetWizardStepEnterVisibility(target);
+                },
             },
-            onInterrupt: () => {
-                resetWizardStepEnterVisibility(target);
-            },
-        },
+        ),
     );
 }
 
 export function resetLoadingScreenOverlay(target: Element): void {
-    killTweenProps(target, LOADING_OVERLAY_PROPS);
-    gsap.set(target, { opacity: 1, clearProps: 'opacity' });
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, LOADING_OVERLAY_PROPS);
+    gsapInstance.set(target, { opacity: 1, clearProps: 'opacity' });
 }
 
-export function animateLoadingScreenExit(
+export async function animateLoadingScreenExit(
     target: Element,
     onComplete: () => void,
-): gsap.core.Tween {
-    const duration = motionDurationSeconds(LOADING_SCREEN_EXIT_DURATION_SECONDS);
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
+    const duration = motionDurationSeconds(
+        LOADING_SCREEN_EXIT_DURATION_SECONDS,
+    );
 
-    killTweenProps(target, LOADING_OVERLAY_PROPS);
+    killTweenProps(gsapInstance, target, LOADING_OVERLAY_PROPS);
 
     if (duration === 0) {
         resetLoadingScreenOverlay(target);
         onComplete();
 
-        return gsap.to(target, { duration: 0 });
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
     }
 
-    return gsap.to(target, {
-        opacity: 0,
-        duration,
-        ease: 'power2.out',
-        overwrite: 'auto',
-        onComplete: () => {
-            resetLoadingScreenOverlay(target);
-            onComplete();
-        },
-        onInterrupt: () => {
-            resetLoadingScreenOverlay(target);
-            onComplete();
-        },
-    });
-}
-
-export function animateActionConfirm(target: Element): gsap.core.Tween {
-    const duration = motionDurationSeconds(ACTION_CONFIRM_DURATION_SECONDS);
-
-    killTweenProps(target, ACTION_CONFIRM_PROPS);
-
-    if (duration === 0) {
-        resetActionConfirmVisibility(target);
-
-        return gsap.to(target, { duration: 0 });
-    }
-
-    return gsap.fromTo(
-        target,
-        { opacity: 0, scale: 0.97 },
-        {
-            opacity: 1,
-            scale: 1,
-            duration,
-            ease: 'power2.out',
-            immediateRender: true,
-            overwrite: 'auto',
-            clearProps: 'transform',
-            onComplete: () => {
-                resetActionConfirmVisibility(target);
-            },
-            onInterrupt: () => {
-                resetActionConfirmVisibility(target);
-            },
-        },
-    );
-}
-
-export function animateProgressWidth(
-    target: Element,
-    percent: number,
-): gsap.core.Tween {
-    const duration = motionDurationSeconds(PROGRESS_DURATION_SECONDS);
-    const width = `${percent}%`;
-    const currentWidth = gsap.getProperty(target, 'width', 'px') as number;
-
-    killTweenProps(target, PROGRESS_WIDTH_PROPS);
-
-    if (duration === 0) {
-        gsap.set(target, { width });
-
-        return gsap.to(target, { duration: 0 });
-    }
-
-    if (!Number.isFinite(currentWidth) || currentWidth <= 0) {
-        gsap.set(target, { width: '0%' });
-    }
-
-    return gsap.to(target, {
-        width,
-        duration,
-        ease: 'power2.out',
-        overwrite: 'auto',
-    });
-}
-
-export function resetAttentionPulseVisibility(target: Element): void {
-    killTweenProps(target, ATTENTION_PULSE_PROPS);
-    gsap.set(target, { opacity: 1, clearProps: 'opacity' });
-}
-
-export function animateAttentionPulse(target: Element): gsap.core.Tween {
-    const duration = motionDurationSeconds(ATTENTION_PULSE_DURATION_SECONDS);
-
-    killTweenProps(target, ATTENTION_PULSE_PROPS);
-
-    if (duration === 0) {
-        resetAttentionPulseVisibility(target);
-
-        return gsap.to(target, { duration: 0 });
-    }
-
-    return gsap.fromTo(
-        target,
-        { opacity: 1 },
-        {
-            opacity: 0.45,
-            duration,
-            ease: 'power1.inOut',
-            overwrite: 'auto',
-            repeat: ATTENTION_PULSE_REPEAT,
-            yoyo: true,
-            onComplete: () => {
-                resetAttentionPulseVisibility(target);
-            },
-            onInterrupt: () => {
-                resetAttentionPulseVisibility(target);
-            },
-        },
-    );
-}
-
-export function resetSuccessFlashOverlay(target: Element): void {
-    killTweenProps(target, SUCCESS_FLASH_PROPS);
-    gsap.set(target, { opacity: 0, clearProps: 'opacity' });
-}
-
-export function animateSuccessFlashOverlay(target: Element): gsap.core.Tween {
-    const duration = motionDurationSeconds(SUCCESS_FLASH_DURATION_SECONDS);
-
-    killTweenProps(target, SUCCESS_FLASH_PROPS);
-
-    if (duration === 0) {
-        resetSuccessFlashOverlay(target);
-
-        return gsap.to(target, { duration: 0 });
-    }
-
-    return gsap.fromTo(
-        target,
-        { opacity: 1 },
-        {
+    return asGsapTween(
+        gsapInstance.to(target, {
             opacity: 0,
             duration,
             ease: 'power2.out',
             overwrite: 'auto',
             onComplete: () => {
-                resetSuccessFlashOverlay(target);
+                resetLoadingScreenOverlay(target);
+                onComplete();
             },
             onInterrupt: () => {
-                resetSuccessFlashOverlay(target);
+                resetLoadingScreenOverlay(target);
+                onComplete();
             },
-        },
+        }),
+    );
+}
+
+export async function animateActionConfirm(
+    target: Element,
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
+    const duration = motionDurationSeconds(ACTION_CONFIRM_DURATION_SECONDS);
+
+    killTweenProps(gsapInstance, target, ACTION_CONFIRM_PROPS);
+
+    if (duration === 0) {
+        resetActionConfirmVisibility(target);
+
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
+    }
+
+    return asGsapTween(
+        gsapInstance.fromTo(
+            target,
+            { opacity: 0, scale: 0.97 },
+            {
+                opacity: 1,
+                scale: 1,
+                duration,
+                ease: 'power2.out',
+                immediateRender: true,
+                overwrite: 'auto',
+                clearProps: 'transform',
+                onComplete: () => {
+                    resetActionConfirmVisibility(target);
+                },
+                onInterrupt: () => {
+                    resetActionConfirmVisibility(target);
+                },
+            },
+        ),
+    );
+}
+
+export async function animateProgressWidth(
+    target: Element,
+    percent: number,
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
+    const duration = motionDurationSeconds(PROGRESS_DURATION_SECONDS);
+    const width = `${percent}%`;
+    const currentWidth = gsapInstance.getProperty(
+        target,
+        'width',
+        'px',
+    ) as number;
+
+    killTweenProps(gsapInstance, target, PROGRESS_WIDTH_PROPS);
+
+    if (duration === 0) {
+        gsapInstance.set(target, { width });
+
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
+    }
+
+    if (!Number.isFinite(currentWidth) || currentWidth <= 0) {
+        gsapInstance.set(target, { width: '0%' });
+    }
+
+    return asGsapTween(
+        gsapInstance.to(target, {
+            width,
+            duration,
+            ease: 'power2.out',
+            overwrite: 'auto',
+        }),
+    );
+}
+
+export function resetAttentionPulseVisibility(target: Element): void {
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, ATTENTION_PULSE_PROPS);
+    gsapInstance.set(target, { opacity: 1, clearProps: 'opacity' });
+}
+
+export async function animateAttentionPulse(
+    target: Element,
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
+    const duration = motionDurationSeconds(ATTENTION_PULSE_DURATION_SECONDS);
+
+    killTweenProps(gsapInstance, target, ATTENTION_PULSE_PROPS);
+
+    if (duration === 0) {
+        resetAttentionPulseVisibility(target);
+
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
+    }
+
+    return asGsapTween(
+        gsapInstance.fromTo(
+            target,
+            { opacity: 1 },
+            {
+                opacity: 0.45,
+                duration,
+                ease: 'power1.inOut',
+                overwrite: 'auto',
+                repeat: ATTENTION_PULSE_REPEAT,
+                yoyo: true,
+                onComplete: () => {
+                    resetAttentionPulseVisibility(target);
+                },
+                onInterrupt: () => {
+                    resetAttentionPulseVisibility(target);
+                },
+            },
+        ),
+    );
+}
+
+export function resetSuccessFlashOverlay(target: Element): void {
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, SUCCESS_FLASH_PROPS);
+    gsapInstance.set(target, { opacity: 0, clearProps: 'opacity' });
+}
+
+export async function animateSuccessFlashOverlay(
+    target: Element,
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
+    const duration = motionDurationSeconds(SUCCESS_FLASH_DURATION_SECONDS);
+
+    killTweenProps(gsapInstance, target, SUCCESS_FLASH_PROPS);
+
+    if (duration === 0) {
+        resetSuccessFlashOverlay(target);
+
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
+    }
+
+    return asGsapTween(
+        gsapInstance.fromTo(
+            target,
+            { opacity: 1 },
+            {
+                opacity: 0,
+                duration,
+                ease: 'power2.out',
+                overwrite: 'auto',
+                onComplete: () => {
+                    resetSuccessFlashOverlay(target);
+                },
+                onInterrupt: () => {
+                    resetSuccessFlashOverlay(target);
+                },
+            },
+        ),
     );
 }
 
 export function resetButtonPressScale(target: Element): void {
-    killTweenProps(target, BUTTON_PRESS_PROPS);
-    gsap.set(target, { scale: 1, clearProps: 'transform' });
+    const gsapInstance = getGsapSync();
+
+    if (gsapInstance === null) {
+        return;
+    }
+
+    killTweenProps(gsapInstance, target, BUTTON_PRESS_PROPS);
+    gsapInstance.set(target, { scale: 1, clearProps: 'transform' });
 }
 
-export function animateButtonPress(
+export async function animateButtonPress(
     target: Element,
     pressed: boolean,
-): gsap.core.Tween {
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
     const duration = motionDurationSeconds(BUTTON_PRESS_DURATION_SECONDS);
 
-    killTweenProps(target, BUTTON_PRESS_PROPS);
+    killTweenProps(gsapInstance, target, BUTTON_PRESS_PROPS);
 
     if (duration === 0) {
         resetButtonPressScale(target);
 
-        return gsap.to(target, { duration: 0 });
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
     }
 
     const vars: gsap.TweenVars = {
@@ -296,7 +382,7 @@ export function animateButtonPress(
         };
     }
 
-    return gsap.to(target, vars);
+    return asGsapTween(gsapInstance.to(target, vars));
 }
 
 export type FooterNavIndicatorMetrics = {
@@ -306,16 +392,17 @@ export type FooterNavIndicatorMetrics = {
     height: number;
 };
 
-export function animateFooterNavIndicator(
+export async function animateFooterNavIndicator(
     target: HTMLElement,
     metrics: FooterNavIndicatorMetrics,
     animated: boolean,
-): gsap.core.Tween {
+): Promise<GsapTween> {
+    const gsapInstance = await loadGsap();
     const duration = animated
         ? motionDurationSeconds(FOOTER_NAV_INDICATOR_DURATION_SECONDS)
         : 0;
 
-    killTweenProps(target, FOOTER_NAV_INDICATOR_PROPS);
+    killTweenProps(gsapInstance, target, FOOTER_NAV_INDICATOR_PROPS);
 
     const properties = {
         left: metrics.left,
@@ -326,17 +413,19 @@ export function animateFooterNavIndicator(
     };
 
     if (duration === 0) {
-        gsap.set(target, properties);
+        gsapInstance.set(target, properties);
 
-        return gsap.to(target, { duration: 0 });
+        return asGsapTween(gsapInstance.to(target, { duration: 0 }));
     }
 
-    return gsap.to(target, {
-        ...properties,
-        duration,
-        ease: 'power2.out',
-        overwrite: 'auto',
-    });
+    return asGsapTween(
+        gsapInstance.to(target, {
+            ...properties,
+            duration,
+            ease: 'power2.out',
+            overwrite: 'auto',
+        }),
+    );
 }
 
 function resolveCheckmarkSvg(target: Element): SVGSVGElement | null {
@@ -361,41 +450,45 @@ function collectSvgStrokeElements(svg: SVGSVGElement): SVGGeometryElement[] {
 }
 
 export function resetCheckmarkDraw(target: Element): void {
+    const gsapInstance = getGsapSync();
     const svg = resolveCheckmarkSvg(target);
 
-    if (svg === null) {
+    if (gsapInstance === null || svg === null) {
         return;
     }
 
     const strokeElements = collectSvgStrokeElements(svg);
 
-    gsap.killTweensOf(strokeElements);
+    gsapInstance.killTweensOf(strokeElements);
 
     for (const element of strokeElements) {
-        gsap.set(element, {
+        gsapInstance.set(element, {
             strokeDashoffset: 0,
             clearProps: 'strokeDashoffset,strokeDasharray',
         });
     }
 }
 
-export function animateCheckmarkDraw(target: Element): gsap.core.Timeline {
+export async function animateCheckmarkDraw(
+    target: Element,
+): Promise<GsapTimeline> {
+    const gsapInstance = await loadGsap();
     const duration = motionDurationSeconds(CHECKMARK_DRAW_DURATION_SECONDS);
     const svg = resolveCheckmarkSvg(target);
-    const timeline = gsap.timeline();
+    const timeline = gsapInstance.timeline();
 
     if (svg === null) {
-        return timeline;
+        return asGsapTimeline(timeline);
     }
 
     const strokeElements = collectSvgStrokeElements(svg);
 
-    gsap.killTweensOf(strokeElements);
+    gsapInstance.killTweensOf(strokeElements);
 
     if (duration === 0 || strokeElements.length === 0) {
         resetCheckmarkDraw(target);
 
-        return timeline;
+        return asGsapTimeline(timeline);
     }
 
     for (const [index, element] of strokeElements.entries()) {
@@ -405,7 +498,7 @@ export function animateCheckmarkDraw(target: Element): gsap.core.Timeline {
             continue;
         }
 
-        gsap.set(element, {
+        gsapInstance.set(element, {
             strokeDasharray: length,
             strokeDashoffset: length,
         });
@@ -421,5 +514,5 @@ export function animateCheckmarkDraw(target: Element): gsap.core.Timeline {
         );
     }
 
-    return timeline;
+    return asGsapTimeline(timeline);
 }

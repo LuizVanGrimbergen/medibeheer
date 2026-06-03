@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
 import AppNavbar from '@/Components/AppNavbar.vue';
 import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
 import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
 import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
-import { AppLoadingScreen } from '@/Components/ui/loading-screen';
 import { useInertiaNavigationLoading } from '@/composables/useInertiaNavigationLoading';
 import type { PageProps } from '@/lib/types';
+import { usePage } from '@inertiajs/vue3';
+import { computed, defineAsyncComponent } from 'vue';
+
+const AppLoadingScreen = defineAsyncComponent(
+    () => import('@/Components/ui/loading-screen/AppLoadingScreen.vue'),
+);
 
 const { isLoading: isNavigationLoading, loadingMessageKey } =
     useInertiaNavigationLoading();

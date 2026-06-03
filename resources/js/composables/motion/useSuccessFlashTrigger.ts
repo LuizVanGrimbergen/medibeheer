@@ -1,4 +1,5 @@
-import { nextTick, ref, watch, type Ref } from 'vue';
+import type { Ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 
 export function useSuccessFlashTrigger(isSuccess: Ref<boolean>): Ref<boolean> {
     const shouldFlash = ref(false);

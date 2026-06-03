@@ -3,10 +3,7 @@ import type { PrimitiveProps } from 'reka-ui';
 import { Primitive } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
 import type { ComponentPublicInstance } from 'vue';
-import { computed, ref } from 'vue';
-import { useGsapActionConfirm } from '@/composables/motion/useGsapActionConfirm';
-import { useGsapButtonPress } from '@/composables/motion/useGsapButtonPress';
-import { useGsapSuccessFlash } from '@/composables/motion/useGsapSuccessFlash';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import { cn } from '@/lib/utils';
 import type { ButtonVariants } from '.';
 import { buttonSuccessClass, buttonVariants } from '.';
@@ -44,9 +41,17 @@ const successConfirmActive = computed(
     () => props.success && motionLayersEnabled.value,
 );
 
-useGsapButtonPress(rootRef, motionPressEnabled);
-useGsapSuccessFlash(flashOverlayRef, successFlashActive);
-useGsapActionConfirm(rootRef, successConfirmActive);
+const ButtonMotionLayers = defineAsyncComponent(
+    () => import('@/Components/ui/button/ButtonMotionLayers.vue'),
+);
+
+const buttonMotionBindings = {
+    rootRef,
+    flashOverlayRef,
+    motionPressEnabled,
+    successFlashActive,
+    successConfirmActive,
+};
 
 const rootClass = computed(() =>
     cn(
@@ -71,6 +76,10 @@ const rootClass = computed(() =>
             ref="flashOverlayRef"
             class="pointer-events-none absolute inset-0 z-0 rounded-[inherit] bg-success/15 opacity-0"
             aria-hidden="true"
+        />
+        <ButtonMotionLayers
+            v-if="motionLayersEnabled"
+            :bindings="buttonMotionBindings"
         />
         <slot />
     </Primitive>

@@ -1,21 +1,17 @@
+import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateButtonPress,
     resetButtonPressScale,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    onMounted,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapButtonPress(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     enabled: Ref<boolean>,
 ): void {
-    let tween: ReturnType<typeof animateButtonPress> | null = null;
+    let tween: GsapTween | null = null;
     let element: HTMLElement | null = null;
 
     const releasePress = (): void => {
@@ -24,7 +20,9 @@ export function useGsapButtonPress(
         }
 
         tween?.kill();
-        tween = animateButtonPress(element, false);
+        void animateButtonPress(element, false).then((nextTween) => {
+            tween = nextTween;
+        });
     };
 
     const onPointerDown = (event: PointerEvent): void => {
@@ -44,7 +42,9 @@ export function useGsapButtonPress(
         }
 
         tween?.kill();
-        tween = animateButtonPress(element, true);
+        void animateButtonPress(element, true).then((nextTween) => {
+            tween = nextTween;
+        });
     };
 
     const attachListeners = (): void => {
