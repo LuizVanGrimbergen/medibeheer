@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -37,9 +38,11 @@ const submit = () => {
 </script>
 
 <template>
-    <Head>
-        <title>{{ t('auth.resetPwd.metaTitle') }}</title>
-    </Head>
+    <SeoHead
+        :title="t('auth.resetPwd.metaTitle')"
+        :description="t('auth.resetPwd.metaDescription')"
+        no-index
+    />
 
     <AuthPageContainer
         title-key="auth.resetPwd.title"

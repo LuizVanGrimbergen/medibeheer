@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
 import { Eye, EyeOff } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { AuthRoleSelectorWidget } from '@/Components/ui/auth-role-selector';
 import { Button } from '@/Components/ui/button';
@@ -89,9 +90,10 @@ const submit = () => {
 </script>
 
 <template>
-    <Head>
-        <title>{{ t('auth.register.metaTitle') }}</title>
-    </Head>
+    <SeoHead
+        :title="t('auth.register.metaTitle')"
+        :description="t('auth.register.metaDescription')"
+    />
 
     <AuthPageContainer
         title-accent-key="auth.register.titleAccent"
@@ -318,6 +320,16 @@ const submit = () => {
                                     version: props.privacyPolicyVersion,
                                 })
                             }}
+                            <a
+                                :href="route('legal.cookies')"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-primary font-semibold underline underline-offset-2 hover:opacity-80"
+                                @click.stop
+                            >
+                                {{ t('privacy.register.cookiesLink') }}
+                            </a>
+                            {{ t('privacy.register.privacySuffixEnd') }}
                         </Label>
                     </div>
                     <InputError
