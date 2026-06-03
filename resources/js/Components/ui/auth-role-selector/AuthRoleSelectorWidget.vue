@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { Card, CardContent } from '@/Components/ui/card';
 import type { RoleKey, RoleOption } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -27,43 +26,31 @@ defineProps<{
 </script>
 
 <template>
-    <div class="mb-6 grid grid-cols-3 gap-2 sm:gap-3">
+    <div class="mb-4 grid grid-cols-3 items-start gap-2 sm:mb-6 sm:gap-3 md:gap-4">
         <Link
             v-for="role in roles"
             :key="role.key"
             :href="getHref(role.key)"
             preserve-state
-            class="group block min-h-11 touch-manipulation rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+            :class="
+                cn(
+                    'group box-border flex aspect-square w-full min-w-0 shrink-0 flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border p-3 text-center shadow-sm transition-colors duration-200 touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 sm:gap-2 sm:p-3 md:gap-2.5 md:rounded-xl',
+                    role.ringClass,
+                    roleActiveSurfaceClass[role.key],
+                    selectedRole === role.key
+                        ? roleSelectedSurfaceClass[role.key]
+                        : '',
+                )
+            "
         >
-            <Card
-                :class="
-                    cn(
-                        'min-h-24 border px-2 py-3 transition-colors duration-200 sm:min-h-28 sm:px-3',
-                        role.ringClass,
-                        roleActiveSurfaceClass[role.key],
-                        selectedRole === role.key
-                            ? roleSelectedSurfaceClass[role.key]
-                            : '',
-                    )
-                "
-            >
-                <CardContent
-                    class="flex h-full min-h-24 items-center justify-center p-0 text-center sm:min-h-28 [&_svg]:shrink-0"
-                >
-                    <span class="flex flex-col items-center gap-2 px-0.5">
-                        <component
-                            :is="role.icon"
-                            class="size-6 text-inherit sm:size-7"
-                            stroke-width="2"
-                        />
-                        <span
-                            class="text-base font-bold leading-snug sm:text-lg"
-                        >
-                            {{ role.label }}
-                        </span>
-                    </span>
-                </CardContent>
-            </Card>
+            <component
+                :is="role.icon"
+                class="size-8 shrink-0 text-inherit sm:size-8 md:size-8"
+                stroke-width="2"
+            />
+            <span class="max-w-full overflow-hidden text-ellipsis whitespace-nowrap px-0.5 text-xs font-bold leading-tight sm:text-xs md:text-sm">
+                {{ role.label }}
+            </span>
         </Link>
     </div>
 </template>

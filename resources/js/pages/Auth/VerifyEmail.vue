@@ -41,23 +41,24 @@ const verificationLinkSentMessage = computed(() =>
         />
 
         <form class="space-y-3" @submit.prevent="submit">
-            <Button
-                type="submit"
-                :disabled="form.processing"
-                size="lg"
-                class="w-full text-xl"
-            >
-                {{ t('auth.verifyEmail.resendAction') }}
-            </Button>
-
             <Link
                 :href="route('logout')"
                 method="post"
                 as="button"
-                class="block w-full rounded-xl border border-border bg-surface px-4 py-3 text-center text-base font-semibold text-text transition hover:bg-surface-hover"
+                class="inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-xl bg-primary px-8 text-xl font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-focus/20"
             >
                 {{ t('auth.verifyEmail.logoutAction') }}
             </Link>
+
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                variant="outline"
+                size="lg"
+                class="w-full"
+            >
+                {{ t('auth.verifyEmail.resendAction') }}
+            </Button>
         </form>
     </AuthPageContainer>
 </template>
