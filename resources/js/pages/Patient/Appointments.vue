@@ -2,12 +2,13 @@
 import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
-import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
 import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
+import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
+import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
@@ -18,6 +19,10 @@ const { t } = useI18n();
 
 const {
     doctorTypeOptions,
+    createSuccessOpen,
+    createSuccessTitle,
+    createSuccessMessage,
+    createSuccessDetails,
     createDialogOpen,
     form,
     editForm,
@@ -47,6 +52,14 @@ const {
     </Head>
 
     <PatientLayout>
+        <PatientActionSuccessScreen
+            v-model:open="createSuccessOpen"
+            :title="createSuccessTitle"
+            :message="createSuccessMessage"
+            :details="createSuccessDetails"
+            :done-label="t('patient.actionSuccess.done')"
+        />
+
         <PatientPageShell :title="t('patient.appointments.heading')">
             <AppointmentsPageIntro @new-appointment-click="createDialogOpen = true" />
 
