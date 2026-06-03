@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -68,7 +69,7 @@ test('login redirects to the dashboard when the intended url points to login', f
     $user = User::factory()->create(['role' => 'patient']);
 
     $response = $this
-        ->withSession(['url.intended' => route('login', ['role' => 'patient'])])
+        ->withSession(['url.intended' => route('login', ['role' => UserRole::PATIENT->encryptForTransport()])])
         ->post('/login', [
             'email' => $user->email,
             'password' => 'password',

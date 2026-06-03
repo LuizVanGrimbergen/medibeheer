@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Mail\DoctorInvitationMail;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
@@ -7,7 +8,9 @@ use Illuminate\Support\Facades\URL;
 test('doctor invitation entry sends guests to doctor registration with intended patients page', function () {
     $response = $this->get(route('doctor.invitation.entry'));
 
-    $response->assertRedirect(route('register', ['role' => 'doctor']));
+    $response->assertRedirect();
+    parse_str((string) parse_url((string) $response->headers->get('Location'), PHP_URL_QUERY), $query);
+    expect(UserRole::tryFromEncryptedTransport($query['role'] ?? null))->toBe(UserRole::DOCTOR);
     expect(session('url.intended'))->toBe(route('doctor.patients'));
 });
 
