@@ -5,6 +5,7 @@ import { Calendar, FileText, House, Package, Pill, UserRound } from 'lucide-vue-
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientFlashActionSuccessScreen from '@/Components/Patient/PatientFlashActionSuccessScreen.vue';
 import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps } from '@/lib/types';
@@ -133,6 +134,8 @@ const footerLabelClass = computed(() =>
 
 <template>
     <AuthenticatedLayout>
+        <PatientFlashActionSuccessScreen />
+
         <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
