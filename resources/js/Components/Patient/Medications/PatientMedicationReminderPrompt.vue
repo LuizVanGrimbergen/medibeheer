@@ -3,7 +3,7 @@ import { Link } from '@inertiajs/vue3';
 import { Bell, BellOff, X } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { usePatientMedicationPushReminders } from '@/composables/usePatientMedicationPushReminders';
+import { usePatientMedicationPushReminders } from '@/composables/patient/usePatientMedicationPushReminders';
 
 const { t } = useI18n();
 
