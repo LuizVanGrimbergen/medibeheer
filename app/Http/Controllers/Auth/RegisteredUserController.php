@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\SecurityActivityDescription;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
@@ -33,6 +34,7 @@ class RegisteredUserController extends Controller
     {
         return Inertia::render('Auth/Register', [
             'selectedRole' => $resolveSelectedRole($request),
+            'roleTokens' => UserRole::encryptedTransportTokens(),
             'privacyPolicyVersion' => config('privacy.policy_version'),
         ]);
     }

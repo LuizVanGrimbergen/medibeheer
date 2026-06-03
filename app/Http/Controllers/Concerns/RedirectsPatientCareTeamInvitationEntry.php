@@ -27,7 +27,7 @@ trait RedirectsPatientCareTeamInvitationEntry
             $request->session()->put('url.intended', route($this->invitationEntryDestinationRoute()));
 
             return redirect()->route('register', [
-                'role' => $this->invitationEntryRegisterRole()->value,
+                'role' => $this->invitationEntryRegisterRole()->encryptForTransport(),
             ]);
         }
 
