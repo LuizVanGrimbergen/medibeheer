@@ -10,8 +10,6 @@ class ShowPrivacyPolicyController extends Controller
 {
     public function __invoke(): Response
     {
-        return Inertia::render('Legal/Privacy', [
-            'policyVersion' => config('privacy.policy_version'),
-        ]);
+        return Inertia::render('Legal/Privacy', LegalPageProps::forInertia());
     }
 }
