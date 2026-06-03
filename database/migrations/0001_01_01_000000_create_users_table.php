@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->uuid('public_id')->unique();
-            $table->string('role')->default(UserRole::PATIENT->value)->index();
+            $table->text('role');
             $table->text('name_encrypted');
             $table->text('email_encrypted');
             $table->char('email_hash', 64)->unique();
