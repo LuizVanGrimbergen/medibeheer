@@ -1,9 +1,14 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { usePrescriptionFormWizard } from '@/Components/Patient/Prescriptions/form/usePrescriptionFormWizard';
+import {
+    usePatientActionSuccessScreen,
+    type PatientActionSuccessDetail,
+} from '@/composables/usePatientActionSuccessScreen';
+import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
-import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 
 const prescriptionFormDialogLayoutClass = patientShellDialogContentClass('md');
 
@@ -37,6 +42,8 @@ function resizePrescriptionExpiryDates(
 export function usePatientPrescriptionsPage(
     medicationChoices: () => PatientPrescriptionMedicationChoice[],
 ) {
+    const { t } = useI18n();
+    const addSuccessScreen = usePatientActionSuccessScreen();
     const addDialogOpen = ref(false);
     const selectedMedicationId = ref<number | null>(null);
     const quantityClientError = ref('');
@@ -113,6 +120,22 @@ export function usePatientPrescriptionsPage(
             return;
         }
 
+        const medicationName =
+            medicationChoices().find((choice) => choice.id === medicationId)?.name?.trim() ?? '';
+        const successDetails: PatientActionSuccessDetail[] = [];
+
+        if (medicationName !== '') {
+            successDetails.push({
+                label: t('patient.actionSuccess.summary.medication'),
+                value: medicationName,
+            });
+        }
+
+        successDetails.push({
+            label: t('patient.actionSuccess.summary.quantity'),
+            value: String(parsedQuantity),
+        });
+
         form.post(
             route('patient.medications.prescriptions.store', {
                 medication: medicationId,
@@ -121,6 +144,11 @@ export function usePatientPrescriptionsPage(
                 preserveScroll: true,
                 onSuccess: () => {
                     closeAddPrescriptionDialog();
+                    addSuccessScreen.show({
+                        title: t('patient.actionSuccess.prescriptions.created.title'),
+                        message: t('patient.actionSuccess.prescriptions.created.message'),
+                        details: successDetails,
+                    });
                 },
                 onError: () => {
                     addDialogOpen.value = true;
@@ -147,6 +175,10 @@ export function usePatientPrescriptionsPage(
 
     return {
         prescriptionFormDialogLayoutClass,
+        addSuccessOpen: addSuccessScreen.open,
+        addSuccessTitle: addSuccessScreen.title,
+        addSuccessMessage: addSuccessScreen.message,
+        addSuccessDetails: addSuccessScreen.details,
         addDialogOpen,
         selectedMedicationId,
         quantityClientError,
