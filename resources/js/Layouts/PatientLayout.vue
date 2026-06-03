@@ -10,12 +10,24 @@ import {
     UserRound,
 } from 'lucide-vue-next';
 import type { ComputedRef } from 'vue';
-import { computed } from 'vue';
+import { computed, ref, type ComponentPublicInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientFlashActionSuccessScreen from '@/Components/Patient/PatientFlashActionSuccessScreen.vue';
-import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
+import {
+    type FooterNavLinkRefs,
+    useGsapFooterNavIndicator,
+} from '@/composables/motion/useGsapFooterNavIndicator';
+import { usePatientNavigationAlerts } from '@/composables/patient/usePatientNavigationAlerts';
+import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {
+    patientFooterNavAlertAccentClass,
+    patientFooterNavAlertTone,
+    type PatientFooterNavRouteName,
+} from '@/lib/patient/navigation/patientFooterNavClasses';
+import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
 import type { PageProps } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
@@ -43,13 +55,7 @@ const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
 const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
 
 type PatientNavItem = {
-    routeName:
-        | 'patient.dashboard'
-        | 'patient.medications'
-        | 'patient.prescriptions'
-        | 'patient.inventory'
-        | 'patient.appointments'
-        | 'patient.family';
+    routeName: PatientFooterNavRouteName;
     labelKey:
         | 'patient.navigation.home'
         | 'patient.navigation.medications'
@@ -115,15 +121,99 @@ const activePatientNavRoute = computed(
     },
 );
 
-function footerNavClass(routeName: PatientNavItem['routeName']): string {
+const patientNavigation = usePatientNavigationAlerts();
+
+const footerNavRef = ref<HTMLElement | null>(null);
+const footerNavIndicatorRef = ref<HTMLElement | null>(null);
+const footerNavLinkRefs: FooterNavLinkRefs = {};
+
+useGsapFooterNavIndicator(
+    footerNavRef,
+    footerNavIndicatorRef,
+    activePatientNavRoute,
+    footerNavLinkRefs,
+);
+
+function registerFooterNavLinkRef(
+    routeName: PatientFooterNavRouteName,
+    target: Element | ComponentPublicInstance | null,
+): void {
+    const element = resolveGsapTargetElement(
+        target as HTMLElement | ComponentPublicInstance | null,
+    );
+
+    if (element === null) {
+        delete footerNavLinkRefs[routeName];
+
+        return;
+    }
+
+    if (footerNavLinkRefs[routeName] === element) {
+        return;
+    }
+
+    footerNavLinkRefs[routeName] = element;
+}
+
+function footerNavAriaLabel(item: PatientNavItem): string | undefined {
+    const alertTone = patientFooterNavAlertTone(
+        item.routeName,
+        patientNavigation.value,
+    );
+
+    if (alertTone === null || activePatientNavRoute.value === item.routeName) {
+        return undefined;
+    }
+
+    if (alertTone === 'critical') {
+        return t('patient.navigation.footerAlertCritical', {
+            label: t(item.labelKey),
+        });
+    }
+
+    return t('patient.navigation.footerAlertWarning', {
+        label: t(item.labelKey),
+    });
+}
+
+function footerNavLinkClass(routeName: PatientNavItem['routeName']): string {
     const density = smAndUp.value ? 'gap-1.5 py-2.5 px-2' : 'gap-1 py-2 px-1';
-    const base = `flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl transition-colors ${density}`;
+    const base = `relative z-10 flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl ${density}`;
 
     if (activePatientNavRoute.value === routeName) {
-        return `${base} bg-primary/12 text-primary`;
+        return `${base} text-primary`;
     }
 
     return `${base} text-text-muted`;
+}
+
+function footerNavAlertAccentClass(
+    routeName: PatientNavItem['routeName'],
+): string | null {
+    if (activePatientNavRoute.value === routeName) {
+        return null;
+    }
+
+    const alertTone = patientFooterNavAlertTone(
+        routeName,
+        patientNavigation.value,
+    );
+
+    if (alertTone === null) {
+        return null;
+    }
+
+    return patientFooterNavAlertAccentClass(alertTone);
+}
+
+function footerNavIconClass(routeName: PatientNavItem['routeName']): string {
+    return cn(footerIconClass.value, footerNavAlertAccentClass(routeName));
+}
+
+function footerNavLabelClassForItem(
+    routeName: PatientNavItem['routeName'],
+): string {
+    return cn(footerLabelClass.value, footerNavAlertAccentClass(routeName));
 }
 
 const footerIconClass = computed(() =>
@@ -160,26 +250,38 @@ const footerLabelClass = computed(() =>
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div
-                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
+                    ref="footerNavRef"
+                    class="relative mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
                     :class="footerPaddingX"
                 >
+                    <div
+                        ref="footerNavIndicatorRef"
+                        class="bg-primary/12 pointer-events-none absolute z-0 rounded-xl opacity-0"
+                        aria-hidden="true"
+                    />
+
                     <Link
                         v-for="item in patientNavItems"
                         :key="item.routeName"
+                        :ref="
+                            (target) =>
+                                registerFooterNavLinkRef(item.routeName, target)
+                        "
                         :href="route(item.routeName)"
                         :prefetch="
                             activePatientNavRoute === item.routeName
                                 ? false
                                 : (['mount', 'hover'] as const)
                         "
-                        :class="footerNavClass(item.routeName)"
+                        :class="footerNavLinkClass(item.routeName)"
+                        :aria-label="footerNavAriaLabel(item)"
                     >
                         <component
                             :is="item.icon"
-                            :class="footerIconClass"
+                            :class="footerNavIconClass(item.routeName)"
                             aria-hidden="true"
                         />
-                        <span :class="footerLabelClass">
+                        <span :class="footerNavLabelClassForItem(item.routeName)">
                             {{ t(item.labelKey) }}
                         </span>
                     </Link>
