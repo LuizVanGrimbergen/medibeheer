@@ -1,17 +1,11 @@
+import type { GsapTween, WizardStepDirection } from '@/lib/motion/gsapMotion';
 import {
     animateWizardStepEnter,
     resetWizardStepEnterVisibility,
-    type WizardStepDirection,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    nextTick,
-    onUnmounted,
-    ref,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 
 export function useGsapWizardStepEnter(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
@@ -19,7 +13,7 @@ export function useGsapWizardStepEnter(
     stepDirection: Ref<WizardStepDirection>,
     isOpen: Ref<boolean>,
 ): void {
-    let tween: ReturnType<typeof animateWizardStepEnter> | null = null;
+    let tween: GsapTween | null = null;
     let retryFrameId: number | null = null;
     const skipNextTransition = ref(false);
 
@@ -32,7 +26,7 @@ export function useGsapWizardStepEnter(
         retryFrameId = null;
     };
 
-    const applyAnimation = (): boolean => {
+    const applyAnimation = async (): Promise<boolean> => {
         const element = resolveGsapTargetElement(targetRef.value);
 
         if (element === null) {
@@ -40,7 +34,7 @@ export function useGsapWizardStepEnter(
         }
 
         tween?.kill();
-        tween = animateWizardStepEnter(element, stepDirection.value);
+        tween = await animateWizardStepEnter(element, stepDirection.value);
 
         return true;
     };
@@ -50,13 +44,13 @@ export function useGsapWizardStepEnter(
 
         await nextTick();
 
-        if (applyAnimation()) {
+        if (await applyAnimation()) {
             return;
         }
 
         retryFrameId = globalThis.requestAnimationFrame(() => {
             retryFrameId = null;
-            applyAnimation();
+            void applyAnimation();
         });
     };
 
