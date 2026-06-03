@@ -216,6 +216,7 @@ final class UserDataExportService
             'mood_score' => $checkin->mood_score->value,
             'symptoms' => $checkin->symptomValues(),
             'note' => $checkin->note,
+            'encouragement_message' => $checkin->encouragement_message,
             'created_at' => $checkin->created_at?->toIso8601String(),
         ];
     }

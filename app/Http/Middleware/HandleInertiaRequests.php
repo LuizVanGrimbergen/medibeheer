@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'rateLimitSeconds' => fn () => $request->session()->get('rate_limit_seconds'),
                 'daily_checkin_mood' => fn () => $request->session()->get('daily_checkin_mood'),
+                'daily_checkin_encouragement' => fn () => $request->session()->get('daily_checkin_encouragement'),
             ],
             'legal' => [
                 'privacyUrl' => route('legal.privacy', absolute: false),
