@@ -42,6 +42,7 @@ export function medicationWizardStepForInertiaFormErrors(
 
     const startDateError = errors['schedule.start_date'];
     const endDateError = errors['schedule.end_date'];
+
     if (
         (startDateError !== undefined && startDateError.length > 0) ||
         (endDateError !== undefined && endDateError.length > 0)

@@ -1,8 +1,8 @@
 import { toBlob } from 'html-to-image';
 import { createApp, nextTick } from 'vue';
 import InventoryVacationShareSheet from '@/Components/Patient/Inventory/InventoryVacationShareSheet.vue';
-import { inventoryVacationShareMedicationSelector } from '@/lib/patient/inventory/inventoryVacationShareSelectors';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
+import { inventoryVacationShareMedicationSelector } from '@/lib/patient/inventory/inventoryVacationShareSelectors';
 
 const SHARE_IMAGE_WIDTH_PX = 840;
 const SHARE_IMAGE_PIXEL_RATIO = 2;

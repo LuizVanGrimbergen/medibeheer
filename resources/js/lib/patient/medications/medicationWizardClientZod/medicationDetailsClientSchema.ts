@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-import { MEDICATION_TYPE_VALUES } from '@/lib/types';
 import {
     MEDICATION_DOSE_UNIT_FORM_VALUES,
     medicationDoseUnitRequiresStrength,
 } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { MEDICATION_STRENGTH_UNIT_VALUES } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import { MEDICATION_TYPE_VALUES } from '@/lib/types';
 import { isMemberOf } from '../validation/medicationFormValidationPrimitives';
 import { medicationWizardStepValidation } from './wizardStepMessages';
 import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';

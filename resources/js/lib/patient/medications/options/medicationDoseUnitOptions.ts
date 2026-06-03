@@ -1,5 +1,5 @@
-import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_FORM_VALUES } from '@/lib/patient/medications/options/medicationDoseUnitForm';
+import type { MedicationDoseUnitValue } from '@/lib/types';
 
 export type MedicationDoseUnitOption = {
     value: MedicationDoseUnitValue;
