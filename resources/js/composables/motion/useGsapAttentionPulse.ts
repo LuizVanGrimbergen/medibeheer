@@ -1,21 +1,17 @@
+import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateAttentionPulse,
     resetAttentionPulseVisibility,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    nextTick,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, watch } from 'vue';
 
 export function useGsapAttentionPulse(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     shouldAnimate: Ref<boolean>,
 ): void {
-    let tween: ReturnType<typeof animateAttentionPulse> | null = null;
+    let tween: GsapTween | null = null;
     let retryFrameId: number | null = null;
 
     const cancelRetry = (): void => {
@@ -27,7 +23,7 @@ export function useGsapAttentionPulse(
         retryFrameId = null;
     };
 
-    const applyAnimation = (): boolean => {
+    const applyAnimation = async (): Promise<boolean> => {
         const element = resolveGsapTargetElement(targetRef.value);
 
         if (element === null) {
@@ -35,7 +31,7 @@ export function useGsapAttentionPulse(
         }
 
         tween?.kill();
-        tween = animateAttentionPulse(element);
+        tween = await animateAttentionPulse(element);
 
         return true;
     };
@@ -45,13 +41,13 @@ export function useGsapAttentionPulse(
 
         await nextTick();
 
-        if (applyAnimation()) {
+        if (await applyAnimation()) {
             return;
         }
 
         retryFrameId = globalThis.requestAnimationFrame(() => {
             retryFrameId = null;
-            applyAnimation();
+            void applyAnimation();
         });
     };
 
