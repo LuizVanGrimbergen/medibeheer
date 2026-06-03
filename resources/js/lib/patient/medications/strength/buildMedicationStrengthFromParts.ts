@@ -1,8 +1,9 @@
 import {
     MEDICATION_STRENGTH_UNIT_VALUES,
-    medicationStrengthUnitStorageLabel,
-    type MedicationStrengthUnitValue,
+    medicationStrengthUnitStorageLabel
+    
 } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import type {MedicationStrengthUnitValue} from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 
 export function buildMedicationStrengthFromParts(
     doseUnit: string,

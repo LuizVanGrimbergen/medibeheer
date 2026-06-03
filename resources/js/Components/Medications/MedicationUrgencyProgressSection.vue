@@ -5,9 +5,10 @@ import { Progress } from '@/Components/ui/progress';
 import {
     medicationUrgencyProgressIndicatorClass,
     medicationUrgencyShowsAlertRow,
-    medicationUrgencyStatusTextClass,
-    type MedicationUrgencyTone,
+    medicationUrgencyStatusTextClass
+    
 } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import type {MedicationUrgencyTone} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 
 const props = withDefaults(
     defineProps<{

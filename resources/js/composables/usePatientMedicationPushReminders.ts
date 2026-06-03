@@ -2,8 +2,8 @@ import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { i18n } from '@/i18n';
 import { registerMedicationPushServiceWorker } from '@/lib/medicationPushServiceWorker';
-import { urlBase64ToUint8Array } from '@/lib/webpush/vapidPublicKey';
 import type { PageProps } from '@/lib/types';
+import { urlBase64ToUint8Array } from '@/lib/webpush/vapidPublicKey';
 
 type PushSubscriptionJson = {
     endpoint: string;

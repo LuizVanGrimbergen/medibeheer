@@ -4,12 +4,12 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import {
     patientFormFieldInvalidClass,
     patientFormLabelClass,
     patientFormNativeDateTimeInputClass,
 } from '@/lib/patient/patientFormFieldClasses';
+import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{

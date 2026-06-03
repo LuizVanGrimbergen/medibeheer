@@ -2,14 +2,15 @@
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import AddPrescriptionDialog from '@/Components/Patient/Prescriptions/AddPrescriptionDialog.vue';
 import MedicationPrescriptionCard from '@/Components/Patient/Prescriptions/MedicationPrescriptionCard.vue';
 import PrescriptionsPageIntro from '@/Components/Patient/Prescriptions/PrescriptionsPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { usePatientPrescriptionsPage } from '@/composables/usePatientPrescriptionsPage';
+import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationPrescriptionListItems } from '@/lib/patient/prescriptions/compareMedicationPrescriptionListItems';
 import type { PatientPrescriptionsScreenProps } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { MedicationPrescriptionListItem } from '@/lib/types';
@@ -20,6 +21,10 @@ const { t } = useI18n();
 
 const {
     prescriptionFormDialogLayoutClass,
+    addSuccessOpen,
+    addSuccessTitle,
+    addSuccessMessage,
+    addSuccessDetails,
     addDialogOpen,
     selectedMedicationId,
     quantityClientError,
@@ -62,6 +67,14 @@ const emptyStateMessage = computed((): string => {
     </Head>
 
     <PatientLayout>
+        <PatientActionSuccessScreen
+            v-model:open="addSuccessOpen"
+            :title="addSuccessTitle"
+            :message="addSuccessMessage"
+            :details="addSuccessDetails"
+            :done-label="t('patient.actionSuccess.done')"
+        />
+
         <PatientPageShell :title="t('patient.prescriptions.listHeading')">
             <PrescriptionsPageIntro
                 :can-add-prescription="canAddPrescription"

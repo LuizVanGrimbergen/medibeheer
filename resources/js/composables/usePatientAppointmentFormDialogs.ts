@@ -1,5 +1,10 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import {
+    usePatientActionSuccessScreen,
+    type PatientActionSuccessDetail,
+} from '@/composables/usePatientActionSuccessScreen';
 import {
     PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
     patientAppointmentFormValuesToRequestPayload,
@@ -21,6 +26,8 @@ const appointmentFormDialogLayoutClass = patientShellDialogContentClass('sm');
 export function usePatientAppointmentFormDialogs(
     props: Pick<PatientAppointmentsScreenProps, 'linked_families' | 'open_create_dialog'>,
 ) {
+    const { t } = useI18n();
+    const createSuccessScreen = usePatientActionSuccessScreen();
     const createDialogOpen = ref(false);
 
     onMounted(() => {
@@ -151,6 +158,34 @@ export function usePatientAppointmentFormDialogs(
     }
 
     function submitNewAppointment(): void {
+        const successDetails: PatientActionSuccessDetail[] = [];
+        const providerName = createForm.provider_name.trim();
+
+        if (providerName !== '') {
+            successDetails.push({
+                label: t('patient.actionSuccess.summary.appointmentProvider'),
+                value: providerName,
+            });
+        }
+
+        const startsAtDate = createForm.starts_at_date.trim();
+
+        if (startsAtDate !== '') {
+            successDetails.push({
+                label: t('patient.actionSuccess.summary.appointmentDay'),
+                value: startsAtDate,
+            });
+        }
+
+        const startsAtTime = createForm.starts_at_time.trim();
+
+        if (startsAtTime !== '') {
+            successDetails.push({
+                label: t('patient.actionSuccess.summary.appointmentTime'),
+                value: startsAtTime,
+            });
+        }
+
         createForm
             .transform((data) => patientAppointmentFormValuesToRequestPayload({ ...data }))
             .post(route('patient.appointments.store'), {
@@ -158,6 +193,11 @@ export function usePatientAppointmentFormDialogs(
                 onSuccess: () => {
                     resetCreateDialogToFreshDefaults();
                     createDialogOpen.value = false;
+                    createSuccessScreen.show({
+                        title: t('patient.actionSuccess.appointments.created.title'),
+                        message: t('patient.actionSuccess.appointments.created.message'),
+                        details: successDetails,
+                    });
                 },
             });
     }
@@ -191,6 +231,10 @@ export function usePatientAppointmentFormDialogs(
     return {
         doctorTypeOptions: PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
         appointmentFormDialogLayoutClass,
+        createSuccessOpen: createSuccessScreen.open,
+        createSuccessTitle: createSuccessScreen.title,
+        createSuccessMessage: createSuccessScreen.message,
+        createSuccessDetails: createSuccessScreen.details,
         createStartsAtDateMinIso,
         editSchedulePermitPastStartsAtIfSameInstantMs,
         createDialogOpen,

@@ -111,6 +111,7 @@ export type PageProps<
         success: string | null;
         rateLimitSeconds: number | null;
         daily_checkin_mood: DailyMoodScoreValue | null;
+        daily_checkin_encouragement: string | null;
     };
     legal: LegalSharedProps;
     webpush?: WebPushSharedProps;

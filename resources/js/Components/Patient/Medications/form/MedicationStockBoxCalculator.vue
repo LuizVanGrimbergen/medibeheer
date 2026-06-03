@@ -109,6 +109,7 @@ watch(
     (newValue) => {
         if (numberOfBoxes.value === '' && piecesPerBox.value === '' && newValue !== '') {
             const parsed = Number.parseInt(newValue, 10);
+
             if (!Number.isNaN(parsed) && parsed > 0) {
                 numberOfBoxes.value = '1';
                 piecesPerBox.value = String(parsed);

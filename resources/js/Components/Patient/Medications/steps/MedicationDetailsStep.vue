@@ -2,19 +2,19 @@
 /* eslint-disable vue/no-mutating-props */
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import MedicationFormAmountWithUnitField from '@/Components/Patient/Medications/form/MedicationFormAmountWithUnitField.vue';
+import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { medicationDoseUnitOptionsForSelect } from '@/lib/patient/medications/options/medicationDoseUnitOptions';
+import { medicationStrengthUnitChipForAmount } from '@/lib/patient/medications/options/medicationStrengthUnitChipForAmount';
 import { MEDICATION_STRENGTH_UNIT_OPTIONS } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import type { MedicationStrengthUnitValue } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
-import { medicationStrengthUnitChipForAmount } from '@/lib/patient/medications/options/medicationStrengthUnitChipForAmount';
-import { MEDICATION_TYPE_OPTIONS } from '@/lib/patient/medications/options/medicationTypeIcons';
 import { defaultDoseUnitForMedicationType } from '@/lib/patient/medications/options/medicationTypeDefaultDoseUnit';
+import { MEDICATION_TYPE_OPTIONS } from '@/lib/patient/medications/options/medicationTypeIcons';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,

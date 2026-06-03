@@ -1,4 +1,5 @@
-import { computed, type Ref } from 'vue';
+import { computed  } from 'vue';
+import type {Ref} from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 

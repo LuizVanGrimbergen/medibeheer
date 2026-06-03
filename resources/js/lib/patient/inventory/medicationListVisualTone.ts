@@ -1,12 +1,13 @@
+import {
+    medicationUrgencyToneFromDaysRemaining
+    
+} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import type {MedicationUrgencyTone} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import type {
     MedicationListItem,
     MedicationSupplyEstimateQuality,
 } from '@/lib/types';
 
-import {
-    medicationUrgencyToneFromDaysRemaining,
-    type MedicationUrgencyTone,
-} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 
 export type MedicationStockProgressTone = MedicationUrgencyTone;
 

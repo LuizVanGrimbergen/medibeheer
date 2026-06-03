@@ -3,9 +3,10 @@ import type { Ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import {
-    PRESCRIPTION_FORM_WIZARD_STEP_COUNT,
-    type PrescriptionFormWizardStep,
+    PRESCRIPTION_FORM_WIZARD_STEP_COUNT
+    
 } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
+import type {PrescriptionFormWizardStep} from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
 
 const PRESCRIPTION_QUANTITY_MIN = 1;
 const PRESCRIPTION_QUANTITY_MAX = 24;

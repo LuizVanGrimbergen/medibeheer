@@ -51,4 +51,10 @@ return [
         'expiry_days' => (int) env('MEDICATION_PLAN_PROPOSAL_EXPIRY_DAYS', 14),
     ],
 
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4o-mini'),
+        'timeout' => (int) env('OPENAI_TIMEOUT', 10),
+    ],
+
 ];

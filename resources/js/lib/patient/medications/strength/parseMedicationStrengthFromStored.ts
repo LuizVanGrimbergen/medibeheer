@@ -1,7 +1,8 @@
 import {
-    MEDICATION_STRENGTH_UNIT_VALUES,
-    type MedicationStrengthUnitValue,
+    MEDICATION_STRENGTH_UNIT_VALUES
+    
 } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import type {MedicationStrengthUnitValue} from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 
 const STORAGE_LABEL_TO_UNIT: Record<string, MedicationStrengthUnitValue> = {
     mg: 'milligram',

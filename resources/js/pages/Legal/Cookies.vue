@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import LegalDocumentLayout from '@/Components/Legal/LegalDocumentLayout.vue';
 import { useI18n } from 'vue-i18n';
+import LegalDocumentLayout from '@/Components/Legal/LegalDocumentLayout.vue';
 
 defineProps<{
     policyVersion: string;

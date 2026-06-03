@@ -1,3 +1,4 @@
+import actionSuccess from './actionSuccess';
 import appointments from './appointments';
 import dashboard from './dashboard';
 import doctors from './doctors';
@@ -10,6 +11,7 @@ import navigation from './navigation';
 import prescriptions from './prescriptions';
 
 export default {
+    actionSuccess,
     appointments,
     dashboard,
     doctors,

@@ -6,10 +6,11 @@ import MedicationDetailsEditDialog from '@/Components/Patient/Medications/form/M
 import MedicationFormDialog from '@/Components/Patient/Medications/form/MedicationFormDialog.vue';
 import MedicationPageIntro from '@/Components/Patient/Medications/form/MedicationPageIntro.vue';
 import MedicationRemoveFromListDialog from '@/Components/Patient/Medications/MedicationRemoveFromListDialog.vue';
+import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientMedicationsPage } from '@/composables/usePatientMedicationsPage';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 
@@ -19,6 +20,10 @@ const { t } = useI18n();
 
 const {
     medicationFormDialogLayoutClass,
+    createSuccessOpen,
+    createSuccessTitle,
+    createSuccessMessage,
+    createSuccessDetails,
     createDialogOpen,
     createForm,
     submitNewMedication,
@@ -47,6 +52,14 @@ const {
     </Head>
 
     <PatientLayout>
+        <PatientActionSuccessScreen
+            v-model:open="createSuccessOpen"
+            :title="createSuccessTitle"
+            :message="createSuccessMessage"
+            :details="createSuccessDetails"
+            :done-label="t('patient.actionSuccess.done')"
+        />
+
         <PatientPageShell :title="t('patient.medications.listHeading')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"

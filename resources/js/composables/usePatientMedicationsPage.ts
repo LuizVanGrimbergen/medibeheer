@@ -1,11 +1,16 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import {
+    usePatientActionSuccessScreen,
+    type PatientActionSuccessDetail,
+} from '@/composables/usePatientActionSuccessScreen';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
 import { medicationListItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationListItemToCreateFormState';
-import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
+import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import {
     patientShellDialogContentClass,
@@ -85,6 +90,8 @@ function attachMedicationScheduleDateOrderWatcher(
 }
 
 export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) {
+    const { t } = useI18n();
+    const createSuccessScreen = usePatientActionSuccessScreen();
     const createDialogOpen = ref(false);
     const editDialogOpen = ref(false);
     const editMedicationId = ref<number | null>(null);
@@ -163,6 +170,17 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
     }
 
     function submitNewMedication(): void {
+        const savedName = createForm.name.trim();
+        const successDetails: PatientActionSuccessDetail[] =
+            savedName !== ''
+                ? [
+                      {
+                          label: t('patient.actionSuccess.summary.medication'),
+                          value: savedName,
+                      },
+                  ]
+                : [];
+
         createForm
             .transform((data) => medicationCreateFormStateToRequestPayload(data))
             .post(route('patient.medications.store'), {
@@ -171,6 +189,11 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
                     router.flushAll();
                     resetCreateDialogToFreshDefaults();
                     createDialogOpen.value = false;
+                    createSuccessScreen.show({
+                        title: t('patient.actionSuccess.medications.created.title'),
+                        message: t('patient.actionSuccess.medications.created.message'),
+                        details: successDetails,
+                    });
                 },
             });
     }
@@ -226,6 +249,10 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
 
     return {
         medicationFormDialogLayoutClass,
+        createSuccessOpen: createSuccessScreen.open,
+        createSuccessTitle: createSuccessScreen.title,
+        createSuccessMessage: createSuccessScreen.message,
+        createSuccessDetails: createSuccessScreen.details,
         createDialogOpen,
         createForm,
         resetCreateDialogToFreshDefaults,

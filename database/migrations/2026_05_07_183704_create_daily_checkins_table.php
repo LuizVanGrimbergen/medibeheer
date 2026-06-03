@@ -14,6 +14,7 @@ return new class extends Migration
             $table->date('checkin_date');
             $table->text('mood_score');
             $table->text('note')->nullable();
+            $table->text('encouragement_message')->nullable();
             $table->timestamps();
 
             $table->unique(['patient_id', 'checkin_date']);

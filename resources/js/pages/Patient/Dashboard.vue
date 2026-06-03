@@ -167,6 +167,18 @@ const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
 
     return null;
 });
+
+const dailyCheckinEncouragementFlash = computed((): string | null => {
+    const raw = page.props.flash?.daily_checkin_encouragement;
+
+    if (typeof raw !== 'string') {
+        return null;
+    }
+
+    const trimmed = raw.trim();
+
+    return trimmed === '' ? null : trimmed;
+});
 </script>
 
 <template>
@@ -176,7 +188,10 @@ const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
 
     <PatientLayout>
         <PatientPageShell :title="t('patient.dashboard.heading')">
-            <DailyCheckinSuccessScreen :mood="dailyCheckinMoodFlash" />
+            <DailyCheckinSuccessScreen
+                :mood="dailyCheckinMoodFlash"
+                :message="dailyCheckinEncouragementFlash"
+            />
 
             <Card
                 v-if="isTodayCheckinLoading"

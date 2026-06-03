@@ -3,8 +3,8 @@
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { InputError } from '@/Components/ui/input-error';
 import { Card, CardContent } from '@/Components/ui/card';
+import { InputError } from '@/Components/ui/input-error';
 import {
     isCustomIntakeFrequencyInterval,
     isWizardIntakeFrequencyPreset,

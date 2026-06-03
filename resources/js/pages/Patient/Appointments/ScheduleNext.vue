@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { Button } from '@/Components/ui/button';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
+import { Button } from '@/Components/ui/button';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentScheduleNextPageProps } from '@/lib/patient/appointments/screen/patientAppointmentScheduleNextPageProps';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentScheduleNextPageProps>();
 

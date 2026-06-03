@@ -95,7 +95,6 @@ final class PatientMedicationsScreenService
         );
     }
 
-    /** @return list<array{id: int, name: string, type_medication: string}> */
     public function activeMedicationChoicesFor(Patient $patient): array
     {
         return $patient->medications()
@@ -111,7 +110,6 @@ final class PatientMedicationsScreenService
             ->all();
     }
 
-    /** @param list<string> $with */
     private function paginateMedicationRegister(Patient $patient, array $with, int $page = 1): array
     {
         $paginator = $patient->medications()

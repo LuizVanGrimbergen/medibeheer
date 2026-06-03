@@ -1,12 +1,13 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import {
+    medicationPlanProposalInitialToFormState
+    
+} from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
+import type {MedicationPlanProposalFormInitial} from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
-import {
-    medicationPlanProposalInitialToFormState,
-    type MedicationPlanProposalFormInitial,
-} from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
 import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 

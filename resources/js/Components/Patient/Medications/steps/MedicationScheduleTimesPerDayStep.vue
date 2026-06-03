@@ -2,8 +2,8 @@
 /* eslint-disable vue/no-mutating-props */
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import PatientFormCountPresetPicker from '@/Components/Patient/form/PatientFormCountPresetPicker.vue';
+import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 
 const { form, idPrefix } = defineProps<{
     form: MedicationCreateFormWithErrors;

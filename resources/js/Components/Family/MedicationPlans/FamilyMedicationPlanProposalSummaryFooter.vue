@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
 import { Link } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
 import { cn } from '@/lib/utils';
 

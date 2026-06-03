@@ -2,19 +2,19 @@
 import { Layers, PackagePlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
 import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
+import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
+import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import {
     medicationUrgencyOutlineButtonClass,
     medicationUrgencyPanelClass,
     medicationUrgencyPanelIconWrapClass,
 } from '@/lib/patient/medications/urgency/medicationUrgencyPanelClasses';
-import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
-import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationListItem } from '@/lib/types';
 
@@ -201,6 +201,7 @@ const currentStockDisplayLine = computed((): string =>
             v-if="primaryStock !== undefined && props.canAdjustStock"
             v-model:open="stockEditOpen"
             :medication-id="medication.id"
+            :medication-name="medication.name"
             :dose-unit="stockDisplayDoseUnit"
             :stock="primaryStock"
             :stock-progress-tone="stockProgressTone"

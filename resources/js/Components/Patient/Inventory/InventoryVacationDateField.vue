@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Label } from '@/Components/ui/label';
 import { InputError } from '@/Components/ui/input-error';
+import { Label } from '@/Components/ui/label';
 import {
     patientFormFieldInvalidClass,
     patientFormLabelClass,

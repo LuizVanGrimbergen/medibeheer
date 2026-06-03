@@ -3,11 +3,11 @@ import { Link } from '@inertiajs/vue3';
 import { LayoutDashboard, UsersRound } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import {
     doctorNavItems,
     useDoctorRoleNavigation,
 } from '@/composables/useDoctorRoleNavigation';
+import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 
 const { t } = useI18n();
 const { isActive } = useDoctorRoleNavigation();
