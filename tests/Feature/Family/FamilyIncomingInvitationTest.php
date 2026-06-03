@@ -13,7 +13,6 @@ test('family link page lists pending patient invitations for the family member e
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-incoming-'.uniqid('', true).'@example.com';
@@ -42,7 +41,6 @@ test('family members can accept an incoming patient invitation from the link pag
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-incoming-accept-'.uniqid('', true).'@example.com';
@@ -82,13 +80,11 @@ test('family members can accept invitations from multiple patients', function ()
     $firstPatientUser = User::factory()->patient()->create();
     $firstPatient = Patient::query()->firstOrCreate(
         ['user_id' => $firstPatientUser->id],
-        ['streak_count' => 0],
     );
 
     $secondPatientUser = User::factory()->patient()->create();
     $secondPatient = Patient::query()->firstOrCreate(
         ['user_id' => $secondPatientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-multi-'.uniqid('', true).'@example.com';
@@ -130,7 +126,6 @@ test('family link page omits invitations for patients already linked', function 
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-incoming-linked-'.uniqid('', true).'@example.com';
@@ -161,7 +156,6 @@ test('family members cannot accept an invitation sent to another email address',
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $this->actingAs($patientUser)->post(route('patient.family.invitations.store'), [
@@ -188,7 +182,6 @@ test('family members cannot accept an invitation using a numeric id', function (
     $patientUser = User::factory()->patient()->create();
     Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-numeric-id-'.uniqid('', true).'@example.com';

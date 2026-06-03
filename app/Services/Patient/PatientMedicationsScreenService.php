@@ -10,6 +10,7 @@ use App\Models\Medication;
 use App\Models\MedicationPrescription;
 use App\Models\Patient;
 use App\Support\InertiaPagination;
+use Illuminate\Database\Eloquent\Builder;
 
 final class PatientMedicationsScreenService
 {
@@ -75,12 +76,10 @@ final class PatientMedicationsScreenService
 
         $paginator = MedicationPrescription::query()
             ->where('patient_id', $patientId)
-            ->whereNull('completed_at')
+            ->whereNull('completed_at', '=', null)
             ->whereHas(
                 'medication',
-                fn ($query) => $query
-                    ->where('patient_id', $patientId)
-                    ->activeOnMedicationList(),
+                fn (Builder $query) => $query->activeOnMedicationList(),
             )
             ->with(['medication'])
             ->orderByRaw('prescription_expiry_date IS NULL')

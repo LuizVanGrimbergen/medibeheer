@@ -17,15 +17,7 @@ class Patient extends Model
 
     protected $fillable = [
         'user_id',
-        'streak_count',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'streak_count' => 'integer',
-        ];
-    }
 
     /**************************************/
     /*           Relationships */

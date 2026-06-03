@@ -91,10 +91,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DoctorDemoSeeder::class);
 
         $primaryPatient->refresh();
-        $checkinCount = $primaryPatient->dailyCheckins()->count();
-        $primaryPatient->update([
-            'streak_count' => min(max($checkinCount, 1), 120),
-        ]);
 
         if ($this->command !== null) {
             $linkedPatientNames = collect($linkedPatients)

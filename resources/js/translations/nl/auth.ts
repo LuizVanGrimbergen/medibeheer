@@ -95,6 +95,6 @@ export default {
             'Bedankt voor uw registratie! Voordat u verdergaat, verifieer uw e-mailadres via de link die we u net hebben gemaild. Geen e-mail ontvangen? Dan sturen we met plezier een nieuwe.',
         linkSent: 'Nieuwe verificatielink naar uw e-mailadres verstuurd.',
         resendAction: 'Verificatiemail opnieuw versturen',
-        logoutAction: 'Uitloggen',
+        logoutAction: 'Inloggen',
     },
 };

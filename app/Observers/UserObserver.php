@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Models\Doctor;
 use App\Models\Family;
 use App\Models\Patient;
 use App\Models\User;
@@ -22,7 +23,6 @@ class UserObserver
         if ($user->isPatient()) {
             Patient::query()->firstOrCreate(
                 ['user_id' => $user->id],
-                ['streak_count' => 0],
             );
 
             return;
@@ -30,6 +30,14 @@ class UserObserver
 
         if ($user->isFamilyMember()) {
             Family::query()->firstOrCreate(
+                ['user_id' => $user->id],
+            );
+
+            return;
+        }
+
+        if ($user->isDoctor()) {
+            Doctor::query()->firstOrCreate(
                 ['user_id' => $user->id],
             );
         }
