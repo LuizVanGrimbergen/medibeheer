@@ -11,10 +11,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
+import { computed, ref } from 'vue';
 
 const open = defineModel<boolean>('open', { required: true });
 const selectedMedicationId = defineModel<number | null>(
@@ -44,6 +46,17 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const isOpen = open;
+const progressLabelRef = ref<HTMLElement | null>(null);
+
+const currentStepIndex = computed(() => props.currentStep - 1);
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    currentStepIndex,
+    isOpen,
+    { progressLabelRef },
+);
 </script>
 
 <template>
@@ -61,6 +74,7 @@ const { t } = useI18n();
                     {{ t('patient.prescriptions.dialogTitle') }}
                 </DialogTitle>
                 <DialogDescription
+                    ref="progressLabelRef"
                     class="text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed"
                     aria-live="polite"
                 >
@@ -77,7 +91,7 @@ const { t } = useI18n();
                 <div
                     class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
-                    <div class="space-y-3 md:space-y-3">
+                    <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
                         >

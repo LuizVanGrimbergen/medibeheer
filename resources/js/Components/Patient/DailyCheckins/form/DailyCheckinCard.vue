@@ -7,6 +7,7 @@ import DailyCheckinNoteStep from '@/Components/Patient/DailyCheckins/steps/Daily
 import DailyCheckinSymptomsStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinSymptomsStep.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
@@ -22,7 +23,17 @@ const { t } = useI18n();
 
 type CheckinStep = 'mood' | 'symptoms' | 'note';
 
+const checkinStepOrder: CheckinStep[] = ['mood', 'symptoms', 'note'];
+
 const step = ref<CheckinStep>('mood');
+const isWizardOpen = ref(true);
+
+const stepIndex = computed(() => checkinStepOrder.indexOf(step.value));
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    stepIndex,
+    isWizardOpen,
+);
 const showActionBar = computed(
     () => step.value === 'symptoms' || step.value === 'note',
 );
@@ -115,6 +126,7 @@ watch(
         >
             <CardContent class="p-0">
                 <div
+                    ref="wizardStepPanelRef"
                     class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
                 >
                     <DailyCheckinMoodStep

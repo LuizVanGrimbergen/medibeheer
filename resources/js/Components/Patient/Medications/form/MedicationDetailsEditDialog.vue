@@ -9,7 +9,7 @@ import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/st
 import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
 import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
 import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
-import { buttonVariants } from '@/Components/ui/button';
+import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     Dialog,
@@ -18,8 +18,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
-import { cn } from '@/lib/utils';
+import { ref, toRef } from 'vue';
 
 const props = defineProps<{
     open: boolean;
@@ -54,6 +55,15 @@ const primaryButtonClass =
 
 const secondaryButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl border-2 border-danger/40 bg-danger/10 px-3 text-base font-semibold text-danger hover:border-danger hover:bg-danger/20 hover:text-danger md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
+
+const isOpen = toRef(() => props.open);
+const progressLabelRef = ref<HTMLElement | null>(null);
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    editingStep,
+    isOpen,
+    { progressLabelRef },
+);
 </script>
 
 <template>
@@ -71,6 +81,7 @@ const secondaryButtonClass =
                     {{ props.title }}
                 </DialogTitle>
                 <DialogDescription
+                    ref="progressLabelRef"
                     class="text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed"
                     aria-live="polite"
                 >
@@ -97,7 +108,7 @@ const secondaryButtonClass =
                 <div
                     class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
-                    <div class="space-y-3 md:space-y-3">
+                    <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
                         <MedicationScheduleMealsAndFrequencyStep
                             v-if="editingStep === 2"
                             :form="props.form"
@@ -164,40 +175,28 @@ const secondaryButtonClass =
                             <div
                                 class="flex min-w-0 flex-col gap-2 md:flex-row-reverse md:flex-wrap md:gap-3"
                             >
-                                <button
+                                <Button
                                     v-if="editingStep >= 1"
                                     type="submit"
+                                    variant="default"
+                                    size="lg"
                                     :disabled="props.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'default',
-                                                size: 'lg',
-                                            }),
-                                            primaryButtonClass,
-                                        )
-                                    "
+                                    :class="primaryButtonClass"
                                 >
                                     {{ t('patient.medications.actions.save') }}
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                     type="button"
+                                    variant="secondary"
+                                    size="lg"
                                     :disabled="props.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'secondary',
-                                                size: 'lg',
-                                            }),
-                                            secondaryButtonClass,
-                                        )
-                                    "
+                                    :class="secondaryButtonClass"
                                     @click.stop.prevent="emit('cancel')"
                                 >
                                     {{
                                         t('patient.medications.actions.cancel')
                                     }}
-                                </button>
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>
