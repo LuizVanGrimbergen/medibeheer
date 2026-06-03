@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { CircleCheck } from 'lucide-vue-next';
-import { computed, useId } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import {
     patientPageCardDetailLabelClass,
     patientPageCardDetailsGroupClass,
     patientPageCardDetailValueClass,
 } from '@/lib/patient/patientPageTypography';
+import { CircleCheck } from 'lucide-vue-next';
+import { computed, ref, useId, type ComponentPublicInstance } from 'vue';
+import { useGsapActionConfirm } from '@/composables/motion/useGsapActionConfirm';
+import { useGsapCheckmarkDraw } from '@/composables/motion/useGsapCheckmarkDraw';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -36,6 +38,11 @@ const emit = defineEmits<{
 }>();
 
 const titleId = useId();
+const successIconRef = ref<HTMLElement | null>(null);
+const checkmarkRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+
+useGsapActionConfirm(successIconRef, open);
+useGsapCheckmarkDraw(checkmarkRef, open);
 
 const trimmedMessage = computed((): string | null => {
     if (typeof props.message !== 'string') {
@@ -96,9 +103,11 @@ function dismiss(): void {
                 class="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center sm:px-10"
             >
                 <div
+                    ref="successIconRef"
                     class="border-success/40 bg-success/10 mb-8 flex size-20 items-center justify-center rounded-2xl border-2 sm:size-24"
                 >
                     <CircleCheck
+                        ref="checkmarkRef"
                         class="text-success size-12 sm:size-14"
                         aria-hidden="true"
                         stroke-width="2"

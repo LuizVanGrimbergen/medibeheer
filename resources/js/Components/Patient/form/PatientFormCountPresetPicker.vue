@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { InputError } from '@/Components/ui/input-error';
-import { Label } from '@/Components/ui/label';
 import {
     isPatientFormCountCustomValue,
     isPatientFormCountPresetValue,
@@ -144,14 +143,13 @@ watch(count, (value) => {
 
 <template>
     <div>
-        <Label
+        <span
             :id="`${idPrefix}-count-label`"
-            :for="`${idPrefix}-count-custom`"
             :class="cn(patientFormLabelClass, 'text-xl')"
         >
             {{ label }}
             <span v-if="required" class="text-danger"> *</span>
-        </Label>
+        </span>
         <div
             :id="`${idPrefix}-count`"
             :class="

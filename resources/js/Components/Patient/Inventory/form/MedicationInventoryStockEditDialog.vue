@@ -12,8 +12,8 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
-import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
-import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';

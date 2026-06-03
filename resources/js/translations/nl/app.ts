@@ -1,5 +1,32 @@
 export default {
     name: 'Medibeheer',
+    loading: {
+        ariaLabel: 'Pagina wordt geladen',
+        default: {
+            title: 'Even laden…',
+            description: 'Een ogenblik geduld alstublieft.',
+        },
+        savingMedication: {
+            title: 'Medicatie wordt opgeslagen…',
+            description: 'Uw medicatiegegevens worden bewaard.',
+        },
+        savingIntake: {
+            title: 'Inname wordt geregistreerd…',
+            description: 'Even geduld terwijl we uw inname opslaan.',
+        },
+        savingPrescription: {
+            title: 'Recept wordt opgeslagen…',
+            description: 'Uw receptgegevens worden bewaard.',
+        },
+        savingAppointment: {
+            title: 'Afspraak wordt opgeslagen…',
+            description: 'Uw afspraakgegevens worden bewaard.',
+        },
+        savingCheckin: {
+            title: 'Check-in wordt opgeslagen…',
+            description: 'Uw antwoorden worden bewaard.',
+        },
+    },
     pagination: {
         navLabel: 'Paginering',
         previous: 'Vorige',

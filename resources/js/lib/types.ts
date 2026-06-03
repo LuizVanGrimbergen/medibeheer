@@ -109,6 +109,13 @@ export type SeoSharedProps = {
     locale: string;
 };
 
+export type PatientNavigationAlertTone = 'critical' | 'warning';
+
+export type PatientNavigationSharedProps = {
+    inventory: PatientNavigationAlertTone | null;
+    prescriptions: PatientNavigationAlertTone | null;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
@@ -123,6 +130,7 @@ export type PageProps<
     };
     legal: LegalSharedProps;
     webpush?: WebPushSharedProps;
+    patient_navigation?: PatientNavigationSharedProps;
 };
 
 export type AppointmentDoctorType =

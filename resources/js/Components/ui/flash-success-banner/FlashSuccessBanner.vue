@@ -2,6 +2,7 @@
 import { CheckCircle2, X } from 'lucide-vue-next';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { Button } from '@/Components/ui/button';
+import { useGsapActionConfirm } from '@/composables/motion/useGsapActionConfirm';
 
 type TimeoutHandle = ReturnType<typeof globalThis.setTimeout>;
 
@@ -17,8 +18,11 @@ const props = withDefaults(
 
 const dismissed = ref(false);
 const timeoutId = ref<TimeoutHandle | null>(null);
+const bannerRef = ref<HTMLElement | null>(null);
 
 const open = computed(() => props.message !== null && !dismissed.value);
+
+useGsapActionConfirm(bannerRef, open);
 
 const stopTimer = () => {
     if (timeoutId.value === null) {
@@ -63,6 +67,7 @@ function dismiss(): void {
 <template>
     <div
         v-if="open"
+        ref="bannerRef"
         class="relative rounded-2xl border-2 border-success/25 bg-success/5 px-4 py-4 pr-12 sm:pr-14"
     >
         <div class="flex items-start gap-2.5">
@@ -70,7 +75,9 @@ function dismiss(): void {
                 class="mt-0.5 size-5 shrink-0 text-success"
                 aria-hidden="true"
             />
-            <p class="min-w-0 text-base font-semibold leading-relaxed text-text-heading sm:text-lg">
+            <p
+                class="min-w-0 text-base font-semibold leading-relaxed text-text-heading sm:text-lg"
+            >
                 {{ props.message }}
             </p>
         </div>
@@ -86,4 +93,3 @@ function dismiss(): void {
         </Button>
     </div>
 </template>
-

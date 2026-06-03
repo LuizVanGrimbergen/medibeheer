@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import MedicationPrescriptionExpiryControls from '@/Components/Patient/Prescriptions/MedicationPrescriptionExpiryControls.vue';
 import PrescriptionPickupControl from '@/Components/Patient/Prescriptions/PrescriptionPickupControl.vue';
-import { usePatientPrescriptionCompleteActions } from '@/composables/usePatientPrescriptionCompleteActions';
+import { usePatientPrescriptionCompleteActions } from '@/composables/patient/usePatientPrescriptionCompleteActions';
 import type {
     MedicationPrescriptionListItem,
     MedicationPrescriptionPickupStatusValue,

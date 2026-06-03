@@ -10,7 +10,7 @@ import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/Inve
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import { useInventoryVacationShareToPhotos } from '@/composables/useInventoryVacationShareToPhotos';
+import { useInventoryVacationShareToPhotos } from '@/composables/inventory/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
     patientAppointmentFormPrimaryPairButtonClass,

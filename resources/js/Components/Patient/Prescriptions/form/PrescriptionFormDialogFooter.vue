@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { buttonVariants } from '@/Components/ui/button';
+import { Button } from '@/Components/ui/button';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
-import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     currentStep: PrescriptionFormWizardStep;
@@ -49,56 +48,38 @@ function handleSecondaryClick(): void {
     <div
         class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
     >
-        <button
+        <Button
             type="submit"
+            variant="default"
+            size="lg"
             :disabled="processing"
-            :class="
-                cn(
-                    buttonVariants({
-                        variant: 'default',
-                        size: 'lg',
-                    }),
-                    primaryButtonClass,
-                )
-            "
+            :class="primaryButtonClass"
         >
             {{ primaryLabel }}
-        </button>
+        </Button>
 
-        <button
+        <Button
             v-if="currentStep === 1"
             type="button"
+            variant="secondary"
+            size="lg"
             :disabled="processing"
-            :class="
-                cn(
-                    buttonVariants({
-                        variant: 'secondary',
-                        size: 'lg',
-                    }),
-                    cancelButtonClass,
-                )
-            "
+            :class="cancelButtonClass"
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.cancel') }}
-        </button>
+        </Button>
 
-        <button
+        <Button
             v-else
             type="button"
+            variant="outline"
+            size="lg"
             :disabled="processing"
-            :class="
-                cn(
-                    buttonVariants({
-                        variant: 'outline',
-                        size: 'lg',
-                    }),
-                    backButtonClass,
-                )
-            "
+            :class="backButtonClass"
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.back') }}
-        </button>
+        </Button>
     </div>
 </template>

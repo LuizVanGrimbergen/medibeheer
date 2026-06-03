@@ -189,7 +189,7 @@ test('medication due reminder command skips intakes already taken', function () 
     $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '09:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     Cache::flush();
 
@@ -260,7 +260,7 @@ test('medication missed reminder is not sent when intake was already taken', fun
     $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '09:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     Cache::flush();
 

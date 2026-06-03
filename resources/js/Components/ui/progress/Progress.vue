@@ -3,6 +3,9 @@ import { reactiveOmit } from '@vueuse/core';
 import type { ProgressRootProps } from 'reka-ui';
 import { ProgressIndicator, ProgressRoot } from 'reka-ui';
 import type { HTMLAttributes } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { ref, toRef } from 'vue';
+import { useGsapProgressIndicator } from '@/composables/motion/useGsapProgressIndicator';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -18,6 +21,10 @@ const props = withDefaults(
 );
 
 const delegatedProps = reactiveOmit(props, 'class', 'indicatorClass');
+
+const indicatorRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+
+useGsapProgressIndicator(indicatorRef, toRef(() => props.modelValue));
 </script>
 
 <template>
@@ -31,13 +38,13 @@ const delegatedProps = reactiveOmit(props, 'class', 'indicatorClass');
         "
     >
         <ProgressIndicator
+            ref="indicatorRef"
             :class="
                 cn(
-                    'h-full min-w-0 rounded-full bg-primary transition-[width]',
+                    'h-full min-w-0 rounded-full bg-primary',
                     props.indicatorClass,
                 )
             "
-            :style="{ width: `${props.modelValue ?? 0}%` }"
         />
     </ProgressRoot>
 </template>

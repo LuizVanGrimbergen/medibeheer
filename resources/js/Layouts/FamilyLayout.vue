@@ -12,7 +12,7 @@ import {
 import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
+import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 

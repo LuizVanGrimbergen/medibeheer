@@ -91,25 +91,9 @@
     --color-input-border-focus: #2f6fae;
     --color-input-text: #1f334a;
     --color-input-placeholder: #2f6fae;
-
-    --animate-supply-alert-flicker: supply-alert-flicker 1.4s ease-in-out
-        infinite;
-    --animate-collapsible-down: collapsible-down 0.2s ease-out;
-    --animate-collapsible-up: collapsible-up 0.2s ease-out;
 }
 
-@keyframes supply-alert-flicker {
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.35;
-    }
-}
-
-@keyframes collapsible-down {
+@keyframes collapsible-slide-down {
     from {
         height: 0;
     }
@@ -119,7 +103,7 @@
     }
 }
 
-@keyframes collapsible-up {
+@keyframes collapsible-slide-up {
     from {
         height: var(--reka-collapsible-content-height);
     }
@@ -210,8 +194,33 @@
         @apply min-h-14 w-full justify-start rounded-xl px-4 py-3 text-left font-semibold whitespace-normal sm:min-h-16 sm:w-auto sm:justify-center sm:rounded-2xl sm:px-5 sm:py-3 sm:text-center;
     }
 
+    .collapsible-content {
+        overflow: hidden;
+    }
+
+    .collapsible-content[data-state='open'] {
+        animation: collapsible-slide-down 0.3s ease-out;
+    }
+
+    .collapsible-content[data-state='closed'] {
+        animation: collapsible-slide-up 0.3s ease-out;
+    }
+
     @media (prefers-reduced-motion: reduce) {
-        .animate-supply-alert-flicker {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+
+        html {
+            scroll-behavior: auto;
+        }
+
+        .collapsible-content[data-state='open'],
+        .collapsible-content[data-state='closed'] {
             animation: none;
         }
     }

@@ -220,7 +220,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 md:gap-4">
+        <div class="flex flex-col gap-4 md:gap-5">
             <div>
                 <Label
                     :for="boxFieldId"

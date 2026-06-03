@@ -6,8 +6,8 @@ import { useI18n } from 'vue-i18n';
 import {
     doctorNavItems,
     useDoctorRoleNavigation,
-} from '@/composables/useDoctorRoleNavigation';
-import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
+} from '@/composables/doctor/useDoctorRoleNavigation';
+import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 
 const { t } = useI18n();
 const { isActive } = useDoctorRoleNavigation();
