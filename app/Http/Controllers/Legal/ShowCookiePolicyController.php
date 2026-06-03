@@ -10,8 +10,6 @@ class ShowCookiePolicyController extends Controller
 {
     public function __invoke(): Response
     {
-        return Inertia::render('Legal/Cookies', [
-            'policyVersion' => config('privacy.policy_version'),
-        ]);
+        return Inertia::render('Legal/Cookies', LegalPageProps::forInertia());
     }
 }

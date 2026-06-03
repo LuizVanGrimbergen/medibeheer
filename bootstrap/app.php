@@ -1,10 +1,12 @@
 <?php
 
 use App\Exceptions\RegisterForbiddenAccessLogging;
+use App\Http\Middleware\ApplySearchEngineIndexing;
 use App\Http\Middleware\EnsureDoctor;
 use App\Http\Middleware\EnsureFamilyMember;
 use App\Http\Middleware\EnsurePatient;
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\ShareSeoViewData;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Foundation\Application;
@@ -33,9 +35,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->web(append: [
+            ShareSeoViewData::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             AuthenticateSession::class,
+            ApplySearchEngineIndexing::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

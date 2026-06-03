@@ -4,17 +4,30 @@ import LegalDocumentLayout from '@/Components/Legal/LegalDocumentLayout.vue';
 
 defineProps<{
     policyVersion: string;
+    contactEmail: string;
+    retention: {
+        security_activity_log_days: number;
+        data_activity_log_days: number;
+        session_days: number;
+    };
 }>();
 
 const { t } = useI18n();
 
-const sectionKeys = ['necessary', 'storage', 'analytics'] as const;
+const sectionKeys = [
+    'necessary',
+    'storage',
+    'push',
+    'publicSite',
+    'analytics',
+] as const;
 </script>
 
 <template>
     <LegalDocumentLayout
         title-key="privacy.cookies.title"
         meta-title-key="privacy.cookies.metaTitle"
+        meta-description-key="privacy.cookies.metaDescription"
         :policy-version="policyVersion"
     >
         <section v-for="key in sectionKeys" :key="key">

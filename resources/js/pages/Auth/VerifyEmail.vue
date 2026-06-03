@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
@@ -27,9 +28,11 @@ const verificationLinkSentMessage = computed(() =>
 </script>
 
 <template>
-    <Head>
-        <title>{{ t('auth.verifyEmail.metaTitle') }}</title>
-    </Head>
+    <SeoHead
+        :title="t('auth.verifyEmail.metaTitle')"
+        :description="t('auth.verifyEmail.metaDescription')"
+        no-index
+    />
 
     <AuthPageContainer
         title-key="auth.verifyEmail.title"
