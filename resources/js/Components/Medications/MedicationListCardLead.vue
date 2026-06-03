@@ -4,7 +4,13 @@ import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
+import {
+    patientMedicationListCardLeadIconWrapClass,
+    patientMedicationListCardLeadRowClass,
+    patientMedicationListCardLeadTitleClass,
+} from '@/lib/patient/patientPageTypography';
 import type { MedicationTypeValue } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
@@ -30,10 +36,14 @@ const visualToneClasses = computed(() =>
 </script>
 
 <template>
-    <div class="flex min-w-0 items-start gap-4">
+    <div :class="patientMedicationListCardLeadRowClass">
         <div
-            class="flex size-12 shrink-0 items-center justify-center rounded-xl"
-            :class="visualToneClasses.pillWrap"
+            :class="
+                cn(
+                    patientMedicationListCardLeadIconWrapClass,
+                    visualToneClasses.pillWrap,
+                )
+            "
         >
             <span class="sr-only">{{ typeLabel }}</span>
             <MedicationTypeLeadIcon
@@ -42,9 +52,7 @@ const visualToneClasses = computed(() =>
             />
         </div>
         <div class="min-w-0 flex-1 space-y-1 overflow-hidden">
-            <p
-                class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
-            >
+            <p :class="patientMedicationListCardLeadTitleClass">
                 {{ name }}
             </p>
             <slot v-if="$slots.subtitle" name="subtitle" />

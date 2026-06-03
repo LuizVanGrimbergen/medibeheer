@@ -28,12 +28,19 @@ export const patientPageWideButtonClass =
 /** Primary/secondary actions in page intros (Medicatie toevoegen, Vakantie, …). */
 export const patientPageIntroButtonClass = `${patientPageWideButtonClass} gap-2.5 justify-center px-6 font-body text-lg font-bold sm:px-8 [&_svg]:size-6`;
 
-/** Expand/collapse toggle on patient list cards (Tik voor meer details / Tik om te sluiten). */
-export const patientPageCardDetailsButtonClass = `${patientPageWideButtonClass} group justify-between gap-3 rounded-2xl border-0 bg-surface-2/80 px-4 py-3 text-base font-semibold text-text-heading shadow-none transition-colors hover:bg-primary/8 hover:opacity-100 focus-visible:ring-primary/20`;
+/** Wrapper for expand toggle on patient list cards — subtle, below primary actions. */
+export const patientPageCardDetailsExpandWrapperClass = 'mt-3';
 
-/** Chevron badge on patient list card expand/collapse toggles. */
-export const patientPageCardDetailsChevronClass =
-    'flex size-11 shrink-0 items-center justify-center rounded-xl bg-text-heading/8 text-text-heading transition-colors group-hover:bg-text-heading/12 [&_svg]:size-6';
+/** Wrapper for collapse toggle below expanded card details. */
+export const patientPageCardDetailsCollapseWrapperClass =
+    'mt-4 border-t border-border/30 pt-3';
+
+/** Expand/collapse toggle — outline intro styling at compact card size (~44px). */
+export const patientPageCardDetailsButtonClass =
+    'h-auto min-h-11 w-full min-w-0 touch-manipulation gap-1.5 justify-center px-4 py-2.5 text-base font-bold leading-snug sm:min-h-12';
+
+/** Chevron on patient list card expand/collapse toggles. */
+export const patientPageCardDetailsChevronClass = 'size-5 shrink-0 sm:size-6';
 
 /** Edit/delete toolbar on patient list cards. */
 export const patientPageCardToolbarClass =
@@ -44,7 +51,19 @@ export const patientPageCardHeaderWithActionsClass = 'pr-21 sm:pr-28';
 
 /** Divider and spacing for stacked sections below a list card header. */
 export const patientPageCardFooterSectionClass =
-    'mt-5 border-t border-border/50 pt-4';
+    'mt-4 border-t border-border/50 pt-3 sm:mt-5 sm:pt-4';
+
+/** Row layout for MedicationListCardLead (icon + title stack). */
+export const patientMedicationListCardLeadRowClass =
+    'flex min-w-0 items-start gap-4';
+
+/** Icon pill on MedicationListCardLead and matching taken-section header. */
+export const patientMedicationListCardLeadIconWrapClass =
+    'flex size-12 shrink-0 items-center justify-center rounded-xl';
+
+/** Primary title on MedicationListCardLead. */
+export const patientMedicationListCardLeadTitleClass =
+    'text-text-heading text-lg leading-snug font-bold sm:text-xl';
 
 /** Summary line under the title on patient list cards. */
 export const patientPageCardHeaderSummaryClass =

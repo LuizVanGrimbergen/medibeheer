@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -12,7 +12,6 @@ import {
     medicationIntakeDoseLine,
     medicationIntakeNotePreview,
     medicationTodayIntakeHeaderSummary,
-    medicationTypeLabel,
 } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import {
     buildMedicationTakenAtForToday,
@@ -24,7 +23,10 @@ import {
     patientFormNativeDateTimeInputClass,
 } from '@/lib/patient/patientFormFieldClasses';
 import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
-import type { TodayMedicationIntakeSlot } from '@/lib/types';
+import type {
+    MedicationTypeValue,
+    TodayMedicationIntakeSlot,
+} from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useForm } from '@inertiajs/vue3';
 import { AlertTriangle, Check } from 'lucide-vue-next';
@@ -83,10 +85,6 @@ const notePreview = computed(() =>
     medicationIntakeNotePreview(props.intakeSlot),
 );
 
-const typeLabel = computed(() =>
-    medicationTypeLabel(t, props.intakeSlot.type_medication),
-);
-
 const headerSummary = computed(() =>
     medicationTodayIntakeHeaderSummary(t, props.intakeSlot),
 );
@@ -101,9 +99,7 @@ const stockProgressTone = computed(() =>
 const isCriticalSupply = computed(() => stockProgressTone.value === 'critical');
 
 const intakeCardToneClasses = computed(() =>
-    isCriticalSupply.value
-        ? medicationListVisualToneClasses('critical')
-        : medicationListVisualToneClasses(null),
+    medicationListVisualToneClasses(stockProgressTone.value),
 );
 
 const showCriticalSupplyAlert = computed(() => isCriticalSupply.value);
@@ -196,71 +192,178 @@ function confirmCustomTakenTime(): void {
 
 <template>
     <Card
-        class="text-text relative w-full min-w-0 overflow-hidden rounded-3xl border-2 shadow-md shadow-black/[0.04]"
+        class="bg-surface text-text relative w-full min-w-0 overflow-hidden rounded-3xl border shadow-md shadow-black/[0.04]"
         :class="
             isTaken
                 ? 'border-success bg-success/5'
-                : cn('bg-surface', intakeCardToneClasses.border)
+                : intakeCardToneClasses.border
         "
     >
-        <CardContent class="relative flex flex-col gap-5 p-5 sm:gap-6 sm:p-6">
+        <CardContent class="relative p-6 sm:p-7">
             <AlertTriangle
                 v-if="showCriticalSupplyAlert"
                 ref="criticalAlertRef"
-                class="text-danger pointer-events-none absolute top-4 right-4 z-10 size-6 shrink-0 sm:top-6 sm:right-6 sm:size-7"
+                class="text-danger pointer-events-none absolute top-6 right-6 z-10 size-6 shrink-0 sm:size-7"
                 role="img"
                 :aria-label="t('patient.inventory.lowStockBadge')"
             />
 
             <Collapsible v-model:open="isOpen">
-                <div
-                    class="flex min-w-0 items-start gap-4"
+                <MedicationListCardLead
+                    :name="intakeSlot.name"
+                    :type-medication="
+                        intakeSlot.type_medication as MedicationTypeValue
+                    "
+                    :tone="stockProgressTone"
+                    :show-type-label="false"
                     :class="showCriticalSupplyAlert ? 'pr-8 sm:pr-10' : null"
                 >
-                    <div
-                        class="flex size-14 shrink-0 items-center justify-center rounded-2xl sm:size-16"
-                        :class="intakeCardToneClasses.pillWrap"
-                    >
-                        <span class="sr-only">{{ typeLabel }}</span>
-                        <MedicationTypeLeadIcon
-                            :medication-type="intakeSlot.type_medication"
-                            :icon-tone-class="intakeCardToneClasses.pillIcon"
-                        />
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                        <h4
-                            class="text-text-heading text-xl leading-snug font-bold wrap-break-word sm:text-2xl"
-                        >
-                            {{ intakeSlot.name }}
-                        </h4>
-                        <p
-                            v-if="!isOpen"
-                            :class="
-                                cn('mt-1', patientPageCardHeaderSummaryClass)
-                            "
-                        >
+                    <template v-if="!isOpen" #subtitle>
+                        <p :class="patientPageCardHeaderSummaryClass">
                             {{ headerSummary }}
                         </p>
-                    </div>
+                    </template>
+                </MedicationListCardLead>
+
+                <div v-if="showBeforeWindowState" class="mt-5 flex flex-col gap-3">
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        variant="outline"
+                        disabled
+                    >
+                        {{
+                            t(
+                                'patient.dashboard.todayMedications.notYetTimeToTake',
+                            )
+                        }}
+                    </Button>
                 </div>
 
-                <PatientListCardDetailsToggle
-                    v-if="!isOpen"
-                    mode="expand"
-                    :label="t('patient.medications.cardExpandHint')"
-                    :ariaLabel="t('patient.medications.showDetails')"
-                />
+                <div
+                    v-else-if="showStandardTakeButton"
+                    class="mt-5 flex flex-col gap-2"
+                >
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        :disabled="form.processing"
+                        :aria-label="markTakenAriaLabel"
+                        @click="markTakenWithinWindow"
+                    >
+                        {{ t('patient.dashboard.todayMedications.markTaken') }}
+                    </Button>
+                    <InputError :message="intakeFormError" />
+                </div>
+
+                <div
+                    v-else-if="showPastSnoozeActions"
+                    class="mt-5 flex flex-col gap-3"
+                >
+                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <Button
+                            type="button"
+                            class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                            :disabled="form.processing"
+                            @click="markTakenNow"
+                        >
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.markTakenNow',
+                                )
+                            }}
+                        </Button>
+                        <Button
+                            type="button"
+                            class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                            variant="outline"
+                            :disabled="form.processing"
+                            :aria-expanded="showCustomTimePanel"
+                            @click="openCustomTimePanel"
+                        >
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.markTakenCustom',
+                                )
+                            }}
+                        </Button>
+                    </div>
+
+                    <div
+                        v-if="showCustomTimePanel"
+                        class="border-border/70 bg-bg space-y-3 rounded-2xl border p-4 sm:p-5"
+                    >
+                        <Label
+                            :for="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
+                            :class="patientFormLabelClass"
+                        >
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.customTakenTimeLabel',
+                                )
+                            }}
+                        </Label>
+                        <input
+                            :id="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
+                            v-model="customTakenTime"
+                            type="time"
+                            step="60"
+                            autocomplete="off"
+                            :class="
+                                cn(
+                                    patientFormNativeDateTimeInputClass,
+                                    intakeFormError
+                                        ? patientFormFieldInvalidClass
+                                        : null,
+                                )
+                            "
+                            :aria-invalid="Boolean(intakeFormError)"
+                        />
+                        <InputError :message="intakeFormError" />
+                        <Button
+                            type="button"
+                            class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                            :disabled="form.processing"
+                            @click="confirmCustomTakenTime"
+                        >
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.confirmCustomTaken',
+                                )
+                            }}
+                        </Button>
+                    </div>
+                    <InputError
+                        v-if="!showCustomTimePanel"
+                        :message="intakeFormError"
+                    />
+                </div>
+
+                <div v-else-if="isTaken" class="mt-5">
+                    <Button
+                        type="button"
+                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                        variant="outline"
+                        success
+                        :success-flash="shouldFlashSuccess"
+                        disabled
+                        :aria-pressed="true"
+                    >
+                        <Check
+                            class="text-success size-6 shrink-0 sm:size-5"
+                            aria-hidden="true"
+                        />
+                        {{ t('patient.dashboard.todayMedications.taken') }}
+                    </Button>
+                </div>
 
                 <CollapsibleContent>
-                    <div class="space-y-5 pt-4">
+                    <div class="pt-4">
                         <div class="flex flex-col gap-4 sm:gap-5">
                             <div
-                                class="grid min-w-0 gap-3 sm:gap-4"
+                                class="grid min-w-0 grid-cols-1 gap-3 sm:gap-4"
                                 :class="
-                                    doseLine !== null
-                                        ? 'grid-cols-2'
-                                        : 'grid-cols-1'
+                                    doseLine !== null ? 'sm:grid-cols-2' : null
                                 "
                             >
                                 <div
@@ -323,143 +426,27 @@ function confirmCustomTakenTime(): void {
                                 </p>
                             </div>
                         </div>
-
-                        <PatientListCardDetailsToggle
-                            mode="collapse"
-                            :label="t('patient.medications.cardCollapseHint')"
-                            :ariaLabel="t('patient.medications.hideDetails')"
-                        />
                     </div>
                 </CollapsibleContent>
-            </Collapsible>
 
-            <div v-if="showBeforeWindowState" class="mt-5 flex flex-col gap-3">
-                <Button
-                    type="button"
-                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                    variant="outline"
-                    disabled
-                >
-                    {{
-                        t('patient.dashboard.todayMedications.notYetTimeToTake')
-                    }}
-                </Button>
-            </div>
-
-            <div
-                v-else-if="showStandardTakeButton"
-                class="mt-5 flex flex-col gap-2"
-            >
-                <Button
-                    type="button"
-                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                    :disabled="form.processing"
-                    :aria-label="markTakenAriaLabel"
-                    @click="markTakenWithinWindow"
-                >
-                    {{ t('patient.dashboard.todayMedications.markTaken') }}
-                </Button>
-                <InputError :message="intakeFormError" />
-            </div>
-
-            <div
-                v-else-if="showPastSnoozeActions"
-                class="mt-5 flex flex-col gap-3"
-            >
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <Button
-                        type="button"
-                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                        :disabled="form.processing"
-                        @click="markTakenNow"
-                    >
-                        {{
-                            t('patient.dashboard.todayMedications.markTakenNow')
-                        }}
-                    </Button>
-                    <Button
-                        type="button"
-                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                        variant="outline"
-                        :disabled="form.processing"
-                        :aria-expanded="showCustomTimePanel"
-                        @click="openCustomTimePanel"
-                    >
-                        {{
-                            t(
-                                'patient.dashboard.todayMedications.markTakenCustom',
-                            )
-                        }}
-                    </Button>
-                </div>
-
-                <div
-                    v-if="showCustomTimePanel"
-                    class="border-border/70 bg-bg space-y-3 rounded-2xl border p-4 sm:p-5"
-                >
-                    <Label
-                        :for="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
-                        :class="patientFormLabelClass"
-                    >
-                        {{
-                            t(
-                                'patient.dashboard.todayMedications.customTakenTimeLabel',
-                            )
-                        }}
-                    </Label>
-                    <input
-                        :id="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
-                        v-model="customTakenTime"
-                        type="time"
-                        step="60"
-                        autocomplete="off"
-                        :class="
-                            cn(
-                                patientFormNativeDateTimeInputClass,
-                                intakeFormError
-                                    ? patientFormFieldInvalidClass
-                                    : null,
-                            )
-                        "
-                        :aria-invalid="Boolean(intakeFormError)"
-                    />
-                    <InputError :message="intakeFormError" />
-                    <Button
-                        type="button"
-                        class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                        :disabled="form.processing"
-                        @click="confirmCustomTakenTime"
-                    >
-                        {{
-                            t(
-                                'patient.dashboard.todayMedications.confirmCustomTaken',
-                            )
-                        }}
-                    </Button>
-                </div>
-                <InputError
-                    v-if="!showCustomTimePanel"
-                    :message="intakeFormError"
+                <PatientListCardDetailsToggle
+                    :mode="isOpen ? 'collapse' : 'expand'"
+                    :label="
+                        t(
+                            isOpen
+                                ? 'patient.medications.cardCollapseHint'
+                                : 'patient.medications.cardExpandHint',
+                        )
+                    "
+                    :ariaLabel="
+                        t(
+                            isOpen
+                                ? 'patient.medications.hideDetails'
+                                : 'patient.medications.showDetails',
+                        )
+                    "
                 />
-            </div>
-
-            <div v-else-if="isTaken" class="mt-5">
-                <Button
-                    type="button"
-                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
-                    variant="outline"
-                    success
-                    :success-flash="shouldFlashSuccess"
-                    disabled
-                    :aria-pressed="true"
-                >
-                    <Check
-                        class="text-success size-6 shrink-0 sm:size-5"
-                        aria-hidden="true"
-                    />
-                    {{ t('patient.dashboard.todayMedications.taken') }}
-                </Button>
-            </div>
+            </Collapsible>
         </CardContent>
     </Card>
 </template>

@@ -357,13 +357,6 @@ const notePreview = computed(() =>
                     </div>
                 </div>
 
-                <PatientListCardDetailsToggle
-                    v-if="!isOpen"
-                    mode="expand"
-                    :label="t('patient.medications.cardExpandHint')"
-                    :ariaLabel="t('patient.medications.showDetails')"
-                />
-
                 <CollapsibleContent>
                     <div class="space-y-6 pt-4">
                         <PatientListCardDetailsGroup
@@ -482,13 +475,25 @@ const notePreview = computed(() =>
                             class="border-border/70 border-t pt-5"
                         />
                     </div>
-
-                    <PatientListCardDetailsToggle
-                        mode="collapse"
-                        :label="t('patient.medications.cardCollapseHint')"
-                        :ariaLabel="t('patient.medications.hideDetails')"
-                    />
                 </CollapsibleContent>
+
+                <PatientListCardDetailsToggle
+                    :mode="isOpen ? 'collapse' : 'expand'"
+                    :label="
+                        t(
+                            isOpen
+                                ? 'patient.medications.cardCollapseHint'
+                                : 'patient.medications.cardExpandHint',
+                        )
+                    "
+                    :ariaLabel="
+                        t(
+                            isOpen
+                                ? 'patient.medications.hideDetails'
+                                : 'patient.medications.showDetails',
+                        )
+                    "
+                />
             </Collapsible>
         </CardContent>
     </Card>

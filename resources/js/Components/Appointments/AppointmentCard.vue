@@ -18,7 +18,6 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import {
-    patientPageCardFooterSectionClass,
     patientPageCardHeaderSummaryClass,
     patientPageCardHeaderWithActionsClass,
 } from '@/lib/patient/patientPageTypography';
@@ -160,11 +159,14 @@ const showAppointmentDoneToggle = computed(
                     </div>
                 </div>
 
-                <PatientListCardDetailsToggle
-                    v-if="!isOpen"
-                    mode="expand"
-                    :label="t('patient.appointments.cardExpandHint')"
-                    :ariaLabel="t('patient.appointments.showDetails')"
+                <AppointmentDoneToggle
+                    v-if="showAppointmentDoneToggle"
+                    class="mt-5"
+                    :model-value="doneDisplayed"
+                    :disabled="isPatching"
+                    :complete-form-href="completeFormHref!"
+                    :cancel-form-href="cancelFormHref!"
+                    @update:model-value="emit('update:done', $event)"
                 />
 
                 <CollapsibleContent>
@@ -421,23 +423,25 @@ const showAppointmentDoneToggle = computed(
                                 {{ appointment.cancellation_reason }}
                             </p>
                         </div>
-
-                        <PatientListCardDetailsToggle
-                            mode="collapse"
-                            :label="t('patient.appointments.cardCollapseHint')"
-                            :ariaLabel="t('patient.appointments.hideDetails')"
-                        />
                     </div>
                 </CollapsibleContent>
 
-                <AppointmentDoneToggle
-                    v-if="showAppointmentDoneToggle"
-                    :class="patientPageCardFooterSectionClass"
-                    :model-value="doneDisplayed"
-                    :disabled="isPatching"
-                    :complete-form-href="completeFormHref!"
-                    :cancel-form-href="cancelFormHref!"
-                    @update:model-value="emit('update:done', $event)"
+                <PatientListCardDetailsToggle
+                    :mode="isOpen ? 'collapse' : 'expand'"
+                    :label="
+                        t(
+                            isOpen
+                                ? 'patient.appointments.cardCollapseHint'
+                                : 'patient.appointments.cardExpandHint',
+                        )
+                    "
+                    :ariaLabel="
+                        t(
+                            isOpen
+                                ? 'patient.appointments.hideDetails'
+                                : 'patient.appointments.showDetails',
+                        )
+                    "
                 />
             </Collapsible>
         </CardContent>
