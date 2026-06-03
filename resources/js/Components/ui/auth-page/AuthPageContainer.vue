@@ -11,12 +11,14 @@ const props = withDefaults(
         titleKey: string;
         titleAccentKey?: string;
         subtitleKey?: string;
+        subtitleTone?: 'muted' | 'body';
         appendAppName?: boolean;
         showSubtitle?: boolean;
     }>(),
     {
         appendAppName: false,
         showSubtitle: true,
+        subtitleTone: 'muted',
     },
 );
 
@@ -35,6 +37,7 @@ const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds 
                 :title-key="props.titleKey"
                 :title-accent-key="props.titleAccentKey"
                 :subtitle-key="props.subtitleKey"
+                :subtitle-tone="props.subtitleTone"
                 :append-app-name="props.appendAppName"
                 :show-subtitle="props.showSubtitle"
             />
