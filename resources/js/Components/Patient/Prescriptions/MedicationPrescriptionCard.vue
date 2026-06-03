@@ -113,27 +113,31 @@ const expiryProgressAriaLabel = computed((): string => {
                     </template>
                 </MedicationListCardLead>
 
-                <PatientListCardDetailsToggle
-                    v-if="!isOpen"
-                    mode="expand"
-                    wrapper-class="mt-5 border-t-0 pt-0"
-                    :label="t('patient.medications.cardExpandHint')"
-                    :ariaLabel="t('patient.medications.showDetails')"
-                />
-
                 <CollapsibleContent>
                     <MedicationPrescriptionListItemSection
                         :prescription="prescription"
                         class="border-border/70 mt-5 border-t pt-5"
                     />
-
-                    <PatientListCardDetailsToggle
-                        mode="collapse"
-                        wrapper-class="mt-5 border-t border-border/50 pt-4"
-                        :label="t('patient.medications.cardCollapseHint')"
-                        :ariaLabel="t('patient.medications.hideDetails')"
-                    />
                 </CollapsibleContent>
+
+                <PatientListCardDetailsToggle
+                    :mode="isOpen ? 'collapse' : 'expand'"
+                    wrapper-class="mt-5 border-t-0 pt-0"
+                    :label="
+                        t(
+                            isOpen
+                                ? 'patient.medications.cardCollapseHint'
+                                : 'patient.medications.cardExpandHint',
+                        )
+                    "
+                    :ariaLabel="
+                        t(
+                            isOpen
+                                ? 'patient.medications.hideDetails'
+                                : 'patient.medications.showDetails',
+                        )
+                    "
+                />
             </Collapsible>
         </CardContent>
     </Card>

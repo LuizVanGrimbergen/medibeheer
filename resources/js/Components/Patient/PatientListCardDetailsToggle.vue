@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ChevronDown } from 'lucide-vue-next';
+import { nextTick, useTemplateRef } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { CollapsibleTrigger } from '@/Components/ui/collapsible';
+import { scrollPatientListCardDetailsIntoView } from '@/lib/patient/patientListCardDetailsExpandScroll';
 import {
     patientPageCardDetailsButtonClass,
     patientPageCardDetailsChevronClass,
-    patientPageCardFooterSectionClass,
+    patientPageCardDetailsCollapseWrapperClass,
+    patientPageCardDetailsExpandWrapperClass,
 } from '@/lib/patient/patientPageTypography';
 import { cn } from '@/lib/utils';
 
@@ -15,15 +18,27 @@ const props = defineProps<{
     ariaLabel: string;
     wrapperClass?: string;
 }>();
+
+const wrapperRef = useTemplateRef<HTMLElement>('wrapper');
+
+async function onExpandClick(): Promise<void> {
+    if (props.mode !== 'expand') {
+        return;
+    }
+
+    await nextTick();
+    scrollPatientListCardDetailsIntoView(wrapperRef.value);
+}
 </script>
 
 <template>
     <div
+        ref="wrapper"
         :class="
             cn(
                 props.mode === 'expand'
-                    ? patientPageCardFooterSectionClass
-                    : 'border-border/50 border-t pt-4',
+                    ? patientPageCardDetailsExpandWrapperClass
+                    : patientPageCardDetailsCollapseWrapperClass,
                 props.wrapperClass,
             )
         "
@@ -31,22 +46,21 @@ const props = defineProps<{
         <CollapsibleTrigger as-child>
             <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 :class="patientPageCardDetailsButtonClass"
                 :aria-label="props.ariaLabel"
+                @click="onExpandClick"
             >
-                {{ props.label }}
-                <span
+                <span class="min-w-0">{{ props.label }}</span>
+                <ChevronDown
                     :class="
                         cn(
                             patientPageCardDetailsChevronClass,
-                            props.mode === 'collapse' && '[&_svg]:rotate-180',
+                            props.mode === 'collapse' && 'rotate-180',
                         )
                     "
                     aria-hidden="true"
-                >
-                    <ChevronDown />
-                </span>
+                />
             </Button>
         </CollapsibleTrigger>
     </div>
