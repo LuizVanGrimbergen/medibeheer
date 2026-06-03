@@ -168,7 +168,7 @@ watch(
     { immediate: true },
 );
 
-watch(piecesPerBox, (piecesValue) => {
+watch(piecesPerBox, () => {
     if (hasSavedPiecesPerPackage.value) {
         return;
     }

@@ -10,7 +10,6 @@ import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/Inve
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import { InputError } from '@/Components/ui/input-error';
 import { useInventoryVacationShareToPhotos } from '@/composables/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
@@ -26,7 +25,6 @@ import {
 } from '@/lib/patient/inventory/inventoryVacationUiClasses';
 import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/patientInventoryVacationPageProps';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import {
     patientPageIntroClass,
@@ -103,10 +101,6 @@ function submit(): void {
     form.post(route('patient.inventory.vacation.store'), {
         preserveScroll: true,
     });
-}
-
-function displayAmount(amount: string, doseUnit: string | null): string {
-    return formatMedicationStockDisplayAmount(t, amount, doseUnit);
 }
 
 function doseUnitForItem(doseUnit: string | null): string | null {
