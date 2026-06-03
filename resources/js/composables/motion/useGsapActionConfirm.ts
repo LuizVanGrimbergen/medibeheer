@@ -1,18 +1,17 @@
-import { animateActionConfirm, resetActionConfirmVisibility } from '@/lib/motion/gsapMotion';
-import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
+import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
-    nextTick,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+    animateActionConfirm,
+    resetActionConfirmVisibility,
+} from '@/lib/motion/gsapMotion';
+import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, watch } from 'vue';
 
 export function useGsapActionConfirm(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     shouldAnimate: Ref<boolean>,
 ): void {
-    let tween: ReturnType<typeof animateActionConfirm> | null = null;
+    let tween: GsapTween | null = null;
     let retryFrameId: number | null = null;
 
     const cancelRetry = (): void => {
@@ -24,7 +23,7 @@ export function useGsapActionConfirm(
         retryFrameId = null;
     };
 
-    const applyAnimation = (): boolean => {
+    const applyAnimation = async (): Promise<boolean> => {
         const element = resolveGsapTargetElement(targetRef.value);
 
         if (element === null) {
@@ -32,7 +31,7 @@ export function useGsapActionConfirm(
         }
 
         tween?.kill();
-        tween = animateActionConfirm(element);
+        tween = await animateActionConfirm(element);
 
         return true;
     };
@@ -42,13 +41,13 @@ export function useGsapActionConfirm(
 
         await nextTick();
 
-        if (applyAnimation()) {
+        if (await applyAnimation()) {
             return;
         }
 
         retryFrameId = globalThis.requestAnimationFrame(() => {
             retryFrameId = null;
-            applyAnimation();
+            void applyAnimation();
         });
     };
 

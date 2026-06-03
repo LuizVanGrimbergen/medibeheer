@@ -1,21 +1,17 @@
+import type { GsapTimeline } from '@/lib/motion/gsapMotion';
 import {
     animateCheckmarkDraw,
     resetCheckmarkDraw,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    nextTick,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, watch } from 'vue';
 
 export function useGsapCheckmarkDraw(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     shouldAnimate: Ref<boolean>,
 ): void {
-    let timeline: ReturnType<typeof animateCheckmarkDraw> | null = null;
+    let timeline: GsapTimeline | null = null;
     let retryFrameId: number | null = null;
 
     const cancelRetry = (): void => {
@@ -27,7 +23,7 @@ export function useGsapCheckmarkDraw(
         retryFrameId = null;
     };
 
-    const applyAnimation = (): boolean => {
+    const applyAnimation = async (): Promise<boolean> => {
         const element = resolveGsapTargetElement(targetRef.value);
 
         if (element === null) {
@@ -35,7 +31,7 @@ export function useGsapCheckmarkDraw(
         }
 
         timeline?.kill();
-        timeline = animateCheckmarkDraw(element);
+        timeline = await animateCheckmarkDraw(element);
 
         return true;
     };
@@ -45,13 +41,13 @@ export function useGsapCheckmarkDraw(
 
         await nextTick();
 
-        if (applyAnimation()) {
+        if (await applyAnimation()) {
             return;
         }
 
         retryFrameId = globalThis.requestAnimationFrame(() => {
             retryFrameId = null;
-            applyAnimation();
+            void applyAnimation();
         });
     };
 

@@ -1,7 +1,8 @@
 import { useGsapWizardProgressLabel } from '@/composables/motion/useGsapWizardProgressLabel';
 import { useGsapWizardStepEnter } from '@/composables/motion/useGsapWizardStepEnter';
 import { useWizardStepDirection } from '@/composables/motion/useWizardStepDirection';
-import { ref, type ComponentPublicInstance, type Ref } from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { ref } from 'vue';
 
 type UsePatientFormWizardStepMotionOptions = {
     progressLabelRef?: Ref<HTMLElement | ComponentPublicInstance | null>;
@@ -23,11 +24,7 @@ export function usePatientFormWizardStepMotion(
     );
 
     if (options.progressLabelRef !== undefined) {
-        useGsapWizardProgressLabel(
-            options.progressLabelRef,
-            stepIndex,
-            isOpen,
-        );
+        useGsapWizardProgressLabel(options.progressLabelRef, stepIndex, isOpen);
     }
 
     return { wizardStepPanelRef };

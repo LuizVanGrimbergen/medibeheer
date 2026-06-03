@@ -1,9 +1,8 @@
 import inertia from '@inertiajs/vite';
+import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig, loadEnv } from 'vite';
-import tailwindcss from '@tailwindcss/vite';
-
 
 function hostnameFromAppUrl(appUrl: string): string | null {
     try {
@@ -33,12 +32,12 @@ export default defineConfig(({ mode }) => {
     const devServerOrigin = `${devProtocol}://${devServerHost}:5173`;
 
     let detectTls: string | boolean;
-    if (! appUsesHttps) {
+    if (!appUsesHttps) {
         detectTls = false;
     } else if (
-        appHostname !== null
-        && appHostname !== ''
-        && appHostname !== 'localhost'
+        appHostname !== null &&
+        appHostname !== '' &&
+        appHostname !== 'localhost'
     ) {
         detectTls = appHostname;
     } else {
@@ -75,6 +74,35 @@ export default defineConfig(({ mode }) => {
             hmr: {
                 host: devServerHost,
                 protocol: appUsesHttps ? 'wss' : 'ws',
+            },
+        },
+        resolve: {
+            dedupe: ['@vueuse/core', '@vueuse/shared'],
+        },
+        build: {
+            rolldownOptions: {
+                output: {
+                    manualChunks(id) {
+                        if (id.includes('node_modules/gsap')) {
+                            return 'vendor-gsap';
+                        }
+
+                        if (id.includes('node_modules/vue-i18n')) {
+                            return 'vendor-i18n';
+                        }
+
+                        if (
+                            id.includes('node_modules/lucide-vue-next') ||
+                            id.includes('node_modules/@lucide/')
+                        ) {
+                            return 'vendor-icons';
+                        }
+
+                        if (id.includes('node_modules/reka-ui')) {
+                            return 'vendor-reka-ui';
+                        }
+                    },
+                },
             },
         },
         ssr: {
