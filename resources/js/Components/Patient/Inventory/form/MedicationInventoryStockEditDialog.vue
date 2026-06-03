@@ -3,13 +3,18 @@ import { router, useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
-import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
+import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
-import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    usePatientActionSuccessScreen,
+    type PatientActionSuccessDetail,
+} from '@/composables/usePatientActionSuccessScreen';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
+import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
+import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
+import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationStockListItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +22,7 @@ const props = withDefaults(
     defineProps<{
         open: boolean;
         medicationId: number;
+        medicationName: string;
         doseUnit: string | null;
         stock: MedicationStockListItem;
         stockProgressTone?: MedicationStockProgressTone | null;
@@ -38,6 +44,13 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const {
+    open: stockUpdateSuccessOpen,
+    title: stockUpdateSuccessTitle,
+    message: stockUpdateSuccessMessage,
+    details: stockUpdateSuccessDetails,
+    show: showStockUpdateSuccess,
+} = usePatientActionSuccessScreen();
 
 const stockToAdd = ref('');
 const addStockError = ref('');
@@ -137,10 +150,53 @@ function closeDialog(): void {
     emit('update:open', false);
 }
 
+function buildStockUpdateSuccessDetails(
+    amountAddedInput: string,
+    savedCurrentStock: string,
+): PatientActionSuccessDetail[] {
+    const summary: PatientActionSuccessDetail[] = [];
+    const medicationName = props.medicationName.trim();
+
+    if (medicationName !== '') {
+        summary.push({
+            label: t('patient.actionSuccess.summary.medication'),
+            value: medicationName,
+        });
+    }
+
+    if (amountAddedInput !== '') {
+        summary.push({
+            label: t('patient.inventory.addStockCalculatedTotal'),
+            value: formatMedicationStockDisplayAmount(
+                t,
+                amountAddedInput,
+                props.doseUnit,
+            ),
+        });
+    }
+
+    if (savedCurrentStock.trim() !== '') {
+        summary.push({
+            label: t('patient.inventory.addStockNewTotal'),
+            value: savedCurrentStock,
+        });
+    }
+
+    return summary;
+}
+
 function submitStock(): void {
+    const amountAddedInput = stockToAdd.value.trim();
+
     if (!mergeAddIntoCurrentStockForSubmit()) {
         return;
     }
+
+    const savedCurrentStock = form.current_stock;
+    const successDetails = buildStockUpdateSuccessDetails(
+        amountAddedInput,
+        savedCurrentStock,
+    );
 
     form.put(
         route(props.updateRouteName, {
@@ -152,6 +208,11 @@ function submitStock(): void {
             onSuccess: () => {
                 router.flushAll();
                 closeDialog();
+                showStockUpdateSuccess({
+                    title: t('patient.actionSuccess.inventory.stockUpdated.title'),
+                    message: t('patient.actionSuccess.inventory.stockUpdated.message'),
+                    details: successDetails,
+                });
             },
         },
     );
@@ -254,4 +315,12 @@ function submitStock(): void {
             </form>
         </DialogContent>
     </Dialog>
+
+    <PatientActionSuccessScreen
+        v-model:open="stockUpdateSuccessOpen"
+        :title="stockUpdateSuccessTitle"
+        :message="stockUpdateSuccessMessage"
+        :details="stockUpdateSuccessDetails"
+        :done-label="t('patient.actionSuccess.done')"
+    />
 </template>
