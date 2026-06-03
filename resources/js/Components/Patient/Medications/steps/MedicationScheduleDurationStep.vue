@@ -12,10 +12,11 @@ import {
     applyMedicationScheduleOngoingPreset,
     detectMedicationScheduleDurationPreset,
     MEDICATION_SCHEDULE_DURATION_ONGOING_KEY,
-    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS,
-    type MedicationScheduleDurationPresetKey,
-    type MedicationScheduleDurationTimedPresetKey,
+    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS
+    
+    
 } from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
+import type {MedicationScheduleDurationPresetKey, MedicationScheduleDurationTimedPresetKey} from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,

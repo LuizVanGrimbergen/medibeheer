@@ -5,14 +5,14 @@ import { useI18n } from 'vue-i18n';
 import PatientFormCountPresetPicker from '@/Components/Patient/form/PatientFormCountPresetPicker.vue';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
-import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import {
     patientFormFieldInvalidClass,
     patientFormLabelClass,
     patientFormSelectBaseClass,
     patientFormSelectChevronStyle,
 } from '@/lib/patient/patientFormFieldClasses';
+import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
+import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { MedicationTypeValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
 

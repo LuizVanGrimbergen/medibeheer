@@ -2,11 +2,11 @@
 /* eslint-disable vue/no-mutating-props */
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationStockBoxCalculator from '@/Components/Patient/Medications/form/MedicationStockBoxCalculator.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
+import MedicationStockBoxCalculator from '@/Components/Patient/Medications/form/MedicationStockBoxCalculator.vue';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
+import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,

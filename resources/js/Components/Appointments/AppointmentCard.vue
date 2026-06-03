@@ -16,7 +16,6 @@ import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardA
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
-import { cn } from '@/lib/utils';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import {
     patientPageCardFooterSectionClass,
@@ -27,6 +26,7 @@ import type {
     AppointmentTransportStatusValue,
     AppointmentStatusValue,
 } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 type AppointmentCardAppointment = {
     id: number;

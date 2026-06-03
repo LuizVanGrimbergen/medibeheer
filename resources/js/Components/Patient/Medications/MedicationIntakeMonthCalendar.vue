@@ -2,12 +2,12 @@
 import { AlertCircle, Check, Minus } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationIntakeCalendarDayIndicator from '@/Components/Patient/Medications/MedicationIntakeCalendarDayIndicator.vue';
 import HistoryMonthCalendar from '@/Components/History/HistoryMonthCalendar.vue';
+import MedicationIntakeCalendarDayIndicator from '@/Components/Patient/Medications/MedicationIntakeCalendarDayIndicator.vue';
 import { formatHistoryCalendarLongDate, todayIsoDateKey } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
-import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import { indexMedicationIntakeCalendarDays } from '@/lib/patient/medications/history/indexMedicationIntakeCalendarDays';
+import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 
 const props = withDefaults(
     defineProps<{

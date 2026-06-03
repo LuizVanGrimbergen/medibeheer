@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
-import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import type { MedicationTypeValue } from '@/lib/types';
 
 const props = withDefaults(

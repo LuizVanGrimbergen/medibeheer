@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Layers } from 'lucide-vue-next';
+import type { InventoryVacationShareImageItem } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 import {
     inventoryVacationMetricBoxClass,
     inventoryVacationMetricLabelClass,
@@ -8,7 +9,6 @@ import {
     medicationStockCurrentStockIconWrapClass,
     medicationStockCurrentStockPanelClass,
 } from '@/lib/patient/inventory/medicationStockCurrentStockPanelClasses';
-import type { InventoryVacationShareImageItem } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 
 defineProps<{
     item: InventoryVacationShareImageItem;

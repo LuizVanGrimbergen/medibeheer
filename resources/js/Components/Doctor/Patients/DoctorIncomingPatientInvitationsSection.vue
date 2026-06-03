@@ -5,8 +5,8 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
 import { Button } from '@/Components/ui/button';
-import type { IncomingCareTeamInvitation } from '@/lib/types';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
+import type { IncomingCareTeamInvitation } from '@/lib/types';
 
 const props = defineProps<{
     invitations: IncomingCareTeamInvitation[];

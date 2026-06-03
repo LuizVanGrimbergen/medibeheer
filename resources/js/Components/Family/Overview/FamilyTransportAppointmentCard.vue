@@ -2,8 +2,8 @@
 import { Calendar, ChevronRight, Clock, MapPin } from 'lucide-vue-next';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import { Card, CardContent } from '@/Components/ui/card';
-import type { FamilyAcceptedTransportAppointment } from '@/lib/family/overview/familyAcceptedTransportAppointments';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import type { FamilyAcceptedTransportAppointment } from '@/lib/family/overview/familyAcceptedTransportAppointments';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
