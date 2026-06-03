@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 
 const props = defineProps<{
     titleKey: string;
     metaTitleKey: string;
+    metaDescriptionKey: string;
     policyVersion: string;
 }>();
 
@@ -13,9 +15,10 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <Head>
-        <title>{{ t(props.metaTitleKey) }}</title>
-    </Head>
+    <SeoHead
+        :title="t(props.metaTitleKey)"
+        :description="t(props.metaDescriptionKey)"
+    />
 
     <div
         class="bg-bg min-h-dvh pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
