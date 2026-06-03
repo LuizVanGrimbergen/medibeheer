@@ -98,5 +98,5 @@ test('registering as doctor does not create a patient profile', function () {
     /** @var User $registeredUser */
     $registeredUser = auth()->user();
     expect(Patient::query()->where('user_id', $registeredUser->id)->exists())->toBeFalse();
-    expect(Doctor::query()->where('user_id', $registeredUser->id)->exists())->toBeFalse();
+    expect(Doctor::query()->where('user_id', $registeredUser->id)->exists())->toBeTrue();
 });

@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\User;
 
@@ -71,7 +70,7 @@ test('guests are redirected when visiting the doctor patients index', function (
 
 test('doctors only see patients linked on the doctor patient pivot', function () {
     $doctorUser = User::factory()->doctor()->create();
-    $doctor = Doctor::factory()->for($doctorUser)->create();
+    $doctor = $doctorUser->doctor;
     $linkedPatient = Patient::factory()->create();
     $otherPatient = Patient::factory()->create();
     $doctor->patients()->attach($linkedPatient);
@@ -88,7 +87,7 @@ test('doctors only see patients linked on the doctor patient pivot', function ()
 
 test('doctors can view a linked patient overview with calendar data on the dashboard', function () {
     $doctorUser = User::factory()->doctor()->create();
-    $doctor = Doctor::factory()->for($doctorUser)->create();
+    $doctor = $doctorUser->doctor;
     $linkedPatient = Patient::factory()->create();
     $doctor->patients()->attach($linkedPatient);
 
@@ -113,7 +112,6 @@ test('doctors can view a linked patient overview with calendar data on the dashb
 
 test('doctors cannot view an unlinked patient overview on the dashboard', function () {
     $doctorUser = User::factory()->doctor()->create();
-    Doctor::factory()->for($doctorUser)->create();
     $otherPatient = Patient::factory()->create();
 
     $response = $this->actingAs($doctorUser)->get(route('doctor.dashboard', [
@@ -129,7 +127,7 @@ test('doctors cannot view an unlinked patient overview on the dashboard', functi
 
 test('doctor patients route redirects patient overview queries to the dashboard', function () {
     $doctorUser = User::factory()->doctor()->create();
-    $doctor = Doctor::factory()->for($doctorUser)->create();
+    $doctor = $doctorUser->doctor;
     $linkedPatient = Patient::factory()->create();
     $doctor->patients()->attach($linkedPatient);
 
@@ -146,7 +144,7 @@ test('doctor patients route redirects patient overview queries to the dashboard'
 
 test('doctors can unlink a linked patient', function () {
     $doctorUser = User::factory()->doctor()->create();
-    $doctor = Doctor::factory()->for($doctorUser)->create();
+    $doctor = $doctorUser->doctor;
     $linkedPatient = Patient::factory()->create();
     $doctor->patients()->attach($linkedPatient);
 
@@ -161,7 +159,6 @@ test('doctors can unlink a linked patient', function () {
 
 test('doctors cannot unlink a patient that is not linked to them', function () {
     $doctorUser = User::factory()->doctor()->create();
-    Doctor::factory()->for($doctorUser)->create();
     $otherPatient = Patient::factory()->create();
 
     $this->actingAs($doctorUser)
