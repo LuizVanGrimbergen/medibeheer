@@ -85,7 +85,6 @@ final class UserDataExportService
         ]);
 
         return [
-            'streak_count' => $patient->streak_count,
             'created_at' => $patient->created_at?->toIso8601String(),
             'medications' => $patient->medications
                 ->map(fn (Medication $medication): array => $this->medicationPayload($medication))
