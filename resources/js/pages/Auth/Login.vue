@@ -11,7 +11,8 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { useAuthRoleOptions } from '@/lib/auth/useAuthRoleOptions';
-import type { PageProps, RoleKey } from '@/lib/types';
+import { authRouteWithEncryptedRole } from '@/lib/auth/useAuthRoleRoute';
+import type { PageProps, RoleKey, RoleTokens } from '@/lib/types';
 
 const form = useForm({
     email: '',
@@ -23,6 +24,7 @@ const props = defineProps<{
     canResetPassword?: boolean;
     status?: string;
     selectedRole?: RoleKey | null;
+    roleTokens: RoleTokens;
 }>();
 
 const { t } = useI18n();
@@ -169,7 +171,7 @@ const submit = () => {
             :roles="roles"
             :selected-role="selectedRole"
             :get-href="
-                (role) => route('login', { role })
+                (role) => authRouteWithEncryptedRole('login', props.roleTokens, role)
             "
         />
 
@@ -247,7 +249,7 @@ const submit = () => {
             <p class="mt-7 text-center text-lg text-text-muted">
                 {{ t('auth.login.registerPrompt') }}
                 <Link
-                    :href="route('register', { role: selectedRole })"
+                    :href="authRouteWithEncryptedRole('register', props.roleTokens, selectedRole)"
                     class="font-semibold text-primary hover:opacity-80"
                 >
                     {{ t('auth.login.registerAction') }}

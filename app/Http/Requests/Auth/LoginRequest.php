@@ -60,7 +60,7 @@ class LoginRequest extends FormRequest
         $role = UserRole::tryFrom($this->string('role')->toString());
 
         if ($role !== null) {
-            return route('login', ['role' => $role->value], absolute: false);
+            return route('login', ['role' => $role->encryptForTransport()], absolute: false);
         }
 
         return route('login', absolute: false);

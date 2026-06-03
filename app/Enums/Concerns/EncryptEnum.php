@@ -13,6 +13,57 @@ use ValueError;
 
 trait EncryptEnum
 {
+    public function encryptForTransport(): string
+    {
+        if (! $this instanceof BackedEnum) {
+            throw new LogicException(
+                sprintf('encryptForTransport can only be called on BackedEnum cases, [%s] is not a BackedEnum case.', static::class),
+            );
+        }
+
+        return Model::currentEncrypter()->encrypt($this->value, false);
+    }
+
+    /** @return array<string, string> */
+    public static function encryptedTransportTokens(): array
+    {
+        if (! is_a(static::class, BackedEnum::class, true)) {
+            throw new LogicException(
+                sprintf('encryptedTransportTokens can only be used on BackedEnum classes, [%s] is not a BackedEnum.', static::class),
+            );
+        }
+
+        $tokens = [];
+
+        foreach (static::cases() as $case) {
+            /** @var BackedEnum&EncryptEnum $case */
+            $tokens[$case->value] = $case->encryptForTransport();
+        }
+
+        return $tokens;
+    }
+
+    public static function tryFromEncryptedTransport(?string $token): ?static
+    {
+        if (! is_a(static::class, BackedEnum::class, true)) {
+            throw new LogicException(
+                sprintf('tryFromEncryptedTransport can only be used on BackedEnum classes, [%s] is not a BackedEnum.', static::class),
+            );
+        }
+
+        if ($token === null || $token === '') {
+            return null;
+        }
+
+        try {
+            $plain = Model::currentEncrypter()->decrypt($token, false);
+        } catch (DecryptException) {
+            return null;
+        }
+
+        return static::tryFrom($plain);
+    }
+
     public static function castUsing(array $arguments): CastsAttributes
     {
         if (! is_a(static::class, BackedEnum::class, true)) {

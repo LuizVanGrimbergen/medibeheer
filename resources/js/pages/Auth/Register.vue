@@ -12,7 +12,8 @@ import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { PasswordRequirementsCard } from '@/Components/ui/password-requirements-card';
 import { useAuthRoleOptions } from '@/lib/auth/useAuthRoleOptions';
-import type { RoleKey } from '@/lib/types';
+import { authRouteWithEncryptedRole } from '@/lib/auth/useAuthRoleRoute';
+import type { RoleKey, RoleTokens } from '@/lib/types';
 const minimumPasswordLength = 12;
 const showPassword = ref(false);
 const showPasswordConfirmation = ref(false);
@@ -29,6 +30,7 @@ const form = useForm({
 
 const props = defineProps<{
     selectedRole?: RoleKey | null;
+    roleTokens: RoleTokens;
     privacyPolicyVersion: string;
 }>();
 
@@ -102,7 +104,7 @@ const submit = () => {
             :roles="roles"
             :selected-role="selectedRole"
             :get-href="
-                (role) => route('register', { role })
+                (role) => authRouteWithEncryptedRole('register', props.roleTokens, role)
             "
         />
         <p
@@ -310,7 +312,7 @@ const submit = () => {
             <p class="mt-7 text-center text-lg text-text-muted">
                 {{ t('auth.register.loginPrompt') }}
                 <Link
-                    :href="route('login', { role: selectedRole })"
+                    :href="authRouteWithEncryptedRole('login', props.roleTokens, selectedRole)"
                     class="font-semibold text-primary hover:opacity-80"
                 >
                     {{ t('auth.register.loginAction') }}
