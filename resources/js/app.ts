@@ -47,9 +47,7 @@ const bootstrapApp = () => {
 
             return vueApp;
         },
-        progress: {
-            color: '#4B5563',
-        },
+        progress: false,
     });
 };
 
