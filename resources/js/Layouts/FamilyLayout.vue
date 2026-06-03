@@ -12,6 +12,7 @@ import {
 import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MobileShellSettingsLink from '@/Components/MobileShellSettingsLink.vue';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
@@ -202,9 +203,10 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
                 <div
-                    class="relative mx-auto w-full max-w-7xl pt-6 pb-4"
+                    class="relative mx-auto w-full max-w-7xl pt-4 pb-4 md:pt-6"
                     :class="shellPaddingX"
                 >
+                    <MobileShellSettingsLink />
                     <slot />
                 </div>
             </div>
