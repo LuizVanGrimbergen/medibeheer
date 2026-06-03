@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import AppLogo from '@/Components/AppLogo.vue';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -8,24 +9,37 @@ const props = withDefaults(
         titleKey: string;
         titleAccentKey?: string;
         subtitleKey?: string;
+        subtitleTone?: 'muted' | 'body';
         appendAppName?: boolean;
         showSubtitle?: boolean;
     }>(),
     {
         appendAppName: false,
         showSubtitle: true,
+        subtitleTone: 'muted',
     },
 );
 
 const { t } = useI18n();
 
-const isHeroHeader = computed(() => !props.showSubtitle);
+const isHeroHeader = computed(
+    () =>
+        props.appendAppName
+        || props.titleAccentKey !== undefined
+        || !props.showSubtitle,
+);
 </script>
 
 <template>
     <header
         :class="cn('text-center', isHeroHeader ? 'mb-6' : 'mb-8')"
     >
+        <div class="mb-6 flex justify-center">
+            <AppLogo
+                :class="isHeroHeader ? 'h-20 w-auto sm:h-24' : 'h-14 w-auto sm:h-16'"
+            />
+        </div>
+
         <h1
             :class="
                 cn(
@@ -53,7 +67,16 @@ const isHeroHeader = computed(() => !props.showSubtitle);
         </h1>
 
         <template v-if="props.showSubtitle && props.subtitleKey !== undefined">
-            <p class="mt-2 text-lg text-text-muted">
+            <p
+                :class="
+                    cn(
+                        'mx-auto max-w-md',
+                        props.subtitleTone === 'body'
+                            ? 'mt-3 text-base font-medium leading-relaxed text-text sm:text-lg'
+                            : 'mt-2 text-lg text-text-muted',
+                    )
+                "
+            >
                 {{ t(props.subtitleKey) }}
             </p>
         </template>

@@ -94,20 +94,6 @@ const selectedRole = computed(() => {
     return props.selectedRole ?? null;
 });
 
-const roleExtraTagline = computed((): string | null => {
-    const role = selectedRole.value;
-
-    if (role === 'doctor') {
-        return t('auth.common.roles.doctorSelector');
-    }
-
-    if (role === 'family_member') {
-        return t('auth.common.roles.familyMemberSelector');
-    }
-
-    return null;
-});
-
 const selectedRoleNoticeClass = computed(() => {
     if (selectedRole.value === 'patient') {
         return 'text-role-patient';
@@ -125,15 +111,13 @@ const selectedRoleNoticeClass = computed(() => {
 });
 
 const loginRoleHighlightLine = computed((): string | null => {
-    if (selectedRole.value === null) {
+    const role = selectedRole.value;
+
+    if (role === null) {
         return null;
     }
 
-    if (selectedRole.value === 'patient') {
-        return t('auth.login.roleNotice');
-    }
-
-    return roleExtraTagline.value;
+    return t(`auth.login.roleNotices.${role}`);
 });
 
 const canSubmit = computed(() => {
@@ -176,7 +160,9 @@ const submit = () => {
 
     <AuthPageContainer
         title-key="auth.login.heroTitlePrefix"
-        :show-subtitle="false"
+        subtitle-key="auth.common.roleSelectorHint"
+        subtitle-tone="body"
+        :show-subtitle="selectedRole === null"
         append-app-name
     >
         <AuthRoleSelectorWidget
@@ -187,25 +173,26 @@ const submit = () => {
             "
         />
 
-        <div
-            class="mb-4 text-center text-sm font-semibold"
-            :class="selectedRoleNoticeClass"
-        >
-            {{
-                loginRoleHighlightLine !== null
-                    ? loginRoleHighlightLine
-                    : t('auth.login.roleRequired')
-            }}
-        </div>
+        <template v-if="selectedRole !== null">
+            <div
+                v-if="loginRoleHighlightLine !== null"
+                class="mb-4 text-center text-sm font-semibold"
+                :class="selectedRoleNoticeClass"
+            >
+                {{ loginRoleHighlightLine }}
+            </div>
 
-        <FlashSuccessBanner
-            class="mb-4"
-            :message="props.status ?? null"
-        />
+            <FlashSuccessBanner
+                class="mb-4"
+                :message="props.status ?? null"
+            />
 
-        <form class="space-y-5" novalidate @submit.prevent="submit">
+            <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
-                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">{{ t('auth.login.emailLabel') }}</Label>
+                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.login.emailLabel') }}
+                    <span class="text-danger">*</span>
+                </Label>
                 <Input
                     id="email"
                     v-model="form.email"
@@ -220,7 +207,10 @@ const submit = () => {
             </div>
 
             <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">{{ t('auth.login.pwdLabel') }}</Label>
+                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                    {{ t('auth.login.pwdLabel') }}
+                    <span class="text-danger">*</span>
+                </Label>
                 <div class="relative">
                     <Input
                         id="password"
@@ -252,29 +242,26 @@ const submit = () => {
             >
                 {{ t('auth.login.submit') }}
             </Button>
-        </form>
+            </form>
 
-        <p class="mt-7 text-center text-lg text-text-muted">
-            {{ t('auth.login.registerPrompt') }}
-            <Link
-                :href="
-                    selectedRole
-                        ? route('register', { role: selectedRole })
-                        : route('register')
-                "
-                class="font-semibold text-primary hover:opacity-80"
-            >
-                {{ t('auth.login.registerAction') }}
-            </Link>
-        </p>
+            <p class="mt-7 text-center text-lg text-text-muted">
+                {{ t('auth.login.registerPrompt') }}
+                <Link
+                    :href="route('register', { role: selectedRole })"
+                    class="font-semibold text-primary hover:opacity-80"
+                >
+                    {{ t('auth.login.registerAction') }}
+                </Link>
+            </p>
 
-        <p v-if="canResetPassword" class="mt-2 text-center text-sm text-text-muted">
-            <Link
-                :href="route('password.request')"
-                class="underline underline-offset-2 hover:text-text"
-            >
-                {{ t('auth.login.forgotPassword') }}
-            </Link>
-        </p>
+            <p v-if="canResetPassword" class="mt-2 text-center text-sm text-text-muted">
+                <Link
+                    :href="route('password.request')"
+                    class="underline underline-offset-2 hover:text-text"
+                >
+                    {{ t('auth.login.forgotPassword') }}
+                </Link>
+            </p>
+        </template>
     </AuthPageContainer>
 </template>

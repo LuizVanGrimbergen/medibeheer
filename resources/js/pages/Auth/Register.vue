@@ -94,7 +94,9 @@ const submit = () => {
     <AuthPageContainer
         title-accent-key="auth.register.titleAccent"
         title-key="auth.register.title"
-        :show-subtitle="false"
+        subtitle-key="auth.common.roleSelectorHint"
+        subtitle-tone="body"
+        :show-subtitle="selectedRole === null"
     >
         <AuthRoleSelectorWidget
             :roles="roles"
@@ -110,21 +112,19 @@ const submit = () => {
             {{ bannerErrorMessage }}
         </p>
 
-        <div
-            class="mb-4 text-center text-sm font-semibold"
-            :class="selectedRoleNoticeClass"
-        >
-            {{
-                selectedRoleLabel
-                    ? t('auth.register.roleNotice', { role: selectedRoleLabel })
-                    : t('auth.register.roleRequired')
-            }}
-        </div>
+        <template v-if="selectedRole !== null">
+            <div
+                class="mb-4 text-center text-sm font-semibold"
+                :class="selectedRoleNoticeClass"
+            >
+                {{ t('auth.register.roleNotice', { role: selectedRoleLabel }) }}
+            </div>
 
-        <form class="space-y-5" novalidate @submit.prevent="submit">
+            <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
                 <Label for="name" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('auth.register.nameLabel') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <Input
                     id="name"
@@ -143,6 +143,7 @@ const submit = () => {
             <div>
                 <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('auth.register.emailLabel') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <Input
                     id="email"
@@ -159,6 +160,7 @@ const submit = () => {
             <div>
                 <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('auth.register.pwdLabel') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <div
                     class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
@@ -196,6 +198,7 @@ const submit = () => {
             <div>
                 <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
                     {{ t('auth.register.pwdConfirmLabel') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <div class="relative">
                     <Input
@@ -220,10 +223,10 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
-            <div class="space-y-3">
-                <p class="mb-2 text-2xl/none font-medium text-text">
+            <fieldset class="space-y-3 border-0 p-0">
+                <legend class="mb-2 block w-full text-2xl/none font-medium text-text">
                     {{ t('privacy.register.sectionTitle') }}
-                </p>
+                </legend>
 
                 <div
                     class="flex cursor-pointer items-start gap-4 rounded-2xl border-2 border-border/70 bg-surface px-4 py-3 transition-colors hover:bg-surface-hover focus-within:ring-2 focus-within:ring-focus/25"
@@ -233,6 +236,7 @@ const submit = () => {
                         id="register-consent-privacy"
                         :model-value="form.accepted_privacy_policy"
                         :disabled="form.processing"
+                        required
                         class="mt-0.5 size-6 shrink-0"
                         @click.stop
                         @update:model-value="
@@ -245,6 +249,8 @@ const submit = () => {
                         for="register-consent-privacy"
                         class="min-w-0 cursor-pointer text-lg font-medium leading-relaxed text-text wrap-break-word"
                     >
+                        <span class="text-danger">*</span>
+                        {{ ' ' }}
                         {{ t('privacy.register.privacyPrefix') }}
                         <a
                             :href="route('legal.privacy')"
@@ -270,6 +276,7 @@ const submit = () => {
                         id="register-consent-health-data"
                         :model-value="form.accepted_health_data_processing"
                         :disabled="form.processing"
+                        required
                         class="mt-0.5 size-6 shrink-0"
                         @click.stop
                         @update:model-value="
@@ -282,11 +289,13 @@ const submit = () => {
                         for="register-consent-health-data"
                         class="min-w-0 cursor-pointer text-lg font-medium leading-relaxed text-text wrap-break-word"
                     >
+                        <span class="text-danger">*</span>
+                        {{ ' ' }}
                         {{ t('privacy.register.healthDataLabel') }}
                     </Label>
                 </div>
                 <InputError :message="form.errors.accepted_health_data_processing" />
-            </div>
+            </fieldset>
 
             <Button
                 type="submit"
@@ -296,20 +305,17 @@ const submit = () => {
             >
                 {{ t('auth.register.submit') }}
             </Button>
-        </form>
+            </form>
 
-        <p class="mt-7 text-center text-lg text-text-muted">
-            {{ t('auth.register.loginPrompt') }}
-            <Link
-                :href="
-                    selectedRole
-                        ? route('login', { role: selectedRole })
-                        : route('login')
-                "
-                class="font-semibold text-primary hover:opacity-80"
-            >
-                {{ t('auth.register.loginAction') }}
-            </Link>
-        </p>
+            <p class="mt-7 text-center text-lg text-text-muted">
+                {{ t('auth.register.loginPrompt') }}
+                <Link
+                    :href="route('login', { role: selectedRole })"
+                    class="font-semibold text-primary hover:opacity-80"
+                >
+                    {{ t('auth.register.loginAction') }}
+                </Link>
+            </p>
+        </template>
     </AuthPageContainer>
 </template>

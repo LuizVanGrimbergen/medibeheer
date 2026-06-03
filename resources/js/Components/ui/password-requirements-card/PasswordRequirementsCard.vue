@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ChevronDown, Circle, CircleCheck } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
+import { Circle, CircleCheck } from 'lucide-vue-next';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Progress } from '@/Components/ui/progress';
 import { cn } from '@/lib/utils';
@@ -18,7 +18,6 @@ const props = withDefaults(
 );
 
 const { t } = useI18n();
-const showAllRulesOnMobile = ref(false);
 
 const password = computed(() => props.password ?? '');
 
@@ -87,10 +86,6 @@ const progressPercent = computed(() => {
     return Math.round((fulfilledRulesCount.value / totalRulesCount.value) * 100);
 });
 
-const firstUnmetRule = computed(() => {
-    return rules.value.find((rule) => !rule.met) ?? null;
-});
-
 const statusVariant = computed((): 'allMet' | 'start' | 'remaining' | 'continue' => {
     if (allRulesMet.value) {
         return 'allMet';
@@ -106,12 +101,6 @@ const statusVariant = computed((): 'allMet' | 'start' | 'remaining' | 'continue'
 
     return 'continue';
 });
-
-watch(allRulesMet, (isMet) => {
-    if (isMet) {
-        showAllRulesOnMobile.value = false;
-    }
-});
 </script>
 
 <template>
@@ -125,17 +114,8 @@ watch(allRulesMet, (isMet) => {
         "
         :aria-label="t('auth.register.pwdHelperTitle')"
     >
-        <h2
-            class="hidden text-xl font-bold leading-snug text-text-heading md:block"
-        >
-            {{ t('auth.register.pwdHelperTitle') }}
-        </h2>
-        <p class="mt-2 hidden text-lg leading-relaxed text-text-muted md:block">
-            {{ t('auth.register.pwdHelperIntro') }}
-        </p>
-
         <p
-            class="rounded-xl border px-3 py-2.5 text-base font-semibold leading-snug md:mt-4 md:px-4 md:py-3 md:text-lg"
+            class="rounded-xl border px-3 py-2.5 text-base font-semibold leading-snug sm:px-4 sm:py-3 sm:text-lg"
             :class="
                 cn(
                     allRulesMet
@@ -167,13 +147,13 @@ watch(allRulesMet, (isMet) => {
 
         <div
             v-if="hasStartedTyping"
-            class="mt-2 space-y-2 md:hidden"
+            class="mt-2 space-y-2"
         >
             <Progress
                 :model-value="progressPercent"
                 :indicator-class="allRulesMet ? 'bg-success' : undefined"
             />
-            <p class="text-sm font-semibold text-text-muted">
+            <p class="text-sm font-semibold text-text-muted sm:text-base">
                 {{
                     t('auth.register.pwdProgress', {
                         done: fulfilledRulesCount,
@@ -181,61 +161,11 @@ watch(allRulesMet, (isMet) => {
                     })
                 }}
             </p>
-
-            <p
-                v-if="firstUnmetRule !== null && !showAllRulesOnMobile && !allRulesMet"
-                class="text-base leading-snug text-text"
-            >
-                {{
-                    t('auth.register.pwdNextRule', {
-                        rule: firstUnmetRule.label,
-                    })
-                }}
-            </p>
-
-            <button
-                v-if="!allRulesMet"
-                type="button"
-                class="flex w-full items-center justify-center gap-1.5 rounded-lg py-2 text-base font-semibold text-primary hover:bg-primary/5"
-                :aria-expanded="showAllRulesOnMobile"
-                @click="showAllRulesOnMobile = !showAllRulesOnMobile"
-            >
-                <span>
-                    {{
-                        showAllRulesOnMobile
-                            ? t('auth.register.pwdHideAllRules')
-                            : t('auth.register.pwdShowAllRules', {
-                                  count: totalRulesCount,
-                              })
-                    }}
-                </span>
-                <ChevronDown
-                    :size="18"
-                    class="shrink-0 transition-transform"
-                    :class="showAllRulesOnMobile ? 'rotate-180' : ''"
-                />
-            </button>
         </div>
 
-        <p
-            v-if="hasStartedTyping"
-            class="mt-3 hidden text-base font-semibold text-text-muted md:block"
-        >
-            {{
-                t('auth.register.pwdProgress', {
-                    done: fulfilledRulesCount,
-                    total: totalRulesCount,
-                })
-            }}
-        </p>
-
         <ul
-            :class="
-                cn(
-                    'mt-2 space-y-2 md:mt-3 md:block',
-                    showAllRulesOnMobile ? 'block' : 'hidden',
-                )
-            "
+            v-if="hasStartedTyping"
+            class="mt-2 space-y-2"
             :aria-label="t('auth.register.pwdRulesListAria')"
         >
             <li
@@ -243,7 +173,7 @@ watch(allRulesMet, (isMet) => {
                 :key="index"
                 :class="
                     cn(
-                        'flex items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-base leading-snug transition-colors md:py-3 md:text-lg',
+                        'flex items-center gap-3 rounded-xl border-2 px-3 py-2.5 text-base leading-snug sm:py-3 sm:text-lg',
                         rule.met
                             ? 'border-success/50 bg-success/10 font-semibold text-success'
                             : 'border-border bg-surface text-text',
@@ -253,7 +183,7 @@ watch(allRulesMet, (isMet) => {
                 <component
                     :is="rule.met ? CircleCheck : Circle"
                     :size="20"
-                    class="shrink-0 md:size-[22px]"
+                    class="shrink-0 sm:size-[22px]"
                     :class="rule.met ? 'text-success' : 'text-text-muted'"
                     aria-hidden="true"
                 />
