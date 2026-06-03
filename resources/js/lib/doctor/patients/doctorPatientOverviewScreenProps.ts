@@ -1,8 +1,8 @@
-import type { DailyCheckin } from '@/lib/types';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
+import type { DailyCheckin } from '@/lib/types';
 
 export type DoctorPatientOverviewScreenProps = {
     selected_patient: {

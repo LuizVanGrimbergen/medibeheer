@@ -3,8 +3,8 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Settings } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import DoctorNavbarLinks from '@/Components/Doctor/DoctorNavbarLinks.vue';
 import AppLogo from '@/Components/AppLogo.vue';
+import DoctorNavbarLinks from '@/Components/Doctor/DoctorNavbarLinks.vue';
 import { Button } from '@/Components/ui/button';
 import type { PageProps } from '@/lib/types';
 

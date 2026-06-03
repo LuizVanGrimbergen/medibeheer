@@ -2,6 +2,8 @@ import type { Component } from 'vue';
 
 export type RoleKey = 'patient' | 'doctor' | 'family_member';
 
+export type RoleTokens = Record<RoleKey, string>;
+
 export type RoleOption = {
     key: RoleKey;
     label: string;
@@ -111,6 +113,7 @@ export type PageProps<
         success: string | null;
         rateLimitSeconds: number | null;
         daily_checkin_mood: DailyMoodScoreValue | null;
+        daily_checkin_encouragement: string | null;
     };
     legal: LegalSharedProps;
     webpush?: WebPushSharedProps;
@@ -194,23 +197,16 @@ export const MEDICATION_TYPE_VALUES = [
     'pill',
     'liquid',
     'injection',
-    'cream',
     'sachets',
-    'other',
 ] as const;
 
 export type MedicationTypeValue = (typeof MEDICATION_TYPE_VALUES)[number];
 
 export const MEDICATION_DOSE_UNIT_VALUES = [
-    'milligram',
-    'gram',
     'milliliter',
     'piece',
     'drop',
-    'injection',
     'unit',
-    'sachet',
-    'other',
 ] as const;
 
 export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
@@ -338,6 +334,9 @@ export type TodayMedicationIntakeSlot = {
     snooze_minutes: number;
     intake_window_state: MedicationIntakeWindowState;
     day_period: TodayMedicationIntakeDayPeriodValue;
+    meal_timing: MedicationMealTimingValue;
+    intake_frequency: MedicationIntakeFrequencyValue;
+    intake_weekdays: number[] | null;
     name: string;
     type_medication: MedicationTypeValue;
     dose: string | null;
@@ -358,10 +357,42 @@ export type MedicationListItem = {
     type_medication: MedicationTypeValue;
     strength: string | null;
     note: string | null;
+    prescription_expiry_date: string | null;
+    stock_pieces_per_package: number | null;
     schedules: MedicationScheduleListItem[];
     stocks: MedicationStockListItem[];
     supply_estimate_days: number | null;
     supply_estimate_quality: MedicationSupplyEstimateQuality;
+};
+
+export type MedicationPrescriptionListItem = {
+    id: number;
+    medication_id: number;
+    prescription_expiry_date: string | null;
+    is_last_in_batch: boolean;
+    pickup_status: MedicationPrescriptionPickupStatusValue;
+    medication: {
+        id: number;
+        name: string;
+        type_medication: MedicationTypeValue;
+    };
+};
+
+export type MedicationPrescriptionPickupStatusValue = 'pending' | 'picked_up';
+
+export type MedicationPrescriptionGroupPrescriptionItem = {
+    id: number;
+    prescription_expiry_date: string | null;
+    pickup_status: MedicationPrescriptionPickupStatusValue;
+};
+
+export type MedicationPrescriptionGroupListItem = {
+    medication: {
+        id: number;
+        name: string;
+        type_medication: MedicationTypeValue;
+    };
+    prescriptions: MedicationPrescriptionGroupPrescriptionItem[];
 };
 
 export type Appointment = {

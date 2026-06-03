@@ -1,3 +1,4 @@
+import actionSuccess from './actionSuccess';
 import appointments from './appointments';
 import dashboard from './dashboard';
 import doctors from './doctors';
@@ -7,8 +8,10 @@ import medicationPlans from './medicationPlans';
 import medicationReminders from './medicationReminders';
 import medications from './medications';
 import navigation from './navigation';
+import prescriptions from './prescriptions';
 
 export default {
+    actionSuccess,
     appointments,
     dashboard,
     doctors,
@@ -18,4 +21,5 @@ export default {
     medicationReminders,
     medications,
     navigation,
+    prescriptions,
 };

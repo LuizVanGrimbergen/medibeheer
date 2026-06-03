@@ -13,6 +13,7 @@ import {
 } from './medicationScheduleClientSchema';
 import {
     hasNonEmptyFieldMessage,
+    mapMedicationWizardDurationStepFieldErrors,
     medicationWizardStepAfterFullClientParseFailure,
     medicationWizardZodIssuesToFlatFieldErrors,
     prefixScheduleFieldErrors,
@@ -23,7 +24,7 @@ import type {
     MedicationWizardSubmitClientValidationResult,
 } from './types';
 import { medicationWizardStepValidation } from './wizardStepMessages';
-import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
+import { trimmedNonEmptyMax, trimmedPositiveIntegerMax } from './wizardStringFieldPatterns';
 
 export function tryMedicationWizardDetailsStep(
     data: Pick<
@@ -108,11 +109,11 @@ export function tryMedicationWizardDoseTimesStep(
 }
 
 export function tryMedicationWizardDurationStep(
-    schedule: MedicationCreateFormState['schedule'],
+    form: Pick<MedicationCreateFormState, 'schedule'>,
 ): MedicationWizardClientParseResult {
     const parsed = medicationWizardDurationFieldsSchema.safeParse({
-        start_date: schedule.start_date,
-        end_date: schedule.end_date,
+        start_date: form.schedule.start_date,
+        end_date: form.schedule.end_date,
     });
 
     if (parsed.success) {
@@ -121,14 +122,17 @@ export function tryMedicationWizardDurationStep(
 
     return {
         ok: false,
-        fieldErrors: prefixScheduleFieldErrors(
+        fieldErrors: mapMedicationWizardDurationStepFieldErrors(
             medicationWizardZodIssuesToFlatFieldErrors(parsed.error.issues),
         ),
     };
 }
 
 export function tryMedicationWizardNoteStockStep(
-    data: Pick<MedicationCreateFormState, 'note' | 'current_stock'>,
+    data: Pick<
+        MedicationCreateFormState,
+        'note' | 'current_stock' | 'stock_pieces_per_package'
+    >,
 ): MedicationWizardClientParseResult {
     const parsed = z
         .object({
@@ -142,6 +146,12 @@ export function tryMedicationWizardNoteStockStep(
                 }
             }),
             current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
+            stock_pieces_per_package: trimmedPositiveIntegerMax(
+                9999,
+                'stockPiecesPerPackageRequired',
+                'stockPiecesPerPackageInvalid',
+                'stockPiecesPerPackageMax',
+            ),
         })
         .safeParse(data);
 

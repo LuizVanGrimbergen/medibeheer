@@ -1,11 +1,11 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import type { MedicationListItem } from '@/lib/types';
 import {
     buildMedicationScheduleDoseTimeSlots,
     buildMedicationScheduleSnoozeTimeSlots,
 } from '../schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
-import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import { blankMedicationCreateForm } from './medicationCreateFormDefaults';
 
 export function medicationListItemToCreateFormState(
@@ -23,6 +23,10 @@ export function medicationListItemToCreateFormState(
     base.strength_amount = parsedStrength.strength_amount;
     base.strength_unit = parsedStrength.strength_unit;
     base.note = item.note ?? '';
+
+    if (item.stock_pieces_per_package !== null && item.stock_pieces_per_package > 0) {
+        base.stock_pieces_per_package = String(item.stock_pieces_per_package);
+    }
 
     const firstStock = item.stocks[0];
 

@@ -17,7 +17,6 @@ class PatientFactory extends Factory
 
         return [
             'user_id' => $user->id,
-            'streak_count' => fake()->numberBetween(0, 30),
         ];
     }
 }

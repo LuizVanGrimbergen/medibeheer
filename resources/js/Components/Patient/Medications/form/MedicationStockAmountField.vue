@@ -34,7 +34,7 @@ const fieldId = computed(() => `${props.idPrefix}-${props.fieldIdSuffix}`);
 const inputName = computed(() => props.fieldIdSuffix.replaceAll('-', '_'));
 
 const hasDisplayableDoseUnit = computed((): boolean => {
-    if (props.doseUnit === '' || props.doseUnit === 'other') {
+    if (props.doseUnit === '') {
         return false;
     }
 

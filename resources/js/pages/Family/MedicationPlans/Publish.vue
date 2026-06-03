@@ -14,8 +14,8 @@ import {
     patientFormLabelClass,
 } from '@/lib/patient/patientFormFieldClasses';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
-import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 import { cn } from '@/lib/utils';
+import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 
 type FamilyMedicationPlansPageProps = PageProps & {
     family?: FamilyDashboardProps;

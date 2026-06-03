@@ -57,12 +57,18 @@ const importPlanUrl = computed(() => `${route('patient.family')}#family-pending-
                             :href="addMedicationUrl"
                         />
 
-                        <p
-                            class="text-center text-base text-text-muted"
-                            role="separator"
-                        >
-                            {{ t('patient.dashboard.medicationSetup.orDivider') }}
-                        </p>
+                        <div class="relative py-2">
+                            <hr
+                                class="border-0 border-t border-border"
+                                :aria-label="t('patient.dashboard.medicationSetup.orDivider')"
+                            />
+                            <span
+                                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface px-4 text-base font-semibold text-text-muted sm:text-lg"
+                                aria-hidden="true"
+                            >
+                                {{ t('patient.dashboard.medicationSetup.orDivider') }}
+                            </span>
+                        </div>
 
                         <PatientMedicationOnboardingOption
                             :icon="Users"

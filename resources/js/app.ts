@@ -2,16 +2,16 @@ import '../css/app.css';
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
+import { configureEcho } from '@laravel/echo-vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { i18n } from '@/i18n';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
-import { configureEcho } from '@laravel/echo-vue';
 import {
     listenForMedicationPushServiceWorkerUpdates,
     registerMedicationPushServiceWorker,
 } from '@/lib/medicationPushServiceWorker';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
 configureEcho({
     broadcaster: 'pusher',

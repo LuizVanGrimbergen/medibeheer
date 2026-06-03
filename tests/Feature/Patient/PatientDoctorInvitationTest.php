@@ -13,7 +13,6 @@ test('patients can send a doctor invitation email', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-invitee-'.uniqid('', true).'@example.com';
@@ -43,7 +42,6 @@ test('patients cannot send a second pending doctor invitation to the same email'
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-dup-'.uniqid('', true).'@example.com';
@@ -73,7 +71,6 @@ test('patients can revoke a pending doctor invitation', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-revoke-'.uniqid('', true).'@example.com';

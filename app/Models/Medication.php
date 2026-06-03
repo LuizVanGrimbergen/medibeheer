@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Medication extends Model
@@ -44,6 +45,7 @@ class Medication extends Model
         'type_medication',
         'strength',
         'note',
+        'stock_pieces_per_package',
     ];
 
     protected function casts(): array
@@ -55,10 +57,12 @@ class Medication extends Model
             'type_medication' => MedicationType::class,
             'strength' => 'encrypted',
             'note' => 'encrypted',
+            'stock_pieces_per_package' => 'encrypted',
         ];
     }
 
     /**************************************/
+
     /*           Relationships */
     /**************************************/
 
@@ -85,6 +89,16 @@ class Medication extends Model
     public function intakes(): HasMany
     {
         return $this->hasMany(MedicationIntake::class);
+    }
+
+    public function prescriptions(): HasMany
+    {
+        return $this->hasMany(MedicationPrescription::class);
+    }
+
+    public function prescription(): HasOne
+    {
+        return $this->hasOne(MedicationPrescription::class)->latestOfMany();
     }
 
     /**************************************/

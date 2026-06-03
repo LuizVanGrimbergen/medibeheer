@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\DailyCheckins\StoreDailyCheckinRequest;
 use App\Models\DailyCheckin;
+use App\Services\Patient\DailyCheckinEncouragementService;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,10 @@ use Illuminate\Support\Facades\DB;
 class PatientDailyCheckinController extends Controller
 {
     use AuthorizesPatientProfile;
+
+    public function __construct(
+        private readonly DailyCheckinEncouragementService $dailyCheckinEncouragementService,
+    ) {}
 
     public function store(StoreDailyCheckinRequest $request): RedirectResponse
     {
@@ -64,8 +69,11 @@ class PatientDailyCheckinController extends Controller
 
         DailyCheckinCreatedEvent::dispatch($checkin);
 
+        $encouragementMessage = $this->dailyCheckinEncouragementService->ensureMessage($checkin);
+
         return redirect()
             ->route('patient.dashboard')
-            ->with('daily_checkin_mood', $mood->value);
+            ->with('daily_checkin_mood', $mood->value)
+            ->with('daily_checkin_encouragement', $encouragementMessage);
     }
 }

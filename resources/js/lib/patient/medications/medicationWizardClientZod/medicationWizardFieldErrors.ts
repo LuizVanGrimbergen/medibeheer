@@ -40,6 +40,28 @@ export function prefixScheduleFieldErrors(
     return out;
 }
 
+export function mapMedicationWizardDurationStepFieldErrors(
+    inner: Partial<Record<string, string>>,
+): Partial<Record<string, string>> {
+    const out: Partial<Record<string, string>> = {};
+
+    for (const [key, message] of Object.entries(inner)) {
+        if (message === undefined || message.length < 1) {
+            continue;
+        }
+
+        if (key === 'start_date' || key === 'end_date') {
+            out[`schedule.${key}`] = message;
+
+            continue;
+        }
+
+        out[key] = message;
+    }
+
+    return out;
+}
+
 export function hasNonEmptyFieldMessage(fieldErrors: Partial<Record<string, string>>): boolean {
     return Object.values(fieldErrors).some(
         (message) => message !== undefined && message.length > 0,
@@ -72,8 +94,11 @@ export function medicationWizardStepAfterFullClientParseFailure(
     const hasTimesPerDayErrors = hasKey('schedule.times_per_day');
     const hasDoseSlotErrors =
         hasKey('schedule.dose_time') || hasKey('schedule.snooze_time');
-    const hasDurationErrors = hasKey('schedule.start_date') || hasKey('schedule.end_date');
-    const hasStepSixErrors = hasKey('note') || hasKey('current_stock');
+    const hasDurationErrors =
+        hasKey('schedule.start_date') ||
+        hasKey('schedule.end_date');
+    const hasStepSixErrors =
+        hasKey('note') || hasKey('current_stock') || hasKey('stock_pieces_per_package');
 
     if (hasDetailErrors) {
         return 1;

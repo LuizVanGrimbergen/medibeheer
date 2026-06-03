@@ -178,7 +178,11 @@ function applyMedicationWizardDurationRefinement(
     if (startTrimmed.length < 1) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleStartDateRequired'),
+            message: medicationWizardStepValidation(
+                endTrimmed.length < 1
+                    ? 'scheduleIntakePeriodRequired'
+                    : 'scheduleStartDateRequired',
+            ),
             path: ['start_date'],
         });
     } else if (medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null) {

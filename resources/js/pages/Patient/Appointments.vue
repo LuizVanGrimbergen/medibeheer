@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { CalendarPlus } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
+import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
-import { Button } from '@/Components/ui/button';
+import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
+import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
@@ -18,6 +19,10 @@ const { t } = useI18n();
 
 const {
     doctorTypeOptions,
+    createSuccessOpen,
+    createSuccessTitle,
+    createSuccessMessage,
+    createSuccessDetails,
     createDialogOpen,
     form,
     editForm,
@@ -40,37 +45,26 @@ const {
 <template>
     <Head>
         <title>{{ t('patient.appointments.title') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.appointments.metaDescription')"
+        />
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.appointments.heading')">
-            <div
-                class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
-            >
-                <div class="min-w-0">
-                    <h1 class="text-3xl font-bold leading-tight text-text-heading">
-                        {{ t('patient.appointments.heading') }}
-                    </h1>
-                    <p class="mt-3 max-w-prose text-base leading-relaxed text-text-muted">
-                        {{ t('patient.appointments.plannedDescription') }}
-                    </p>
-                </div>
+        <PatientActionSuccessScreen
+            v-model:open="createSuccessOpen"
+            :title="createSuccessTitle"
+            :message="createSuccessMessage"
+            :details="createSuccessDetails"
+            :done-label="t('patient.actionSuccess.done')"
+        />
 
-                <Button
-                    size="lg"
-                    class="min-h-14 w-full touch-manipulation gap-2.5 self-stretch px-6 text-lg sm:w-auto sm:self-center sm:px-8"
-                    @click="createDialogOpen = true"
-                >
-                    <CalendarPlus
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
-                    {{ t('patient.appointments.newAppointment') }}
-                </Button>
-            </div>
+        <PatientPageShell :title="t('patient.appointments.heading')">
+            <AppointmentsPageIntro @new-appointment-click="createDialogOpen = true" />
 
             <section class="space-y-5">
-                <h2 class="text-2xl font-bold leading-tight text-text-heading">
+                <h2 :class="patientPageSectionTitleClass">
                     {{ t('patient.appointments.plannedHeading') }}
                 </h2>
 

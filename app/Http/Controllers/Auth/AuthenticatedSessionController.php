@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\SecurityActivityDescription;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
@@ -33,6 +34,7 @@ class AuthenticatedSessionController extends Controller
         return Inertia::render('Auth/Login', [
             'canResetPassword' => Route::has('password.request'),
             'selectedRole' => $resolveSelectedRole($request),
+            'roleTokens' => UserRole::encryptedTransportTokens(),
             'status' => session('status'),
         ]);
     }

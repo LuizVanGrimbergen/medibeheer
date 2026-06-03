@@ -13,7 +13,6 @@ test('when sending mail fails the invitation is removed and the user sees an err
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'family-mail-fail-'.uniqid('', true).'@example.com';

@@ -15,7 +15,9 @@ use App\Http\Controllers\Patient\Family\DestroyPatientFamilyInvitationController
 use App\Http\Controllers\Patient\Family\DestroyPatientLinkedFamilyMemberController;
 use App\Http\Controllers\Patient\Family\PatientFamilyController;
 use App\Http\Controllers\Patient\Family\StorePatientFamilyInvitationController;
+use App\Http\Controllers\Patient\Inventory\CalculatePatientInventoryVacationSupplyController;
 use App\Http\Controllers\Patient\Inventory\PatientInventoryController;
+use App\Http\Controllers\Patient\Inventory\ShowPatientInventoryVacationPageController;
 use App\Http\Controllers\Patient\MedicationPlans\AcceptPatientMedicationPlanProposalController;
 use App\Http\Controllers\Patient\MedicationPlans\DeclinePatientMedicationPlanProposalController;
 use App\Http\Controllers\Patient\MedicationPlans\ShowPatientMedicationPlanProposalReviewController;
@@ -23,10 +25,12 @@ use App\Http\Controllers\Patient\Medications\AckPatientPushMedicationMarkControl
 use App\Http\Controllers\Patient\Medications\MarkPatientMedicationIntakeFromPushController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationIntakeController;
+use App\Http\Controllers\Patient\Medications\PatientMedicationPrescriptionController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationScheduleController;
 use App\Http\Controllers\Patient\Medications\PatientMedicationStockController;
 use App\Http\Controllers\Patient\Medications\ShowPatientActiveMedicationsPharmacistOverviewController;
 use App\Http\Controllers\Patient\Medications\ShowPatientPushMedicationMarkSuccessController;
+use App\Http\Controllers\Patient\Prescriptions\PatientPrescriptionsController;
 use App\Http\Controllers\Patient\PushSubscriptions\DestroyPatientPushSubscriptionController;
 use App\Http\Controllers\Patient\PushSubscriptions\StorePatientPushSubscriptionController;
 use App\Http\Middleware\EnsurePatient;
@@ -78,6 +82,12 @@ Route::middleware([
             ->only(['store', 'update', 'destroy'])
             ->scoped();
 
+        Route::post('medications/{medication}/prescriptions', [PatientMedicationPrescriptionController::class, 'store'])
+            ->name('medications.prescriptions.store');
+
+        Route::patch('prescriptions/{medication_prescription}', [PatientMedicationPrescriptionController::class, 'update'])
+            ->name('prescriptions.update');
+
         /* Medication plan proposals */
         Route::get('medication-plans/{medication_plan_proposal}/review', ShowPatientMedicationPlanProposalReviewController::class)
             ->name('medication-plans.review');
@@ -88,7 +98,12 @@ Route::middleware([
             ->middleware('throttle:medication-plan-proposal-redeem')
             ->name('medication-plans.decline');
 
+        Route::get('prescriptions', PatientPrescriptionsController::class)->name('prescriptions');
         Route::get('inventory', PatientInventoryController::class)->name('inventory');
+        Route::get('inventory/vacation', ShowPatientInventoryVacationPageController::class)
+            ->name('inventory.vacation');
+        Route::post('inventory/vacation', CalculatePatientInventoryVacationSupplyController::class)
+            ->name('inventory.vacation.store');
         Route::get('family', PatientFamilyController::class)->name('family');
         Route::get('doctors', PatientDoctorsController::class)->name('doctors');
 

@@ -1,6 +1,12 @@
 import type { ComposerTranslation } from 'vue-i18n';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import type { MedicationDoseUnitValue, MedicationTypeValue } from '@/lib/types';
+import { medicationIntakeFrequencySummaryLabel } from '@/lib/patient/medications/schedule/medicationIntakeFrequencyDisplay';
+import type {
+    MedicationDoseUnitValue,
+    MedicationIntakeFrequencyValue,
+    MedicationMealTimingValue,
+    MedicationTypeValue,
+} from '@/lib/types';
 
 export type MedicationIntakeSlotDisplaySource = {
     dose: string | null;
@@ -51,4 +57,57 @@ export function medicationTypeLabel(
     typeMedication: MedicationTypeValue,
 ): string {
     return t(`patient.medications.types.${typeMedication}`);
+}
+
+export function medicationMealTimingLabel(
+    t: ComposerTranslation,
+    mealTiming: MedicationMealTimingValue,
+): string {
+    return t(`patient.medications.mealTimings.${mealTiming}`);
+}
+
+export type MedicationTodayIntakeHeaderSource = {
+    meal_timing: MedicationMealTimingValue;
+    intake_frequency: MedicationIntakeFrequencyValue;
+    intake_weekdays: number[] | null;
+};
+
+export function medicationTodayIntakeHeaderSummary(
+    t: ComposerTranslation,
+    source: MedicationTodayIntakeHeaderSource,
+): string {
+    return [
+        medicationMealTimingLabel(t, source.meal_timing),
+        medicationIntakeFrequencySummaryLabel(
+            t,
+            source.intake_frequency,
+            source.intake_weekdays ?? [],
+        ),
+    ].join(' • ');
+}
+
+export function medicationCardHeaderSummary(
+    t: ComposerTranslation,
+    source: MedicationIntakeSlotDisplaySource & { doseTimes: readonly string[] },
+): string {
+    const dosePart = medicationIntakeDoseLine(t, source);
+    const times = source.doseTimes
+        .map((time) => time.trim())
+        .filter((time) => time.length > 0);
+
+    const parts: string[] = [];
+
+    if (dosePart !== null) {
+        parts.push(dosePart);
+    }
+
+    if (times.length > 0) {
+        parts.push(times.join(', '));
+    }
+
+    if (parts.length > 0) {
+        return parts.join(' · ');
+    }
+
+    return medicationTypeLabel(t, source.type_medication);
 }

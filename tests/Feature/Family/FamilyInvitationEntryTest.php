@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Mail\FamilyInvitationMail;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
@@ -7,7 +8,9 @@ use Illuminate\Support\Facades\URL;
 test('family invitation entry sends guests to family member registration with intended link page', function () {
     $response = $this->get(route('family.invitation.entry'));
 
-    $response->assertRedirect(route('register', ['role' => 'family_member']));
+    $response->assertRedirect();
+    parse_str((string) parse_url((string) $response->headers->get('Location'), PHP_URL_QUERY), $query);
+    expect(UserRole::tryFromEncryptedTransport($query['role'] ?? null))->toBe(UserRole::FAMILY_MEMBER);
     expect(session('url.intended'))->toBe(route('family.link'));
 });
 

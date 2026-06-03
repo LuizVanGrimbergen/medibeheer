@@ -1,4 +1,5 @@
-import { nextTick, ref, watch, type MaybeRefOrGetter, toValue } from 'vue';
+import { nextTick, ref, watch,  toValue } from 'vue';
+import type {MaybeRefOrGetter} from 'vue';
 
 type HistorySelectedDayScrollTarget = {
     scrollIntoView: (options?: ScrollIntoViewOptions) => void;

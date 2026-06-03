@@ -6,22 +6,27 @@ import {
     CircleX,
     Clock,
     MapPin,
-    Pencil,
     Stethoscope,
-    Trash2,
 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
+import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Card, CardContent } from '@/Components/ui/card';
-import { cn } from '@/lib/utils';
-import { IconActionButton } from '@/Components/ui/icon-action-button';
+import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import {
+    patientPageCardFooterSectionClass,
+    patientPageCardHeaderSummaryClass,
+    patientPageCardHeaderWithActionsClass,
+} from '@/lib/patient/patientPageTypography';
 import type {
     AppointmentTransportStatusValue,
     AppointmentStatusValue,
 } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 type AppointmentCardAppointment = {
     id: number;
@@ -41,20 +46,34 @@ type AppointmentCardAppointment = {
     status?: AppointmentStatusValue;
 };
 
-const props = defineProps<{
-    appointment: AppointmentCardAppointment;
-    doneDisplayed: boolean;
-    isPatching: boolean;
-    showActions?: boolean;
-    showDoneToggle?: boolean;
-    showTransportSection?: boolean;
-    doneSummaryLabel?: string;
-    completeFormHref?: string;
-    cancelFormHref?: string;
-    anchorId?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        appointment: AppointmentCardAppointment;
+        doneDisplayed: boolean;
+        isPatching: boolean;
+        showActions?: boolean;
+        showDoneToggle?: boolean;
+        showTransportSection?: boolean;
+        doneSummaryLabel?: string;
+        completeFormHref?: string;
+        cancelFormHref?: string;
+        anchorId?: string;
+        defaultOpen?: boolean;
+    }>(),
+    {
+        defaultOpen: false,
+    },
+);
+
+const isOpen = ref(props.defaultOpen);
 
 const showActionsToolbar = computed(() => props.showActions ?? true);
+
+const canEditAppointment = computed(
+    () => showActionsToolbar.value && props.appointment.status !== 'cancelled',
+);
+
+const canDeleteAppointment = computed(() => showActionsToolbar.value);
 
 const emit = defineEmits<{
     edit: [];
@@ -65,6 +84,19 @@ const emit = defineEmits<{
 const { t } = useI18n();
 const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
     useAppointmentDisplay();
+
+const headerSummary = computed(
+    () =>
+        `${formatDateOnly(props.appointment.starts_at)} · ${formatTimeOnly(props.appointment.starts_at)}`,
+);
+
+const showAppointmentDoneToggle = computed(
+    () =>
+        (props.showDoneToggle ?? true)
+        && props.appointment.status !== 'cancelled'
+        && props.completeFormHref !== undefined
+        && props.cancelFormHref !== undefined,
+);
 </script>
 
 <template>
@@ -76,248 +108,252 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
             )
         "
     >
-        <CardContent class="relative space-y-6 p-6 sm:p-7">
-            <div
-                v-if="showActionsToolbar"
-                class="absolute right-6 top-6 z-10 flex flex-row items-center gap-0.5 sm:right-7 sm:top-7"
-                role="toolbar"
-                :aria-label="t('patient.appointments.cardActionsAriaLabel')"
-            >
-                <IconActionButton
-                    v-if="appointment.status !== 'cancelled'"
-                    :ariaLabel="t('patient.appointments.actions.edit')"
-                    @click="emit('edit')"
-                >
-                    <Pencil
-                        class="size-5"
-                        aria-hidden="true"
-                    />
-                </IconActionButton>
-                <IconActionButton
-                    tone="danger"
-                    :ariaLabel="t('patient.appointments.actions.delete')"
-                    @click="emit('delete')"
-                >
-                    <Trash2
-                        class="size-5"
-                        aria-hidden="true"
-                    />
-                </IconActionButton>
-            </div>
+        <CardContent class="relative p-6 sm:p-7">
+            <Collapsible v-model:open="isOpen">
+                <PatientListCardActionsToolbar
+                    v-if="showActionsToolbar"
+                    :ariaLabel="t('patient.appointments.cardActionsAriaLabel')"
+                    :showEdit="canEditAppointment"
+                    :showDelete="canDeleteAppointment"
+                    :editAriaLabel="t('patient.appointments.actions.edit')"
+                    :deleteAriaLabel="t('patient.appointments.actions.delete')"
+                    @edit="emit('edit')"
+                    @delete="emit('delete')"
+                />
 
-            <div
-                class="flex min-w-0 items-start gap-4"
-                :class="showActionsToolbar ? 'pr-21 sm:pr-28' : null"
-            >
                 <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
-                    aria-hidden="true"
+                    class="flex min-w-0 items-start gap-4"
+                    :class="showActionsToolbar ? patientPageCardHeaderWithActionsClass : null"
                 >
-                    <Stethoscope class="size-6 text-primary" />
-                </div>
-                <div class="min-w-0 flex-1 overflow-hidden space-y-1">
-                    <p
-                        class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
-                    >
-                        {{
-                            appointment.doctor_type
-                                ? doctorTypeLabel(appointment.doctor_type)
-                                : appointment.provider_name
-                        }}
-                    </p>
-                    <p
-                        v-if="appointment.doctor_type"
-                        class="text-base font-normal leading-snug text-text-muted"
-                    >
-                        {{ appointment.provider_name }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div
-                    v-if="appointment.status === 'done' || appointment.status === 'cancelled'"
-                    class="flex gap-4 sm:gap-5"
-                >
-                    <CheckCircle2
-                        v-if="appointment.status === 'done'"
-                        class="mt-0.5 size-6 shrink-0 text-primary"
-                        :stroke-width="2"
+                    <div
+                        class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
                         aria-hidden="true"
-                    />
-                    <CircleX
-                        v-else
-                        class="mt-0.5 size-6 shrink-0 text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
+                    >
+                        <Stethoscope class="size-6 text-primary" />
+                    </div>
                     <div class="min-w-0 flex-1 space-y-1.5">
                         <p
-                            class="text-base font-semibold leading-tight text-text-heading"
-                        >
-                            {{ t('patient.appointments.fields.status') }}
-                        </p>
-                        <p
-                            class="text-lg font-medium leading-relaxed tracking-tight sm:text-xl sm:leading-snug"
-                            :class="
-                                appointment.status === 'done'
-                                    ? 'text-success'
-                                    : 'text-danger'
-                            "
+                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
                         >
                             {{
-                                appointment.status === 'done'
-                                    ? t('patient.appointments.statuses.done')
-                                    : t('patient.appointments.statuses.cancelled')
+                                appointment.doctor_type
+                                    ? doctorTypeLabel(appointment.doctor_type)
+                                    : appointment.provider_name
                             }}
                         </p>
-                    </div>
-                </div>
-                <div class="flex gap-4 sm:gap-5">
-                    <Calendar
-                        class="mt-0.5 size-6 shrink-0 text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p class="text-base font-semibold leading-tight text-text-heading">
-                            {{ t('patient.appointments.labels.when') }}
+                        <p
+                            v-if="appointment.doctor_type"
+                            class="text-base font-medium leading-snug text-text-heading sm:text-lg"
+                        >
+                            {{ appointment.provider_name }}
                         </p>
                         <p
-                            class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
+                            v-if="!isOpen"
+                            :class="patientPageCardHeaderSummaryClass"
                         >
-                            {{ formatDateOnly(appointment.starts_at) }}
+                            {{ headerSummary }}
                         </p>
                     </div>
                 </div>
-                <div class="flex gap-4 sm:gap-5">
-                    <Clock
-                        class="mt-0.5 size-6 shrink-0 text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p class="text-base font-semibold leading-tight text-text-heading">
-                            {{ t('patient.appointments.labels.time') }}
-                        </p>
+
+                <PatientListCardDetailsToggle
+                    v-if="!isOpen"
+                    mode="expand"
+                    :label="t('patient.appointments.cardExpandHint')"
+                    :ariaLabel="t('patient.appointments.showDetails')"
+                />
+
+                <CollapsibleContent>
+                    <div class="space-y-6 pt-4">
+                        <div class="space-y-5">
+                            <div
+                                v-if="appointment.status === 'done' || appointment.status === 'cancelled'"
+                                class="flex gap-4 sm:gap-5"
+                            >
+                                <CheckCircle2
+                                    v-if="appointment.status === 'done'"
+                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <CircleX
+                                    v-else
+                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <div class="min-w-0 flex-1 space-y-1.5">
+                                    <p
+                                        class="text-base font-semibold leading-tight text-text-heading"
+                                    >
+                                        {{ t('patient.appointments.fields.status') }}
+                                    </p>
+                                    <p
+                                        class="text-lg font-medium leading-relaxed tracking-tight sm:text-xl sm:leading-snug"
+                                        :class="
+                                            appointment.status === 'done'
+                                                ? 'text-success'
+                                                : 'text-danger'
+                                        "
+                                    >
+                                        {{
+                                            appointment.status === 'done'
+                                                ? t('patient.appointments.statuses.done')
+                                                : t('patient.appointments.statuses.cancelled')
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 sm:gap-5">
+                                <Calendar
+                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <div class="min-w-0 flex-1 space-y-1.5">
+                                    <p class="text-base font-semibold leading-tight text-text-heading">
+                                        {{ t('patient.appointments.labels.when') }}
+                                    </p>
+                                    <p
+                                        class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
+                                    >
+                                        {{ formatDateOnly(appointment.starts_at) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 sm:gap-5">
+                                <Clock
+                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <div class="min-w-0 flex-1 space-y-1.5">
+                                    <p class="text-base font-semibold leading-tight text-text-heading">
+                                        {{ t('patient.appointments.labels.time') }}
+                                    </p>
+                                    <p
+                                        class="text-lg font-medium leading-relaxed text-text sm:text-xl sm:leading-snug"
+                                    >
+                                        {{ formatTimeOnly(appointment.starts_at) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 sm:gap-5">
+                                <MapPin
+                                    class="mt-1 size-6 shrink-0 self-start text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <div class="min-w-0 flex-1 space-y-1.5">
+                                    <p class="text-base font-semibold leading-tight text-text-heading">
+                                        {{ t('patient.appointments.labels.where') }}
+                                    </p>
+                                    <p
+                                        class="text-lg font-medium leading-relaxed text-text wrap-break-word text-pretty sm:text-xl sm:leading-snug"
+                                    >
+                                        {{ formatAppointmentAddress(appointment) }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                v-if="showTransportSection ?? true"
+                                class="flex gap-4 sm:gap-5"
+                            >
+                                <Car
+                                    class="mt-1 size-6 shrink-0 self-start text-primary"
+                                    :stroke-width="2"
+                                    aria-hidden="true"
+                                />
+                                <div class="min-w-0 flex-1 space-y-1.5">
+                                    <p class="text-base font-semibold leading-tight text-text-heading">
+                                        {{ t('patient.appointments.labels.transport') }}
+                                    </p>
+                                    <p
+                                        class="text-lg font-medium leading-relaxed sm:text-xl sm:leading-snug"
+                                        :class="
+                                            appointment.needs_transport
+                                                ? appointment.transport_status === 'accepted'
+                                                    ? 'text-text'
+                                                    : appointment.transport_status === 'declined'
+                                                        ? 'text-danger'
+                                                        : 'text-text-muted'
+                                                : 'text-text-muted'
+                                        "
+                                    >
+                                        {{
+                                            appointment.needs_transport
+                                                ? appointment.transport_status === 'accepted'
+                                                    ? t('patient.appointments.transport.acceptedBy', {
+                                                        name: appointment.transport_family?.name ?? '',
+                                                    })
+                                                    : appointment.transport_status === 'declined'
+                                                        ? t('patient.appointments.transport.declined')
+                                                        : t('patient.appointments.transport.requested')
+                                                : t('patient.appointments.transport.notNeeded')
+                                        }}
+                                    </p>
+                                    <slot name="transport-actions" />
+                                </div>
+                            </div>
+                        </div>
+
                         <p
-                            class="text-lg font-medium leading-relaxed text-text sm:text-xl sm:leading-snug"
+                            v-if="appointment.notes"
+                            class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
                         >
-                            {{ formatTimeOnly(appointment.starts_at) }}
+                            {{ appointment.notes }}
                         </p>
-                    </div>
-                </div>
-                <div class="flex gap-4 sm:gap-5">
-                    <MapPin
-                        class="mt-1 size-6 shrink-0 self-start text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p class="text-base font-semibold leading-tight text-text-heading">
-                            {{ t('patient.appointments.labels.where') }}
-                        </p>
-                        <p
-                            class="text-lg font-medium leading-relaxed text-text wrap-break-word text-pretty sm:text-xl sm:leading-snug"
+
+                        <div
+                            v-if="appointment.status === 'done' && appointment.doctor_visit_summary"
+                            class="space-y-2 border-l-[3px] border-success/50 py-0.5 pl-3.5"
                         >
-                            {{ formatAppointmentAddress(appointment) }}
-                        </p>
-                    </div>
-                </div>
-                <div
-                    v-if="showTransportSection ?? true"
-                    class="flex gap-4 sm:gap-5"
-                >
-                    <Car
-                        class="mt-1 size-6 shrink-0 self-start text-primary"
-                        :stroke-width="2"
-                        aria-hidden="true"
-                    />
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p class="text-base font-semibold leading-tight text-text-heading">
-                            {{ t('patient.appointments.labels.transport') }}
-                        </p>
-                        <p
-                            class="text-lg font-medium leading-relaxed sm:text-xl sm:leading-snug"
-                            :class="
-                                appointment.needs_transport
-                                    ? appointment.transport_status === 'accepted'
-                                        ? 'text-text'
-                                        : appointment.transport_status === 'declined'
-                                            ? 'text-danger'
-                                            : 'text-text-muted'
-                                    : 'text-text-muted'
-                            "
+                            <p class="text-base font-semibold leading-snug text-text-heading">
+                                {{ doneSummaryLabel ?? t('patient.appointments.labels.afterVisit') }}
+                            </p>
+                            <p class="text-base leading-relaxed text-text sm:text-lg">
+                                {{ appointment.doctor_visit_summary }}
+                            </p>
+                        </div>
+
+                        <div
+                            v-if="appointment.status === 'cancelled'"
+                            class="space-y-3 border-t border-border/70 pt-5"
                         >
-                            {{
-                                appointment.needs_transport
-                                    ? appointment.transport_status === 'accepted'
-                                        ? t('patient.appointments.transport.acceptedBy', {
-                                            name: appointment.transport_family?.name ?? '',
-                                        })
-                                        : appointment.transport_status === 'declined'
-                                            ? t('patient.appointments.transport.declined')
-                                            : t('patient.appointments.transport.requested')
-                                    : t('patient.appointments.transport.notNeeded')
-                            }}
-                        </p>
-                        <slot name="transport-actions" />
+                            <p
+                                class="border-l-[3px] border-text-muted/35 py-0.5 pl-3.5 text-base italic leading-relaxed text-text-muted"
+                            >
+                                {{ t('patient.appointments.doneToggle.cancelledNotice') }}
+                            </p>
+                            <p
+                                v-if="appointment.cancellation_reason"
+                                class="border-l-[3px] border-danger/40 py-0.5 pl-3.5 text-base leading-relaxed text-text"
+                            >
+                                <span class="font-semibold text-text-heading">
+                                    {{ t('patient.appointments.cancelDialog.savedReasonLabel') }}
+                                </span>
+                                {{ appointment.cancellation_reason }}
+                            </p>
+                        </div>
+
+                        <PatientListCardDetailsToggle
+                            mode="collapse"
+                            :label="t('patient.appointments.cardCollapseHint')"
+                            :ariaLabel="t('patient.appointments.hideDetails')"
+                        />
                     </div>
-                </div>
-            </div>
+                </CollapsibleContent>
 
-            <p
-                v-if="appointment.notes"
-                class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
-            >
-                {{ appointment.notes }}
-            </p>
-
-            <div
-                v-if="appointment.status === 'done' && appointment.doctor_visit_summary"
-                class="space-y-2 border-l-[3px] border-success/50 py-0.5 pl-3.5"
-            >
-                <p class="text-base font-semibold leading-snug text-text-heading">
-                    {{ doneSummaryLabel ?? t('patient.appointments.labels.afterVisit') }}
-                </p>
-                <p class="text-base leading-relaxed text-text sm:text-lg">
-                    {{ appointment.doctor_visit_summary }}
-                </p>
-            </div>
-
-            <AppointmentDoneToggle
-                v-if="
-                    (showDoneToggle ?? true) &&
-                        appointment.status !== 'cancelled' &&
-                        completeFormHref &&
-                        cancelFormHref
-                "
-                :model-value="doneDisplayed"
-                :disabled="isPatching"
-                :complete-form-href="completeFormHref"
-                :cancel-form-href="cancelFormHref"
-                @update:model-value="emit('update:done', $event)"
-            />
-
-            <div
-                v-else-if="appointment.status === 'cancelled'"
-                class="space-y-3 border-t border-border/70 pt-5"
-            >
-                <p
-                    class="border-l-[3px] border-text-muted/35 py-0.5 pl-3.5 text-base italic leading-relaxed text-text-muted"
-                >
-                    {{ t('patient.appointments.doneToggle.cancelledNotice') }}
-                </p>
-                <p
-                    v-if="appointment.cancellation_reason"
-                    class="border-l-[3px] border-danger/40 py-0.5 pl-3.5 text-base leading-relaxed text-text"
-                >
-                    <span class="font-semibold text-text-heading">
-                        {{ t('patient.appointments.cancelDialog.savedReasonLabel') }}
-                    </span>
-                    {{ appointment.cancellation_reason }}
-                </p>
-            </div>
+                <AppointmentDoneToggle
+                    v-if="showAppointmentDoneToggle"
+                    :class="patientPageCardFooterSectionClass"
+                    :model-value="doneDisplayed"
+                    :disabled="isPatching"
+                    :complete-form-href="completeFormHref!"
+                    :cancel-form-href="cancelFormHref!"
+                    @update:model-value="emit('update:done', $event)"
+                />
+            </Collapsible>
         </CardContent>
     </Card>
 </template>

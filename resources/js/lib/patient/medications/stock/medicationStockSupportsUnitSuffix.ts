@@ -1,14 +1,10 @@
 import type { MedicationDoseUnitValue } from '@/lib/types';
 
 export const MEDICATION_STOCK_UNIT_SUFFIX_DOSE_UNITS = [
-    'milligram',
-    'gram',
     'milliliter',
     'piece',
     'drop',
-    'injection',
     'unit',
-    'sachet',
 ] as const satisfies readonly MedicationDoseUnitValue[];
 
 export type MedicationStockUnitSuffixDoseUnit =

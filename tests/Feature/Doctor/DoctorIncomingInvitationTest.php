@@ -13,7 +13,6 @@ test('doctor patients page lists pending patient invitations for the doctor emai
     $patientUser = User::factory()->patient()->create();
     Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-incoming-'.uniqid('', true).'@example.com';
@@ -42,7 +41,6 @@ test('doctors can accept an incoming patient invitation from the patients page',
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-incoming-accept-'.uniqid('', true).'@example.com';
@@ -82,7 +80,6 @@ test('doctor patients page omits invitations for patients already linked', funct
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-incoming-linked-'.uniqid('', true).'@example.com';
@@ -113,7 +110,6 @@ test('doctors cannot accept an invitation sent to another email address', functi
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $this->actingAs($patientUser)->post(route('patient.doctors.invitations.store'), [
@@ -140,7 +136,6 @@ test('doctors cannot accept an invitation using a numeric id', function () {
     $patientUser = User::factory()->patient()->create();
     Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $invitedEmail = 'doctor-numeric-id-'.uniqid('', true).'@example.com';

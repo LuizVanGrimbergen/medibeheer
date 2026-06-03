@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Button } from '@/Components/ui/button';
 import PatientFamilyActionConfirmDialog from '@/Components/Patient/Family/PatientFamilyActionConfirmDialog.vue';
+import { Button } from '@/Components/ui/button';
 import { patientSoftDangerActionButtonClass } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 import { cn } from '@/lib/utils';
 

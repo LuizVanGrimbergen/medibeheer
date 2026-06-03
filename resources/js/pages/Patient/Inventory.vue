@@ -3,9 +3,10 @@ import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationInventoryStockCard from '@/Components/Patient/Inventory/form/MedicationInventoryStockCard.vue';
+import InventoryPageIntro from '@/Components/Patient/Inventory/InventoryPageIntro.vue';
+import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationInventoryListItems } from '@/lib/patient/inventory/medicationInventoryListSortRank';
 import type { PatientInventoryScreenProps } from '@/lib/patient/inventory/patientInventoryScreenProps';
@@ -27,15 +28,19 @@ const sortedInventoryMedications = computed((): MedicationListItem[] => {
 <template>
     <Head>
         <title>{{ t('patient.inventory.title') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.inventory.metaDescription')"
+        />
     </Head>
 
     <PatientLayout>
         <PatientPageShell :title="t('patient.inventory.listHeading')">
-            <section class="flex min-w-0 w-full flex-col space-y-5">
-            <h1 class="text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
-                {{ t('patient.inventory.listHeading') }}
-            </h1>
+            <InventoryPageIntro
+                :show-vacation-button="props.medications.meta.total > 0"
+            />
 
+            <section class="space-y-5">
             <ul
                 v-if="props.medications.data.length > 0"
                 class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"

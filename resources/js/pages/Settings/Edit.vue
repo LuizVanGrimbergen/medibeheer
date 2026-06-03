@@ -7,10 +7,10 @@ import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps, SecurityActivityPaginator } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import PatientMedicationRemindersForm from './Partials/PatientMedicationRemindersForm.vue';
 import PrivacyDataForm from './Partials/PrivacyDataForm.vue';
 import SecurityActivityLog from './Partials/SecurityActivityLog.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import PatientMedicationRemindersForm from './Partials/PatientMedicationRemindersForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
 
 type SettingsSection =

@@ -4,6 +4,11 @@ import { ClipboardList, Pill } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import {
+    patientPageActionsBarClass,
+    patientPageActionsGridClass,
+    patientPageIntroButtonClass,
+} from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<{
     canCreateMedication: boolean;
@@ -20,26 +25,18 @@ const hasActions = computed(
     () => props.canCreateMedication || props.hasActiveMedications,
 );
 
-const actionButtonClass =
-    'min-h-14 w-full touch-manipulation gap-2.5 px-6 font-body text-lg font-bold sm:px-8';
 </script>
 
 <template>
     <div
-        class="flex min-w-0 w-full flex-col gap-5 sm:flex-row sm:items-start sm:justify-between sm:gap-6"
+        v-if="hasActions"
+        :class="patientPageActionsBarClass"
     >
-        <h1 class="min-w-0 text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight">
-            {{ t('patient.medications.listHeading') }}
-        </h1>
-
-        <div
-            v-if="hasActions"
-            class="grid w-full shrink-0 grid-cols-1 gap-3 sm:ml-auto sm:w-max"
-        >
+        <div :class="patientPageActionsGridClass">
             <Button
                 v-if="canCreateMedication"
                 size="lg"
-                :class="actionButtonClass"
+                :class="patientPageIntroButtonClass"
                 type="button"
                 @click="emit('newMedicationClick')"
             >
@@ -55,7 +52,7 @@ const actionButtonClass =
                 as-child
                 variant="outline"
                 size="lg"
-                :class="actionButtonClass"
+                :class="patientPageIntroButtonClass"
             >
                 <Link :href="route('patient.medications.pharmacist-overview')">
                     <ClipboardList

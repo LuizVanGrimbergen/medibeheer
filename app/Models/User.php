@@ -43,6 +43,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_hash',
     ];
 
+    protected $attributes = [
+        'role' => null,
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if ($user->role === null) {
+                $user->role = UserRole::PATIENT;
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [

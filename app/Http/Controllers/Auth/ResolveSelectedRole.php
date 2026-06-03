@@ -15,6 +15,6 @@ class ResolveSelectedRole
             return null;
         }
 
-        return UserRole::tryFrom($role)?->value;
+        return UserRole::tryFromEncryptedTransport($role)?->value;
     }
 }

@@ -43,7 +43,7 @@ const { t } = useI18n();
                         :for="`${idPrefix}-street`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.appointments.fields.street') }}
+                        {{ t('patient.appointments.fields.street') }} <span class="text-danger">*</span>
                     </Label>
                     <Input
                         :id="`${idPrefix}-street`"
@@ -115,7 +115,7 @@ const { t } = useI18n();
                             :for="`${idPrefix}-postal-code`"
                             :class="patientFormLabelClass"
                         >
-                            {{ t('patient.appointments.fields.postalCode') }}
+                            {{ t('patient.appointments.fields.postalCode') }} <span class="text-danger">*</span>
                         </Label>
                         <Input
                             :id="`${idPrefix}-postal-code`"
@@ -152,7 +152,7 @@ const { t } = useI18n();
                             :for="`${idPrefix}-city`"
                             :class="patientFormLabelClass"
                         >
-                            {{ t('patient.appointments.fields.city') }}
+                            {{ t('patient.appointments.fields.city') }} <span class="text-danger">*</span>
                         </Label>
                         <Input
                             :id="`${idPrefix}-city`"

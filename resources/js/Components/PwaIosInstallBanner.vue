@@ -2,9 +2,9 @@
 import { usePage } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { PageProps } from '@/lib/types';
 import { Alert, AlertDescription, AlertTitle } from '@/Components/ui/alert';
 import { Button } from '@/Components/ui/button';
+import type { PageProps } from '@/lib/types';
 
 const dismissedStorageKey = 'medibeheer:pwa-ios-install-banner-dismissed';
 

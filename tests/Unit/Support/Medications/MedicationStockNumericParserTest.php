@@ -7,21 +7,19 @@ it('parses plain numeric stock', function () {
     $parser = new MedicationStockNumericParser;
 
     expect($parser->parse('30'))->toBe(30.0);
-    expect($parser->parse('3,5', MedicationDoseUnit::MILLIGRAM))->toBe(3.5);
+    expect($parser->parse('3,5', MedicationDoseUnit::PIECE))->toBe(3.5);
 });
 
-it('strips milligram and gram unit suffixes from stock', function () {
+it('strips unit suffixes from stock', function () {
     $parser = new MedicationStockNumericParser;
 
-    expect($parser->parse('200 mg', MedicationDoseUnit::MILLIGRAM))->toBe(200.0);
-    expect($parser->parse('200mg', MedicationDoseUnit::MILLIGRAM))->toBe(200.0);
-    expect($parser->parse('30 g', MedicationDoseUnit::GRAM))->toBe(30.0);
     expect($parser->parse('250 ml', MedicationDoseUnit::MILLILITER))->toBe(250.0);
     expect($parser->parse('30 stuks', MedicationDoseUnit::PIECE))->toBe(30.0);
+    expect($parser->parse('10 druppels', MedicationDoseUnit::DROP))->toBe(10.0);
 });
 
 it('returns null for invalid stock after stripping units', function () {
     $parser = new MedicationStockNumericParser;
 
-    expect($parser->parse('abc mg', MedicationDoseUnit::MILLIGRAM))->toBeNull();
+    expect($parser->parse('abc stuks', MedicationDoseUnit::PIECE))->toBeNull();
 });

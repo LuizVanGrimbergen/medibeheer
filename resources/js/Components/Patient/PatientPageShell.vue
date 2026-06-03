@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import {
+    patientPageIntroClass,
+    patientPageTitleClass,
+} from '@/lib/patient/patientPageTypography';
+
 withDefaults(
     defineProps<{
         title: string;
@@ -21,7 +26,7 @@ withDefaults(
             <h1
                 :class="
                     showVisibleTitle
-                        ? 'text-2xl font-bold leading-tight text-text-heading md:text-3xl'
+                        ? patientPageTitleClass
                         : 'sr-only'
                 "
             >
@@ -29,7 +34,7 @@ withDefaults(
             </h1>
             <p
                 v-if="intro !== ''"
-                class="text-base leading-relaxed text-text-muted md:text-lg"
+                :class="patientPageIntroClass"
             >
                 {{ intro }}
             </p>

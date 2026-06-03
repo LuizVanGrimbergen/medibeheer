@@ -1,7 +1,8 @@
 import {
-    medicationStockSupportsUnitSuffix,
-    type MedicationStockUnitSuffixDoseUnit,
+    medicationStockSupportsUnitSuffix
+    
 } from '@/lib/patient/medications/stock/medicationStockSupportsUnitSuffix';
+import type {MedicationStockUnitSuffixDoseUnit} from '@/lib/patient/medications/stock/medicationStockSupportsUnitSuffix';
 import { medicationStockUnitSuffixPattern } from '@/lib/patient/medications/stock/medicationStockUnitSuffixPattern';
 
 function stripKnownUnitSuffix(

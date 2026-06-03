@@ -1,6 +1,6 @@
+import { medicationUrgencyProgressPercent } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import type { MedicationSupplyEstimateQuality } from '@/lib/types';
 
-import { MEDICATION_SUPPLY_PROGRESS_FULL_DAYS } from './medicationSupplyDayThresholds';
 
 export function medicationStockProgressPercent(
     supplyEstimateDays: number | null,
@@ -10,8 +10,5 @@ export function medicationStockProgressPercent(
         return null;
     }
 
-    const days = Math.max(0, supplyEstimateDays);
-    const capped = Math.min(days, MEDICATION_SUPPLY_PROGRESS_FULL_DAYS);
-
-    return Math.round((capped / MEDICATION_SUPPLY_PROGRESS_FULL_DAYS) * 100);
+    return medicationUrgencyProgressPercent(supplyEstimateDays);
 }

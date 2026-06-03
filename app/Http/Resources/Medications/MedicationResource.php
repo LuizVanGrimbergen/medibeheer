@@ -40,6 +40,12 @@ class MedicationResource extends JsonResource
             'type_medication' => $this->type_medication->value,
             'strength' => filled($this->strength) ? (string) $this->strength : null,
             'note' => filled($this->note) ? (string) $this->note : null,
+            'prescription_expiry_date' => $this->relationLoaded('prescription')
+                ? $this->prescription?->prescription_expiry_date?->format('Y-m-d')
+                : null,
+            'stock_pieces_per_package' => filled($this->stock_pieces_per_package)
+                ? (int) $this->stock_pieces_per_package
+                : null,
             'schedules' => $this->relationLoaded('schedules')
                 ? MedicationScheduleResource::collection($this->schedules)->resolve()
                 : [],

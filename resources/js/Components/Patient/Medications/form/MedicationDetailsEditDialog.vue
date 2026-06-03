@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type {
-    MedicationCreateFormWithErrors,
-    MedicationFormWizardStep,
-} from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import { useMedicationEditDialog } from '@/Components/Patient/Medications/form/useMedicationEditDialog';
 import MedicationCreateSummaryStep from '@/Components/Patient/Medications/steps/MedicationCreateSummaryStep.vue';
 import MedicationDetailsStep from '@/Components/Patient/Medications/steps/MedicationDetailsStep.vue';
 import MedicationNoteStep from '@/Components/Patient/Medications/steps/MedicationNoteStep.vue';
@@ -24,8 +21,6 @@ import {
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
 import { cn } from '@/lib/utils';
 
-type MedicationEditDialogStep = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-
 const props = defineProps<{
     open: boolean;
     title: string;
@@ -44,47 +39,14 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const editingStep = ref<MedicationEditDialogStep>(0);
-
-watch(
-    () => props.open,
-    (open) => {
-        if (open) {
-            editingStep.value = 0;
-        }
+const { editingStep, handleSubmit, medicationEditSummaryGoToField } = useMedicationEditDialog({
+    open: () => props.open,
+    form: () => props.form,
+    idPrefix: () => props.idPrefix,
+    onSubmit: () => {
+        emit('submit');
     },
-);
-
-function medicationEditSummaryGoToField(
-    step: MedicationFormWizardStep,
-    focusElementIdSuffix?: string,
-): void {
-    if (props.processing) {
-        return;
-    }
-
-    if (step < 1 || step > 6) {
-        return;
-    }
-
-    editingStep.value = step as MedicationEditDialogStep;
-
-    void nextTick(() => {
-        const suffix =
-            focusElementIdSuffix !== undefined && focusElementIdSuffix.length > 0
-                ? focusElementIdSuffix
-                : 'name';
-
-        const el = document.getElementById(`${props.idPrefix}-${suffix}`);
-
-        if (el === null) {
-            return;
-        }
-
-        el.focus({ preventScroll: true });
-        el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    });
-}
+});
 
 const primaryButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
@@ -125,13 +87,19 @@ const secondaryButtonClass =
                 :id="props.formId"
                 class="flex min-h-0 flex-1 flex-col"
                 novalidate
-                @submit.prevent="emit('submit')"
+                @submit.prevent="handleSubmit"
             >
                 <div
                     class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] touch-pan-y"
                 >
                     <div class="space-y-3 md:space-y-3">
+                        <MedicationScheduleMealsAndFrequencyStep
+                            v-if="editingStep === 2"
+                            :form="props.form"
+                            :id-prefix="props.idPrefix"
+                        />
                         <Card
+                            v-else
                             class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
                         >
                             <CardContent class="p-0">
@@ -147,11 +115,6 @@ const secondaryButtonClass =
                                     />
                                     <MedicationDetailsStep
                                         v-else-if="editingStep === 1"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationScheduleMealsAndFrequencyStep
-                                        v-else-if="editingStep === 2"
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
                                     />

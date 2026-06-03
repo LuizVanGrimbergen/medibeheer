@@ -11,6 +11,7 @@ use App\Models\Family;
 use App\Models\FamilyInvitation;
 use App\Models\Medication;
 use App\Models\MedicationIntake;
+use App\Models\MedicationPrescription;
 use App\Models\MedicationSchedule;
 use App\Models\MedicationStock;
 use App\Models\Patient;
@@ -73,6 +74,7 @@ final class UserDataExportService
             'medications' => fn ($query) => $query->withTrashed()->with([
                 'schedules' => fn ($scheduleQuery) => $scheduleQuery->withTrashed()->with('weekdays'),
                 'stocks' => fn ($stockQuery) => $stockQuery->withTrashed(),
+                'prescriptions' => fn ($prescriptionQuery) => $prescriptionQuery->withTrashed(),
             ]),
             'medicationIntakes',
             'appointments',
@@ -83,7 +85,6 @@ final class UserDataExportService
         ]);
 
         return [
-            'streak_count' => $patient->streak_count,
             'created_at' => $patient->created_at?->toIso8601String(),
             'medications' => $patient->medications
                 ->map(fn (Medication $medication): array => $this->medicationPayload($medication))
@@ -130,6 +131,17 @@ final class UserDataExportService
             'type_medication' => $medication->type_medication?->value,
             'strength' => $medication->strength,
             'note' => $medication->note,
+            'prescriptions' => $medication->prescriptions
+                ->map(fn (MedicationPrescription $prescription): array => [
+                    'id' => $prescription->id,
+                    'prescription_expiry_date' => $prescription->prescription_expiry_date?->toDateString(),
+                    'pickup_status' => $prescription->pickup_status->value,
+                    'completed_at' => $prescription->completed_at?->toIso8601String(),
+                    'deleted_at' => $prescription->deleted_at?->toIso8601String(),
+                    'created_at' => $prescription->created_at?->toIso8601String(),
+                ])
+                ->values()
+                ->all(),
             'deleted_at' => $medication->deleted_at?->toIso8601String(),
             'created_at' => $medication->created_at?->toIso8601String(),
             'schedules' => $medication->schedules
@@ -203,6 +215,7 @@ final class UserDataExportService
             'mood_score' => $checkin->mood_score->value,
             'symptoms' => $checkin->symptomValues(),
             'note' => $checkin->note,
+            'encouragement_message' => $checkin->encouragement_message,
             'created_at' => $checkin->created_at?->toIso8601String(),
         ];
     }

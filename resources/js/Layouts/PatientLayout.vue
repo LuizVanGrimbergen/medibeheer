@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Calendar, House, Package, Pill, UserRound } from 'lucide-vue-next';
+import { Calendar, FileText, House, Package, Pill, UserRound } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { ComputedRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientFlashActionSuccessScreen from '@/Components/Patient/PatientFlashActionSuccessScreen.vue';
 import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps } from '@/lib/types';
@@ -38,12 +39,14 @@ type PatientNavItem = {
     routeName:
         | 'patient.dashboard'
         | 'patient.medications'
+        | 'patient.prescriptions'
         | 'patient.inventory'
         | 'patient.appointments'
         | 'patient.family';
     labelKey:
         | 'patient.navigation.home'
         | 'patient.navigation.medications'
+        | 'patient.navigation.prescriptions'
         | 'patient.navigation.inventory'
         | 'patient.navigation.appointments'
         | 'patient.navigation.family';
@@ -72,6 +75,11 @@ const patientNavItems: readonly PatientNavItem[] = [
         routeName: 'patient.medications',
         labelKey: 'patient.navigation.medications',
         icon: Pill,
+    },
+    {
+        routeName: 'patient.prescriptions',
+        labelKey: 'patient.navigation.prescriptions',
+        icon: FileText,
     },
     {
         routeName: 'patient.inventory',
@@ -126,6 +134,8 @@ const footerLabelClass = computed(() =>
 
 <template>
     <AuthenticatedLayout>
+        <PatientFlashActionSuccessScreen />
+
         <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"

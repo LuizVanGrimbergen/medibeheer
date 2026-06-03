@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { CheckCircle2, CircleX } from 'lucide-vue-next';
+import type { HTMLAttributes } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
 import { Button } from '@/Components/ui/button';
+import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     modelValue: boolean;
     disabled: boolean;
     completeFormHref: string;
     cancelFormHref: string;
+    class?: HTMLAttributes['class'];
 }>();
 
 const emit = defineEmits<{
@@ -27,11 +30,7 @@ function revert(): void {
 </script>
 
 <template>
-    <fieldset class="m-0 min-w-0 w-full border-0 border-t border-border/70 p-0 pt-5">
-        <legend class="mb-3 w-full px-0 text-base font-semibold leading-snug text-text-heading">
-            {{ t('patient.appointments.doneToggle.groupLabel') }}
-        </legend>
-
+    <div :class="cn('min-w-0 w-full', props.class)">
         <div v-if="!modelValue">
             <AppointmentPairActionButtons
                 :disabled="disabled"
@@ -79,5 +78,5 @@ function revert(): void {
                 {{ t('patient.appointments.doneToggle.markUndone') }}
             </Button>
         </div>
-    </fieldset>
+    </div>
 </template>

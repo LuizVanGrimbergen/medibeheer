@@ -12,10 +12,11 @@ import {
     applyMedicationScheduleOngoingPreset,
     detectMedicationScheduleDurationPreset,
     MEDICATION_SCHEDULE_DURATION_ONGOING_KEY,
-    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS,
-    type MedicationScheduleDurationPresetKey,
-    type MedicationScheduleDurationTimedPresetKey,
+    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS
+    
+    
 } from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
+import type {MedicationScheduleDurationPresetKey, MedicationScheduleDurationTimedPresetKey} from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,
@@ -116,7 +117,7 @@ watch(
                 :id="`${idPrefix}-schedule-duration-intake-period`"
                 :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
             >
-                {{ t('patient.medications.fields.intakePeriod') }}
+                {{ t('patient.medications.fields.intakePeriod') }} <span class="text-danger">*</span>
             </legend>
             <div
                 :class="

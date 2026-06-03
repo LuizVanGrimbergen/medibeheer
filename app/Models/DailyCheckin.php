@@ -22,6 +22,7 @@ class DailyCheckin extends Model
         'checkin_date',
         'mood_score',
         'note',
+        'encouragement_message',
     ];
 
     protected function casts(): array
@@ -30,6 +31,7 @@ class DailyCheckin extends Model
             'checkin_date' => 'date',
             'mood_score' => DailyMoodScore::class,
             'note' => 'encrypted',
+            'encouragement_message' => 'encrypted',
         ];
     }
 

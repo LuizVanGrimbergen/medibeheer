@@ -10,6 +10,7 @@ export function blankMedicationCreateForm(): MedicationCreateFormState {
         strength_amount: '',
         strength_unit: '',
         current_stock: '',
+        stock_pieces_per_package: '',
         note: '',
         schedule: {
             meal_timing: '',

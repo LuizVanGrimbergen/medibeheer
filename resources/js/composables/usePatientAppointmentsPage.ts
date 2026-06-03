@@ -19,6 +19,10 @@ export function usePatientAppointmentsPage(props: PatientAppointmentsScreenProps
 
     return {
         doctorTypeOptions: formDialogs.doctorTypeOptions,
+        createSuccessOpen: formDialogs.createSuccessOpen,
+        createSuccessTitle: formDialogs.createSuccessTitle,
+        createSuccessMessage: formDialogs.createSuccessMessage,
+        createSuccessDetails: formDialogs.createSuccessDetails,
         createDialogOpen: formDialogs.createDialogOpen,
         form: formDialogs.createForm,
         editForm: formDialogs.editForm,

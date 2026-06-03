@@ -22,7 +22,6 @@ test('linked family members can view the patient profile read only', function ()
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $familyUser = User::factory()->familyMember()->create();
@@ -39,7 +38,6 @@ test('family members without a patient link cannot view that patient profile', f
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $familyUser = User::factory()->familyMember()->create();
