@@ -18,7 +18,6 @@ trait AuthorizesPatientProfile
         if ($patient === null) {
             $patient = Patient::query()->firstOrCreate(
                 ['user_id' => $user->id],
-                ['streak_count' => 0],
             );
         }
 

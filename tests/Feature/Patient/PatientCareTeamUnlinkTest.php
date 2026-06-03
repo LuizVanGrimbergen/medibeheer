@@ -9,7 +9,6 @@ test('patients can unlink a linked family member', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $familyUser = User::factory()->familyMember()->create();
@@ -29,7 +28,6 @@ test('patients can unlink a linked doctor', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $doctorUser = User::factory()->doctor()->create();
@@ -49,13 +47,11 @@ test('patients cannot unlink a family member linked to another patient', functio
     $patientUserA = User::factory()->patient()->create();
     $patientA = Patient::query()->firstOrCreate(
         ['user_id' => $patientUserA->id],
-        ['streak_count' => 0],
     );
 
     $patientUserB = User::factory()->patient()->create();
     $patientB = Patient::query()->firstOrCreate(
         ['user_id' => $patientUserB->id],
-        ['streak_count' => 0],
     );
 
     $familyUser = User::factory()->familyMember()->create();
@@ -74,7 +70,6 @@ test('patient family page includes linked family members and doctors with unlink
     $patientUser = User::factory()->patient()->create();
     $patient = Patient::query()->firstOrCreate(
         ['user_id' => $patientUser->id],
-        ['streak_count' => 0],
     );
 
     $familyUser = User::factory()->familyMember()->create(['name' => 'Linked Family']);

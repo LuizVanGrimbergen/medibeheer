@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->integer('streak_count')->default(0);
             $table->timestamps();
 
             $table->unique('user_id');
