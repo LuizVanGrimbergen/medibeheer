@@ -1,21 +1,16 @@
+import type { GsapTween } from '@/lib/motion/gsapMotion';
 import { animateProgressWidth } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    nextTick,
-    onMounted,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapProgressIndicator(
     indicatorRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     modelValue: Ref<number | null | undefined>,
 ): void {
-    let tween: ReturnType<typeof animateProgressWidth> | null = null;
+    let tween: GsapTween | null = null;
 
-    const applyWidth = (): void => {
+    const applyWidth = async (): Promise<void> => {
         const element = resolveGsapTargetElement(indicatorRef.value);
 
         if (element === null) {
@@ -23,15 +18,19 @@ export function useGsapProgressIndicator(
         }
 
         tween?.kill();
-        tween = animateProgressWidth(element, modelValue.value ?? 0);
+        tween = await animateProgressWidth(element, modelValue.value ?? 0);
     };
 
     watch(modelValue, () => {
-        void nextTick(applyWidth);
+        void nextTick(() => {
+            void applyWidth();
+        });
     });
 
     onMounted(() => {
-        void nextTick(applyWidth);
+        void nextTick(() => {
+            void applyWidth();
+        });
     });
 
     onUnmounted(() => {
