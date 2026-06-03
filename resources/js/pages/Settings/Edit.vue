@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
+import { Button } from '@/Components/ui/button';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import type { PageProps, SecurityActivityPaginator } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
@@ -34,6 +35,37 @@ const sectionKeys = new Set<SettingsSection>([
 ]);
 
 const isPatient = computed(() => page.props.auth.user?.role === 'patient');
+const isFamilyMember = computed(
+    () => page.props.auth.user?.role === 'family_member',
+);
+
+const settingsBackHref = computed(() => {
+    if (isPatient.value) {
+        return route('patient.dashboard');
+    }
+
+    if (isFamilyMember.value) {
+        return route('family.overview');
+    }
+
+    if (page.props.auth.user?.role === 'doctor') {
+        return route('doctor.dashboard');
+    }
+
+    return route('home');
+});
+
+const settingsBackLabelKey = computed(() => {
+    if (isPatient.value) {
+        return 'patient.navigation.home';
+    }
+
+    if (isFamilyMember.value) {
+        return 'family.navigation.overview';
+    }
+
+    return 'doctor.navigation.home';
+});
 const showMedicationRemindersSettings = computed(
     () => isPatient.value && page.props.webpush !== undefined,
 );
@@ -53,7 +85,6 @@ const selectedSection = computed<SettingsSection | null>(() => {
 });
 
 const userName = computed(() => page.props.auth.user?.name ?? '');
-const userEmail = computed(() => page.props.auth.user?.email ?? '');
 const userInitial = computed(() => userName.value.charAt(0).toUpperCase());
 
 const props = defineProps<{
@@ -76,6 +107,15 @@ const props = defineProps<{
                 <div
                     class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8"
                 >
+                    <Link
+                        v-if="isPatient || isFamilyMember"
+                        :href="settingsBackHref"
+                        class="text-primary mb-4 inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition hover:opacity-80 md:hidden"
+                    >
+                        <ArrowLeft :size="18" />
+                        <span>{{ t(settingsBackLabelKey) }}</span>
+                    </Link>
+
                     <div v-if="selectedSection === null" class="space-y-4">
                         <SettingsWidgetLink
                             :href="
@@ -94,9 +134,6 @@ const props = defineProps<{
                             </template>
                             <p class="text-primary text-xl font-bold">
                                 {{ userName }}
-                            </p>
-                            <p class="text-text-muted text-base">
-                                {{ userEmail }}
                             </p>
                         </SettingsWidgetLink>
 
@@ -191,7 +228,7 @@ const props = defineProps<{
                         </Link>
 
                         <div
-                            class="border-border bg-surface rounded-lg border p-4 shadow-sm sm:p-8"
+                            class="border-border bg-surface rounded-2xl border p-4 shadow-sm sm:p-6"
                         >
                             <UpdateProfileInformationForm
                                 v-if="selectedSection === 'information'"
@@ -229,15 +266,20 @@ const props = defineProps<{
                         </div>
                     </div>
 
-                    <div class="mt-auto flex justify-center pt-8">
-                        <Link
-                            :href="route('logout')"
-                            method="post"
-                            as="button"
-                            class="border-border bg-surface text-danger hover:bg-surface-hover inline-flex items-center rounded-md border px-5 py-2.5 text-sm font-semibold transition duration-150 ease-in-out focus:outline-none"
+                    <div class="mt-auto pt-8">
+                        <Button
+                            as-child
+                            variant="outline"
+                            class="h-auto min-h-12 w-full touch-manipulation text-danger hover:bg-surface-hover hover:text-danger sm:min-h-14"
                         >
-                            {{ t('app.navigation.logout') }}
-                        </Link>
+                            <Link
+                                :href="route('logout')"
+                                method="post"
+                                as="button"
+                            >
+                                {{ t('app.navigation.logout') }}
+                            </Link>
+                        </Button>
                     </div>
                 </div>
             </div>
