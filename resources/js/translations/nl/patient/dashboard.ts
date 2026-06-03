@@ -75,6 +75,8 @@ export default {
         taken: 'Ingenomen',
         takenSection: {
             title: 'Ingenomen',
+            cardLead: 'Uw innames van vandaag ({count})',
+            rowAria: '{name}, ingenomen om {time}',
         },
         intakeCard: {
             dose: 'Dosis',
