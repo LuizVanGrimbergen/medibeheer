@@ -3,8 +3,9 @@
 namespace App\Enums;
 
 use App\Enums\Concerns\EncryptEnum;
+use Illuminate\Contracts\Database\Eloquent\Castable;
 
-enum UserRole: string
+enum UserRole: string implements Castable
 {
     use EncryptEnum;
 
