@@ -1,22 +1,17 @@
+import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateSuccessFlashOverlay,
     resetSuccessFlashOverlay,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import {
-    nextTick,
-    onMounted,
-    onUnmounted,
-    watch,
-    type ComponentPublicInstance,
-    type Ref,
-} from 'vue';
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapSuccessFlash(
     overlayRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     shouldFlash: Ref<boolean>,
 ): void {
-    let tween: ReturnType<typeof animateSuccessFlashOverlay> | null = null;
+    let tween: GsapTween | null = null;
     let retryFrameId: number | null = null;
 
     const cancelRetry = (): void => {
@@ -28,7 +23,7 @@ export function useGsapSuccessFlash(
         retryFrameId = null;
     };
 
-    const applyAnimation = (): boolean => {
+    const applyAnimation = async (): Promise<boolean> => {
         const element = resolveGsapTargetElement(overlayRef.value);
 
         if (element === null) {
@@ -36,7 +31,7 @@ export function useGsapSuccessFlash(
         }
 
         tween?.kill();
-        tween = animateSuccessFlashOverlay(element);
+        tween = await animateSuccessFlashOverlay(element);
 
         return true;
     };
@@ -46,13 +41,13 @@ export function useGsapSuccessFlash(
 
         await nextTick();
 
-        if (applyAnimation()) {
+        if (await applyAnimation()) {
             return;
         }
 
         retryFrameId = globalThis.requestAnimationFrame(() => {
             retryFrameId = null;
-            applyAnimation();
+            void applyAnimation();
         });
     };
 
