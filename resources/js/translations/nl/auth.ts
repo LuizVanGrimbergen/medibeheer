@@ -1,19 +1,22 @@
 export default {
     common: {
+        roleSelectorHint: 'Kies hieronder uw rol',
         roles: {
-            patient: 'Patient',
+            patient: 'Gebruiker',
             doctor: 'Zorgverlener',
-            doctorSelector: 'Monitor uw patiënten',
             family_member: 'Familie',
-            familyMemberSelector: 'Ondersteun uw dierbare',
         },
     },
     login: {
         metaTitle: 'Log in',
         heroTitlePrefix: 'Samen zorgen, altijd verbonden met',
         heroSubtitle: 'Log in om door te gaan naar uw dashboard',
-        roleNotice: 'Beheer uw medicatie en afspraken.',
-        roleRequired: 'Kies eerst een rol om in te loggen.',
+        roleNotices: {
+            patient: 'Uw medicatie en afspraken op één plek.',
+            doctor: 'Uw patiënten en hun medicatie in één overzicht.',
+            family_member: 'Help uw familielid met medicatie en afspraken.',
+        },
+        roleRequired: 'Kies eerst uw rol.',
         emailLabel: 'E-mailadres',
         emailPlaceholder: "uw{'@'}email.be",
         pwdLabel: `Wacht${'woord'}`,
@@ -29,7 +32,7 @@ export default {
         title: 'aanmaken',
         subtitle: 'Registreer om door te gaan naar uw dashboard',
         roleNotice: 'U registreert als {role}.',
-        roleRequired: 'Kies eerst een rol om te registreren.',
+        roleRequired: 'Kies eerst uw rol.',
         nameLabel: 'Naam',
         namePlaceholder: 'Uw naam',
         emailLabel: 'E-mailadres',
