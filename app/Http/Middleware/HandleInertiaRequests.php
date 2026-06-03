@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use App\Support\FamilyDashboardState;
+use App\Support\PatientNavigationState;
 use App\Support\Seo;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -74,6 +75,8 @@ class HandleInertiaRequests extends Middleware
                     ->where('endpoint', 'not like', '%push.example.test%')
                     ->exists(),
             ];
+
+            $shared['patient_navigation'] = fn (): array => PatientNavigationState::inertiaPayload($request);
         }
 
         return $shared;
