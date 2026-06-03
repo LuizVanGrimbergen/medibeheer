@@ -16,7 +16,11 @@ defineProps<{
 
 <template>
     <div class="space-y-2">
-        <dl :class="metricGridClass ?? inventoryVacationCalculationMetricGridClass">
+        <dl
+            :class="
+                metricGridClass ?? inventoryVacationCalculationMetricGridClass
+            "
+        >
             <InventoryVacationMetricBox
                 :label="neededLabel"
                 :value="neededValue"
@@ -30,7 +34,7 @@ defineProps<{
                 :value="pickupValue"
             />
         </dl>
-        <p class="text-sm leading-relaxed text-text-muted sm:text-base">
+        <p class="text-text-muted text-sm leading-relaxed sm:text-base">
             {{ formulaText }}
         </p>
     </div>

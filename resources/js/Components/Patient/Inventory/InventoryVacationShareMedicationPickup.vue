@@ -29,7 +29,7 @@ const totalIconWrapClass = medicationStockCurrentStockIconWrapClass(null);
                     {{ item.primaryLabel }}
                 </p>
                 <p
-                    class="mt-1 text-2xl font-bold tabular-nums leading-none text-text-heading"
+                    class="text-text-heading mt-1 text-2xl leading-none font-bold tabular-nums"
                 >
                     {{ item.primaryValue }}
                 </p>
@@ -39,36 +39,32 @@ const totalIconWrapClass = medicationStockCurrentStockIconWrapClass(null);
                     {{ item.secondaryLabel }}
                 </p>
                 <p
-                    class="mt-1 text-2xl font-bold tabular-nums leading-none text-text-heading"
+                    class="text-text-heading mt-1 text-2xl leading-none font-bold tabular-nums"
                 >
                     {{ item.secondaryValue }}
                 </p>
             </div>
         </div>
 
-        <div
-            v-if="item.totalNumeric !== null"
-            :class="totalPanelClass"
-        >
+        <div v-if="item.totalNumeric !== null" :class="totalPanelClass">
             <div :class="totalIconWrapClass">
-                <Layers
-                    class="size-5"
-                    aria-hidden="true"
-                />
+                <Layers class="size-5" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class="text-sm font-semibold leading-snug text-text-heading">
+                <span
+                    class="text-text-heading text-sm leading-snug font-semibold"
+                >
                     {{ item.totalLabel }}
                 </span>
                 <div class="flex items-baseline gap-2">
                     <span
-                        class="text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading"
+                        class="text-text-heading text-2xl leading-none font-bold tracking-tight tabular-nums"
                     >
                         {{ item.totalNumeric }}
                     </span>
                     <span
                         v-if="item.totalUnitChip !== null"
-                        class="text-lg font-semibold text-text-heading"
+                        class="text-text-heading text-lg font-semibold"
                     >
                         {{ item.totalUnitChip }}
                     </span>

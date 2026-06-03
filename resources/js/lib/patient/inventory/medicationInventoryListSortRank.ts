@@ -2,7 +2,9 @@ import { medicationListVisualTone } from '@/lib/patient/inventory/medicationList
 import type { MedicationListItem } from '@/lib/types';
 
 /** Lower rank sorts first: 0 critical, 1 warning, 2 safe, 3 missing tone (e.g. invalid stock). */
-export function medicationInventoryListSortRank(medication: MedicationListItem): number {
+export function medicationInventoryListSortRank(
+    medication: MedicationListItem,
+): number {
     const tone = medicationListVisualTone(medication);
 
     if (tone === 'critical') {
@@ -21,8 +23,10 @@ export function medicationInventoryListSortRank(medication: MedicationListItem):
 }
 
 function hasApproxSupplyDays(medication: MedicationListItem): boolean {
-    return medication.supply_estimate_quality === 'approx'
-        && medication.supply_estimate_days !== null;
+    return (
+        medication.supply_estimate_quality === 'approx' &&
+        medication.supply_estimate_days !== null
+    );
 }
 
 /** Sort by remaining supply days (ascending), then visual tone, then name. Unknown estimates last. */
@@ -41,7 +45,9 @@ export function compareMedicationInventoryListItems(
             return dayA - dayB;
         }
 
-        const rankDiff = medicationInventoryListSortRank(a) - medicationInventoryListSortRank(b);
+        const rankDiff =
+            medicationInventoryListSortRank(a) -
+            medicationInventoryListSortRank(b);
 
         if (rankDiff !== 0) {
             return rankDiff;
@@ -58,7 +64,8 @@ export function compareMedicationInventoryListItems(
         return 1;
     }
 
-    const rankDiff = medicationInventoryListSortRank(a) - medicationInventoryListSortRank(b);
+    const rankDiff =
+        medicationInventoryListSortRank(a) - medicationInventoryListSortRank(b);
 
     if (rankDiff !== 0) {
         return rankDiff;

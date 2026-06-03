@@ -40,7 +40,7 @@ const statusLine = computed((): string => {
 
     <p
         v-else
-        class="text-lg font-semibold leading-relaxed text-text-heading sm:text-xl"
+        class="text-text-heading text-lg leading-relaxed font-semibold sm:text-xl"
     >
         {{ statusLine }}
     </p>

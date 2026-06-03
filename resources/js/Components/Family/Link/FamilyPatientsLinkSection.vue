@@ -44,23 +44,17 @@ const collapsedSummary = computed((): string => {
             <Users class="size-5" />
         </template>
 
-        <ul
-            v-if="hasPatients"
-            class="flex flex-col gap-2"
-        >
+        <ul v-if="hasPatients" class="flex flex-col gap-2">
             <li
                 v-for="patient in patients"
                 :key="patient.id"
-                class="rounded-xl border border-border bg-surface-2/50 px-4 py-3 text-base font-semibold text-text-heading"
+                class="border-border bg-surface-2/50 text-text-heading rounded-xl border px-4 py-3 text-base font-semibold"
             >
                 {{ patient.name }}
             </li>
         </ul>
 
-        <p
-            v-else
-            class="text-sm leading-relaxed text-text-muted"
-        >
+        <p v-else class="text-text-muted text-sm leading-relaxed">
             {{ t('family.link.patientsEmpty') }}
         </p>
     </FamilyOverviewCollapsibleSection>

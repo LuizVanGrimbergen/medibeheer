@@ -4,7 +4,10 @@ type LinkedFamily = {
     id: number;
 };
 
-function utcIsoToLocalDateAndTime(isoInstant: string): { date: string; time: string } {
+function utcIsoToLocalDateAndTime(isoInstant: string): {
+    date: string;
+    time: string;
+} {
     const parsed = new Date(isoInstant);
 
     if (Number.isNaN(parsed.getTime())) {
@@ -55,11 +58,14 @@ export function patientAppointmentToEditFormState(
     transport_family_ids: number[];
     status: PatientAppointment['status'];
 } {
-    const { date: startsAtDate, time: startsAtTime } = utcIsoToLocalDateAndTime(appointment.starts_at);
+    const { date: startsAtDate, time: startsAtTime } = utcIsoToLocalDateAndTime(
+        appointment.starts_at,
+    );
 
-    const needsTransport = linkedFamilies.length === 0
-        ? false
-        : (appointment.needs_transport ?? false);
+    const needsTransport =
+        linkedFamilies.length === 0
+            ? false
+            : (appointment.needs_transport ?? false);
 
     return {
         doctor_type: appointment.doctor_type,
@@ -72,7 +78,10 @@ export function patientAppointmentToEditFormState(
         starts_at_time: startsAtTime,
         notes: appointment.notes ?? '',
         needs_transport: needsTransport,
-        transport_family_ids: resolveTransportFamilyIdsForEdit(appointment, linkedFamilies),
+        transport_family_ids: resolveTransportFamilyIdsForEdit(
+            appointment,
+            linkedFamilies,
+        ),
         status: appointment.status,
     };
 }

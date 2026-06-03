@@ -48,25 +48,32 @@ function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
             <UserPlus class="size-5" />
         </template>
 
-        <p class="text-sm leading-relaxed text-text-muted">
+        <p class="text-text-muted text-sm leading-relaxed">
             {{ t('doctor.patients.incomingIntro') }}
         </p>
 
-        <ul
-            v-if="hasInvitations"
-            class="flex flex-col gap-3"
-        >
+        <ul v-if="hasInvitations" class="flex flex-col gap-3">
             <li
                 v-for="invitation in props.invitations"
                 :key="invitation.public_id"
-                class="flex flex-col gap-3 rounded-xl border border-border bg-surface-2/50 p-4 sm:flex-row sm:items-center sm:justify-between"
+                class="border-border bg-surface-2/50 flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between"
             >
                 <div class="min-w-0">
-                    <p class="text-base font-semibold text-text-heading">
-                        {{ t('doctor.patients.incomingFrom', { name: invitation.patient_name }) }}
+                    <p class="text-text-heading text-base font-semibold">
+                        {{
+                            t('doctor.patients.incomingFrom', {
+                                name: invitation.patient_name,
+                            })
+                        }}
                     </p>
-                    <p class="mt-1 text-sm text-text-muted">
-                        {{ t('doctor.patients.incomingExpires', { date: formatCareTeamExpiry(invitation.expires_at) }) }}
+                    <p class="text-text-muted mt-1 text-sm">
+                        {{
+                            t('doctor.patients.incomingExpires', {
+                                date: formatCareTeamExpiry(
+                                    invitation.expires_at,
+                                ),
+                            })
+                        }}
                     </p>
                 </div>
 
@@ -80,10 +87,7 @@ function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
             </li>
         </ul>
 
-        <p
-            v-else
-            class="text-sm leading-relaxed text-text-muted"
-        >
+        <p v-else class="text-text-muted text-sm leading-relaxed">
             {{ t('doctor.patients.incomingEmpty') }}
         </p>
     </DoctorCollapsibleSection>

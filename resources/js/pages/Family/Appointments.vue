@@ -14,9 +14,7 @@ import {
     setAppointmentViewFromToggle,
 } from '@/composables/useFamilyAppointmentsActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
-import type {
-    FamilyAppointmentsScreenProps,
-} from '@/lib/family/appointments/familyAppointmentsScreenProps';
+import type { FamilyAppointmentsScreenProps } from '@/lib/family/appointments/familyAppointmentsScreenProps';
 import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
 
 const props = defineProps<FamilyAppointmentsScreenProps>();
@@ -51,7 +49,7 @@ function scrollToDeepLinkedAppointment(): void {
 
     const id = Number(appointmentId);
 
-    if (! props.appointments.data.some((appointment) => appointment.id === id)) {
+    if (!props.appointments.data.some((appointment) => appointment.id === id)) {
         return;
     }
 
@@ -82,9 +80,7 @@ watch(
             :family="props.family"
             :show-active-patient="props.family.has_linked_patient"
         >
-            <div
-                v-if="props.family.has_linked_patient"
-            >
+            <div v-if="props.family.has_linked_patient">
                 <SegmentedToggle
                     :model-value="props.appointment_view"
                     :options="[
@@ -105,7 +101,7 @@ watch(
 
             <p
                 v-if="!props.family.has_linked_patient"
-                class="max-w-prose text-sm leading-relaxed text-text-muted"
+                class="text-text-muted max-w-prose text-sm leading-relaxed"
             >
                 {{ t('family.appointments.notLinked') }}
             </p>
@@ -114,7 +110,7 @@ watch(
                 v-else-if="props.appointments.data.length === 0"
                 class="border-border"
             >
-                <CardContent class="py-10 text-sm text-text-muted">
+                <CardContent class="text-text-muted py-10 text-sm">
                     {{
                         props.appointment_view === 'planned'
                             ? t('family.appointments.emptyPlanned')
@@ -123,10 +119,7 @@ watch(
                 </CardContent>
             </Card>
 
-            <div
-                v-else
-                class="space-y-4"
-            >
+            <div v-else class="space-y-4">
                 <div
                     v-for="appointment in props.appointments.data"
                     :key="appointment.id"
@@ -146,8 +139,10 @@ watch(
                             needs_transport: appointment.needs_transport,
                             transport_family: appointment.transport_family,
                             transport_status: appointment.transport_status,
-                            doctor_visit_summary: appointment.doctor_visit_summary,
-                            cancellation_reason: appointment.cancellation_reason,
+                            doctor_visit_summary:
+                                appointment.doctor_visit_summary,
+                            cancellation_reason:
+                                appointment.cancellation_reason,
                             status: appointment.status,
                         }"
                         :done-displayed="appointment.status === 'done'"
@@ -155,33 +150,52 @@ watch(
                         :show-actions="false"
                         :show-done-toggle="false"
                         :show-transport-section="true"
-                        :done-summary-label="t('family.appointments.doneSummaryLabel')"
+                        :done-summary-label="
+                            t('family.appointments.doneSummaryLabel')
+                        "
                     >
                         <template #transport-actions>
                             <div
-                                v-if="appointment.transport_invitation?.accept_url && appointment.status === 'scheduled'"
+                                v-if="
+                                    appointment.transport_invitation
+                                        ?.accept_url &&
+                                    appointment.status === 'scheduled'
+                                "
                                 class="pt-1"
                             >
                                 <AppointmentPairActionButtons
                                     :show-secondary="
-                                        Boolean(appointment.transport_invitation.decline_url)
+                                        Boolean(
+                                            appointment.transport_invitation
+                                                .decline_url,
+                                        )
                                     "
                                     @primary-click="
                                         acceptTransport(
-                                            appointment.transport_invitation.accept_url,
+                                            appointment.transport_invitation
+                                                .accept_url,
                                         )
                                     "
                                     @secondary-click="
                                         declineTransport(
-                                            appointment.transport_invitation.decline_url,
+                                            appointment.transport_invitation
+                                                .decline_url,
                                         )
                                     "
                                 >
                                     <template #primary>
-                                        {{ t('family.appointments.acceptTransport') }}
+                                        {{
+                                            t(
+                                                'family.appointments.acceptTransport',
+                                            )
+                                        }}
                                     </template>
                                     <template #secondary>
-                                        {{ t('family.appointments.declineTransport') }}
+                                        {{
+                                            t(
+                                                'family.appointments.declineTransport',
+                                            )
+                                        }}
                                     </template>
                                 </AppointmentPairActionButtons>
                             </div>

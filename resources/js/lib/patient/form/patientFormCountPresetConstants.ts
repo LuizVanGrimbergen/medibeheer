@@ -4,7 +4,9 @@ export type PatientFormCountPresetValue =
     (typeof PATIENT_FORM_COUNT_PRESET_VALUES)[number];
 
 export function isPatientFormCountPresetValue(count: number): boolean {
-    return (PATIENT_FORM_COUNT_PRESET_VALUES as readonly number[]).includes(count);
+    return (PATIENT_FORM_COUNT_PRESET_VALUES as readonly number[]).includes(
+        count,
+    );
 }
 
 export function patientFormCountCustomOptions(

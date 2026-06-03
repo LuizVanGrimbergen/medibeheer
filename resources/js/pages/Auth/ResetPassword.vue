@@ -47,26 +47,33 @@ const submit = () => {
     >
         <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="password"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('auth.resetPwd.pwdLabel') }}
                 </Label>
                 <div
-                    class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
+                    class="border-border bg-surface focus-within:ring-focus/25 mt-1 overflow-hidden rounded-xl border focus-within:ring-2"
                 >
                     <div class="relative">
                         <Input
                             id="password"
                             v-model="form.password"
                             :type="showPassword ? 'text' : 'password'"
-                            :autocomplete="showPassword ? 'off' : 'new-password'"
+                            :autocomplete="
+                                showPassword ? 'off' : 'new-password'
+                            "
                             required
                             autofocus
-                            class="h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 pr-12 text-xl text-text shadow-none placeholder:text-text-muted focus-visible:ring-0"
+                            class="text-text placeholder:text-text-muted h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 pr-12 text-xl shadow-none focus-visible:ring-0"
                         />
                         <button
                             type="button"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                            :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                            class="text-text-muted hover:text-text absolute top-1/2 right-3 -translate-y-1/2 transition"
+                            :aria-label="
+                                showPassword ? 'Hide password' : 'Show password'
+                            "
                             @click="showPassword = !showPassword"
                         >
                             <EyeOff v-if="showPassword" :size="20" />
@@ -84,7 +91,10 @@ const submit = () => {
             </div>
 
             <div>
-                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="password_confirmation"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('auth.resetPwd.pwdConfirmLabel') }}
                 </Label>
                 <div class="relative">
@@ -92,21 +102,32 @@ const submit = () => {
                         id="password_confirmation"
                         v-model="form.password_confirmation"
                         :type="showPasswordConfirmation ? 'text' : 'password'"
-                        :autocomplete="showPasswordConfirmation ? 'off' : 'new-password'"
+                        :autocomplete="
+                            showPasswordConfirmation ? 'off' : 'new-password'
+                        "
                         required
-                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                        class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 pr-12 text-xl"
                     />
                     <button
                         type="button"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                        :aria-label="showPasswordConfirmation ? 'Hide password confirmation' : 'Show password confirmation'"
-                        @click="showPasswordConfirmation = !showPasswordConfirmation"
+                        class="text-text-muted hover:text-text absolute top-1/2 right-3 -translate-y-1/2 transition"
+                        :aria-label="
+                            showPasswordConfirmation
+                                ? 'Hide password confirmation'
+                                : 'Show password confirmation'
+                        "
+                        @click="
+                            showPasswordConfirmation = !showPasswordConfirmation
+                        "
                     >
                         <EyeOff v-if="showPasswordConfirmation" :size="20" />
                         <Eye v-else :size="20" />
                     </button>
                 </div>
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
+                <InputError
+                    class="mt-2"
+                    :message="form.errors.password_confirmation"
+                />
             </div>
 
             <Button

@@ -14,25 +14,14 @@ defineProps<{
 }>();
 
 const { t } = useI18n();
-
 </script>
 
 <template>
-    <div
-        v-if="showVacationButton"
-        :class="patientPageActionsBarClass"
-    >
+    <div v-if="showVacationButton" :class="patientPageActionsBarClass">
         <div :class="patientPageActionsGridClass">
-            <Button
-                as-child
-                size="lg"
-                :class="patientPageIntroButtonClass"
-            >
+            <Button as-child size="lg" :class="patientPageIntroButtonClass">
                 <Link :href="route('patient.inventory.vacation')">
-                    <Palmtree
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
+                    <Palmtree class="size-6 shrink-0" aria-hidden="true" />
                     {{ t('patient.inventory.vacationButton') }}
                 </Link>
             </Button>

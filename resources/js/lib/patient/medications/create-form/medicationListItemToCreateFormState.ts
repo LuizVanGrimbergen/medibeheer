@@ -24,7 +24,10 @@ export function medicationListItemToCreateFormState(
     base.strength_unit = parsedStrength.strength_unit;
     base.note = item.note ?? '';
 
-    if (item.stock_pieces_per_package !== null && item.stock_pieces_per_package > 0) {
+    if (
+        item.stock_pieces_per_package !== null &&
+        item.stock_pieces_per_package > 0
+    ) {
         base.stock_pieces_per_package = String(item.stock_pieces_per_package);
     }
 
@@ -40,13 +43,20 @@ export function medicationListItemToCreateFormState(
 
     const count = parseMedicationTimesPerDayCount(first.times_per_day);
     const slotCount = count ?? 1;
-    const dose_time_slots = buildMedicationScheduleDoseTimeSlots(first.dose_time, slotCount);
-    const snooze_time_slots = buildMedicationScheduleSnoozeTimeSlots(first.snooze_time, slotCount);
+    const dose_time_slots = buildMedicationScheduleDoseTimeSlots(
+        first.dose_time,
+        slotCount,
+    );
+    const snooze_time_slots = buildMedicationScheduleSnoozeTimeSlots(
+        first.snooze_time,
+        slotCount,
+    );
 
     base.schedule = {
         meal_timing: first.meal_timing,
         intake_frequency: first.intake_frequency,
-        intake_weekdays: first.intake_weekdays === null ? [] : [...first.intake_weekdays],
+        intake_weekdays:
+            first.intake_weekdays === null ? [] : [...first.intake_weekdays],
         times_per_day: first.times_per_day,
         dose_time_slots,
         snooze_time_slots,

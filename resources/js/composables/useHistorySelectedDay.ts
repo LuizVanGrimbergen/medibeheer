@@ -1,5 +1,5 @@
-import { nextTick, ref, watch,  toValue } from 'vue';
-import type {MaybeRefOrGetter} from 'vue';
+import type { MaybeRefOrGetter } from 'vue';
+import { nextTick, ref, toValue, watch } from 'vue';
 
 type HistorySelectedDayScrollTarget = {
     scrollIntoView: (options?: ScrollIntoViewOptions) => void;
@@ -7,7 +7,9 @@ type HistorySelectedDayScrollTarget = {
 
 export function useHistorySelectedDay(calendarMonth: MaybeRefOrGetter<string>) {
     const selectedCalendarDate = ref<string | null>(null);
-    const selectedDaySectionRef = ref<HistorySelectedDayScrollTarget | null>(null);
+    const selectedDaySectionRef = ref<HistorySelectedDayScrollTarget | null>(
+        null,
+    );
 
     watch(
         () => toValue(calendarMonth),

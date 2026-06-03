@@ -31,7 +31,9 @@ const { t } = useI18n();
 const page = usePage<PageProps>();
 const showPassword = ref(false);
 type IntervalHandle = ReturnType<typeof globalThis.setInterval>;
-const rateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds ?? null);
+const rateLimitSeconds = computed(
+    () => page.props.flash?.rateLimitSeconds ?? null,
+);
 const remainingRateLimitSeconds = ref<number | null>(null);
 const rateLimitIntervalId = ref<IntervalHandle | null>(null);
 
@@ -70,9 +72,13 @@ const startRateLimitCountdown = (seconds: number | null) => {
     }, 1000);
 };
 
-watch(rateLimitSeconds, (seconds) => {
-    startRateLimitCountdown(seconds);
-}, { immediate: true });
+watch(
+    rateLimitSeconds,
+    (seconds) => {
+        startRateLimitCountdown(seconds);
+    },
+    { immediate: true },
+);
 
 onUnmounted(() => {
     stopRateLimitCountdown();
@@ -87,7 +93,10 @@ const emailErrorMessage = computed(() => {
         return form.errors.email;
     }
 
-    return form.errors.email.replace(/\d+/, String(remainingRateLimitSeconds.value));
+    return form.errors.email.replace(
+        /\d+/,
+        String(remainingRateLimitSeconds.value),
+    );
 });
 
 const roles = useAuthRoleOptions();
@@ -171,7 +180,8 @@ const submit = () => {
             :roles="roles"
             :selected-role="selectedRole"
             :get-href="
-                (role) => authRouteWithEncryptedRole('login', props.roleTokens, role)
+                (role) =>
+                    authRouteWithEncryptedRole('login', props.roleTokens, role)
             "
         />
 
@@ -184,82 +194,98 @@ const submit = () => {
                 {{ loginRoleHighlightLine }}
             </div>
 
-            <FlashSuccessBanner
-                class="mb-4"
-                :message="props.status ?? null"
-            />
+            <FlashSuccessBanner class="mb-4" :message="props.status ?? null" />
 
             <form class="space-y-5" novalidate @submit.prevent="submit">
-            <div>
-                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.login.emailLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <Input
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    autocomplete="email"
-                    :placeholder="t('auth.login.emailPlaceholder')"
-                    required
-                    autofocus
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                />
-                <InputError class="mt-2" :message="emailErrorMessage" />
-            </div>
-
-            <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.login.pwdLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <div class="relative">
-                    <Input
-                        id="password"
-                        v-model="form.password"
-                        :type="showPassword ? 'text' : 'password'"
-                        :autocomplete="showPassword ? 'off' : 'current-password'"
-                        :placeholder="t('auth.login.pwdPlaceholder')"
-                        required
-                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                    />
-                    <button
-                        type="button"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                        :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                        @click="showPassword = !showPassword"
+                <div>
+                    <Label
+                        for="email"
+                        class="text-text mb-2 block text-2xl/none font-medium"
                     >
-                        <EyeOff v-if="showPassword" :size="20" />
-                        <Eye v-else :size="20" />
-                    </button>
+                        {{ t('auth.login.emailLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
+                    <Input
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        autocomplete="email"
+                        :placeholder="t('auth.login.emailPlaceholder')"
+                        required
+                        autofocus
+                        class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
+                    />
+                    <InputError class="mt-2" :message="emailErrorMessage" />
                 </div>
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
 
-            <Button
-                type="submit"
-                :disabled="form.processing || !canSubmit"
-                size="lg"
-                class="w-full text-xl"
-            >
-                {{ t('auth.login.submit') }}
-            </Button>
+                <div>
+                    <Label
+                        for="password"
+                        class="text-text mb-2 block text-2xl/none font-medium"
+                    >
+                        {{ t('auth.login.pwdLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
+                    <div class="relative">
+                        <Input
+                            id="password"
+                            v-model="form.password"
+                            :type="showPassword ? 'text' : 'password'"
+                            :autocomplete="
+                                showPassword ? 'off' : 'current-password'
+                            "
+                            :placeholder="t('auth.login.pwdPlaceholder')"
+                            required
+                            class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 pr-12 text-xl"
+                        />
+                        <button
+                            type="button"
+                            class="text-text-muted hover:text-text absolute top-1/2 right-3 -translate-y-1/2 transition"
+                            :aria-label="
+                                showPassword ? 'Hide password' : 'Show password'
+                            "
+                            @click="showPassword = !showPassword"
+                        >
+                            <EyeOff v-if="showPassword" :size="20" />
+                            <Eye v-else :size="20" />
+                        </button>
+                    </div>
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+
+                <Button
+                    type="submit"
+                    :disabled="form.processing || !canSubmit"
+                    size="lg"
+                    class="w-full text-xl"
+                >
+                    {{ t('auth.login.submit') }}
+                </Button>
             </form>
 
-            <p class="mt-7 text-center text-lg text-text-muted">
+            <p class="text-text-muted mt-7 text-center text-lg">
                 {{ t('auth.login.registerPrompt') }}
                 <Link
-                    :href="authRouteWithEncryptedRole('register', props.roleTokens, selectedRole)"
-                    class="font-semibold text-primary hover:opacity-80"
+                    :href="
+                        authRouteWithEncryptedRole(
+                            'register',
+                            props.roleTokens,
+                            selectedRole,
+                        )
+                    "
+                    class="text-primary font-semibold hover:opacity-80"
                 >
                     {{ t('auth.login.registerAction') }}
                 </Link>
             </p>
 
-            <p v-if="canResetPassword" class="mt-2 text-center text-sm text-text-muted">
+            <p
+                v-if="canResetPassword"
+                class="text-text-muted mt-2 text-center text-sm"
+            >
                 <Link
                     :href="route('password.request')"
-                    class="underline underline-offset-2 hover:text-text"
+                    class="hover:text-text underline underline-offset-2"
                 >
                     {{ t('auth.login.forgotPassword') }}
                 </Link>

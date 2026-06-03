@@ -51,10 +51,7 @@ function openPatientMedications(patient: FamilyLowStockPatient): void {
         </template>
 
         <ul class="space-y-4 md:space-y-3">
-            <li
-                v-for="patient in props.patients"
-                :key="patient.patient_id"
-            >
+            <li v-for="patient in props.patients" :key="patient.patient_id">
                 <FamilyLowStockPatientCard
                     :patient="patient"
                     @click="openPatientMedications(patient)"

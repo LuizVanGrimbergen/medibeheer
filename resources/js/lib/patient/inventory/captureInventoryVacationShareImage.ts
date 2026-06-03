@@ -11,9 +11,9 @@ function resolveShareImageBackgroundColor(captureTarget: HTMLElement): string {
     const computedBackground = getComputedStyle(captureTarget).backgroundColor;
 
     if (
-        computedBackground !== ''
-        && computedBackground !== 'rgba(0, 0, 0, 0)'
-        && computedBackground !== 'transparent'
+        computedBackground !== '' &&
+        computedBackground !== 'rgba(0, 0, 0, 0)' &&
+        computedBackground !== 'transparent'
     ) {
         return computedBackground;
     }
@@ -41,7 +41,9 @@ export async function waitForShareCapturePaint(): Promise<void> {
 }
 
 function shareSheetCaptureTarget(host: HTMLElement): HTMLElement {
-    return host.firstElementChild instanceof HTMLElement ? host.firstElementChild : host;
+    return host.firstElementChild instanceof HTMLElement
+        ? host.firstElementChild
+        : host;
 }
 
 export async function waitForShareSheetMedicationCount(
@@ -116,7 +118,8 @@ export async function captureInventoryVacationSharePage(
 
         const blob = await toBlob(captureTarget, {
             width: captureTarget.offsetWidth,
-            height: captureHeight > 0 ? captureHeight : captureTarget.offsetHeight,
+            height:
+                captureHeight > 0 ? captureHeight : captureTarget.offsetHeight,
             pixelRatio: SHARE_IMAGE_PIXEL_RATIO,
             backgroundColor: resolveShareImageBackgroundColor(captureTarget),
             cacheBust: true,

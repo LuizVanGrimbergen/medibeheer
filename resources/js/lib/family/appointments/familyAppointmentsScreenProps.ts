@@ -34,4 +34,3 @@ export type FamilyAppointmentsScreenProps = {
     appointment_view: FamilyAppointmentView;
     appointment_tab_totals: { planned: number; completed: number };
 };
-

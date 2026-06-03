@@ -16,7 +16,9 @@ const navIcons = {
     'doctor.patients': UsersRound,
 } as const;
 
-function linkClass(routeName: (typeof doctorNavItems)[number]['routeName']): string {
+function linkClass(
+    routeName: (typeof doctorNavItems)[number]['routeName'],
+): string {
     return cn(
         'inline-flex w-[7.5rem] items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors',
         isActive(routeName)
@@ -36,9 +38,7 @@ function linkClass(routeName: (typeof doctorNavItems)[number]['routeName']): str
             :key="item.routeName"
             :href="route(item.routeName)"
             :prefetch="
-                isActive(item.routeName)
-                    ? false
-                    : (['mount', 'hover'] as const)
+                isActive(item.routeName) ? false : (['mount', 'hover'] as const)
             "
             :class="linkClass(item.routeName)"
             :aria-current="isActive(item.routeName) ? 'page' : undefined"

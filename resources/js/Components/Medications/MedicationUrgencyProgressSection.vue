@@ -2,13 +2,12 @@
 import { AlertTriangle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { Progress } from '@/Components/ui/progress';
+import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import {
     medicationUrgencyProgressIndicatorClass,
     medicationUrgencyShowsAlertRow,
-    medicationUrgencyStatusTextClass
-    
+    medicationUrgencyStatusTextClass,
 } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
-import type {MedicationUrgencyTone} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 
 const props = withDefaults(
     defineProps<{
@@ -69,7 +68,7 @@ const alertIconClass = computed((): string => {
                 />
             </template>
             <p
-                class="min-w-0 text-base font-semibold leading-relaxed sm:text-lg"
+                class="min-w-0 text-base leading-relaxed font-semibold sm:text-lg"
                 :class="statusLineClass"
             >
                 {{ statusLine }}

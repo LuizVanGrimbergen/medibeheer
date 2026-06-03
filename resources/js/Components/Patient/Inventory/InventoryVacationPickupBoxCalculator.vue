@@ -13,8 +13,8 @@ import { medicationStockPackageCountForQuantity } from '@/lib/patient/medication
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import {
     patientFormFieldInputClass,
-    patientFormLargeTouchFieldClass,
     patientFormLabelClass,
+    patientFormLargeTouchFieldClass,
 } from '@/lib/patient/patientFormFieldClasses';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
@@ -86,11 +86,7 @@ const calculatedTotal = computed((): number | null => {
     const boxes = Number.parseInt(numberOfBoxes.value, 10);
     const pieces = resolvedPiecesPerPackage.value;
 
-    if (
-        Number.isNaN(boxes) ||
-        pieces === null ||
-        boxes <= 0
-    ) {
+    if (Number.isNaN(boxes) || pieces === null || boxes <= 0) {
         return null;
     }
 
@@ -104,7 +100,9 @@ const hasDisplayableDoseUnit = computed((): boolean => {
         return false;
     }
 
-    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(props.doseUnit);
+    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(
+        props.doseUnit,
+    );
 });
 
 const doseUnitChip = computed((): string | null => {
@@ -136,7 +134,9 @@ const totalMismatch = computed((): boolean => {
     return calculated < target;
 });
 
-const totalPanelClass = computed((): string => medicationStockCurrentStockPanelClass(null));
+const totalPanelClass = computed((): string =>
+    medicationStockCurrentStockPanelClass(null),
+);
 
 const totalIconWrapClass = computed((): string =>
     medicationStockCurrentStockIconWrapClass(null),
@@ -153,7 +153,9 @@ function syncBoxesFromPickup(): void {
         return;
     }
 
-    numberOfBoxes.value = String(medicationStockPackageCountForQuantity(target, pieces));
+    numberOfBoxes.value = String(
+        medicationStockPackageCountForQuantity(target, pieces),
+    );
 }
 
 watch(
@@ -168,7 +170,7 @@ watch(
     { immediate: true },
 );
 
-watch(piecesPerBox, (piecesValue) => {
+watch(piecesPerBox, () => {
     if (hasSavedPiecesPerPackage.value) {
         return;
     }
@@ -217,7 +219,9 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                             patientFormFieldInputClass,
                             patientFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            hasSavedPiecesPerPackage ? 'cursor-default opacity-90' : null,
+                            hasSavedPiecesPerPackage
+                                ? 'cursor-default opacity-90'
+                                : null,
                         )
                     "
                     @input="handleNumberInput($event, 'boxes')"
@@ -246,7 +250,9 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                             patientFormFieldInputClass,
                             patientFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            hasSavedPiecesPerPackage ? 'cursor-default opacity-90' : null,
+                            hasSavedPiecesPerPackage
+                                ? 'cursor-default opacity-90'
+                                : null,
                         )
                     "
                     @input="handleNumberInput($event, 'pieces')"
@@ -260,40 +266,46 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             :for="`${boxFieldId} ${piecesFieldId}`"
         >
             <div :class="totalIconWrapClass">
-                <Layers
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
+                <Layers class="size-5 sm:size-6" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class="text-sm font-semibold leading-snug text-text-heading sm:text-base">
-                    {{ t('patient.inventory.vacationPickupCalculator.totalLabel') }}
+                <span
+                    class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+                >
+                    {{
+                        t(
+                            'patient.inventory.vacationPickupCalculator.totalLabel',
+                        )
+                    }}
                 </span>
                 <div class="flex items-baseline gap-2">
                     <span
-                        class="whitespace-pre-wrap wrap-break-word text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-3xl"
+                        class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
                     >
                         {{ displayTotal }}
                     </span>
                     <span
                         v-if="doseUnitChip !== null"
-                        class="text-lg font-semibold text-text-heading sm:text-xl"
+                        class="text-text-heading text-lg font-semibold sm:text-xl"
                     >
                         {{ doseUnitChip }}
                     </span>
                 </div>
                 <p
                     v-if="totalMismatch"
-                    class="mt-1 text-sm leading-relaxed text-danger"
+                    class="text-danger mt-1 text-sm leading-relaxed"
                 >
                     {{
-                        t('patient.inventory.vacationPickupCalculator.totalMismatch', {
-                            target: formatMedicationStockDisplayAmount(
-                                t,
-                                pickupQuantity,
-                                doseUnit,
-                            ),
-                        })
+                        t(
+                            'patient.inventory.vacationPickupCalculator.totalMismatch',
+                            {
+                                target: formatMedicationStockDisplayAmount(
+                                    t,
+                                    pickupQuantity,
+                                    doseUnit,
+                                ),
+                            },
+                        )
                     }}
                 </p>
             </div>

@@ -30,7 +30,11 @@ defineExpose({
     <section
         v-if="selectedDate !== null"
         ref="sectionRef"
-        :class="props.density === 'compact' ? 'scroll-mt-20 space-y-2' : 'scroll-mt-24 space-y-3'"
+        :class="
+            props.density === 'compact'
+                ? 'scroll-mt-20 space-y-2'
+                : 'scroll-mt-24 space-y-3'
+        "
         :aria-label="props.showHeading ? undefined : props.heading"
         tabindex="-1"
     >
@@ -38,7 +42,7 @@ defineExpose({
             v-if="props.showHeading"
             :class="
                 cn(
-                    'font-semibold text-text-heading',
+                    'text-text-heading font-semibold',
                     props.density === 'compact' ? 'text-base' : 'text-lg',
                 )
             "

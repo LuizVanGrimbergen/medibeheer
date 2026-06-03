@@ -33,7 +33,10 @@ const props = withDefaults(
     defineProps<{
         form: MedicationCreateFormWithErrors;
         idPrefix: string;
-        goToWizardStep: (step: MedicationFormWizardStep, focusElementIdSuffix?: string) => void;
+        goToWizardStep: (
+            step: MedicationFormWizardStep,
+            focusElementIdSuffix?: string,
+        ) => void;
         showStepNavigation?: boolean;
         alwaysShowNoteSummaryRow?: boolean;
     }>(),
@@ -51,7 +54,10 @@ const summaryRowGroupClass =
 const summaryDdClass =
     'flex min-w-0 flex-1 flex-row items-baseline justify-end gap-2';
 
-function activateSummaryRow(step: MedicationFormWizardStep, focusElementIdSuffix: string): void {
+function activateSummaryRow(
+    step: MedicationFormWizardStep,
+    focusElementIdSuffix: string,
+): void {
     if (props.form.processing || !props.showStepNavigation) {
         return;
     }
@@ -59,19 +65,25 @@ function activateSummaryRow(step: MedicationFormWizardStep, focusElementIdSuffix
     props.goToWizardStep(step, focusElementIdSuffix);
 }
 
-const summaryLabelClass = 'shrink-0 text-sm font-medium text-text-muted md:text-base';
-const summaryValueClass = 'min-w-0 flex-1 text-base font-semibold leading-snug text-text-heading sm:text-end md:text-lg';
+const summaryLabelClass =
+    'shrink-0 text-sm font-medium text-text-muted md:text-base';
+const summaryValueClass =
+    'min-w-0 flex-1 text-base font-semibold leading-snug text-text-heading sm:text-end md:text-lg';
 
 const intakeFrequencySummary = computed(() =>
     medicationIntakeFrequencySummaryLabel(
         t,
-        props.form.schedule.intake_frequency as MedicationIntakeFrequencyValue | '',
+        props.form.schedule.intake_frequency as
+            | MedicationIntakeFrequencyValue
+            | '',
         props.form.schedule.intake_weekdays,
     ),
 );
 
 const mealTimingLabel = computed(() => {
-    const value = props.form.schedule.meal_timing as MedicationMealTimingValue | '';
+    const value = props.form.schedule.meal_timing as
+        | MedicationMealTimingValue
+        | '';
 
     if (value === '') {
         return '—';
@@ -91,7 +103,9 @@ const typeLabel = computed(() => {
 });
 
 const doseTimesJoined = computed(() => {
-    const count = parseMedicationTimesPerDayCount(props.form.schedule.times_per_day);
+    const count = parseMedicationTimesPerDayCount(
+        props.form.schedule.times_per_day,
+    );
 
     if (count === null) {
         return '—';
@@ -107,7 +121,10 @@ const doseTimesJoined = computed(() => {
         }
 
         const snooze = props.form.schedule.snooze_time_slots[index] ?? '';
-        const snoozeLabel = formatMedicationSnoozeMinutesLabelFromRaw(t, snooze);
+        const snoozeLabel = formatMedicationSnoozeMinutesLabelFromRaw(
+            t,
+            snooze,
+        );
 
         parts.push(`${time} (${snoozeLabel})`);
     }
@@ -120,15 +137,24 @@ const doseTimesJoined = computed(() => {
 });
 
 const doseUnitForStock = computed(() =>
-    medicationStockDisplayDoseUnit(props.form.dose_unit, props.form.strength_unit),
+    medicationStockDisplayDoseUnit(
+        props.form.dose_unit,
+        props.form.strength_unit,
+    ),
 );
 
 const currentStockSummary = computed(() =>
-    formatMedicationStockDisplayAmount(t, props.form.current_stock, doseUnitForStock.value),
+    formatMedicationStockDisplayAmount(
+        t,
+        props.form.current_stock,
+        doseUnitForStock.value,
+    ),
 );
 
 const summaryMealTimingFocusSuffix = computed(() =>
-    resolveMedicationWizardMealTimingFocusSuffix(props.form.schedule.meal_timing),
+    resolveMedicationWizardMealTimingFocusSuffix(
+        props.form.schedule.meal_timing,
+    ),
 );
 
 const summaryIntakeFrequencyFocusSuffix = computed(() =>
@@ -136,7 +162,9 @@ const summaryIntakeFrequencyFocusSuffix = computed(() =>
 );
 
 const summaryTimesPerDayFocusSuffix = computed(() =>
-    resolveMedicationWizardTimesPerDayFocusSuffix(props.form.schedule.times_per_day.trim()),
+    resolveMedicationWizardTimesPerDayFocusSuffix(
+        props.form.schedule.times_per_day.trim(),
+    ),
 );
 
 const summaryTypeFocusSuffix = computed(() =>
@@ -160,7 +188,7 @@ function summaryRowAria(fieldTranslationKey: string): string {
         <h2
             :id="`${idPrefix}-create-summary-title`"
             tabindex="-1"
-            class="text-xl font-bold leading-tight text-text-heading md:text-2xl"
+            class="text-text-heading text-xl leading-tight font-bold md:text-2xl"
         >
             {{ t('patient.medications.overview.title') }}
         </h2>
@@ -169,66 +197,82 @@ function summaryRowAria(fieldTranslationKey: string): string {
             <p :class="overviewSectionHeadingClass">
                 {{ t('patient.medications.overview.sectionMedicine') }}
             </p>
-            <dl class="rounded-2xl border border-border/70 bg-surface px-4 py-1 md:px-5">
+            <dl
+                class="border-border/70 bg-surface rounded-2xl border px-4 py-1 md:px-5"
+            >
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.name') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.name') }}
+                    </dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ props.form.name.trim() || '—' }}</span>
-                        <IconActionButton v-if="showStepNavigation"
+                        <span :class="summaryValueClass">{{
+                            props.form.name.trim() || '—'
+                        }}</span>
+                        <IconActionButton
+                            v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.name')"
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(1, 'name')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.type') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.type') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">{{ typeLabel }}</span>
-                        <IconActionButton v-if="showStepNavigation"
+                        <IconActionButton
+                            v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.type')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(1, summaryTypeFocusSuffix)"
+                            @click="
+                                activateSummaryRow(1, summaryTypeFocusSuffix)
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.dose') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.dose') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">
                             {{ props.form.dose.trim() || '—' }}
                             <span class="text-text-muted">
-                                {{ medicationDoseUnitChipForAmount(t, props.form.dose, props.form.dose_unit) }}
+                                {{
+                                    medicationDoseUnitChipForAmount(
+                                        t,
+                                        props.form.dose,
+                                        props.form.dose_unit,
+                                    )
+                                }}
                             </span>
                         </span>
-                        <IconActionButton v-if="showStepNavigation"
+                        <IconActionButton
+                            v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.dose')"
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(1, 'dose')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.strength') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.strength') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">
                             {{
-                                medicationStrengthDisplayValue(props.form).trim() || '—'
+                                medicationStrengthDisplayValue(
+                                    props.form,
+                                ).trim() || '—'
                             }}
                         </span>
                         <IconActionButton
@@ -237,33 +281,42 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(1, 'strength_amount')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div
-                    v-if="props.form.note.trim().length > 0 || props.alwaysShowNoteSummaryRow"
+                    v-if="
+                        props.form.note.trim().length > 0 ||
+                        props.alwaysShowNoteSummaryRow
+                    "
                     :class="summaryRowGroupClass"
                 >
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.note') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.note') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span
-                            :class="cn(summaryValueClass, 'whitespace-pre-wrap wrap-break-word')"
+                            :class="
+                                cn(
+                                    summaryValueClass,
+                                    'wrap-break-word whitespace-pre-wrap',
+                                )
+                            "
                         >
-                            {{ props.form.note.trim().length > 0 ? props.form.note.trim() : '—' }}
+                            {{
+                                props.form.note.trim().length > 0
+                                    ? props.form.note.trim()
+                                    : '—'
+                            }}
                         </span>
-                        <IconActionButton v-if="showStepNavigation"
+                        <IconActionButton
+                            v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.note')"
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(6, 'note')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
@@ -274,12 +327,20 @@ function summaryRowAria(fieldTranslationKey: string): string {
             <p :class="overviewSectionHeadingClass">
                 {{ t('patient.medications.overview.sectionStock') }}
             </p>
-            <dl class="rounded-2xl border border-border/70 bg-surface px-4 py-1 md:px-5">
+            <dl
+                class="border-border/70 bg-surface rounded-2xl border px-4 py-1 md:px-5"
+            >
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.currentStock') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.currentStock') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="cn(summaryValueClass, 'tabular-nums')">
-                            {{ currentStockSummary.length > 0 ? currentStockSummary : '—' }}
+                            {{
+                                currentStockSummary.length > 0
+                                    ? currentStockSummary
+                                    : '—'
+                            }}
                         </span>
                         <IconActionButton
                             v-if="showStepNavigation"
@@ -287,10 +348,7 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(6, 'stock-boxes')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
@@ -301,21 +359,29 @@ function summaryRowAria(fieldTranslationKey: string): string {
             <p :class="overviewSectionHeadingClass">
                 {{ t('patient.medications.overview.sectionSchedule') }}
             </p>
-            <dl class="rounded-2xl border border-border/70 bg-surface px-4 py-1 md:px-5">
+            <dl
+                class="border-border/70 bg-surface rounded-2xl border px-4 py-1 md:px-5"
+            >
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.mealTiming') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.mealTiming') }}
+                    </dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ mealTimingLabel }}</span>
+                        <span :class="summaryValueClass">{{
+                            mealTimingLabel
+                        }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.mealTiming')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(2, summaryMealTimingFocusSuffix)"
+                            @click="
+                                activateSummaryRow(
+                                    2,
+                                    summaryMealTimingFocusSuffix,
+                                )
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
@@ -324,80 +390,102 @@ function summaryRowAria(fieldTranslationKey: string): string {
                         {{ t('patient.medications.fields.intakeFrequency') }}
                     </dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ intakeFrequencySummary }}</span>
+                        <span :class="summaryValueClass">{{
+                            intakeFrequencySummary
+                        }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
-                            :ariaLabel="summaryRowAria('fields.intakeFrequency')"
+                            :ariaLabel="
+                                summaryRowAria('fields.intakeFrequency')
+                            "
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(2, summaryIntakeFrequencyFocusSuffix)"
+                            @click="
+                                activateSummaryRow(
+                                    2,
+                                    summaryIntakeFrequencyFocusSuffix,
+                                )
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.timesPerDay') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.timesPerDay') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">
-                            {{ props.form.schedule.times_per_day.trim() || '—' }}
+                            {{
+                                props.form.schedule.times_per_day.trim() || '—'
+                            }}
                         </span>
                         <IconActionButton
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.timesPerDay')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(3, summaryTimesPerDayFocusSuffix)"
+                            @click="
+                                activateSummaryRow(
+                                    3,
+                                    summaryTimesPerDayFocusSuffix,
+                                )
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.doseTime') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.doseTime') }}
+                    </dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ doseTimesJoined }}</span>
+                        <span :class="summaryValueClass">{{
+                            doseTimesJoined
+                        }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.doseTime')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(4, 'schedule-dose-time-0')"
+                            @click="
+                                activateSummaryRow(4, 'schedule-dose-time-0')
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.startDate') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.startDate') }}
+                    </dt>
                     <dd :class="summaryDdClass">
-                        <span :class="summaryValueClass">{{ props.form.schedule.start_date.trim() || '—' }}</span>
+                        <span :class="summaryValueClass">{{
+                            props.form.schedule.start_date.trim() || '—'
+                        }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
                             :ariaLabel="summaryRowAria('fields.startDate')"
                             :disabled="props.form.processing"
-                            @click="activateSummaryRow(5, 'schedule-start-date')"
+                            @click="
+                                activateSummaryRow(5, 'schedule-start-date')
+                            "
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>
                 <div :class="summaryRowGroupClass">
-                    <dt :class="summaryLabelClass">{{ t('patient.medications.fields.endDate') }}</dt>
+                    <dt :class="summaryLabelClass">
+                        {{ t('patient.medications.fields.endDate') }}
+                    </dt>
                     <dd :class="summaryDdClass">
                         <span :class="summaryValueClass">{{
                             props.form.schedule.end_date.trim().length > 0
                                 ? props.form.schedule.end_date.trim()
-                                : t('patient.medications.intakePeriodPresets.ongoing')
+                                : t(
+                                      'patient.medications.intakePeriodPresets.ongoing',
+                                  )
                         }}</span>
                         <IconActionButton
                             v-if="showStepNavigation"
@@ -405,10 +493,7 @@ function summaryRowAria(fieldTranslationKey: string): string {
                             :disabled="props.form.processing"
                             @click="activateSummaryRow(5, 'schedule-end-date')"
                         >
-                            <Pencil
-                                class="size-5"
-                                aria-hidden="true"
-                            />
+                            <Pencil class="size-5" aria-hidden="true" />
                         </IconActionButton>
                     </dd>
                 </div>

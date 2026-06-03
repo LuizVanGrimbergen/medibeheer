@@ -19,9 +19,9 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <Card class="rounded-2xl border-border bg-surface shadow-sm">
-        <CardHeader class="border-b border-border px-5 py-4 sm:px-6">
-            <CardTitle class="text-lg font-bold text-text-heading">
+    <Card class="border-border bg-surface rounded-2xl shadow-sm">
+        <CardHeader class="border-border border-b px-5 py-4 sm:px-6">
+            <CardTitle class="text-text-heading text-lg font-bold">
                 {{ t('family.medicationPlans.actionsTitle') }}
             </CardTitle>
         </CardHeader>

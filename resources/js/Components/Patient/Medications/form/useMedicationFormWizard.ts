@@ -47,7 +47,9 @@ function rejectWizardAdvanceWithFieldErrors(
     scrollMedicationFormFirstFieldErrorIntoView(idPrefix, fieldErrors);
 }
 
-export function useMedicationFormWizard(options: UseMedicationFormWizardOptions) {
+export function useMedicationFormWizard(
+    options: UseMedicationFormWizardOptions,
+) {
     const { t } = useI18n();
 
     const currentStep = ref<MedicationFormWizardStep>(1);
@@ -71,7 +73,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep1(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -80,7 +86,10 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         currentStep.value = result.nextStep;
 
         void nextTick(() => {
-            focusMedicationWizardMealTimingField(options.idPrefix(), form.schedule.meal_timing);
+            focusMedicationWizardMealTimingField(
+                options.idPrefix(),
+                form.schedule.meal_timing,
+            );
         });
     }
 
@@ -89,7 +98,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep2(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -110,7 +123,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep3(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -128,7 +145,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep4(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -146,7 +167,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep5(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -164,7 +189,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = attemptMedicationWizardAdvanceFromStep6(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.fieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.fieldErrors,
+            );
 
             return;
         }
@@ -182,7 +211,11 @@ export function useMedicationFormWizard(options: UseMedicationFormWizardOptions)
         const result = evaluateMedicationWizardSubmitClientValidation(form);
 
         if (!result.ok) {
-            rejectWizardAdvanceWithFieldErrors(form, options.idPrefix(), result.mergedFieldErrors);
+            rejectWizardAdvanceWithFieldErrors(
+                form,
+                options.idPrefix(),
+                result.mergedFieldErrors,
+            );
             currentStep.value = result.step;
 
             return;

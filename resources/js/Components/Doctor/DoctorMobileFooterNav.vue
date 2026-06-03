@@ -18,10 +18,10 @@ const navIcons = {
     'doctor.patients': UsersRound,
 } as const;
 
-function footerNavClass(routeName: (typeof doctorNavItems)[number]['routeName']): string {
-    const density = smAndUp.value
-        ? 'gap-1.5 py-2.5 px-2'
-        : 'gap-1 py-2 px-1';
+function footerNavClass(
+    routeName: (typeof doctorNavItems)[number]['routeName'],
+): string {
+    const density = smAndUp.value ? 'gap-1.5 py-2.5 px-2' : 'gap-1 py-2 px-1';
     const base = `flex min-w-0 flex-1 touch-manipulation flex-col items-center justify-center rounded-xl transition-colors ${density}`;
 
     if (isActive(routeName)) {
@@ -46,7 +46,7 @@ const footerLabelClass = computed(() =>
 
 <template>
     <nav
-        class="z-40 shrink-0 border-t border-border bg-surface md:hidden"
+        class="border-border bg-surface z-40 shrink-0 border-t md:hidden"
         :aria-label="t('doctor.navigation.mobileFooterAriaLabel')"
     >
         <div

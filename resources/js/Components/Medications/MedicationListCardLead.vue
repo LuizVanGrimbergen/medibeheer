@@ -41,17 +41,16 @@ const visualToneClasses = computed(() =>
                 :icon-tone-class="visualToneClasses.pillIcon"
             />
         </div>
-        <div class="min-w-0 flex-1 overflow-hidden space-y-1">
-            <p class="text-lg font-bold leading-snug text-text-heading sm:text-xl">
+        <div class="min-w-0 flex-1 space-y-1 overflow-hidden">
+            <p
+                class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+            >
                 {{ name }}
             </p>
-            <slot
-                v-if="$slots.subtitle"
-                name="subtitle"
-            />
+            <slot v-if="$slots.subtitle" name="subtitle" />
             <p
                 v-else-if="showTypeLabel"
-                class="text-base font-normal leading-snug text-text-muted"
+                class="text-text-muted text-base leading-snug font-normal"
             >
                 {{ typeLabel }}
             </p>

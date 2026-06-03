@@ -1,5 +1,5 @@
-import { DAILY_CHECKIN_SYMPTOM_VALUES  } from '@/lib/types';
-import type {DailyCheckinSymptomValue} from '@/lib/types';
+import type { DailyCheckinSymptomValue } from '@/lib/types';
+import { DAILY_CHECKIN_SYMPTOM_VALUES } from '@/lib/types';
 
 export { DAILY_CHECKIN_SYMPTOM_VALUES };
 

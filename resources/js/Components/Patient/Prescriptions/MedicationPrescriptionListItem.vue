@@ -18,8 +18,8 @@ const props = defineProps<{
 const { isPrescriptionUpdateInFlight, updatePrescriptionPickupStatus } =
     usePatientPrescriptionCompleteActions();
 
-const isPickupUpdateDisabled = computed(
-    () => isPrescriptionUpdateInFlight(props.prescription.id),
+const isPickupUpdateDisabled = computed(() =>
+    isPrescriptionUpdateInFlight(props.prescription.id),
 );
 
 function onPickupStatusUpdate(

@@ -22,7 +22,7 @@ const dateLabel = computed((): string =>
 
 <template>
     <section class="space-y-3">
-        <h3 class="text-sm font-semibold text-text-heading">
+        <h3 class="text-text-heading text-sm font-semibold">
             {{ dateLabel }}
         </h3>
 

@@ -18,7 +18,9 @@ function buildMedicationScheduleDoseTimeForPayload(
         .join(', ');
 }
 
-export function medicationCreateFormStateToRequestPayload(data: MedicationCreateFormState): {
+export function medicationCreateFormStateToRequestPayload(
+    data: MedicationCreateFormState,
+): {
     name: string;
     dose: string;
     dose_unit: MedicationCreateFormState['dose_unit'];
@@ -48,7 +50,10 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
         type_medication: data.type_medication,
         strength: resolveMedicationStrengthForPayload(data),
         current_stock: data.current_stock.trim(),
-        stock_pieces_per_package: Number.parseInt(data.stock_pieces_per_package, 10),
+        stock_pieces_per_package: Number.parseInt(
+            data.stock_pieces_per_package,
+            10,
+        ),
         note: noteTrimmed === '' ? null : noteTrimmed,
         schedule: {
             meal_timing: data.schedule.meal_timing,
@@ -61,13 +66,18 @@ export function medicationCreateFormStateToRequestPayload(data: MedicationCreate
             dose_quantity: data.dose.trim(),
             dose_time: buildMedicationScheduleDoseTimeForPayload(data.schedule),
             snooze_time: (() => {
-                const count = parseMedicationTimesPerDayCount(data.schedule.times_per_day);
+                const count = parseMedicationTimesPerDayCount(
+                    data.schedule.times_per_day,
+                );
 
                 if (count === null) {
                     return '';
                 }
 
-                return buildMedicationScheduleSnoozeTimeForPayload(data.schedule, count);
+                return buildMedicationScheduleSnoozeTimeForPayload(
+                    data.schedule,
+                    count,
+                );
             })(),
             start_date: data.schedule.start_date.trim(),
             end_date: (() => {

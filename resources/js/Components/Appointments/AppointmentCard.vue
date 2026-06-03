@@ -23,8 +23,8 @@ import {
     patientPageCardHeaderWithActionsClass,
 } from '@/lib/patient/patientPageTypography';
 import type {
-    AppointmentTransportStatusValue,
     AppointmentStatusValue,
+    AppointmentTransportStatusValue,
 } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -92,10 +92,10 @@ const headerSummary = computed(
 
 const showAppointmentDoneToggle = computed(
     () =>
-        (props.showDoneToggle ?? true)
-        && props.appointment.status !== 'cancelled'
-        && props.completeFormHref !== undefined
-        && props.cancelFormHref !== undefined,
+        (props.showDoneToggle ?? true) &&
+        props.appointment.status !== 'cancelled' &&
+        props.completeFormHref !== undefined &&
+        props.cancelFormHref !== undefined,
 );
 </script>
 
@@ -104,7 +104,7 @@ const showAppointmentDoneToggle = computed(
         :id="props.anchorId"
         :class="
             cn(
-                'min-w-0 w-full scroll-mt-6 rounded-3xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04]',
+                'border-border/80 bg-surface text-text w-full min-w-0 scroll-mt-6 rounded-3xl border shadow-md shadow-black/[0.04]',
             )
         "
     >
@@ -123,17 +123,21 @@ const showAppointmentDoneToggle = computed(
 
                 <div
                     class="flex min-w-0 items-start gap-4"
-                    :class="showActionsToolbar ? patientPageCardHeaderWithActionsClass : null"
+                    :class="
+                        showActionsToolbar
+                            ? patientPageCardHeaderWithActionsClass
+                            : null
+                    "
                 >
                     <div
-                        class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/12"
+                        class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"
                         aria-hidden="true"
                     >
-                        <Stethoscope class="size-6 text-primary" />
+                        <Stethoscope class="text-primary size-6" />
                     </div>
                     <div class="min-w-0 flex-1 space-y-1.5">
                         <p
-                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                            class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
                         >
                             {{
                                 appointment.doctor_type
@@ -143,7 +147,7 @@ const showAppointmentDoneToggle = computed(
                         </p>
                         <p
                             v-if="appointment.doctor_type"
-                            class="text-base font-medium leading-snug text-text-heading sm:text-lg"
+                            class="text-text-heading text-base leading-snug font-medium sm:text-lg"
                         >
                             {{ appointment.provider_name }}
                         </p>
@@ -167,29 +171,36 @@ const showAppointmentDoneToggle = computed(
                     <div class="space-y-6 pt-4">
                         <div class="space-y-5">
                             <div
-                                v-if="appointment.status === 'done' || appointment.status === 'cancelled'"
+                                v-if="
+                                    appointment.status === 'done' ||
+                                    appointment.status === 'cancelled'
+                                "
                                 class="flex gap-4 sm:gap-5"
                             >
                                 <CheckCircle2
                                     v-if="appointment.status === 'done'"
-                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    class="text-primary mt-0.5 size-6 shrink-0"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <CircleX
                                     v-else
-                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    class="text-primary mt-0.5 size-6 shrink-0"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 flex-1 space-y-1.5">
                                     <p
-                                        class="text-base font-semibold leading-tight text-text-heading"
+                                        class="text-text-heading text-base leading-tight font-semibold"
                                     >
-                                        {{ t('patient.appointments.fields.status') }}
+                                        {{
+                                            t(
+                                                'patient.appointments.fields.status',
+                                            )
+                                        }}
                                     </p>
                                     <p
-                                        class="text-lg font-medium leading-relaxed tracking-tight sm:text-xl sm:leading-snug"
+                                        class="text-lg leading-relaxed font-medium tracking-tight sm:text-xl sm:leading-snug"
                                         :class="
                                             appointment.status === 'done'
                                                 ? 'text-success'
@@ -198,60 +209,94 @@ const showAppointmentDoneToggle = computed(
                                     >
                                         {{
                                             appointment.status === 'done'
-                                                ? t('patient.appointments.statuses.done')
-                                                : t('patient.appointments.statuses.cancelled')
+                                                ? t(
+                                                      'patient.appointments.statuses.done',
+                                                  )
+                                                : t(
+                                                      'patient.appointments.statuses.cancelled',
+                                                  )
                                         }}
                                     </p>
                                 </div>
                             </div>
                             <div class="flex gap-4 sm:gap-5">
                                 <Calendar
-                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    class="text-primary mt-0.5 size-6 shrink-0"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p class="text-base font-semibold leading-tight text-text-heading">
-                                        {{ t('patient.appointments.labels.when') }}
+                                    <p
+                                        class="text-text-heading text-base leading-tight font-semibold"
+                                    >
+                                        {{
+                                            t(
+                                                'patient.appointments.labels.when',
+                                            )
+                                        }}
                                     </p>
                                     <p
-                                        class="text-lg font-medium leading-relaxed tracking-tight text-text sm:text-xl sm:leading-snug"
+                                        class="text-text text-lg leading-relaxed font-medium tracking-tight sm:text-xl sm:leading-snug"
                                     >
-                                        {{ formatDateOnly(appointment.starts_at) }}
+                                        {{
+                                            formatDateOnly(
+                                                appointment.starts_at,
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </div>
                             <div class="flex gap-4 sm:gap-5">
                                 <Clock
-                                    class="mt-0.5 size-6 shrink-0 text-primary"
+                                    class="text-primary mt-0.5 size-6 shrink-0"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p class="text-base font-semibold leading-tight text-text-heading">
-                                        {{ t('patient.appointments.labels.time') }}
+                                    <p
+                                        class="text-text-heading text-base leading-tight font-semibold"
+                                    >
+                                        {{
+                                            t(
+                                                'patient.appointments.labels.time',
+                                            )
+                                        }}
                                     </p>
                                     <p
-                                        class="text-lg font-medium leading-relaxed text-text sm:text-xl sm:leading-snug"
+                                        class="text-text text-lg leading-relaxed font-medium sm:text-xl sm:leading-snug"
                                     >
-                                        {{ formatTimeOnly(appointment.starts_at) }}
+                                        {{
+                                            formatTimeOnly(
+                                                appointment.starts_at,
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </div>
                             <div class="flex gap-4 sm:gap-5">
                                 <MapPin
-                                    class="mt-1 size-6 shrink-0 self-start text-primary"
+                                    class="text-primary mt-1 size-6 shrink-0 self-start"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p class="text-base font-semibold leading-tight text-text-heading">
-                                        {{ t('patient.appointments.labels.where') }}
+                                    <p
+                                        class="text-text-heading text-base leading-tight font-semibold"
+                                    >
+                                        {{
+                                            t(
+                                                'patient.appointments.labels.where',
+                                            )
+                                        }}
                                     </p>
                                     <p
-                                        class="text-lg font-medium leading-relaxed text-text wrap-break-word text-pretty sm:text-xl sm:leading-snug"
+                                        class="text-text text-lg leading-relaxed font-medium text-pretty wrap-break-word sm:text-xl sm:leading-snug"
                                     >
-                                        {{ formatAppointmentAddress(appointment) }}
+                                        {{
+                                            formatAppointmentAddress(
+                                                appointment,
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -260,36 +305,59 @@ const showAppointmentDoneToggle = computed(
                                 class="flex gap-4 sm:gap-5"
                             >
                                 <Car
-                                    class="mt-1 size-6 shrink-0 self-start text-primary"
+                                    class="text-primary mt-1 size-6 shrink-0 self-start"
                                     :stroke-width="2"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p class="text-base font-semibold leading-tight text-text-heading">
-                                        {{ t('patient.appointments.labels.transport') }}
+                                    <p
+                                        class="text-text-heading text-base leading-tight font-semibold"
+                                    >
+                                        {{
+                                            t(
+                                                'patient.appointments.labels.transport',
+                                            )
+                                        }}
                                     </p>
                                     <p
-                                        class="text-lg font-medium leading-relaxed sm:text-xl sm:leading-snug"
+                                        class="text-lg leading-relaxed font-medium sm:text-xl sm:leading-snug"
                                         :class="
                                             appointment.needs_transport
-                                                ? appointment.transport_status === 'accepted'
+                                                ? appointment.transport_status ===
+                                                  'accepted'
                                                     ? 'text-text'
-                                                    : appointment.transport_status === 'declined'
-                                                        ? 'text-danger'
-                                                        : 'text-text-muted'
+                                                    : appointment.transport_status ===
+                                                        'declined'
+                                                      ? 'text-danger'
+                                                      : 'text-text-muted'
                                                 : 'text-text-muted'
                                         "
                                     >
                                         {{
                                             appointment.needs_transport
-                                                ? appointment.transport_status === 'accepted'
-                                                    ? t('patient.appointments.transport.acceptedBy', {
-                                                        name: appointment.transport_family?.name ?? '',
-                                                    })
-                                                    : appointment.transport_status === 'declined'
-                                                        ? t('patient.appointments.transport.declined')
-                                                        : t('patient.appointments.transport.requested')
-                                                : t('patient.appointments.transport.notNeeded')
+                                                ? appointment.transport_status ===
+                                                  'accepted'
+                                                    ? t(
+                                                          'patient.appointments.transport.acceptedBy',
+                                                          {
+                                                              name:
+                                                                  appointment
+                                                                      .transport_family
+                                                                      ?.name ??
+                                                                  '',
+                                                          },
+                                                      )
+                                                    : appointment.transport_status ===
+                                                        'declined'
+                                                      ? t(
+                                                            'patient.appointments.transport.declined',
+                                                        )
+                                                      : t(
+                                                            'patient.appointments.transport.requested',
+                                                        )
+                                                : t(
+                                                      'patient.appointments.transport.notNeeded',
+                                                  )
                                         }}
                                     </p>
                                     <slot name="transport-actions" />
@@ -299,38 +367,56 @@ const showAppointmentDoneToggle = computed(
 
                         <p
                             v-if="appointment.notes"
-                            class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
+                            class="border-primary text-text border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed italic sm:text-lg"
                         >
                             {{ appointment.notes }}
                         </p>
 
                         <div
-                            v-if="appointment.status === 'done' && appointment.doctor_visit_summary"
-                            class="space-y-2 border-l-[3px] border-success/50 py-0.5 pl-3.5"
+                            v-if="
+                                appointment.status === 'done' &&
+                                appointment.doctor_visit_summary
+                            "
+                            class="border-success/50 space-y-2 border-l-[3px] py-0.5 pl-3.5"
                         >
-                            <p class="text-base font-semibold leading-snug text-text-heading">
-                                {{ doneSummaryLabel ?? t('patient.appointments.labels.afterVisit') }}
+                            <p
+                                class="text-text-heading text-base leading-snug font-semibold"
+                            >
+                                {{
+                                    doneSummaryLabel ??
+                                    t('patient.appointments.labels.afterVisit')
+                                }}
                             </p>
-                            <p class="text-base leading-relaxed text-text sm:text-lg">
+                            <p
+                                class="text-text text-base leading-relaxed sm:text-lg"
+                            >
                                 {{ appointment.doctor_visit_summary }}
                             </p>
                         </div>
 
                         <div
                             v-if="appointment.status === 'cancelled'"
-                            class="space-y-3 border-t border-border/70 pt-5"
+                            class="border-border/70 space-y-3 border-t pt-5"
                         >
                             <p
-                                class="border-l-[3px] border-text-muted/35 py-0.5 pl-3.5 text-base italic leading-relaxed text-text-muted"
+                                class="border-text-muted/35 text-text-muted border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed italic"
                             >
-                                {{ t('patient.appointments.doneToggle.cancelledNotice') }}
+                                {{
+                                    t(
+                                        'patient.appointments.doneToggle.cancelledNotice',
+                                    )
+                                }}
                             </p>
                             <p
                                 v-if="appointment.cancellation_reason"
-                                class="border-l-[3px] border-danger/40 py-0.5 pl-3.5 text-base leading-relaxed text-text"
+                                class="border-danger/40 text-text border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed"
                             >
-                                <span class="font-semibold text-text-heading">
-                                    {{ t('patient.appointments.cancelDialog.savedReasonLabel') }}
+                                <span class="text-text-heading font-semibold">
+                                    {{
+                                        t(
+                                            'patient.appointments.cancelDialog.savedReasonLabel',
+                                        )
+                                    }}
                                 </span>
                                 {{ appointment.cancellation_reason }}
                             </p>

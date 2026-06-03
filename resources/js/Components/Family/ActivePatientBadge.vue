@@ -16,33 +16,36 @@ const activePatientName = computed(() => {
 
 <template>
     <div
-        v-if="props.family.patients.length > 0 && props.family.active_patient_id !== null && activePatientName"
+        v-if="
+            props.family.patients.length > 0 &&
+            props.family.active_patient_id !== null &&
+            activePatientName
+        "
         :class="
             props.variant === 'compact'
-                ? 'flex flex-wrap items-baseline gap-x-2 gap-y-0.5 rounded-xl border border-border/70 bg-surface px-3 py-2 md:py-1.5'
+                ? 'border-border/70 bg-surface flex flex-wrap items-baseline gap-x-2 gap-y-0.5 rounded-xl border px-3 py-2 md:py-1.5'
                 : props.variant === 'inline'
-                  ? 'text-sm text-text-muted'
-                  : 'rounded-2xl border border-border/70 bg-surface px-4 py-3'
+                  ? 'text-text-muted text-sm'
+                  : 'border-border/70 bg-surface rounded-2xl border px-4 py-3'
         "
     >
         <p
             v-if="props.variant !== 'inline'"
-            class="text-xs font-semibold uppercase tracking-wide text-text-muted"
+            class="text-text-muted text-xs font-semibold tracking-wide uppercase"
         >
             {{ $t('family.overview.activePatientLabel') }}
         </p>
         <p
-            class="font-semibold leading-snug"
+            class="leading-snug font-semibold"
             :class="
                 props.variant === 'inline'
                     ? 'text-primary'
                     : props.variant === 'compact'
-                      ? 'text-sm text-primary md:text-sm'
-                      : 'mt-1 text-base text-primary'
+                      ? 'text-primary text-sm md:text-sm'
+                      : 'text-primary mt-1 text-base'
             "
         >
             {{ activePatientName }}
         </p>
     </div>
 </template>
-

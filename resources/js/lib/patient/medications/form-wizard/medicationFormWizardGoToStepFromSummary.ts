@@ -1,5 +1,5 @@
-import { nextTick } from 'vue';
 import type { Ref } from 'vue';
+import { nextTick } from 'vue';
 import type {
     MedicationCreateFormWithErrors,
     MedicationFormWizardStep,
@@ -22,7 +22,8 @@ export function runMedicationWizardGoToStepFromSummary(params: {
     step: MedicationFormWizardStep;
     focusElementIdSuffix?: string;
 }): void {
-    const { open, form, idPrefix, currentStep, step, focusElementIdSuffix } = params;
+    const { open, form, idPrefix, currentStep, step, focusElementIdSuffix } =
+        params;
     const inertiaForm = form();
 
     if (!open() || inertiaForm.processing || currentStep.value !== 7) {
@@ -38,7 +39,10 @@ export function runMedicationWizardGoToStepFromSummary(params: {
         if (
             focusElementIdSuffix !== undefined &&
             focusElementIdSuffix.length > 0 &&
-            tryFocusMedicationWizardElementBySuffix(prefix, focusElementIdSuffix)
+            tryFocusMedicationWizardElementBySuffix(
+                prefix,
+                focusElementIdSuffix,
+            )
         ) {
             return;
         }
@@ -50,13 +54,19 @@ export function runMedicationWizardGoToStepFromSummary(params: {
         }
 
         if (step === 2) {
-            focusMedicationWizardMealTimingField(prefix, inertiaForm.schedule.meal_timing);
+            focusMedicationWizardMealTimingField(
+                prefix,
+                inertiaForm.schedule.meal_timing,
+            );
 
             return;
         }
 
         if (step === 3) {
-            focusMedicationWizardTimesPerDayField(prefix, inertiaForm.schedule.times_per_day.trim());
+            focusMedicationWizardTimesPerDayField(
+                prefix,
+                inertiaForm.schedule.times_per_day.trim(),
+            );
 
             return;
         }

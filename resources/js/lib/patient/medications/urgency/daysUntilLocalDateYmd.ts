@@ -13,9 +13,9 @@ export function daysUntilLocalDateYmd(ymd: string): number | null {
     const target = new Date(year, month - 1, day);
 
     if (
-        target.getFullYear() !== year
-        || target.getMonth() !== month - 1
-        || target.getDate() !== day
+        target.getFullYear() !== year ||
+        target.getMonth() !== month - 1 ||
+        target.getDate() !== day
     ) {
         return null;
     }

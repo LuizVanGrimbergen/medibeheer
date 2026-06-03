@@ -12,4 +12,3 @@ export default {
     acceptTransport: 'Accepteer transport',
     declineTransport: 'Afwijzen',
 };
-

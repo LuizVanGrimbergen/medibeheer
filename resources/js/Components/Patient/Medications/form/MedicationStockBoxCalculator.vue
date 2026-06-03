@@ -21,7 +21,9 @@ import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const model = defineModel<string>({ required: true });
-const piecesPerPackageModel = defineModel<string>('piecesPerPackage', { default: '' });
+const piecesPerPackageModel = defineModel<string>('piecesPerPackage', {
+    default: '',
+});
 
 const props = defineProps<{
     idPrefix: string;
@@ -32,8 +34,8 @@ const props = defineProps<{
 
 const isLiquidStock = computed(() => props.medicationType === 'liquid');
 
-const stockCalculatorHintIcon = computed((): LucideIcon =>
-    isLiquidStock.value ? PillBottle : Package,
+const stockCalculatorHintIcon = computed(
+    (): LucideIcon => (isLiquidStock.value ? PillBottle : Package),
 );
 
 const stockCalculatorHint = computed(() =>
@@ -75,7 +77,12 @@ const calculatedTotal = computed((): number | null => {
     const boxes = Number.parseInt(numberOfBoxes.value, 10);
     const pieces = Number.parseInt(piecesPerBox.value, 10);
 
-    if (Number.isNaN(boxes) || Number.isNaN(pieces) || boxes < 0 || pieces < 0) {
+    if (
+        Number.isNaN(boxes) ||
+        Number.isNaN(pieces) ||
+        boxes < 0 ||
+        pieces < 0
+    ) {
         return null;
     }
 
@@ -107,7 +114,11 @@ watch(
 watch(
     model,
     (newValue) => {
-        if (numberOfBoxes.value === '' && piecesPerBox.value === '' && newValue !== '') {
+        if (
+            numberOfBoxes.value === '' &&
+            piecesPerBox.value === '' &&
+            newValue !== ''
+        ) {
             const parsed = Number.parseInt(newValue, 10);
 
             if (!Number.isNaN(parsed) && parsed > 0) {
@@ -149,7 +160,9 @@ const hasDisplayableDoseUnit = computed((): boolean => {
         return false;
     }
 
-    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(props.doseUnit);
+    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(
+        props.doseUnit,
+    );
 });
 
 const doseUnitChip = computed((): string | null => {
@@ -192,7 +205,7 @@ const totalStockIconWrapClass = computed((): string =>
 function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
     const input = event.target as HTMLInputElement;
     const cleaned = input.value.replace(/\D/g, '');
-    
+
     if (target === 'boxes') {
         numberOfBoxes.value = cleaned;
     } else {
@@ -204,10 +217,10 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
 <template>
     <div class="space-y-4 md:space-y-5">
         <div
-            class="flex min-w-0 w-full items-start gap-3.5 rounded-2xl border-2 border-border bg-white px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4"
+            class="border-border flex w-full min-w-0 items-start gap-3.5 rounded-2xl border-2 bg-white px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4"
         >
             <div
-                class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary sm:size-14 sm:rounded-2xl"
+                class="bg-primary/12 text-primary flex size-11 shrink-0 items-center justify-center rounded-xl sm:size-14 sm:rounded-2xl"
             >
                 <component
                     :is="stockCalculatorHintIcon"
@@ -216,7 +229,9 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                 />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-1">
-                <span class="text-sm font-semibold leading-snug text-black sm:text-base">
+                <span
+                    class="text-sm leading-snug font-semibold text-black sm:text-base"
+                >
                     {{ stockCalculatorHint }}
                 </span>
             </div>
@@ -252,7 +267,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     @input="handleNumberInput($event, 'boxes')"
                 />
             </div>
-            
+
             <div>
                 <Label
                     :for="piecesFieldId"
@@ -290,24 +305,25 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             :for="`${boxFieldId} ${piecesFieldId}`"
         >
             <div :class="totalStockIconWrapClass">
-                <Layers
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
+                <Layers class="size-5 sm:size-6" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class="text-sm font-semibold leading-snug text-text-heading sm:text-base">
-                    {{ t('patient.medications.stockCalculator.totalStockLabel') }}
+                <span
+                    class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+                >
+                    {{
+                        t('patient.medications.stockCalculator.totalStockLabel')
+                    }}
                 </span>
                 <div class="flex items-baseline gap-2">
                     <span
-                        class="whitespace-pre-wrap wrap-break-word text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-3xl"
+                        class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
                     >
                         {{ calculatedTotal }}
                     </span>
                     <span
                         v-if="doseUnitChip !== null"
-                        class="text-lg font-semibold text-text-heading sm:text-xl"
+                        class="text-text-heading text-lg font-semibold sm:text-xl"
                     >
                         {{ doseUnitChip }}
                     </span>
@@ -315,9 +331,6 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             </div>
         </output>
 
-        <InputError
-            :id="`${idPrefix}-stock-error`"
-            :message="errorMessage"
-        />
+        <InputError :id="`${idPrefix}-stock-error`" :message="errorMessage" />
     </div>
 </template>

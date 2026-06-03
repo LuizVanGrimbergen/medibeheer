@@ -2,7 +2,11 @@ import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import type { FamilyDashboardProps, MedicationListItem, Paginated } from '@/lib/types';
+import type {
+    FamilyDashboardProps,
+    MedicationListItem,
+    Paginated,
+} from '@/lib/types';
 
 export type FamilyMedicationsScreenProps = {
     family: FamilyDashboardProps;

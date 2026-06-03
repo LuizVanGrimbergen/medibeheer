@@ -31,7 +31,10 @@ export type MedicationScheduleDurationChoice =
     | MedicationScheduleDurationPresetKey
     | 'custom';
 
-const PRESET_INCLUSIVE_DAYS: Record<MedicationScheduleDurationTimedPresetKey, number> = {
+const PRESET_INCLUSIVE_DAYS: Record<
+    MedicationScheduleDurationTimedPresetKey,
+    number
+> = {
     '1_week': 7,
     '4_weeks': 28,
     '6_weeks': 42,

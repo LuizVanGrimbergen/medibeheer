@@ -17,8 +17,7 @@ export default {
         confirm: 'Verwijderen',
         cancel: 'Annuleren',
     },
-    empty:
-        'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
+    empty: 'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
     listHeading: 'Uw medicatie',
     listStatus: {
         ended: 'Afgelopen',
@@ -90,7 +89,8 @@ export default {
         boxesPlaceholder: 'Bijv. 2',
         piecesPlaceholder: 'Bijv. 100',
         totalStockLabel: 'Uw totale voorraad',
-        calculationExplanation: '{boxes} doosje(s) × {pieces} stuks = {total} stuks totaal',
+        calculationExplanation:
+            '{boxes} doosje(s) × {pieces} stuks = {total} stuks totaal',
         liquid: {
             hint: 'Hoeveel flesjes heeft u, en hoeveel ml zit er per flesje in?',
             numberOfBottles: 'Aantal flesjes',
@@ -164,7 +164,8 @@ export default {
         strengthAmountRequired: 'Vul de sterkte in.',
         strengthUnitRequired: 'Kies een eenheid voor de sterkte.',
         typeRequired: 'Kies een type medicatie.',
-        scheduleMealTimingRequired: 'Kies wanneer u het medicatie neemt t.o.v. eten.',
+        scheduleMealTimingRequired:
+            'Kies wanneer u het medicatie neemt t.o.v. eten.',
         scheduleIntakeFrequencyRequired: 'Kies hoe vaak u het medicatie neemt.',
         scheduleIntakeWeekdaysRequired: 'Kies minimaal één weekdag.',
         scheduleIntakeWeekdaysInvalid: 'Kies alleen geldige weekdagen.',
@@ -172,21 +173,26 @@ export default {
         scheduleTimesPerDayInvalid: 'Kies tussen 1 en 24 keer per dag.',
         scheduleDoseTimeRequired: 'Vul bij elke inname een tijd in.',
         scheduleDoseTimeMax: 'Dit veld mag maximaal 500 tekens zijn.',
-        scheduleSnoozeTimeRequired: 'Kies bij elke inname hoe lang u de tijd heeft om in te nemen.',
-        scheduleSnoozeTimeInvalid: 'Kies een geldige tijd om in te nemen (0–24 uur).',
+        scheduleSnoozeTimeRequired:
+            'Kies bij elke inname hoe lang u de tijd heeft om in te nemen.',
+        scheduleSnoozeTimeInvalid:
+            'Kies een geldige tijd om in te nemen (0–24 uur).',
         scheduleIntakePeriodRequired: 'Kies een periode van inname.',
         scheduleStartDateRequired: 'Kies een startdatum.',
         scheduleStartDateInvalid: 'Kies een geldige startdatum.',
         scheduleEndDateRequired: 'Kies een einddatum.',
         scheduleEndDateInvalid: 'Kies een geldige einddatum.',
-        scheduleEndDateBeforeStart: 'De einddatum moet op of na de startdatum liggen.',
+        scheduleEndDateBeforeStart:
+            'De einddatum moet op of na de startdatum liggen.',
         scheduleCourseMaxDays: 'Het innemen mag maximaal 366 dagen duren.',
-        prescriptionExpiryDateInvalid: 'Kies een geldige vervaldatum van het voorschrift.',
+        prescriptionExpiryDateInvalid:
+            'Kies een geldige vervaldatum van het voorschrift.',
         noteMax: 'De notitie mag maximaal 2000 tekens zijn.',
         stockCurrentMax: 'De huidige voorraad mag maximaal 500 tekens zijn.',
         stockCurrentRequired: 'Vul de huidige voorraad in.',
         stockPiecesPerPackageRequired: 'Vul het aantal stuks per doosje in.',
-        stockPiecesPerPackageInvalid: 'Stuks per doosje moet een geheel getal zijn.',
+        stockPiecesPerPackageInvalid:
+            'Stuks per doosje moet een geheel getal zijn.',
         stockPiecesPerPackageMax: 'Stuks per doosje mag maximaal 9999 zijn.',
     },
     actions: {

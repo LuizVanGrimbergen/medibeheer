@@ -47,7 +47,7 @@ function handleSecondaryClick(): void {
 
 <template>
     <div
-        class="flex min-w-0 w-full flex-col gap-2 md:flex-row-reverse md:gap-3"
+        class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
     >
         <button
             type="submit"

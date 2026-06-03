@@ -8,7 +8,10 @@ import {
     inclusiveCalendarDaysBetweenIsoDates,
     medicationScheduleEndDateIsoInclusiveLocal,
 } from '../schedule/medicationScheduleDuration';
-import { isMemberOf, parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
+import {
+    isMemberOf,
+    parseMedicationTimesPerDayCount,
+} from '../validation/medicationFormValidationPrimitives';
 import { medicationWizardStepValidation } from './wizardStepMessages';
 
 function applyMedicationWizardScheduleTimingRefinement(
@@ -19,10 +22,15 @@ function applyMedicationWizardScheduleTimingRefinement(
     },
     ctx: z.core.$RefinementCtx,
 ): void {
-    if (data.meal_timing === '' || !isMemberOf(MEDICATION_MEAL_TIMING_VALUES, data.meal_timing)) {
+    if (
+        data.meal_timing === '' ||
+        !isMemberOf(MEDICATION_MEAL_TIMING_VALUES, data.meal_timing)
+    ) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleMealTimingRequired'),
+            message: medicationWizardStepValidation(
+                'scheduleMealTimingRequired',
+            ),
             path: ['meal_timing'],
         });
     }
@@ -33,7 +41,9 @@ function applyMedicationWizardScheduleTimingRefinement(
     ) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleIntakeFrequencyRequired'),
+            message: medicationWizardStepValidation(
+                'scheduleIntakeFrequencyRequired',
+            ),
             path: ['intake_frequency'],
         });
 
@@ -47,17 +57,23 @@ function applyMedicationWizardScheduleTimingRefinement(
     if (data.intake_weekdays.length < 1) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleIntakeWeekdaysRequired'),
+            message: medicationWizardStepValidation(
+                'scheduleIntakeWeekdaysRequired',
+            ),
             path: ['intake_weekdays'],
         });
 
         return;
     }
 
-    if (data.intake_weekdays.some((d) => !Number.isInteger(d) || d < 1 || d > 7)) {
+    if (
+        data.intake_weekdays.some((d) => !Number.isInteger(d) || d < 1 || d > 7)
+    ) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleIntakeWeekdaysInvalid'),
+            message: medicationWizardStepValidation(
+                'scheduleIntakeWeekdaysInvalid',
+            ),
             path: ['intake_weekdays'],
         });
     }
@@ -72,7 +88,9 @@ function applyMedicationWizardTimesPerDayRefinement(
     if (timesTrimmed.length < 1) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleTimesPerDayRequired'),
+            message: medicationWizardStepValidation(
+                'scheduleTimesPerDayRequired',
+            ),
             path: ['times_per_day'],
         });
 
@@ -82,7 +100,9 @@ function applyMedicationWizardTimesPerDayRefinement(
     if (parseMedicationTimesPerDayCount(timesTrimmed) === null) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleTimesPerDayInvalid'),
+            message: medicationWizardStepValidation(
+                'scheduleTimesPerDayInvalid',
+            ),
             path: ['times_per_day'],
         });
     }
@@ -92,7 +112,9 @@ function applyMedicationWizardSnoozeTimesRefinement(
     data: { times_per_day: string; snooze_time_slots: readonly string[] },
     ctx: z.core.$RefinementCtx,
 ): void {
-    const timesCount = parseMedicationTimesPerDayCount(data.times_per_day.trim());
+    const timesCount = parseMedicationTimesPerDayCount(
+        data.times_per_day.trim(),
+    );
 
     if (timesCount === null) {
         return;
@@ -107,7 +129,9 @@ function applyMedicationWizardSnoozeTimesRefinement(
     if (snoozeSlots.some((slot) => slot.length < 1)) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleSnoozeTimeRequired'),
+            message: medicationWizardStepValidation(
+                'scheduleSnoozeTimeRequired',
+            ),
             path: ['snooze_time'],
         });
 
@@ -127,7 +151,9 @@ function applyMedicationWizardSnoozeTimesRefinement(
     if (invalid) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleSnoozeTimeInvalid'),
+            message: medicationWizardStepValidation(
+                'scheduleSnoozeTimeInvalid',
+            ),
             path: ['snooze_time'],
         });
     }
@@ -137,7 +163,9 @@ function applyMedicationWizardDoseTimesRefinement(
     data: { times_per_day: string; dose_time_slots: readonly string[] },
     ctx: z.core.$RefinementCtx,
 ): void {
-    const timesCount = parseMedicationTimesPerDayCount(data.times_per_day.trim());
+    const timesCount = parseMedicationTimesPerDayCount(
+        data.times_per_day.trim(),
+    );
 
     if (timesCount === null) {
         return;
@@ -185,7 +213,9 @@ function applyMedicationWizardDurationRefinement(
             ),
             path: ['start_date'],
         });
-    } else if (medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null) {
+    } else if (
+        medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null
+    ) {
         ctx.addIssue({
             code: 'custom',
             message: medicationWizardStepValidation('scheduleStartDateInvalid'),
@@ -206,20 +236,27 @@ function applyMedicationWizardDurationRefinement(
     }
 
     const hasStartIssue =
-        startTrimmed.length < 1 || medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null;
+        startTrimmed.length < 1 ||
+        medicationScheduleEndDateIsoInclusiveLocal(startTrimmed, 1) === null;
     const hasEndIssue =
-        endTrimmed.length < 1 || medicationScheduleEndDateIsoInclusiveLocal(endTrimmed, 1) === null;
+        endTrimmed.length < 1 ||
+        medicationScheduleEndDateIsoInclusiveLocal(endTrimmed, 1) === null;
 
     if (hasStartIssue || hasEndIssue) {
         return;
     }
 
-    const spanDays = inclusiveCalendarDaysBetweenIsoDates(startTrimmed, endTrimmed);
+    const spanDays = inclusiveCalendarDaysBetweenIsoDates(
+        startTrimmed,
+        endTrimmed,
+    );
 
     if (spanDays === null) {
         ctx.addIssue({
             code: 'custom',
-            message: medicationWizardStepValidation('scheduleEndDateBeforeStart'),
+            message: medicationWizardStepValidation(
+                'scheduleEndDateBeforeStart',
+            ),
             path: ['end_date'],
         });
 

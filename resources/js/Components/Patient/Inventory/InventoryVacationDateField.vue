@@ -26,17 +26,14 @@ const isEmpty = computed(() => model.value.trim() === '');
 
 <template>
     <div>
-        <Label
-            :for="id"
-            :class="cn(patientFormLabelClass, 'text-xl')"
-        >
+        <Label :for="id" :class="cn(patientFormLabelClass, 'text-xl')">
             {{ label }} <span class="text-danger">*</span>
         </Label>
 
         <div class="relative">
             <span
                 v-if="isEmpty"
-                class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-xl leading-normal text-text-placeholder"
+                class="text-text-placeholder pointer-events-none absolute inset-y-0 left-4 flex items-center text-xl leading-normal"
                 aria-hidden="true"
             >
                 {{ t('patient.inventory.vacationDateFormatHint') }}

@@ -40,7 +40,8 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const sectionHeadingClass = 'text-xl font-bold leading-snug text-text-heading md:text-2xl';
+const sectionHeadingClass =
+    'text-xl font-bold leading-snug text-text-heading md:text-2xl';
 
 const subHeadingClass = 'text-lg font-semibold leading-snug text-text-heading';
 
@@ -82,7 +83,7 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
             <section
                 v-if="props.pending_medication_plans.length > 0"
                 id="family-pending-plans"
-                class="scroll-mt-24 rounded-2xl border-2 border-primary/40 bg-primary/5 p-6 shadow-sm sm:p-8"
+                class="border-primary/40 bg-primary/5 scroll-mt-24 rounded-2xl border-2 p-6 shadow-sm sm:p-8"
                 aria-labelledby="family-action-required-heading"
             >
                 <h2
@@ -91,10 +92,7 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                 >
                     {{ t('patient.family.actionRequiredHeading') }}
                 </h2>
-                <p
-                    class="mt-3"
-                    :class="bodyTextClass"
-                >
+                <p class="mt-3" :class="bodyTextClass">
                     {{ t('patient.family.actionRequiredIntro') }}
                 </p>
 
@@ -102,32 +100,50 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                     <li
                         v-for="plan in props.pending_medication_plans"
                         :key="plan.id"
-                        class="rounded-2xl border-2 border-border bg-surface px-4 py-4 sm:px-5 sm:py-5"
+                        class="border-border bg-surface rounded-2xl border-2 px-4 py-4 sm:px-5 sm:py-5"
                     >
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div
+                            class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+                        >
                             <div class="min-w-0 space-y-1">
-                                <p class="text-lg font-bold leading-snug text-text-heading md:text-xl">
-                                    {{ plan.medication_name ?? t('family.medicationPlans.unnamed') }}
+                                <p
+                                    class="text-text-heading text-lg leading-snug font-bold md:text-xl"
+                                >
+                                    {{
+                                        plan.medication_name ??
+                                        t('family.medicationPlans.unnamed')
+                                    }}
                                 </p>
                                 <p
                                     v-if="plan.family_member_name !== ''"
                                     :class="bodyTextClass"
                                 >
                                     {{
-                                        t('patient.family.pendingMedicationPlansFrom', {
-                                            name: plan.family_member_name,
-                                        })
+                                        t(
+                                            'patient.family.pendingMedicationPlansFrom',
+                                            {
+                                                name: plan.family_member_name,
+                                            },
+                                        )
                                     }}
                                 </p>
                                 <p
                                     v-if="plan.expires_at !== null"
-                                    class="text-sm text-text-muted md:text-base"
+                                    class="text-text-muted text-sm md:text-base"
                                 >
-                                    {{ t('patient.family.expiresAt', { date: formatCareTeamExpiry(plan.expires_at) }) }}
+                                    {{
+                                        t('patient.family.expiresAt', {
+                                            date: formatCareTeamExpiry(
+                                                plan.expires_at,
+                                            ),
+                                        })
+                                    }}
                                 </p>
                             </div>
 
-                            <div class="flex min-w-0 w-full flex-col gap-2 sm:flex-row-reverse sm:gap-3">
+                            <div
+                                class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
+                            >
                                 <button
                                     type="button"
                                     :class="
@@ -141,7 +157,11 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                                     "
                                     @click="acceptMedicationPlan(plan)"
                                 >
-                                    {{ t('patient.family.pendingMedicationPlansAccept') }}
+                                    {{
+                                        t(
+                                            'patient.family.pendingMedicationPlansAccept',
+                                        )
+                                    }}
                                 </button>
                                 <button
                                     type="button"
@@ -156,7 +176,11 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                                     "
                                     @click="reviewMedicationPlan(plan)"
                                 >
-                                    {{ t('patient.family.pendingMedicationPlansReview') }}
+                                    {{
+                                        t(
+                                            'patient.family.pendingMedicationPlansReview',
+                                        )
+                                    }}
                                 </button>
                                 <button
                                     type="button"
@@ -171,7 +195,11 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                                     "
                                     @click="declineMedicationPlan(plan)"
                                 >
-                                    {{ t('patient.family.pendingMedicationPlansDecline') }}
+                                    {{
+                                        t(
+                                            'patient.family.pendingMedicationPlansDecline',
+                                        )
+                                    }}
                                 </button>
                             </div>
                         </div>
@@ -192,8 +220,11 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
             />
 
             <section
-                v-if="props.accepted_medication_plans.length > 0 || props.pending_medication_plans.length === 0"
-                class="rounded-2xl border-2 border-border bg-surface p-6 shadow-sm sm:p-8"
+                v-if="
+                    props.accepted_medication_plans.length > 0 ||
+                    props.pending_medication_plans.length === 0
+                "
+                class="border-border bg-surface rounded-2xl border-2 p-6 shadow-sm sm:p-8"
                 aria-labelledby="family-medication-plans-heading"
             >
                 <h2
@@ -204,7 +235,10 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                 </h2>
 
                 <p
-                    v-if="props.pending_medication_plans.length === 0 && props.accepted_medication_plans.length === 0"
+                    v-if="
+                        props.pending_medication_plans.length === 0 &&
+                        props.accepted_medication_plans.length === 0
+                    "
                     class="mt-4"
                     :class="bodyTextClass"
                 >
@@ -218,10 +252,7 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                     <h3 :class="subHeadingClass">
                         {{ t('patient.family.acceptedMedicationPlansHeading') }}
                     </h3>
-                    <p
-                        class="mt-2"
-                        :class="bodyTextClass"
-                    >
+                    <p class="mt-2" :class="bodyTextClass">
                         {{ t('patient.family.acceptedMedicationPlansIntro') }}
                     </p>
 
@@ -229,27 +260,41 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                         <li
                             v-for="plan in props.accepted_medication_plans"
                             :key="plan.id"
-                            class="rounded-2xl border-2 bg-surface px-4 py-4 shadow-sm border-success/55 dark:border-success/65 sm:px-5 sm:py-5"
+                            class="bg-surface border-success/55 dark:border-success/65 rounded-2xl border-2 px-4 py-4 shadow-sm sm:px-5 sm:py-5"
                         >
                             <div class="flex flex-col gap-1">
-                                <p class="text-base font-semibold text-text-heading md:text-lg">
-                                    {{ plan.medication_name ?? t('family.medicationPlans.unnamed') }}
+                                <p
+                                    class="text-text-heading text-base font-semibold md:text-lg"
+                                >
+                                    {{
+                                        plan.medication_name ??
+                                        t('family.medicationPlans.unnamed')
+                                    }}
                                 </p>
                                 <p
                                     v-if="plan.family_member_name !== ''"
                                     :class="bodyTextClass"
                                 >
                                     {{
-                                        t('patient.family.acceptedMedicationPlansBy', {
-                                            name: plan.family_member_name,
-                                        })
+                                        t(
+                                            'patient.family.acceptedMedicationPlansBy',
+                                            {
+                                                name: plan.family_member_name,
+                                            },
+                                        )
                                     }}
                                 </p>
                                 <p
                                     v-if="plan.accepted_at !== null"
-                                    class="text-sm text-text-muted md:text-base"
+                                    class="text-text-muted text-sm md:text-base"
                                 >
-                                    {{ t('patient.family.acceptedAt', { date: formatCareTeamExpiry(plan.accepted_at) }) }}
+                                    {{
+                                        t('patient.family.acceptedAt', {
+                                            date: formatCareTeamExpiry(
+                                                plan.accepted_at,
+                                            ),
+                                        })
+                                    }}
                                 </p>
                             </div>
                         </li>

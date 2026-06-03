@@ -39,7 +39,7 @@ const submit = () => {
             <div class="mb-6">
                 <Link
                     :href="backUrl"
-                    class="inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm font-semibold text-text-muted hover:text-text focus:outline-none focus:ring-2 focus:ring-focus/20"
+                    class="text-text-muted hover:text-text focus:ring-focus/20 inline-flex items-center gap-2 rounded-lg px-2 py-1 text-sm font-semibold focus:ring-2 focus:outline-none"
                 >
                     <svg
                         viewBox="0 0 20 20"
@@ -60,7 +60,10 @@ const submit = () => {
 
         <form class="space-y-5" @submit.prevent="submit">
             <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="password"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('auth.confirmPwd.pwdLabel') }}
                 </Label>
                 <Input
@@ -70,7 +73,7 @@ const submit = () => {
                     autocomplete="current-password"
                     required
                     autofocus
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                 />
                 <InputError class="mt-2" :message="form.errors.password" />
             </div>

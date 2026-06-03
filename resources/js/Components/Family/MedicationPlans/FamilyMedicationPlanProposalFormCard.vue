@@ -72,9 +72,9 @@ watch(
 </script>
 
 <template>
-    <Card class="rounded-2xl border-border bg-surface shadow-sm">
-        <CardHeader class="border-b border-border px-5 py-4 sm:px-6">
-            <CardTitle class="text-xl font-bold text-text-heading">
+    <Card class="border-border bg-surface rounded-2xl shadow-sm">
+        <CardHeader class="border-border border-b px-5 py-4 sm:px-6">
+            <CardTitle class="text-text-heading text-xl font-bold">
                 {{ title }}
             </CardTitle>
         </CardHeader>
@@ -85,10 +85,7 @@ watch(
                 novalidate
                 @submit.prevent="handleSubmit"
             >
-                <p
-                    v-if="showWizardProgress"
-                    class="text-sm text-text-muted"
-                >
+                <p v-if="showWizardProgress" class="text-text-muted text-sm">
                     {{ medicationProgressLabel }}
                 </p>
 

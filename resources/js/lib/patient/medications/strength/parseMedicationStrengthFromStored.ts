@@ -1,8 +1,5 @@
-import {
-    MEDICATION_STRENGTH_UNIT_VALUES
-    
-} from '@/lib/patient/medications/options/medicationStrengthUnitForm';
-import type {MedicationStrengthUnitValue} from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import type { MedicationStrengthUnitValue } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import { MEDICATION_STRENGTH_UNIT_VALUES } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 
 const STORAGE_LABEL_TO_UNIT: Record<string, MedicationStrengthUnitValue> = {
     mg: 'milligram',
@@ -10,7 +7,9 @@ const STORAGE_LABEL_TO_UNIT: Record<string, MedicationStrengthUnitValue> = {
     ml: 'milliliter',
 };
 
-export function parseMedicationStrengthFromStored(strength: string | null | undefined): {
+export function parseMedicationStrengthFromStored(
+    strength: string | null | undefined,
+): {
     strength: string;
     strength_amount: string;
     strength_unit: MedicationStrengthUnitValue | '';
@@ -37,7 +36,9 @@ export function parseMedicationStrengthFromStored(strength: string | null | unde
 
     const unit = STORAGE_LABEL_TO_UNIT[match[2].toLowerCase()] ?? '';
 
-    if (!(MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(unit)) {
+    if (
+        !(MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(unit)
+    ) {
         return {
             strength: trimmed,
             strength_amount: '',

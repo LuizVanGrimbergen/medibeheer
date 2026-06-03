@@ -2,19 +2,15 @@ import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import {
-    usePatientActionSuccessScreen,
-    type PatientActionSuccessDetail,
-} from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
 import { medicationListItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationListItemToCreateFormState';
 import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
-import {
-    patientShellDialogContentClass,
-} from '@/lib/patient/patientShellDialogLayout';
+import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationListItem } from '@/lib/types';
 
 const medicationFormDialogLayoutClass = patientShellDialogContentClass('md');
@@ -25,7 +21,9 @@ function attachMedicationScheduleTimeSlotWatcher(
     watch(
         () => form.schedule.times_per_day,
         () => {
-            const count = parseMedicationTimesPerDayCount(form.schedule.times_per_day);
+            const count = parseMedicationTimesPerDayCount(
+                form.schedule.times_per_day,
+            );
 
             if (count === null) {
                 return;
@@ -54,8 +52,10 @@ function attachMedicationScheduleTimeSlotWatcher(
             if (syncedSnoozeSlots.length < count) {
                 form.schedule.snooze_time_slots = [
                     ...syncedSnoozeSlots,
-                    ...Array.from({ length: count - syncedSnoozeSlots.length }, () =>
-                        String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
+                    ...Array.from(
+                        { length: count - syncedSnoozeSlots.length },
+                        () =>
+                            String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
                     ),
                 ];
 
@@ -63,7 +63,10 @@ function attachMedicationScheduleTimeSlotWatcher(
             }
 
             if (syncedSnoozeSlots.length > count) {
-                form.schedule.snooze_time_slots = syncedSnoozeSlots.slice(0, count);
+                form.schedule.snooze_time_slots = syncedSnoozeSlots.slice(
+                    0,
+                    count,
+                );
             }
         },
     );
@@ -89,7 +92,9 @@ function attachMedicationScheduleDateOrderWatcher(
     );
 }
 
-export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) {
+export function usePatientMedicationsPage(
+    props: PatientMedicationsScreenProps,
+) {
     const { t } = useI18n();
     const createSuccessScreen = usePatientActionSuccessScreen();
     const createDialogOpen = ref(false);
@@ -131,7 +136,9 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
         }
 
         void nextTick(() => {
-            document.getElementById('patient-medication-edit-create-summary-title')?.focus();
+            document
+                .getElementById('patient-medication-edit-create-summary-title')
+                ?.focus();
         });
     });
 
@@ -150,9 +157,10 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
 
         params.delete('create');
         const query = params.toString();
-        const nextUrl = query.length > 0
-            ? `${globalThis.location.pathname}?${query}`
-            : globalThis.location.pathname;
+        const nextUrl =
+            query.length > 0
+                ? `${globalThis.location.pathname}?${query}`
+                : globalThis.location.pathname;
 
         globalThis.history.replaceState({}, '', nextUrl);
     });
@@ -182,7 +190,9 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
                 : [];
 
         createForm
-            .transform((data) => medicationCreateFormStateToRequestPayload(data))
+            .transform((data) =>
+                medicationCreateFormStateToRequestPayload(data),
+            )
             .post(route('patient.medications.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
@@ -190,8 +200,12 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
                     resetCreateDialogToFreshDefaults();
                     createDialogOpen.value = false;
                     createSuccessScreen.show({
-                        title: t('patient.actionSuccess.medications.created.title'),
-                        message: t('patient.actionSuccess.medications.created.message'),
+                        title: t(
+                            'patient.actionSuccess.medications.created.title',
+                        ),
+                        message: t(
+                            'patient.actionSuccess.medications.created.message',
+                        ),
                         details: successDetails,
                     });
                 },
@@ -206,7 +220,9 @@ export function usePatientMedicationsPage(props: PatientMedicationsScreenProps) 
         const id = editMedicationId.value;
 
         editForm
-            .transform((data) => medicationCreateFormStateToRequestPayload(data))
+            .transform((data) =>
+                medicationCreateFormStateToRequestPayload(data),
+            )
             .put(route('patient.medications.update', id), {
                 preserveScroll: true,
                 onSuccess: () => {

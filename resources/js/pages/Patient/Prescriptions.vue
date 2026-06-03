@@ -84,21 +84,23 @@ const emptyStateMessage = computed((): string => {
             <section class="space-y-5">
                 <ul
                     v-if="props.prescriptions.data.length > 0"
-                    class="flex min-w-0 w-full flex-col gap-6 sm:gap-7"
+                    class="flex w-full min-w-0 flex-col gap-6 sm:gap-7"
                 >
                     <li
                         v-for="prescription in sortedPrescriptions"
                         :key="prescription.id"
                         class="min-w-0"
                     >
-                        <MedicationPrescriptionCard :prescription="prescription" />
+                        <MedicationPrescriptionCard
+                            :prescription="prescription"
+                        />
                     </li>
                 </ul>
 
                 <NumberedPagination
                     v-if="
                         props.prescriptions.data.length > 0 &&
-                            props.prescriptions.meta.last_page > 1
+                        props.prescriptions.meta.last_page > 1
                     "
                     route-name="patient.prescriptions"
                     :meta="props.prescriptions.meta"
@@ -106,10 +108,10 @@ const emptyStateMessage = computed((): string => {
 
                 <Card
                     v-if="props.prescriptions.meta.total === 0"
-                    class="rounded-2xl border-2 border-dashed border-border bg-surface-2/70 text-text shadow-none"
+                    class="border-border bg-surface-2/70 text-text rounded-2xl border-2 border-dashed shadow-none"
                 >
                     <CardContent
-                        class="px-5 py-14 text-center text-lg leading-relaxed text-text-muted sm:px-8"
+                        class="text-text-muted px-5 py-14 text-center text-lg leading-relaxed sm:px-8"
                     >
                         {{ emptyStateMessage }}
                     </CardContent>

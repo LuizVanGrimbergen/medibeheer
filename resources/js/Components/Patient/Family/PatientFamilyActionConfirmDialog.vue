@@ -33,21 +33,24 @@ function confirm(): void {
 </script>
 
 <template>
-    <Dialog
-        :open="open"
-        @update:open="(value) => emit('update:open', value)"
-    >
+    <Dialog :open="open" @update:open="(value) => emit('update:open', value)">
         <DialogContent class="max-w-md gap-6 p-6 sm:p-8">
             <DialogHeader class="gap-3 text-left">
-                <DialogTitle class="text-xl font-bold leading-snug text-text-heading md:text-2xl">
+                <DialogTitle
+                    class="text-text-heading text-xl leading-snug font-bold md:text-2xl"
+                >
                     {{ title }}
                 </DialogTitle>
-                <DialogDescription class="text-base leading-relaxed text-text-muted md:text-lg">
+                <DialogDescription
+                    class="text-text-muted text-base leading-relaxed md:text-lg"
+                >
                     {{ description }}
                 </DialogDescription>
             </DialogHeader>
 
-            <DialogFooter class="flex flex-col-reverse gap-3 sm:flex-col-reverse">
+            <DialogFooter
+                class="flex flex-col-reverse gap-3 sm:flex-col-reverse"
+            >
                 <Button
                     type="button"
                     variant="outline"

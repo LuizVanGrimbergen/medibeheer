@@ -1,10 +1,8 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    usePatientActionSuccessScreen,
-    type PatientActionSuccessDetail,
-} from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
 import {
     PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
     patientAppointmentFormValuesToRequestPayload,
@@ -12,19 +10,20 @@ import {
 import { patientAppointmentToEditFormState } from '@/lib/patient/appointments/form-wizard/patientAppointmentToEditFormState';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
-import {
-    patientShellDialogContentClass,
-} from '@/lib/patient/patientShellDialogLayout';
+import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type {
-    Appointment as PatientAppointment,
     AppointmentDoctorType,
     AppointmentStatusValue,
+    Appointment as PatientAppointment,
 } from '@/lib/types';
 
 const appointmentFormDialogLayoutClass = patientShellDialogContentClass('sm');
 
 export function usePatientAppointmentFormDialogs(
-    props: Pick<PatientAppointmentsScreenProps, 'linked_families' | 'open_create_dialog'>,
+    props: Pick<
+        PatientAppointmentsScreenProps,
+        'linked_families' | 'open_create_dialog'
+    >,
 ) {
     const { t } = useI18n();
     const createSuccessScreen = usePatientActionSuccessScreen();
@@ -106,7 +105,9 @@ export function usePatientAppointmentFormDialogs(
         },
     });
 
-    const createStartsAtDateMinIso = computed(() => localCalendarDateIsoToday());
+    const createStartsAtDateMinIso = computed(() =>
+        localCalendarDateIsoToday(),
+    );
 
     const editSchedulePermitPastStartsAtIfSameInstantMs = computed(() => {
         const a = appointmentBeingEdited.value;
@@ -134,7 +135,9 @@ export function usePatientAppointmentFormDialogs(
         editForm.clearErrors();
         resetCreateDialogToFreshDefaults();
         void nextTick(() => {
-            const el = document.getElementById('appointment-create-doctor-type');
+            const el = document.getElementById(
+                'appointment-create-doctor-type',
+            );
             el?.focus();
         });
     });
@@ -149,7 +152,10 @@ export function usePatientAppointmentFormDialogs(
         editForm.clearErrors();
         Object.assign(
             editForm,
-            patientAppointmentToEditFormState(appointment, props.linked_families),
+            patientAppointmentToEditFormState(
+                appointment,
+                props.linked_families,
+            ),
         );
         void nextTick(() => {
             const el = document.getElementById('appointment-edit-doctor-type');
@@ -187,15 +193,21 @@ export function usePatientAppointmentFormDialogs(
         }
 
         createForm
-            .transform((data) => patientAppointmentFormValuesToRequestPayload({ ...data }))
+            .transform((data) =>
+                patientAppointmentFormValuesToRequestPayload({ ...data }),
+            )
             .post(route('patient.appointments.store'), {
                 preserveScroll: true,
                 onSuccess: () => {
                     resetCreateDialogToFreshDefaults();
                     createDialogOpen.value = false;
                     createSuccessScreen.show({
-                        title: t('patient.actionSuccess.appointments.created.title'),
-                        message: t('patient.actionSuccess.appointments.created.message'),
+                        title: t(
+                            'patient.actionSuccess.appointments.created.title',
+                        ),
+                        message: t(
+                            'patient.actionSuccess.appointments.created.message',
+                        ),
                         details: successDetails,
                     });
                 },
@@ -215,7 +227,8 @@ export function usePatientAppointmentFormDialogs(
                     { ...data },
                     {
                         permitPastStartsAtIfSameInstantMs:
-                            editSchedulePermitPastStartsAtIfSameInstantMs.value ?? undefined,
+                            editSchedulePermitPastStartsAtIfSameInstantMs.value ??
+                            undefined,
                     },
                 ),
             )

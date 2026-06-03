@@ -36,7 +36,9 @@ export function medicationIntakeDoseLine(
     return `${dose} ${chip}`;
 }
 
-export function medicationIntakeNotePreview(source: { note: string | null }): string | null {
+export function medicationIntakeNotePreview(source: {
+    note: string | null;
+}): string | null {
     const raw = source.note;
 
     if (raw === null) {
@@ -88,7 +90,9 @@ export function medicationTodayIntakeHeaderSummary(
 
 export function medicationCardHeaderSummary(
     t: ComposerTranslation,
-    source: MedicationIntakeSlotDisplaySource & { doseTimes: readonly string[] },
+    source: MedicationIntakeSlotDisplaySource & {
+        doseTimes: readonly string[];
+    },
 ): string {
     const dosePart = medicationIntakeDoseLine(t, source);
     const times = source.doseTimes

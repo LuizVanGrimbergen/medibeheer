@@ -1,4 +1,7 @@
-import type { TodayMedicationIntakeDayPeriodValue, TodayMedicationIntakeSlot } from '@/lib/types';
+import type {
+    TodayMedicationIntakeDayPeriodValue,
+    TodayMedicationIntakeSlot,
+} from '@/lib/types';
 
 export const TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER = [
     'morning',
@@ -34,7 +37,9 @@ function minutesSinceMidnight(value: string): number {
     return hours * 60 + minutes;
 }
 
-function dayPeriodSortRank(period: TodayMedicationIntakeDayPeriodValue): number {
+function dayPeriodSortRank(
+    period: TodayMedicationIntakeDayPeriodValue,
+): number {
     const rank = TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER.indexOf(period);
 
     return rank === -1 ? TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER.length : rank;
@@ -45,21 +50,26 @@ export function compareTodayMedicationIntakeSlots(
     right: TodayMedicationIntakeSlot,
 ): number {
     const periodCompare =
-        dayPeriodSortRank(left.day_period) - dayPeriodSortRank(right.day_period);
+        dayPeriodSortRank(left.day_period) -
+        dayPeriodSortRank(right.day_period);
 
     if (periodCompare !== 0) {
         return periodCompare;
     }
 
     return (
-        minutesSinceMidnight(left.dose_time) - minutesSinceMidnight(right.dose_time)
+        minutesSinceMidnight(left.dose_time) -
+        minutesSinceMidnight(right.dose_time)
     );
 }
 
 export function groupTodayMedicationIntakesByDayPeriod(
     slots: readonly TodayMedicationIntakeSlot[],
 ): TodayMedicationIntakeDayPeriodGroup[] {
-    const buckets = new Map<TodayMedicationIntakeDayPeriodValue, TodayMedicationIntakeSlot[]>();
+    const buckets = new Map<
+        TodayMedicationIntakeDayPeriodValue,
+        TodayMedicationIntakeSlot[]
+    >();
 
     for (const period of TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER) {
         buckets.set(period, []);

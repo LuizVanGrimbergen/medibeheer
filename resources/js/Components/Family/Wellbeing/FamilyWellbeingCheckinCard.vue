@@ -3,7 +3,11 @@ import { Frown, Meh, Smile } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/Components/ui/card';
-import type { DailyCheckin, DailyCheckinSymptomValue, DailyMoodScoreValue } from '@/lib/types';
+import type {
+    DailyCheckin,
+    DailyCheckinSymptomValue,
+    DailyMoodScoreValue,
+} from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -21,18 +25,21 @@ const { t, locale } = useI18n();
 const formattedDate = computed((): string => {
     const [y, m, d] = props.checkin.checkin_date.split('-').map(Number);
 
-    if (! y || ! m || ! d) {
+    if (!y || !m || !d) {
         return props.checkin.checkin_date;
     }
 
     const date = new Date(y, m - 1, d);
 
-    return new Intl.DateTimeFormat(locale.value === 'nl' ? 'nl-NL' : undefined, {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-    }).format(date);
+    return new Intl.DateTimeFormat(
+        locale.value === 'nl' ? 'nl-NL' : undefined,
+        {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        },
+    ).format(date);
 });
 
 type MoodPresentation = {
@@ -78,7 +85,9 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
 </script>
 
 <template>
-    <Card class="min-w-0 w-full rounded-2xl border border-border bg-surface text-text shadow-sm">
+    <Card
+        class="border-border bg-surface text-text w-full min-w-0 rounded-2xl border shadow-sm"
+    >
         <CardContent
             :class="
                 cn(
@@ -106,12 +115,14 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
                     />
                 </div>
                 <div class="min-w-0 flex-1">
-                    <h4 class="wrap-break-word text-lg font-bold leading-snug text-text-heading">
+                    <h4
+                        class="text-text-heading text-lg leading-snug font-bold wrap-break-word"
+                    >
                         {{ t(moodPresentation.labelKey) }}
                     </h4>
                     <p
                         v-if="props.density === 'default'"
-                        class="mt-1 text-sm font-medium capitalize text-text-muted"
+                        class="text-text-muted mt-1 text-sm font-medium capitalize"
                     >
                         {{ formattedDate }}
                     </p>
@@ -122,7 +133,7 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
                         <span
                             v-for="symptom in checkin.symptoms"
                             :key="symptom"
-                            class="rounded-full bg-surface-hover px-2.5 py-0.5 text-xs font-medium text-text-heading"
+                            class="bg-surface-hover text-text-heading rounded-full px-2.5 py-0.5 text-xs font-medium"
                         >
                             {{ symptomLabel(symptom) }}
                         </span>
@@ -132,12 +143,14 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
 
             <div
                 v-if="checkin.note"
-                class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5"
+                class="border-border/70 bg-bg flex min-w-0 flex-col gap-1 rounded-xl border px-3 py-2.5"
             >
-                <span class="text-xs font-semibold text-text-muted">
+                <span class="text-text-muted text-xs font-semibold">
                     {{ t('family.wellbeing.noteLabel') }}
                 </span>
-                <p class="min-w-0 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-text-heading">
+                <p
+                    class="text-text-heading min-w-0 text-sm leading-relaxed wrap-break-word whitespace-pre-wrap"
+                >
                     {{ checkin.note }}
                 </p>
             </div>

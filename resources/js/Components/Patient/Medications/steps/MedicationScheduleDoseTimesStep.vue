@@ -7,8 +7,8 @@ import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { formatMedicationSnoozeMinutesLabel } from '@/lib/patient/medications/schedule/formatMedicationSnoozeLabel';
 import {
-    MEDICATION_SCHEDULE_SNOOZE_MINUTE_OPTIONS,
     MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES,
+    MEDICATION_SCHEDULE_SNOOZE_MINUTE_OPTIONS,
 } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import {
@@ -69,7 +69,9 @@ function setSnoozeSlot(index: number, minutes: string): void {
     form.schedule.snooze_time_slots = next;
 }
 
-watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true });
+watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
+    immediate: true,
+});
 </script>
 
 <template>
@@ -78,23 +80,26 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
             :id="`${idPrefix}-schedule-dose-times-label`"
             :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
         >
-            {{ t('patient.medications.fields.doseTime') }} <span class="text-danger">*</span>
+            {{ t('patient.medications.fields.doseTime') }}
+            <span class="text-danger">*</span>
         </legend>
         <div class="mt-4 space-y-4">
             <div
                 v-for="index in doseTimeSlotIndices"
                 :key="index"
-                class="space-y-3 rounded-2xl border border-border/60 bg-muted/30 p-4 md:rounded-3xl md:p-5"
+                class="border-border/60 bg-muted/30 space-y-3 rounded-2xl border p-4 md:rounded-3xl md:p-5"
             >
-                <p class="text-sm font-semibold text-text-heading">
-                    {{ t('patient.medications.fields.doseTime') }} {{ index + 1 }}
+                <p class="text-text-heading text-sm font-semibold">
+                    {{ t('patient.medications.fields.doseTime') }}
+                    {{ index + 1 }}
                 </p>
                 <div class="space-y-2">
                     <Label
                         :for="`${idPrefix}-schedule-dose-time-${index}`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.medications.fields.doseTimeAt') }} <span class="text-danger">*</span>
+                        {{ t('patient.medications.fields.doseTimeAt') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-schedule-dose-time-${index}`"
@@ -111,7 +116,9 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
                                     : null,
                             )
                         "
-                        :aria-invalid="Boolean(form.errors['schedule.dose_time'])"
+                        :aria-invalid="
+                            Boolean(form.errors['schedule.dose_time'])
+                        "
                         :aria-describedby="
                             form.errors['schedule.dose_time']
                                 ? `${idPrefix}-schedule-dose-time-error`
@@ -124,14 +131,30 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
                         :for="`${idPrefix}-schedule-snooze-time-${index}`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.medications.fields.snoozeTime') }} <span class="text-danger">*</span>
+                        {{ t('patient.medications.fields.snoozeTime') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <select
                         :id="`${idPrefix}-schedule-snooze-time-${index}`"
-                        :value="form.schedule.snooze_time_slots[index] ?? String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES)"
-                        :class="cn(patientFormSelectBaseClass, patientFormSelectChevronStyle)"
-                        :aria-invalid="Boolean(form.errors['schedule.snooze_time'])"
-                        @change="setSnoozeSlot(index, ($event.target as HTMLSelectElement).value)"
+                        :value="
+                            form.schedule.snooze_time_slots[index] ??
+                            String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES)
+                        "
+                        :class="
+                            cn(
+                                patientFormSelectBaseClass,
+                                patientFormSelectChevronStyle,
+                            )
+                        "
+                        :aria-invalid="
+                            Boolean(form.errors['schedule.snooze_time'])
+                        "
+                        @change="
+                            setSnoozeSlot(
+                                index,
+                                ($event.target as HTMLSelectElement).value,
+                            )
+                        "
                     >
                         <option
                             v-for="minutes in MEDICATION_SCHEDULE_SNOOZE_MINUTE_OPTIONS"
@@ -146,7 +169,10 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, { immediate: true
         </div>
         <InputError
             :id="`${idPrefix}-schedule-dose-time-error`"
-            :message="form.errors['schedule.dose_time'] ?? form.errors['schedule.snooze_time']"
+            :message="
+                form.errors['schedule.dose_time'] ??
+                form.errors['schedule.snooze_time']
+            "
         />
     </fieldset>
 </template>

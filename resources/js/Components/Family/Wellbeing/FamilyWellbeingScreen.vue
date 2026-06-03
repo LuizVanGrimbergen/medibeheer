@@ -19,19 +19,18 @@ const props = defineProps<
 
 const { t } = useI18n();
 
-const listPaginationQuery = computed((): Record<string, string> => ({
-    calendar_month: props.wellbeing_calendar_month,
-}));
+const listPaginationQuery = computed(
+    (): Record<string, string> => ({
+        calendar_month: props.wellbeing_calendar_month,
+    }),
+);
 
 const wellbeingCalendarIndex = computed(() =>
     indexWellbeingCalendarCheckins(props.wellbeing_calendar_checkins),
 );
 
-const {
-    selectedCalendarDate,
-    selectedDaySectionRef,
-    onSelectCalendarDate,
-} = useHistorySelectedDay(() => props.wellbeing_calendar_month);
+const { selectedCalendarDate, selectedDaySectionRef, onSelectCalendarDate } =
+    useHistorySelectedDay(() => props.wellbeing_calendar_month);
 
 const selectedDayCheckin = computed(() => {
     const date = selectedCalendarDate.value;
@@ -52,15 +51,12 @@ const selectedDayCheckin = computed(() => {
     >
         <p
             v-if="!props.family.has_linked_patient"
-            class="max-w-prose text-sm leading-relaxed text-text-muted"
+            class="text-text-muted max-w-prose text-sm leading-relaxed"
         >
             {{ t('family.wellbeing.notLinked') }}
         </p>
 
-        <div
-            v-else
-            class="flex min-w-0 flex-col gap-6"
-        >
+        <div v-else class="flex min-w-0 flex-col gap-6">
             <FamilyWellbeingMonthCalendar
                 :calendar-month="props.wellbeing_calendar_month"
                 :moods-by-date="wellbeingCalendarIndex.moodsByDate"
@@ -78,25 +74,21 @@ const selectedDayCheckin = computed(() => {
                     :checkin="selectedDayCheckin"
                     density="compact"
                 />
-                <p
-                    v-else
-                    class="text-sm leading-relaxed text-text-muted"
-                >
+                <p v-else class="text-text-muted text-sm leading-relaxed">
                     {{ t('family.wellbeing.selectedDayNoCheckin') }}
                 </p>
             </HistorySelectedDaySection>
 
             <template v-if="props.wellbeing_checkins.meta.total === 0">
-                <p class="text-sm leading-relaxed text-text-muted">
+                <p class="text-text-muted text-sm leading-relaxed">
                     {{ t('family.wellbeing.empty') }}
                 </p>
             </template>
 
-            <div
-                v-else
-                class="space-y-4"
-            >
-                <h2 class="text-lg font-semibold text-text-heading md:text-base">
+            <div v-else class="space-y-4">
+                <h2
+                    class="text-text-heading text-lg font-semibold md:text-base"
+                >
                     {{ t('family.wellbeing.listHeading') }}
                 </h2>
                 <FamilyWellbeingCheckinCard
@@ -115,4 +107,3 @@ const selectedDayCheckin = computed(() => {
         </div>
     </FamilyPageShell>
 </template>
-

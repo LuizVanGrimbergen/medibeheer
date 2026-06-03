@@ -24,7 +24,8 @@ const props = withDefaults(
 
 const calendarMonthRef = toRef(props, 'calendarMonth');
 
-const { monthTitle, shiftMonth } = useHistoryMonthCalendarGrid(calendarMonthRef);
+const { monthTitle, shiftMonth } =
+    useHistoryMonthCalendarGrid(calendarMonthRef);
 
 const preservedQuery = computed((): Record<string, string> => {
     if (typeof globalThis.window === 'undefined') {
@@ -65,10 +66,7 @@ function visitMonth(delta: number): void {
             :aria-label="props.prevMonthAriaLabel"
             @click="visitMonth(-1)"
         >
-            <ChevronLeft
-                class="size-4"
-                aria-hidden="true"
-            />
+            <ChevronLeft class="size-4" aria-hidden="true" />
         </Button>
         <CardTitle
             :class="
@@ -88,10 +86,7 @@ function visitMonth(delta: number): void {
             :aria-label="props.nextMonthAriaLabel"
             @click="visitMonth(1)"
         >
-            <ChevronRight
-                class="size-4"
-                aria-hidden="true"
-            />
+            <ChevronRight class="size-4" aria-hidden="true" />
         </Button>
     </div>
 </template>

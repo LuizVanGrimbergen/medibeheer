@@ -18,11 +18,12 @@ export const MEDICATION_STRENGTH_UNIT_OPTIONS: MedicationStrengthUnitOption[] =
         labelKey: value,
     }));
 
-const STRENGTH_UNIT_STORAGE_LABEL: Record<MedicationStrengthUnitValue, string> = {
-    milligram: 'mg',
-    gram: 'g',
-    milliliter: 'ml',
-};
+const STRENGTH_UNIT_STORAGE_LABEL: Record<MedicationStrengthUnitValue, string> =
+    {
+        milligram: 'mg',
+        gram: 'g',
+        milliliter: 'ml',
+    };
 
 export function medicationStrengthUnitStorageLabel(
     unit: MedicationStrengthUnitValue,

@@ -1,9 +1,8 @@
+import type { MedicationStrengthUnitValue } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import {
     MEDICATION_STRENGTH_UNIT_VALUES,
-    medicationStrengthUnitStorageLabel
-    
+    medicationStrengthUnitStorageLabel,
 } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
-import type {MedicationStrengthUnitValue} from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 
 export function buildMedicationStrengthFromParts(
     doseUnit: string,
@@ -17,7 +16,9 @@ export function buildMedicationStrengthFromParts(
     }
 
     if (
-        !(MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(strengthUnit)
+        !(MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(
+            strengthUnit,
+        )
     ) {
         return null;
     }

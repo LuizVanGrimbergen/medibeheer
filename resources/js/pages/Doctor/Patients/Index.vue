@@ -26,7 +26,7 @@ const { t } = useI18n();
 
     <DoctorLayout>
         <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:gap-5">
-            <h1 class="text-2xl font-semibold text-text-heading">
+            <h1 class="text-text-heading text-2xl font-semibold">
                 {{ t('doctor.patients.heading') }}
             </h1>
 

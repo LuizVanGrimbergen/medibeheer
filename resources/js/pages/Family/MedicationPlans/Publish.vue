@@ -59,9 +59,12 @@ function submit(): void {
         patient_email: data.patient_email.trim().toLowerCase(),
     }));
 
-    form.post(route('family.medication-plans.publish.store', props.proposal_id), {
-        preserveScroll: true,
-    });
+    form.post(
+        route('family.medication-plans.publish.store', props.proposal_id),
+        {
+            preserveScroll: true,
+        },
+    );
 }
 </script>
 
@@ -74,21 +77,27 @@ function submit(): void {
         <FamilyPageShell
             :title="t('family.medicationPlans.publishPage.title')"
             :family="page.props.family"
-            :show-active-patient="page.props.family?.has_linked_patient ?? false"
+            :show-active-patient="
+                page.props.family?.has_linked_patient ?? false
+            "
         >
-            <Card class="rounded-2xl border-border bg-surface shadow-sm">
-                <CardHeader class="space-y-1.5 border-b border-border px-5 py-4 sm:px-6">
-                    <CardTitle class="text-xl font-bold text-text-heading">
+            <Card class="border-border bg-surface rounded-2xl shadow-sm">
+                <CardHeader
+                    class="border-border space-y-1.5 border-b px-5 py-4 sm:px-6"
+                >
+                    <CardTitle class="text-text-heading text-xl font-bold">
                         {{ t('family.medicationPlans.publishPage.title') }}
                     </CardTitle>
                     <p
                         v-if="props.medication_name !== null"
-                        class="text-base font-semibold text-text-heading"
+                        class="text-text-heading text-base font-semibold"
                     >
                         {{ props.medication_name }}
                     </p>
-                    <p class="text-sm leading-relaxed text-text-muted">
-                        {{ t('family.medicationPlans.publishPage.description') }}
+                    <p class="text-text-muted text-sm leading-relaxed">
+                        {{
+                            t('family.medicationPlans.publishPage.description')
+                        }}
                     </p>
                 </CardHeader>
                 <CardContent class="px-5 py-6 sm:px-6">
@@ -102,7 +111,11 @@ function submit(): void {
                                 for="medication-plan-patient-email"
                                 :class="patientFormLabelClass"
                             >
-                                {{ t('family.medicationPlans.publishPage.emailLabel') }}
+                                {{
+                                    t(
+                                        'family.medicationPlans.publishPage.emailLabel',
+                                    )
+                                }}
                             </Label>
                             <Input
                                 id="medication-plan-patient-email"
@@ -118,8 +131,14 @@ function submit(): void {
                                             : null,
                                     )
                                 "
-                                :placeholder="t('family.medicationPlans.publishPage.emailPlaceholder')"
-                                :aria-invalid="Boolean(form.errors.patient_email)"
+                                :placeholder="
+                                    t(
+                                        'family.medicationPlans.publishPage.emailPlaceholder',
+                                    )
+                                "
+                                :aria-invalid="
+                                    Boolean(form.errors.patient_email)
+                                "
                             />
                             <InputError
                                 class="mt-1"
@@ -127,7 +146,9 @@ function submit(): void {
                             />
                         </div>
 
-                        <div class="flex min-w-0 w-full flex-col gap-2 md:flex-row-reverse md:gap-3">
+                        <div
+                            class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
+                        >
                             <button
                                 type="submit"
                                 :disabled="form.processing"
@@ -141,7 +162,11 @@ function submit(): void {
                                     )
                                 "
                             >
-                                {{ t('family.medicationPlans.publishPage.submit') }}
+                                {{
+                                    t(
+                                        'family.medicationPlans.publishPage.submit',
+                                    )
+                                }}
                             </button>
                             <Link
                                 :href="props.cancel_url"
@@ -155,7 +180,11 @@ function submit(): void {
                                     )
                                 "
                             >
-                                {{ t('family.medicationPlans.publishPage.cancel') }}
+                                {{
+                                    t(
+                                        'family.medicationPlans.publishPage.cancel',
+                                    )
+                                }}
                             </Link>
                         </div>
                     </form>

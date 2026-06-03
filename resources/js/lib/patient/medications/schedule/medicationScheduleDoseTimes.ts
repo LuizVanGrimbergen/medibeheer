@@ -67,7 +67,9 @@ export function buildMedicationScheduleSnoozeTimeSlots(
         if (fromSnoozeField !== undefined && fromSnoozeField.length > 0) {
             const parsedSnooze = parseSnoozeMinutes(fromSnoozeField);
 
-            return String(parsedSnooze ?? MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES);
+            return String(
+                parsedSnooze ?? MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES,
+            );
         }
 
         return String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES);

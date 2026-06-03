@@ -29,7 +29,9 @@ const collapsedSummary = computed(() => {
     });
 });
 
-function openPatientAppointments(appointment: FamilyPendingTransportAppointment): void {
+function openPatientAppointments(
+    appointment: FamilyPendingTransportAppointment,
+): void {
     router.post(
         appointment.switch_url,
         {},

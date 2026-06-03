@@ -27,7 +27,7 @@ const actionButtonClass = 'min-h-12 w-full touch-manipulation sm:w-auto';
         :class="
             cn(
                 'flex min-w-0 flex-col gap-3',
-                !props.standalone && 'border-t border-border pt-4',
+                !props.standalone && 'border-border border-t pt-4',
             )
         "
     >
