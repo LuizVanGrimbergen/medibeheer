@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { computed, toRef } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { CardTitle } from '@/Components/ui/card';
-import { useHistoryMonthCalendarGrid } from '@/composables/useHistoryMonthCalendarGrid';
+import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(

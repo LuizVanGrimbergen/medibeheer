@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useEcho } from '@laravel/echo-vue';
-import { reloadFamilyUpdatesPage } from '@/composables/useFamilyUpdatesActions';
+import { reloadFamilyUpdatesPage } from '@/composables/family/useFamilyUpdatesActions';
 
 const props = defineProps<{
     patientId: number;

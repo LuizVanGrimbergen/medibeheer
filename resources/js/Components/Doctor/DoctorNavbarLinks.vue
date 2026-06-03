@@ -5,7 +5,7 @@ import { useI18n } from 'vue-i18n';
 import {
     doctorNavItems,
     useDoctorRoleNavigation,
-} from '@/composables/useDoctorRoleNavigation';
+} from '@/composables/doctor/useDoctorRoleNavigation';
 import { cn } from '@/lib/utils';
 
 const { t } = useI18n();

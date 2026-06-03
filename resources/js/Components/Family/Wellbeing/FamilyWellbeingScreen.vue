@@ -6,7 +6,7 @@ import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWell
 import FamilyWellbeingMonthCalendar from '@/Components/Family/Wellbeing/FamilyWellbeingMonthCalendar.vue';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import { useHistorySelectedDay } from '@/composables/useHistorySelectedDay';
+import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import type { FamilyWellbeingScreenProps } from '@/lib/family/wellbeing/familyWellbeingScreenProps';
 import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
 import type { FamilyDashboardProps } from '@/lib/types';

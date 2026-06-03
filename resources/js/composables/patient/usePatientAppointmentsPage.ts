@@ -1,6 +1,6 @@
 import { computed } from 'vue';
-import { usePatientAppointmentFormDialogs } from '@/composables/usePatientAppointmentFormDialogs';
-import { usePatientAppointmentRemoteActions } from '@/composables/usePatientAppointmentRemoteActions';
+import { usePatientAppointmentFormDialogs } from '@/composables/patient/usePatientAppointmentFormDialogs';
+import { usePatientAppointmentRemoteActions } from '@/composables/patient/usePatientAppointmentRemoteActions';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 
 export type PatientAppointmentsPageProps = PatientAppointmentsScreenProps;

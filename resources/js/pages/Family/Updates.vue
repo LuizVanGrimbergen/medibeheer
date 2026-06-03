@@ -7,7 +7,7 @@ import FamilyUpdatesEchoListener from '@/Components/Family/Updates/FamilyUpdates
 import FamilyUpdatesMedicationDayGroup from '@/Components/Family/Updates/FamilyUpdatesMedicationDayGroup.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
-import { setUpdatesPeriodDaysFromToggle } from '@/composables/useFamilyUpdatesActions';
+import { setUpdatesPeriodDaysFromToggle } from '@/composables/family/useFamilyUpdatesActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import { groupMedicationIntakesByDate } from '@/lib/family/medications/groupMedicationIntakesByDate';
 import type { FamilyUpdatesScreenProps } from '@/lib/family/updates/familyUpdatesScreenProps';
