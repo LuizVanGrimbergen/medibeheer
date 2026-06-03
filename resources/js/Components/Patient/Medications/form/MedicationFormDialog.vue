@@ -17,7 +17,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import { ref, toRef } from 'vue';
 
 const props = defineProps<{
     open: boolean;
@@ -48,6 +50,15 @@ const {
         emit('submit');
     },
 });
+
+const isOpen = toRef(() => props.open);
+const progressLabelRef = ref<HTMLElement | null>(null);
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    currentStep,
+    isOpen,
+    { progressLabelRef },
+);
 </script>
 
 <template>
@@ -65,6 +76,7 @@ const {
                     {{ props.title }}
                 </DialogTitle>
                 <DialogDescription
+                    ref="progressLabelRef"
                     class="text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed"
                     aria-live="polite"
                 >
@@ -81,7 +93,7 @@ const {
                 <div
                     class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
-                    <div class="space-y-3 md:space-y-3">
+                    <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
                         <MedicationScheduleMealsAndFrequencyStep
                             v-if="currentStep === 2"
                             :form="props.form"

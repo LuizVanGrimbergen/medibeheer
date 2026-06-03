@@ -7,7 +7,7 @@ import HistoryMonthNavigation from '@/Components/History/HistoryMonthNavigation.
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
-import { useHistorySelectedDay } from '@/composables/useHistorySelectedDay';
+import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
 import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
 import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';

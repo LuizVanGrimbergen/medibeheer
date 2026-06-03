@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import AppointmentAddressStep from '@/Components/Patient/Appointments/steps/AppointmentAddressStep.vue';
@@ -7,7 +7,7 @@ import AppointmentNotesStep from '@/Components/Patient/Appointments/steps/Appoin
 import AppointmentProviderStep from '@/Components/Patient/Appointments/steps/AppointmentProviderStep.vue';
 import AppointmentScheduleStep from '@/Components/Patient/Appointments/steps/AppointmentScheduleStep.vue';
 import AppointmentTransportStep from '@/Components/Patient/Appointments/steps/AppointmentTransportStep.vue';
-import { buttonVariants } from '@/Components/ui/button';
+import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     Dialog,
@@ -29,9 +29,9 @@ import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     open: boolean;
@@ -81,6 +81,15 @@ const stepSnapshot = computed(() => ({
 }));
 
 const currentStepIndex = computed(() => stepOrder.value.indexOf(step.value));
+
+const isOpen = toRef(() => props.open);
+const progressLabelRef = ref<HTMLElement | null>(null);
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    currentStepIndex,
+    isOpen,
+    { progressLabelRef },
+);
 
 const progressLabel = computed(() =>
     t('patient.appointments.steps.progress', {
@@ -353,6 +362,7 @@ watch(
                     {{ props.title }}
                 </DialogTitle>
                 <DialogDescription
+                    ref="progressLabelRef"
                     class="text-text-heading block text-base leading-relaxed font-medium"
                     aria-live="polite"
                 >
@@ -369,7 +379,7 @@ watch(
                 <div
                     class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
-                    <div class="space-y-3 sm:space-y-4">
+                    <div ref="wizardStepPanelRef" class="space-y-3 sm:space-y-4">
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                         >
@@ -437,17 +447,13 @@ watch(
                             <div
                                 class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
                             >
-                                <button
+                                <Button
                                     v-if="!isNotesStep"
                                     type="button"
+                                    variant="default"
+                                    size="lg"
                                     :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'default',
-                                                size: 'lg',
-                                            }),
-                                            patientAppointmentFormPrimaryPairButtonClass,
-                                        )
+                                        patientAppointmentFormPrimaryPairButtonClass
                                     "
                                     @click.stop.prevent="
                                         tryAdvanceFromCurrentStep
@@ -456,37 +462,27 @@ watch(
                                     {{
                                         t('patient.appointments.steps.continue')
                                     }}
-                                </button>
+                                </Button>
 
-                                <button
+                                <Button
                                     v-else
                                     type="submit"
+                                    variant="default"
+                                    size="lg"
                                     :disabled="props.form.processing"
                                     :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'default',
-                                                size: 'lg',
-                                            }),
-                                            patientAppointmentFormPrimaryPairButtonClass,
-                                        )
+                                        patientAppointmentFormPrimaryPairButtonClass
                                     "
                                 >
                                     {{ t('patient.appointments.actions.save') }}
-                                </button>
+                                </Button>
 
-                                <button
+                                <Button
                                     type="button"
+                                    variant="secondary"
+                                    size="lg"
                                     :disabled="props.form.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'secondary',
-                                                size: 'lg',
-                                            }),
-                                            patientSoftDangerActionButtonClass,
-                                        )
-                                    "
+                                    :class="patientSoftDangerActionButtonClass"
                                     @click.stop.prevent="handleCancelOrBack"
                                 >
                                     {{
@@ -498,7 +494,7 @@ watch(
                                                   'patient.appointments.steps.back',
                                               )
                                     }}
-                                </button>
+                                </Button>
                             </div>
                         </CardContent>
                     </Card>

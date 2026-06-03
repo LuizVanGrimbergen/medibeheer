@@ -104,7 +104,6 @@ function onWindowPageShow(): void {
     maybeReloadWhenCalendarDayAdvanced();
 }
 
-let pushMarkPollTimer: ReturnType<typeof globalThis.setInterval> | null = null;
 let pushMarkBroadcastChannel: BroadcastChannel | null = null;
 
 onMounted(() => {
@@ -120,51 +119,10 @@ onMounted(() => {
             router.visit(PUSH_MARK_SUCCESS_ROUTE, { replace: true });
         };
     }
-
-    if (props.pending_push_medication_mark !== null) {
-        return;
-    }
-
-    let attempts = 0;
-
-    pushMarkPollTimer = globalThis.setInterval(() => {
-        attempts += 1;
-
-        if (attempts > 20) {
-            if (pushMarkPollTimer !== null) {
-                globalThis.clearInterval(pushMarkPollTimer);
-            }
-
-            return;
-        }
-
-        router.reload({
-            only: ['pending_push_medication_mark'],
-            onSuccess: (reloadedPage) => {
-                const name = reloadedPage.props.pending_push_medication_mark as
-                    | string
-                    | null;
-
-                if (name === null) {
-                    return;
-                }
-
-                if (pushMarkPollTimer !== null) {
-                    globalThis.clearInterval(pushMarkPollTimer);
-                }
-
-                redirectToPushSuccessIfPending(name);
-            },
-        });
-    }, 1000);
 });
 
 onUnmounted(() => {
     window.removeEventListener('pageshow', onWindowPageShow);
-
-    if (pushMarkPollTimer !== null) {
-        globalThis.clearInterval(pushMarkPollTimer);
-    }
 
     pushMarkBroadcastChannel?.close();
 });
@@ -198,28 +156,56 @@ const dailyCheckinEncouragementFlash = computed((): string | null => {
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.dashboard.heading')">
+        <PatientPageShell
+            :title="t('patient.dashboard.heading')"
+            show-visible-title
+        >
             <DailyCheckinSuccessScreen
                 :mood="dailyCheckinMoodFlash"
                 :message="dailyCheckinEncouragementFlash"
             />
 
+            <DailyCheckinCard
+                v-if="!isTodayCheckinLoading && props.today_checkin === null"
+                :today_date="props.today_date"
+                :today_checkin="null"
+            />
+
             <Card
-                v-if="isTodayCheckinLoading"
-                class="border-border/80 bg-surface text-text animate-pulse rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                v-else-if="isTodayCheckinLoading"
+                class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                 aria-busy="true"
             >
-                <CardContent class="space-y-4 p-5 sm:p-6 md:p-7">
-                    <div class="bg-surface-2 h-7 w-2/3 max-w-xs rounded-xl" />
-                    <div class="bg-surface-2 h-24 rounded-2xl" />
+                <CardContent class="p-0">
+                    <div
+                        class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
+                    >
+                        <div class="space-y-1 sm:space-y-1.5">
+                            <p class="daily-checkin-mood-step-title">
+                                {{ t('patient.dashboard.dailyCheckins.title') }}
+                            </p>
+                            <p class="daily-checkin-mood-step-description">
+                                {{
+                                    t(
+                                        'patient.dashboard.dailyCheckins.description',
+                                    )
+                                }}
+                            </p>
+                        </div>
+
+                        <div
+                            class="mx-auto grid w-full max-w-xl grid-cols-3 gap-2.5 sm:gap-3 md:max-w-none md:flex md:w-auto md:items-center md:justify-center md:gap-12"
+                            aria-hidden="true"
+                        >
+                            <div
+                                v-for="index in 3"
+                                :key="index"
+                                class="bg-surface-2 min-h-28 animate-pulse rounded-2xl sm:min-h-32 md:min-h-36"
+                            />
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
-
-            <DailyCheckinCard
-                v-else
-                :today_date="props.today_date"
-                :today_checkin="props.today_checkin ?? null"
-            />
 
             <PatientMedicationOnboardingShortcuts
                 v-if="showMedicationOnboardingShortcuts"

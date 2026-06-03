@@ -9,7 +9,7 @@ import MedicationPrescriptionCard from '@/Components/Patient/Prescriptions/Medic
 import PrescriptionsPageIntro from '@/Components/Patient/Prescriptions/PrescriptionsPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import { usePatientPrescriptionsPage } from '@/composables/usePatientPrescriptionsPage';
+import { usePatientPrescriptionsPage } from '@/composables/patient/usePatientPrescriptionsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationPrescriptionListItems } from '@/lib/patient/prescriptions/compareMedicationPrescriptionListItems';
 import type { PatientPrescriptionsScreenProps } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';

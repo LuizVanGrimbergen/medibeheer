@@ -5,7 +5,12 @@ import AppNavbar from '@/Components/AppNavbar.vue';
 import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
 import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
 import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
+import { AppLoadingScreen } from '@/Components/ui/loading-screen';
+import { useInertiaNavigationLoading } from '@/composables/useInertiaNavigationLoading';
 import type { PageProps } from '@/lib/types';
+
+const { isLoading: isNavigationLoading, loadingMessageKey } =
+    useInertiaNavigationLoading();
 
 const page = usePage<PageProps>();
 const authenticatedUserName = computed(() => page.props.auth.user?.name ?? '');
@@ -18,6 +23,11 @@ const flashRateLimitSeconds = computed(
 
 <template>
     <div class="bg-bg flex h-svh max-h-svh min-h-0 flex-col overflow-hidden">
+        <AppLoadingScreen
+            v-model:open="isNavigationLoading"
+            :message-key="loadingMessageKey"
+        />
+
         <AppNavbar :user-name="authenticatedUserName" />
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <PwaIosInstallBanner />

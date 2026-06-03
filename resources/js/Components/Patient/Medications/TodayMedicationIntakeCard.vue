@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
-import { AlertTriangle, Check } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
@@ -30,6 +26,12 @@ import {
 import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
 import type { TodayMedicationIntakeSlot } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useForm } from '@inertiajs/vue3';
+import { AlertTriangle, Check } from 'lucide-vue-next';
+import { computed, ref, watch, type ComponentPublicInstance } from 'vue';
+import { useGsapAttentionPulse } from '@/composables/motion/useGsapAttentionPulse';
+import { useSuccessFlashTrigger } from '@/composables/motion/useSuccessFlashTrigger';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
     intakeSlot: TodayMedicationIntakeSlot;
@@ -56,6 +58,8 @@ const showBeforeWindowState = computed(
 const showCustomTimePanel = ref(false);
 const customTakenTime = ref(currentMedicationIntakeTimeHHmm());
 const isOpen = ref(false);
+const criticalAlertRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+const shouldFlashSuccess = useSuccessFlashTrigger(isTaken);
 
 watch(showPastSnoozeActions, (visible) => {
     if (!visible) {
@@ -103,6 +107,8 @@ const intakeCardToneClasses = computed(() =>
 );
 
 const showCriticalSupplyAlert = computed(() => isCriticalSupply.value);
+
+useGsapAttentionPulse(criticalAlertRef, showCriticalSupplyAlert);
 
 const markTakenAriaLabel = computed(() =>
     t('patient.dashboard.todayMedications.markTakenAria', {
@@ -190,13 +196,18 @@ function confirmCustomTakenTime(): void {
 
 <template>
     <Card
-        class="bg-surface text-text w-full min-w-0 rounded-3xl border-2 shadow-md shadow-black/[0.04]"
-        :class="intakeCardToneClasses.border"
+        class="text-text relative w-full min-w-0 overflow-hidden rounded-3xl border-2 shadow-md shadow-black/[0.04]"
+        :class="
+            isTaken
+                ? 'border-success bg-success/5'
+                : cn('bg-surface', intakeCardToneClasses.border)
+        "
     >
         <CardContent class="relative flex flex-col gap-5 p-5 sm:gap-6 sm:p-6">
             <AlertTriangle
                 v-if="showCriticalSupplyAlert"
-                class="animate-supply-alert-flicker text-danger pointer-events-none absolute top-4 right-4 z-10 size-6 shrink-0 sm:top-6 sm:right-6 sm:size-7"
+                ref="criticalAlertRef"
+                class="text-danger pointer-events-none absolute top-4 right-4 z-10 size-6 shrink-0 sm:top-6 sm:right-6 sm:size-7"
                 role="img"
                 :aria-label="t('patient.inventory.lowStockBadge')"
             />
@@ -432,20 +443,23 @@ function confirmCustomTakenTime(): void {
                 />
             </div>
 
-            <Button
-                v-else-if="isTaken"
-                type="button"
-                class="border-success bg-success/10 text-text-heading hover:bg-success/10 mt-5 min-h-14 w-full touch-manipulation rounded-2xl border-2 text-lg font-bold sm:min-h-12 sm:text-base"
-                variant="outline"
-                disabled
-                :aria-pressed="true"
-            >
-                <Check
-                    class="text-success size-6 shrink-0 sm:size-5"
-                    aria-hidden="true"
-                />
-                {{ t('patient.dashboard.todayMedications.taken') }}
-            </Button>
+            <div v-else-if="isTaken" class="mt-5">
+                <Button
+                    type="button"
+                    class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
+                    variant="outline"
+                    success
+                    :success-flash="shouldFlashSuccess"
+                    disabled
+                    :aria-pressed="true"
+                >
+                    <Check
+                        class="text-success size-6 shrink-0 sm:size-5"
+                        aria-hidden="true"
+                    />
+                    {{ t('patient.dashboard.todayMedications.taken') }}
+                </Button>
+            </div>
         </CardContent>
     </Card>
 </template>

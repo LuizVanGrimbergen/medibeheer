@@ -10,7 +10,7 @@ import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSucces
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import { usePatientMedicationsPage } from '@/composables/usePatientMedicationsPage';
+import { usePatientMedicationsPage } from '@/composables/patient/usePatientMedicationsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 

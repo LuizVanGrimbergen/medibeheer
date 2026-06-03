@@ -32,3 +32,6 @@ export const buttonVariants = cva(
 );
 
 export type ButtonVariants = VariantProps<typeof buttonVariants>;
+
+export const buttonSuccessClass =
+    'border-success bg-success/10 text-text-heading hover:bg-success/10 border-2';

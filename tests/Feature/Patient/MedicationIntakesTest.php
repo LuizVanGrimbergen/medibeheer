@@ -93,7 +93,7 @@ test('recording a medication intake dispatches a family updates broadcast event'
     $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '09:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     Event::assertDispatched(MedicationIntakeRecordedEvent::class, function (MedicationIntakeRecordedEvent $event) use ($patient): bool {
         return $event->intake->patient_id === $patient->id
@@ -126,7 +126,7 @@ test('patients can mark a due medication intake as taken', function () {
         'dose_time' => '09:00',
     ]);
 
-    $response->assertRedirect(route('patient.dashboard'));
+    $response->assertRedirect(route('patient.medication-push-mark.success'));
 
     $intake = MedicationIntake::firstOrNewForScheduleDateAndDoseTime(
         $schedule->id,
@@ -161,7 +161,7 @@ test('medication intake dose time is encrypted at rest', function () {
     $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '09:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     $intake = MedicationIntake::firstOrNewForScheduleDateAndDoseTime(
         $schedule->id,
@@ -204,7 +204,7 @@ test('marking the same intake again updates the existing record', function () {
     $this->actingAs($user)->post(route('patient.medication-intakes.store'), [
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '09:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     expect(MedicationIntake::query()->count())->toBe(1);
 
@@ -234,7 +234,7 @@ test('patients can mark an intake as taken after the snooze window with late int
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '18:30',
         'late_intake' => true,
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     expect(MedicationIntake::query()->where('patient_id', $patient->id)->exists())->toBeTrue();
 
@@ -264,7 +264,7 @@ test('patients can register a custom taken time after the snooze window', functi
         'medication_schedule_id' => $schedule->id,
         'dose_time' => '18:30',
         'taken_at' => '2026-05-15 18:50:00',
-    ])->assertRedirect(route('patient.dashboard'));
+    ])->assertRedirect(route('patient.medication-push-mark.success'));
 
     $intake = MedicationIntake::query()
         ->where('patient_id', $patient->id)

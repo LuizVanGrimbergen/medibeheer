@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
+import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import type { PaginationMeta } from '@/lib/types';
 
 const props = defineProps<{

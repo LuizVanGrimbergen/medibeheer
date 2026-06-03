@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
-import { useHistorySelectedDay } from '@/composables/useHistorySelectedDay';
+import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,

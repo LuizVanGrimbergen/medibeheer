@@ -12,7 +12,7 @@ import {
     acceptTransport,
     declineTransport,
     setAppointmentViewFromToggle,
-} from '@/composables/useFamilyAppointmentsActions';
+} from '@/composables/family/useFamilyAppointmentsActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyAppointmentsScreenProps } from '@/lib/family/appointments/familyAppointmentsScreenProps';
 import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';

@@ -7,4 +7,6 @@ export default {
     inventory: 'Voorraad',
     appointments: 'Afspraken',
     family: 'Familie',
+    footerAlertCritical: '{label}: dringende aandacht',
+    footerAlertWarning: '{label}: let op',
 };

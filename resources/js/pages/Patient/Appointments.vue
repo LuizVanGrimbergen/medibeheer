@@ -8,7 +8,7 @@ import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSucces
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
-import { usePatientAppointmentsPage } from '@/composables/usePatientAppointmentsPage';
+import { usePatientAppointmentsPage } from '@/composables/patient/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';

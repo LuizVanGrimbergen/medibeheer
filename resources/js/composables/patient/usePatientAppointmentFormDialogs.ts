@@ -1,8 +1,8 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
-import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
 import {
     PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS,
     patientAppointmentFormValuesToRequestPayload,

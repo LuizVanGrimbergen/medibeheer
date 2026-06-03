@@ -6,7 +6,7 @@ import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyMedicationPlanProposalActionsPanel from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalActionsPanel.vue';
 import FamilyMedicationPlanProposalFormCard from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalFormCard.vue';
 import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { useFamilyMedicationPlanProposalFormPage } from '@/composables/useFamilyMedicationPlanProposalFormPage';
+import { useFamilyMedicationPlanProposalFormPage } from '@/composables/family/useFamilyMedicationPlanProposalFormPage';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { MedicationPlanProposalFormInitial } from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';

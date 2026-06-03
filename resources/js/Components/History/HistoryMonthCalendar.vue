@@ -3,7 +3,7 @@ import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistoryMonthNavigation from '@/Components/History/HistoryMonthNavigation.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
-import { useHistoryMonthCalendarGrid } from '@/composables/useHistoryMonthCalendarGrid';
+import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { cn } from '@/lib/utils';
 
