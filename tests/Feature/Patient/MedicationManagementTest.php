@@ -629,12 +629,12 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     (new MedicationSeeder)->run($patient, $family);
 
     $medications = $patient->medications()->orderBy('id')->get();
-    expect($medications)->toHaveCount(4);
+    expect($medications)->toHaveCount(5);
 
     $levothyroxine = $medications->firstWhere('name', 'Levothyroxine');
     expect($levothyroxine)->not->toBeNull();
     expect($levothyroxine->dose)->toBe('75');
-    expect($levothyroxine->dose_unit)->toBe(MedicationDoseUnit::OTHER);
+    expect($levothyroxine->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($levothyroxine->note)->toBe(
         'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
     );
@@ -668,7 +668,7 @@ test('medication seeder persists encrypted schedule and stock fields', function 
 
     $magnesium = $medications->firstWhere('name', 'Magnesiumcitraat');
     expect($magnesium)->not->toBeNull();
-    expect($magnesium->dose_unit)->toBe(MedicationDoseUnit::SACHET);
+    expect($magnesium->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($magnesium->schedules()->first()?->dose_time)->toBe('18:30');
     expect($magnesium->stocks()->first()?->current_stock)->toBe('5');
 
@@ -676,6 +676,11 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     expect($atorvastatine)->not->toBeNull();
     expect($atorvastatine->schedules()->first()?->dose_time)->toBe('22:00');
     expect($atorvastatine->stocks()->first()?->current_stock)->toBe('440');
+
+    $ibuprofen = $medications->firstWhere('name', 'Ibuprofen suspensie');
+    expect($ibuprofen)->not->toBeNull();
+    expect($ibuprofen->dose_unit)->toBe(MedicationDoseUnit::MILLILITER);
+    expect($ibuprofen->stocks()->first()?->current_stock)->toBe('300');
 });
 
 test('patients cannot store a medication with the unit dose unit', function () {
@@ -693,25 +698,8 @@ test('patients cannot store a medication with the unit dose unit', function () {
     $response->assertSessionHasErrors('dose_unit');
 });
 
-test('patients cannot store drops without strength', function () {
+test('patients cannot store medications with the drop dose unit on create', function () {
     $user = User::factory()->patient()->create();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Vitamine D',
-        'dose' => '2',
-        'dose_unit' => MedicationDoseUnit::DROP->value,
-        'type_medication' => MedicationType::LIQUID->value,
-        ...validNewMedicationStockPayload(),
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
-    $response->assertSessionHasErrors('strength');
-});
-
-test('patients can store drops with strength composed from amount and unit', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
 
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Vitamine D',
@@ -723,26 +711,7 @@ test('patients can store drops with strength composed from amount and unit', fun
         'schedule' => validNewMedicationSchedulePayload(),
     ]);
 
-    $response->assertRedirect(route('patient.medications'));
-
-    $medication = Medication::query()->where('patient_id', $patient->id)->first();
-    expect($medication)->not->toBeNull();
-    expect($medication->strength)->toBe('10 mg per druppel');
-});
-
-test('patients cannot store injections without strength', function () {
-    $user = User::factory()->patient()->create();
-
-    $response = $this->actingAs($user)->post(route('patient.medications.store'), [
-        'name' => 'Insuline',
-        'dose' => '24',
-        'dose_unit' => MedicationDoseUnit::INJECTION->value,
-        'type_medication' => MedicationType::INJECTION->value,
-        ...validNewMedicationStockPayload(),
-        'schedule' => validNewMedicationSchedulePayload(),
-    ]);
-
-    $response->assertSessionHasErrors('strength');
+    $response->assertSessionHasErrors('dose_unit');
 });
 
 test('patients can create a medication with an ongoing schedule without end date', function () {
@@ -756,7 +725,7 @@ test('patients can create a medication with an ongoing schedule without end date
     $response = $this->actingAs($user)->post(route('patient.medications.store'), [
         'name' => 'Levothyroxine',
         'dose' => '75',
-        'dose_unit' => MedicationDoseUnit::OTHER->value,
+        'dose_unit' => MedicationDoseUnit::PIECE->value,
         'type_medication' => MedicationType::PILL->value,
         ...validNewMedicationStockPayload(),
         'schedule' => $schedule,
