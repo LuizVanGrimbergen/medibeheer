@@ -27,18 +27,18 @@ defineProps<{
 </script>
 
 <template>
-    <div class="mb-6 grid grid-cols-3 gap-3">
+    <div class="mb-6 grid grid-cols-3 gap-2 sm:gap-3">
         <Link
             v-for="role in roles"
             :key="role.key"
             :href="getHref(role.key)"
             preserve-state
-            class="group block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+            class="group block min-h-11 touch-manipulation rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
         >
             <Card
                 :class="
                     cn(
-                        'h-20 border px-3 transition-colors duration-200 sm:h-24',
+                        'min-h-24 border px-2 py-3 transition-colors duration-200 sm:min-h-28 sm:px-3',
                         role.ringClass,
                         roleActiveSurfaceClass[role.key],
                         selectedRole === role.key
@@ -48,16 +48,19 @@ defineProps<{
                 "
             >
                 <CardContent
-                    class="flex h-full items-center justify-center p-0 text-center text-sm font-semibold sm:text-base [&_svg]:shrink-0"
+                    class="flex h-full min-h-24 items-center justify-center p-0 text-center sm:min-h-28 [&_svg]:shrink-0"
                 >
-                    <span class="flex flex-col items-center gap-1.5">
+                    <span class="flex flex-col items-center gap-2 px-0.5">
                         <component
                             :is="role.icon"
-                            class="text-inherit"
-                            :size="18"
+                            class="size-6 text-inherit sm:size-7"
                             stroke-width="2"
                         />
-                        <span class="font-bold">{{ role.label }}</span>
+                        <span
+                            class="text-base font-bold leading-snug sm:text-lg"
+                        >
+                            {{ role.label }}
+                        </span>
                     </span>
                 </CardContent>
             </Card>
