@@ -10,7 +10,6 @@ import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/Inve
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import { InputError } from '@/Components/ui/input-error';
 import { useInventoryVacationShareToPhotos } from '@/composables/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
@@ -26,7 +25,6 @@ import {
 } from '@/lib/patient/inventory/inventoryVacationUiClasses';
 import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/patientInventoryVacationPageProps';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import {
     patientPageIntroClass,
@@ -48,9 +46,13 @@ const minDateIso = computed(() => localCalendarDateIsoToday());
 
 const showResults = computed(() => props.result !== null);
 
-const formattedStartsOn = computed(() => formatInventoryVacationDateLabel(form.starts_on));
+const formattedStartsOn = computed(() =>
+    formatInventoryVacationDateLabel(form.starts_on),
+);
 
-const formattedEndsOn = computed(() => formatInventoryVacationDateLabel(form.ends_on));
+const formattedEndsOn = computed(() =>
+    formatInventoryVacationDateLabel(form.ends_on),
+);
 
 const pickupItemsWithSavedPackage = computed(() => {
     if (props.result === null) {
@@ -59,7 +61,8 @@ const pickupItemsWithSavedPackage = computed(() => {
 
     return props.result.items.filter(
         (item) =>
-            item.stock_pieces_per_package !== null && item.stock_pieces_per_package > 0,
+            item.stock_pieces_per_package !== null &&
+            item.stock_pieces_per_package > 0,
     );
 });
 
@@ -73,7 +76,9 @@ const vacationSavedPackageHint = computed((): string | null => {
     const allLiquid = items.every((item) => item.type_medication === 'liquid');
 
     if (allLiquid) {
-        return t('patient.inventory.vacationPickupCalculator.liquid.savedPiecesHint');
+        return t(
+            'patient.inventory.vacationPickupCalculator.liquid.savedPiecesHint',
+        );
     }
 
     return t('patient.inventory.vacationPickupCalculator.savedPiecesHint');
@@ -82,7 +87,9 @@ const vacationSavedPackageHint = computed((): string | null => {
 const vacationSavedPackageHintUsesLiquidIcon = computed(
     (): boolean =>
         pickupItemsWithSavedPackage.value.length > 0 &&
-        pickupItemsWithSavedPackage.value.every((item) => item.type_medication === 'liquid'),
+        pickupItemsWithSavedPackage.value.every(
+            (item) => item.type_medication === 'liquid',
+        ),
 );
 
 const vacationDaysLabel = computed((): string => {
@@ -96,7 +103,9 @@ const vacationDaysLabel = computed((): string => {
         return t('patient.inventory.vacationResultsDaysValueOne');
     }
 
-    return t('patient.inventory.vacationResultsDaysValue', { days: String(days) });
+    return t('patient.inventory.vacationResultsDaysValue', {
+        days: String(days),
+    });
 });
 
 function submit(): void {
@@ -105,20 +114,21 @@ function submit(): void {
     });
 }
 
-function displayAmount(amount: string, doseUnit: string | null): string {
-    return formatMedicationStockDisplayAmount(t, amount, doseUnit);
-}
-
 function doseUnitForItem(doseUnit: string | null): string | null {
     return medicationStockDisplayDoseUnit(doseUnit, null);
 }
 
-function doseUnitChipForItem(amount: string, doseUnit: string | null): string | null {
+function doseUnitChipForItem(
+    amount: string,
+    doseUnit: string | null,
+): string | null {
     if (doseUnit === null || doseUnit === '') {
         return null;
     }
 
-    if (!(MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(doseUnit)) {
+    if (
+        !(MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(doseUnit)
+    ) {
         return null;
     }
 
@@ -153,12 +163,18 @@ const vacationShareImagePayload = computed(() => {
         returnLabel: t('patient.inventory.vacationResultsReturnLabel'),
         savedPackageHint: vacationSavedPackageHint.value,
         totalLabel: t('patient.inventory.vacationPickupCalculator.totalLabel'),
-        minimumBoxesLabel: t('patient.inventory.vacationPickupCalculator.minimumBoxesLabel'),
+        minimumBoxesLabel: t(
+            'patient.inventory.vacationPickupCalculator.minimumBoxesLabel',
+        ),
         liquidMinimumBoxesLabel: t(
             'patient.medications.stockCalculator.liquid.numberOfBottles',
         ),
-        piecesPerBoxLabel: t('patient.medications.stockCalculator.piecesPerBox'),
-        liquidPiecesPerBoxLabel: t('patient.medications.stockCalculator.liquid.mlPerBottle'),
+        piecesPerBoxLabel: t(
+            'patient.medications.stockCalculator.piecesPerBox',
+        ),
+        liquidPiecesPerBoxLabel: t(
+            'patient.medications.stockCalculator.liquid.mlPerBottle',
+        ),
         listHeading: t('patient.inventory.vacationResultsTitle'),
         emptyMessage: t('patient.inventory.vacationEmptyResults'),
         skippedNote:
@@ -216,13 +232,15 @@ const {
                 @submit.prevent="submit"
             >
                 <Card
-                    class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                    class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                 >
                     <CardContent class="space-y-6 p-5 sm:p-6 md:p-7">
                         <InventoryVacationDateField
                             id="patient-inventory-vacation-starts-on"
                             v-model="form.starts_on"
-                            :label="t('patient.inventory.vacationStartsOnLabel')"
+                            :label="
+                                t('patient.inventory.vacationStartsOnLabel')
+                            "
                             :min="minDateIso"
                             :error="form.errors.starts_on"
                         />
@@ -237,7 +255,7 @@ const {
                 </Card>
 
                 <div
-                    class="flex min-w-0 w-full flex-col gap-3 rounded-3xl border-2 border-border/80 bg-surface p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
+                    class="border-border/80 bg-surface flex w-full min-w-0 flex-col gap-3 rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
                 >
                     <Button
                         type="submit"
@@ -265,20 +283,21 @@ const {
                 </div>
             </form>
 
-            <div
-                v-else-if="props.result !== null"
-                class="space-y-5"
-            >
+            <div v-else-if="props.result !== null" class="space-y-5">
                 <Card :class="inventoryVacationResultsCardClass">
                     <CardContent class="space-y-3 p-4 sm:p-5">
                         <div
                             class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
                         >
                             <h2 :class="patientPageSectionTitleClass">
-                                {{ t('patient.inventory.vacationResultsPeriodHeading') }}
+                                {{
+                                    t(
+                                        'patient.inventory.vacationResultsPeriodHeading',
+                                    )
+                                }}
                             </h2>
                             <p
-                                class="text-xl font-bold tabular-nums leading-none text-text-heading"
+                                class="text-text-heading text-xl leading-none font-bold tabular-nums"
                             >
                                 {{ vacationDaysLabel }}
                             </p>
@@ -286,11 +305,19 @@ const {
 
                         <dl :class="inventoryVacationMetricGridClass">
                             <InventoryVacationMetricBox
-                                :label="t('patient.inventory.vacationResultsDepartureLabel')"
+                                :label="
+                                    t(
+                                        'patient.inventory.vacationResultsDepartureLabel',
+                                    )
+                                "
                                 :value="formattedStartsOn"
                             />
                             <InventoryVacationMetricBox
-                                :label="t('patient.inventory.vacationResultsReturnLabel')"
+                                :label="
+                                    t(
+                                        'patient.inventory.vacationResultsReturnLabel',
+                                    )
+                                "
                                 :value="formattedEndsOn"
                             />
                         </dl>
@@ -299,7 +326,7 @@ const {
 
                 <p
                     v-if="props.result.items.length === 0"
-                    class="rounded-2xl border border-border/80 bg-surface-2/80 px-4 py-5 text-base leading-relaxed text-text md:text-lg"
+                    class="border-border/80 bg-surface-2/80 text-text rounded-2xl border px-4 py-5 text-base leading-relaxed md:text-lg"
                 >
                     {{ t('patient.inventory.vacationEmptyResults') }}
                 </p>
@@ -330,7 +357,9 @@ const {
                             'w-full',
                         ]"
                         :disabled="isSaving"
-                        :aria-label="t('patient.inventory.vacationSaveToPhotos')"
+                        :aria-label="
+                            t('patient.inventory.vacationSaveToPhotos')
+                        "
                         @click="prepareShareFiles"
                     >
                         <Loader2
@@ -347,14 +376,16 @@ const {
                             {{
                                 isSaving
                                     ? t('patient.inventory.vacationSaving')
-                                    : t('patient.inventory.vacationSaveToPhotos')
+                                    : t(
+                                          'patient.inventory.vacationSaveToPhotos',
+                                      )
                             }}
                         </span>
                     </Button>
 
                     <p
                         v-if="saveError !== null"
-                        class="text-sm leading-relaxed text-destructive sm:text-base"
+                        class="text-destructive text-sm leading-relaxed sm:text-base"
                         role="alert"
                     >
                         {{ saveError }}
@@ -362,13 +393,16 @@ const {
 
                     <p
                         v-else-if="saveShareHintVisible"
-                        class="text-sm leading-relaxed text-text-muted sm:text-base"
+                        class="text-text-muted text-sm leading-relaxed sm:text-base"
                     >
                         {{
                             savedShareImageCount > 1
-                                ? t('patient.inventory.vacationSaveShareHintMultiple', {
-                                      count: String(savedShareImageCount),
-                                  })
+                                ? t(
+                                      'patient.inventory.vacationSaveShareHintMultiple',
+                                      {
+                                          count: String(savedShareImageCount),
+                                      },
+                                  )
                                 : t('patient.inventory.vacationSaveShareHint')
                         }}
                     </p>
@@ -376,10 +410,10 @@ const {
 
                 <div
                     v-if="vacationSavedPackageHint !== null"
-                    class="flex min-w-0 w-full items-start gap-3.5 rounded-2xl border border-border/60 bg-surface-2/30 px-4 py-3.5 sm:gap-4 sm:rounded-3xl sm:px-5 sm:py-4 dark:border-border/70 dark:bg-surface-2/50"
+                    class="border-border/60 bg-surface-2/30 dark:border-border/70 dark:bg-surface-2/50 flex w-full min-w-0 items-start gap-3.5 rounded-2xl border px-4 py-3.5 sm:gap-4 sm:rounded-3xl sm:px-5 sm:py-4"
                 >
                     <div
-                        class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary sm:size-14 sm:rounded-2xl"
+                        class="bg-primary/12 text-primary flex size-11 shrink-0 items-center justify-center rounded-xl sm:size-14 sm:rounded-2xl"
                     >
                         <PillBottle
                             v-if="vacationSavedPackageHintUsesLiquidIcon"
@@ -393,7 +427,9 @@ const {
                         />
                     </div>
                     <div class="flex min-w-0 flex-1 flex-col gap-1">
-                        <span class="text-sm font-semibold leading-snug text-text-heading sm:text-base">
+                        <span
+                            class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+                        >
                             {{ vacationSavedPackageHint }}
                         </span>
                     </div>
@@ -409,7 +445,9 @@ const {
                     >
                         <Card :class="inventoryVacationResultsCardClass">
                             <CardContent class="space-y-4 p-5 sm:p-6">
-                                <p class="text-lg font-bold leading-snug text-text-heading">
+                                <p
+                                    class="text-text-heading text-lg leading-snug font-bold"
+                                >
                                     {{ item.name }}
                                 </p>
                                 <InventoryVacationPickupBoxCalculator
@@ -417,7 +455,9 @@ const {
                                     :dose-unit="doseUnitForItem(item.dose_unit)"
                                     :medication-type="item.type_medication"
                                     :pickup-quantity="item.pickup_quantity"
-                                    :stock-pieces-per-package="item.stock_pieces_per_package"
+                                    :stock-pieces-per-package="
+                                        item.stock_pieces_per_package
+                                    "
                                 />
                             </CardContent>
                         </Card>
@@ -426,17 +466,19 @@ const {
 
                 <p
                     v-if="props.result.skipped_medication_count > 0"
-                    class="text-sm leading-relaxed text-text-muted sm:text-base"
+                    class="text-text-muted text-sm leading-relaxed sm:text-base"
                 >
                     {{
                         t('patient.inventory.vacationSkippedNote', {
-                            count: String(props.result.skipped_medication_count),
+                            count: String(
+                                props.result.skipped_medication_count,
+                            ),
                         })
                     }}
                 </p>
 
                 <div
-                    class="rounded-3xl border-2 border-border/80 bg-surface p-5 shadow-sm shadow-black/[0.04] sm:p-6"
+                    class="border-border/80 bg-surface rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:p-6"
                 >
                     <Button
                         as-child
@@ -451,6 +493,5 @@ const {
                 </div>
             </div>
         </PatientPageShell>
-
     </PatientLayout>
 </template>

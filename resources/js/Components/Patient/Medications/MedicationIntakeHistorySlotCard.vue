@@ -28,23 +28,31 @@ const isTaken = computed(() => props.intakeSlot.taken_at !== null);
 
 const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 
-const notePreview = computed(() => medicationIntakeNotePreview(props.intakeSlot));
+const notePreview = computed(() =>
+    medicationIntakeNotePreview(props.intakeSlot),
+);
 
-const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_medication));
+const typeLabel = computed(() =>
+    medicationTypeLabel(t, props.intakeSlot.type_medication),
+);
 </script>
 
 <template>
-    <Card class="min-w-0 w-full rounded-2xl border border-border bg-surface text-text shadow-sm">
+    <Card
+        class="border-border bg-surface text-text w-full min-w-0 rounded-2xl border shadow-sm"
+    >
         <CardContent
             :class="
                 cn(
-                    props.density === 'compact' ? 'p-4' : 'flex flex-col gap-4 p-5 sm:gap-5 sm:p-6',
+                    props.density === 'compact'
+                        ? 'p-4'
+                        : 'flex flex-col gap-4 p-5 sm:gap-5 sm:p-6',
                 )
             "
         >
             <div class="flex min-w-0 items-start gap-4">
                 <div
-                    class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 sm:size-14"
+                    class="bg-primary/10 flex size-12 shrink-0 items-center justify-center rounded-2xl sm:size-14"
                 >
                     <MedicationTypeLeadIcon
                         :medication-type="intakeSlot.type_medication"
@@ -52,10 +60,12 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_me
                     />
                 </div>
                 <div class="min-w-0 flex-1">
-                    <h4 class="wrap-break-word text-lg font-bold leading-snug text-text-heading">
+                    <h4
+                        class="text-text-heading text-lg leading-snug font-bold wrap-break-word"
+                    >
                         {{ intakeSlot.name }}
                     </h4>
-                    <p class="mt-1 text-sm font-medium text-text-muted">
+                    <p class="text-text-muted mt-1 text-sm font-medium">
                         {{ typeLabel }}
                     </p>
                 </div>
@@ -87,20 +97,34 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_me
                 >
                     <div
                         v-if="doseLine !== null"
-                        class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5"
+                        class="border-border/70 bg-bg flex min-w-0 flex-col gap-1 rounded-xl border px-3 py-2.5"
                     >
-                        <span class="text-xs font-semibold text-text-muted">
-                            {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
+                        <span class="text-text-muted text-xs font-semibold">
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.intakeCard.dose',
+                                )
+                            }}
                         </span>
-                        <span class="text-base font-bold tabular-nums text-text-heading">
+                        <span
+                            class="text-text-heading text-base font-bold tabular-nums"
+                        >
                             {{ doseLine }}
                         </span>
                     </div>
-                    <div class="flex min-w-0 flex-col gap-1 rounded-xl border border-border/70 bg-bg px-3 py-2.5">
-                        <span class="text-xs font-semibold text-text-muted">
-                            {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
+                    <div
+                        class="border-border/70 bg-bg flex min-w-0 flex-col gap-1 rounded-xl border px-3 py-2.5"
+                    >
+                        <span class="text-text-muted text-xs font-semibold">
+                            {{
+                                t(
+                                    'patient.dashboard.todayMedications.intakeCard.time',
+                                )
+                            }}
                         </span>
-                        <span class="text-base font-bold tabular-nums text-text-heading">
+                        <span
+                            class="text-text-heading text-base font-bold tabular-nums"
+                        >
                             {{ intakeSlot.dose_time }}
                         </span>
                     </div>
@@ -108,10 +132,14 @@ const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_me
 
                 <p
                     v-if="notePreview !== null"
-                    class="min-w-0 whitespace-pre-wrap wrap-break-word text-sm leading-relaxed text-text"
+                    class="text-text min-w-0 text-sm leading-relaxed wrap-break-word whitespace-pre-wrap"
                 >
-                    <span class="font-semibold text-text-muted">
-                        {{ t('patient.dashboard.todayMedications.intakeCard.note') }}:
+                    <span class="text-text-muted font-semibold">
+                        {{
+                            t(
+                                'patient.dashboard.todayMedications.intakeCard.note',
+                            )
+                        }}:
                     </span>
                     {{ notePreview }}
                 </p>

@@ -32,14 +32,15 @@ const submit = () => {
         title-key="auth.forgotPwd.title"
         subtitle-key="auth.forgotPwd.intro"
     >
-        <FlashSuccessBanner
-            class="mb-4"
-            :message="props.status ?? null"
-        />
+        <FlashSuccessBanner class="mb-4" :message="props.status ?? null" />
 
         <form class="space-y-5" novalidate @submit.prevent="submit">
             <div>
-                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">{{ t('auth.forgotPwd.emailLabel') }}</Label>
+                <Label
+                    for="email"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                    >{{ t('auth.forgotPwd.emailLabel') }}</Label
+                >
                 <Input
                     id="email"
                     v-model="form.email"
@@ -48,7 +49,7 @@ const submit = () => {
                     required
                     autofocus
                     autocomplete="email"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>

@@ -32,9 +32,7 @@ const { t } = useI18n();
         </div>
 
         <fieldset class="space-y-5 border-0 p-0">
-            <legend
-                class="sr-only"
-            >
+            <legend class="sr-only">
                 {{ t('patient.appointments.fields.addressGroupLegend') }}
             </legend>
             <div class="space-y-5">
@@ -43,7 +41,8 @@ const { t } = useI18n();
                         :for="`${idPrefix}-street`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.appointments.fields.street') }} <span class="text-danger">*</span>
+                        {{ t('patient.appointments.fields.street') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <Input
                         :id="`${idPrefix}-street`"
@@ -95,7 +94,9 @@ const { t } = useI18n();
                             )
                         "
                         :placeholder="
-                            t('patient.appointments.fields.houseNumberPlaceholder')
+                            t(
+                                'patient.appointments.fields.houseNumberPlaceholder',
+                            )
                         "
                         :aria-invalid="Boolean(form.errors.house_number)"
                         :aria-describedby="
@@ -115,7 +116,8 @@ const { t } = useI18n();
                             :for="`${idPrefix}-postal-code`"
                             :class="patientFormLabelClass"
                         >
-                            {{ t('patient.appointments.fields.postalCode') }} <span class="text-danger">*</span>
+                            {{ t('patient.appointments.fields.postalCode') }}
+                            <span class="text-danger">*</span>
                         </Label>
                         <Input
                             :id="`${idPrefix}-postal-code`"
@@ -133,7 +135,9 @@ const { t } = useI18n();
                                 )
                             "
                             :placeholder="
-                                t('patient.appointments.fields.postalCodePlaceholder')
+                                t(
+                                    'patient.appointments.fields.postalCodePlaceholder',
+                                )
                             "
                             :aria-invalid="Boolean(form.errors.postal_code)"
                             :aria-describedby="
@@ -152,7 +156,8 @@ const { t } = useI18n();
                             :for="`${idPrefix}-city`"
                             :class="patientFormLabelClass"
                         >
-                            {{ t('patient.appointments.fields.city') }} <span class="text-danger">*</span>
+                            {{ t('patient.appointments.fields.city') }}
+                            <span class="text-danger">*</span>
                         </Label>
                         <Input
                             :id="`${idPrefix}-city`"

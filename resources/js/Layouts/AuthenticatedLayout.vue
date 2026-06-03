@@ -11,28 +11,27 @@ const page = usePage<PageProps>();
 const authenticatedUserName = computed(() => page.props.auth.user?.name ?? '');
 const flashError = computed(() => page.props.flash?.error ?? null);
 const flashSuccess = computed(() => page.props.flash?.success ?? null);
-const flashRateLimitSeconds = computed(() => page.props.flash?.rateLimitSeconds ?? null);
+const flashRateLimitSeconds = computed(
+    () => page.props.flash?.rateLimitSeconds ?? null,
+);
 </script>
 
 <template>
-    <div
-        class="flex h-svh max-h-svh min-h-0 flex-col overflow-hidden bg-bg"
-    >
+    <div class="bg-bg flex h-svh max-h-svh min-h-0 flex-col overflow-hidden">
         <AppNavbar :user-name="authenticatedUserName" />
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <PwaIosInstallBanner />
         </div>
 
-        <header
-            v-if="$slots.header"
-            class="border-b border-border bg-surface"
-        >
+        <header v-if="$slots.header" class="border-border bg-surface border-b">
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                 <slot name="header" />
             </div>
         </header>
 
-        <main class="flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-hidden">
+        <main
+            class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden overflow-x-hidden"
+        >
             <div
                 v-if="flashError"
                 class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"

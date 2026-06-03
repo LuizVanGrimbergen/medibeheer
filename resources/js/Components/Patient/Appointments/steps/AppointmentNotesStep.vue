@@ -30,10 +30,7 @@ const { t } = useI18n();
         </div>
 
         <div class="space-y-2 sm:space-y-3">
-            <Label
-                :for="`${idPrefix}-notes`"
-                class="daily-checkin-step-label"
-            >
+            <Label :for="`${idPrefix}-notes`" class="daily-checkin-step-label">
                 {{ t('patient.appointments.fields.notes') }}
             </Label>
             <textarea
@@ -46,9 +43,7 @@ const { t } = useI18n();
                         form.errors.notes ? patientFormFieldInvalidClass : null,
                     )
                 "
-                :placeholder="
-                    t('patient.appointments.fields.notesPlaceholder')
-                "
+                :placeholder="t('patient.appointments.fields.notesPlaceholder')"
                 :aria-invalid="Boolean(form.errors.notes)"
                 :aria-describedby="
                     form.errors.notes ? `${idPrefix}-notes-error` : undefined

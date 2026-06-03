@@ -13,7 +13,10 @@ function normalizeField(value: string): string | null {
     return trimmed === '' ? null : trimmed;
 }
 
-export function useDailyCheckin(todayDate: string, todayCheckin: DailyCheckin | null) {
+export function useDailyCheckin(
+    todayDate: string,
+    todayCheckin: DailyCheckin | null,
+) {
     const selectedSymptoms = ref<DailyCheckinSymptomValue[]>([]);
     const selectedSymptomsSet = computed(
         () => new Set<DailyCheckinSymptomValue>(selectedSymptoms.value),
@@ -46,7 +49,9 @@ export function useDailyCheckin(todayDate: string, todayCheckin: DailyCheckin | 
         const on = selectedSymptomsSet.value.has(symptom);
 
         if (on) {
-            selectedSymptoms.value = selectedSymptoms.value.filter((s) => s !== symptom);
+            selectedSymptoms.value = selectedSymptoms.value.filter(
+                (s) => s !== symptom,
+            );
 
             return;
         }
@@ -120,4 +125,3 @@ export function useDailyCheckin(todayDate: string, todayCheckin: DailyCheckin | 
         submit,
     };
 }
-

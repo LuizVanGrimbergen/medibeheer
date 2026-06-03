@@ -17,14 +17,11 @@ const sectionKeys = ['necessary', 'storage', 'analytics'] as const;
         meta-title-key="privacy.cookies.metaTitle"
         :policy-version="policyVersion"
     >
-        <section
-            v-for="key in sectionKeys"
-            :key="key"
-        >
-            <h2 class="text-xl font-semibold text-primary">
+        <section v-for="key in sectionKeys" :key="key">
+            <h2 class="text-primary text-xl font-semibold">
                 {{ t(`privacy.cookies.sections.${key}.title`) }}
             </h2>
-            <p class="mt-2 text-text-muted">
+            <p class="text-text-muted mt-2">
                 {{ t(`privacy.cookies.sections.${key}.body`) }}
             </p>
         </section>

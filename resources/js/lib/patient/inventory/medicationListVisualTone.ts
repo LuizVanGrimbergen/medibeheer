@@ -1,13 +1,9 @@
-import {
-    medicationUrgencyToneFromDaysRemaining
-    
-} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
-import type {MedicationUrgencyTone} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import { medicationUrgencyToneFromDaysRemaining } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import type {
     MedicationListItem,
     MedicationSupplyEstimateQuality,
 } from '@/lib/types';
-
 
 export type MedicationStockProgressTone = MedicationUrgencyTone;
 
@@ -23,10 +19,12 @@ export function medicationVisualToneFromContext(
     context: MedicationVisualToneContext,
 ): MedicationStockProgressTone | null {
     if (
-        context.supply_estimate_quality === 'approx'
-        && context.supply_estimate_days !== null
+        context.supply_estimate_quality === 'approx' &&
+        context.supply_estimate_days !== null
     ) {
-        return medicationUrgencyToneFromDaysRemaining(context.supply_estimate_days);
+        return medicationUrgencyToneFromDaysRemaining(
+            context.supply_estimate_days,
+        );
     }
 
     return null;

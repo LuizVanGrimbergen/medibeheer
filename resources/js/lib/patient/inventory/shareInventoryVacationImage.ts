@@ -1,6 +1,9 @@
 export type InventoryVacationImageShareOutcome = 'shared' | 'downloaded';
 
-export type InventoryVacationImageShareStepOutcome = 'shared' | 'aborted' | 'downloaded';
+export type InventoryVacationImageShareStepOutcome =
+    | 'shared'
+    | 'aborted'
+    | 'downloaded';
 
 export function buildInventoryVacationShareFiles(
     blobs: Blob[],
@@ -10,15 +13,25 @@ export function buildInventoryVacationShareFiles(
         (blob, index) =>
             new File(
                 [blob],
-                inventoryVacationShareFilename(baseFilename, index, blobs.length),
+                inventoryVacationShareFilename(
+                    baseFilename,
+                    index,
+                    blobs.length,
+                ),
                 { type: 'image/png' },
             ),
     );
 }
 
-function inventoryVacationShareFilename(baseFilename: string, index: number, total: number): string {
+function inventoryVacationShareFilename(
+    baseFilename: string,
+    index: number,
+    total: number,
+): string {
     if (total <= 1) {
-        return baseFilename.endsWith('.png') ? baseFilename : `${baseFilename}.png`;
+        return baseFilename.endsWith('.png')
+            ? baseFilename
+            : `${baseFilename}.png`;
     }
 
     const stem = baseFilename.replace(/\.png$/iu, '');

@@ -9,7 +9,10 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
-import type { LinkedCareTeamMember, PendingCareTeamInvitation } from '@/lib/types';
+import type {
+    LinkedCareTeamMember,
+    PendingCareTeamInvitation,
+} from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 
@@ -31,7 +34,8 @@ const { t } = useI18n();
 const pendingDoctorInvitationsOpen = ref(false);
 const linkedDoctorsOpen = ref(false);
 
-const sectionHeadingClass = 'text-xl font-bold leading-snug text-text-heading md:text-2xl';
+const sectionHeadingClass =
+    'text-xl font-bold leading-snug text-text-heading md:text-2xl';
 
 const bodyTextClass = 'text-base leading-relaxed text-text-muted';
 
@@ -86,19 +90,13 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
 <template>
     <section
         id="doctors"
-        class="scroll-mt-24 rounded-2xl border-2 border-border bg-surface p-6 shadow-sm sm:p-8"
+        class="border-border bg-surface scroll-mt-24 rounded-2xl border-2 p-6 shadow-sm sm:p-8"
         aria-labelledby="family-doctors-heading"
     >
-        <h2
-            id="family-doctors-heading"
-            :class="sectionHeadingClass"
-        >
+        <h2 id="family-doctors-heading" :class="sectionHeadingClass">
             {{ t('patient.doctors.inviteHeading') }}
         </h2>
-        <p
-            class="mt-3"
-            :class="bodyTextClass"
-        >
+        <p class="mt-3" :class="bodyTextClass">
             {{ t('patient.doctors.inviteIntro') }}
         </p>
 
@@ -107,10 +105,7 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
             @submit.prevent="submitDoctorInvite"
         >
             <div>
-                <Label
-                    for="doctor-invite-email"
-                    :class="labelClass"
-                >
+                <Label for="doctor-invite-email" :class="labelClass">
                     {{ t('patient.doctors.emailLabel') }}
                 </Label>
                 <Input
@@ -118,7 +113,14 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
                     v-model="doctorInviteForm.email"
                     type="email"
                     autocomplete="email"
-                    :class="cn(fieldInputClass, doctorInviteForm.errors.email ? 'border-danger ring-2 ring-danger/20' : null)"
+                    :class="
+                        cn(
+                            fieldInputClass,
+                            doctorInviteForm.errors.email
+                                ? 'border-danger ring-danger/20 ring-2'
+                                : null,
+                        )
+                    "
                     :placeholder="t('patient.doctors.emailPlaceholder')"
                     :aria-invalid="Boolean(doctorInviteForm.errors.email)"
                 />
@@ -131,8 +133,11 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
 
             <Button
                 type="submit"
-                class="min-h-12 w-full touch-manipulation text-base font-semibold md:min-h-14 md:text-lg sm:w-auto"
-                :disabled="doctorInviteForm.processing || props.doctor_invitation_store_url === ''"
+                class="min-h-12 w-full touch-manipulation text-base font-semibold sm:w-auto md:min-h-14 md:text-lg"
+                :disabled="
+                    doctorInviteForm.processing ||
+                    props.doctor_invitation_store_url === ''
+                "
             >
                 {{ t('patient.doctors.sendInvite') }}
             </Button>
@@ -152,7 +157,11 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
                 v-for="inv in props.doctor_invitations"
                 :key="inv.public_id"
                 :title="t('patient.doctors.pendingItemLabel')"
-                :subtitle="t('patient.doctors.expiresAt', { date: formatCareTeamExpiry(inv.expires_at) })"
+                :subtitle="
+                    t('patient.doctors.expiresAt', {
+                        date: formatCareTeamExpiry(inv.expires_at),
+                    })
+                "
                 :action-label="t('patient.doctors.revoke')"
                 :confirm-title="t('patient.doctors.revokeConfirmTitle')"
                 :confirm-description="t('patient.doctors.revokeConfirmMessage')"
@@ -179,7 +188,9 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
                 :action-label="t('patient.doctors.unlink')"
                 :confirm-title="t('patient.doctors.unlinkConfirmTitle')"
                 :confirm-description="
-                    t('patient.doctors.unlinkConfirmMessage', { name: doctor.name })
+                    t('patient.doctors.unlinkConfirmMessage', {
+                        name: doctor.name,
+                    })
                 "
                 :confirm-label="t('patient.doctors.unlinkConfirmAction')"
                 :cancel-label="t('patient.doctors.cancel')"

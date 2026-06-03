@@ -36,7 +36,9 @@ const lowStockPatientIds = computed(() =>
                 :low-stock-patient-ids="lowStockPatientIds"
             />
 
-            <FamilyLowStockPatientsSection :patients="props.low_stock_patients" />
+            <FamilyLowStockPatientsSection
+                :patients="props.low_stock_patients"
+            />
 
             <FamilyPendingTransportAppointmentsSection
                 :appointments="props.pending_transport_appointments"
@@ -45,7 +47,6 @@ const lowStockPatientIds = computed(() =>
             <FamilyAcceptedTransportAppointmentsSection
                 :appointments="props.accepted_transport_appointments"
             />
-
         </FamilyPageShell>
     </FamilyLayout>
 </template>

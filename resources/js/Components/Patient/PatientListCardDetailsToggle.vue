@@ -23,7 +23,7 @@ const props = defineProps<{
             cn(
                 props.mode === 'expand'
                     ? patientPageCardFooterSectionClass
-                    : 'border-t border-border/50 pt-4',
+                    : 'border-border/50 border-t pt-4',
                 props.wrapperClass,
             )
         "

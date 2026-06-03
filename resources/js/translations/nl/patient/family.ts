@@ -17,7 +17,8 @@ export default {
     pendingMedicationPlansHeading: 'Medicatieplannen van familie',
     pendingMedicationPlansIntro:
         'Een familielid heeft een medicatieplan naar u gestuurd. U kunt het hier bekijken, accepteren of weigeren.',
-    pendingMedicationPlansEmpty: 'Er zijn geen medicatieplannen om te beoordelen.',
+    pendingMedicationPlansEmpty:
+        'Er zijn geen medicatieplannen om te beoordelen.',
     pendingMedicationPlansFrom: 'Van {name}',
     pendingMedicationPlansReview: 'Bekijken',
     pendingMedicationPlansAccept: 'Accepteren',
@@ -46,7 +47,8 @@ export default {
     unlink: 'Loskoppelen',
     unlinkHint: 'Alleen doen als u deze persoon niet meer wilt koppelen.',
     unlinkConfirmTitle: 'Koppeling verbreken?',
-    unlinkConfirmMessage: 'Weet u zeker dat u {name} wilt loskoppelen? Zij kunnen dan niet meer meekijken.',
+    unlinkConfirmMessage:
+        'Weet u zeker dat u {name} wilt loskoppelen? Zij kunnen dan niet meer meekijken.',
     unlinkConfirmAction: 'Ja, koppeling verbreken',
     revokeHint: 'Alleen doen als u de uitnodiging wilt annuleren.',
     revokeConfirmTitle: 'Uitnodiging intrekken?',

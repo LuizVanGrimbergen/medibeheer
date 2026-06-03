@@ -11,4 +11,3 @@ export type FamilyLowStockPatient = {
     medications_url: string;
     medications: FamilyLowStockMedication[];
 };
-

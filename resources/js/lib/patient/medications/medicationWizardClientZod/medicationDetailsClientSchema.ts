@@ -16,7 +16,9 @@ export const medicationWizardDetailsSchema = z
         dose: trimmedNonEmptyMax(500, 'doseRequired', 'doseMax'),
         dose_unit: z.string().superRefine((val, ctx) => {
             const allowed =
-                val === 'drop' || val === 'unit' || isMemberOf(MEDICATION_DOSE_UNIT_FORM_VALUES, val);
+                val === 'drop' ||
+                val === 'unit' ||
+                isMemberOf(MEDICATION_DOSE_UNIT_FORM_VALUES, val);
 
             if (val === '' || !allowed) {
                 ctx.addIssue({
@@ -39,12 +41,16 @@ export const medicationWizardDetailsSchema = z
     })
     .superRefine((data, ctx) => {
         const amountTrimmed = data.strength_amount.trim();
-        const strengthRequired = medicationDoseUnitRequiresStrength(data.dose_unit);
+        const strengthRequired = medicationDoseUnitRequiresStrength(
+            data.dose_unit,
+        );
 
         if (strengthRequired && amountTrimmed.length < 1) {
             ctx.addIssue({
                 code: 'custom',
-                message: medicationWizardStepValidation('strengthAmountRequired'),
+                message: medicationWizardStepValidation(
+                    'strengthAmountRequired',
+                ),
                 path: ['strength_amount'],
             });
         }

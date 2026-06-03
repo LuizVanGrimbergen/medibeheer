@@ -14,7 +14,9 @@ export function medicationStockDisplayDoseUnit(
     if (
         medicationDoseUnitRequiresStrength(doseUnit) &&
         strengthTrimmed.length > 0 &&
-        (MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(strengthTrimmed)
+        (MEDICATION_STRENGTH_UNIT_VALUES as readonly string[]).includes(
+            strengthTrimmed,
+        )
     ) {
         return strengthTrimmed;
     }

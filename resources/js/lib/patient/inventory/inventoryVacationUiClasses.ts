@@ -1,4 +1,5 @@
-export const inventoryVacationMetricGridClass = 'grid grid-cols-2 gap-2 sm:gap-3';
+export const inventoryVacationMetricGridClass =
+    'grid grid-cols-2 gap-2 sm:gap-3';
 
 export const inventoryVacationCalculationMetricGridClass =
     'grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3';
@@ -12,7 +13,8 @@ export const inventoryVacationShareCalculationMetricGridClass =
 export const inventoryVacationMetricBoxClass =
     'rounded-xl border border-border/60 bg-surface-2/80 px-3 py-2.5';
 
-export const inventoryVacationMetricLabelClass = 'text-sm font-semibold text-text-muted';
+export const inventoryVacationMetricLabelClass =
+    'text-sm font-semibold text-text-muted';
 
 export const inventoryVacationMetricValueClass =
     'mt-0.5 text-base font-bold tabular-nums leading-snug text-text-heading';

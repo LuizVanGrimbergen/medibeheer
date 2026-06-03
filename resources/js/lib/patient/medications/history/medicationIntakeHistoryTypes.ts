@@ -27,7 +27,9 @@ export type MedicationIntakeHistorySlot = TodayMedicationIntakeSlot & {
 export function isMedicationIntakeDayStatusValue(
     value: string,
 ): value is MedicationIntakeDayStatusValue {
-    return (MEDICATION_INTAKE_DAY_STATUS_VALUES as readonly string[]).includes(value);
+    return (MEDICATION_INTAKE_DAY_STATUS_VALUES as readonly string[]).includes(
+        value,
+    );
 }
 
 export type { TodayMedicationIntakeDayPeriodValue };

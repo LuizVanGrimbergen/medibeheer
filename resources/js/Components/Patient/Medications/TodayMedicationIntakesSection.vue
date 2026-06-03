@@ -28,7 +28,9 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const intakeGroups = computed(() => partitionTodayMedicationIntakes(props.slots));
+const intakeGroups = computed(() =>
+    partitionTodayMedicationIntakes(props.slots),
+);
 
 const periodGroups = computed(() => intakeGroups.value.periodGroups);
 
@@ -67,14 +69,16 @@ function periodIcon(period: TodayMedicationIntakeDayPeriodValue): LucideIcon {
                 <div class="flex items-start gap-2.5 px-0.5 sm:gap-3">
                     <component
                         :is="periodIcon(group.period)"
-                        class="mt-0.5 size-6 shrink-0 text-primary sm:mt-0 sm:size-7"
+                        class="text-primary mt-0.5 size-6 shrink-0 sm:mt-0 sm:size-7"
                         aria-hidden="true"
                     />
                     <div class="min-w-0 space-y-1">
-                        <h3 class="text-lg font-bold text-text-heading sm:text-xl">
+                        <h3
+                            class="text-text-heading text-lg font-bold sm:text-xl"
+                        >
                             {{ periodTitle(group.period) }}
                         </h3>
-                        <p class="text-base text-text-muted sm:text-lg">
+                        <p class="text-text-muted text-base sm:text-lg">
                             {{ periodHint(group.period) }}
                         </p>
                     </div>
@@ -91,11 +95,17 @@ function periodIcon(period: TodayMedicationIntakeDayPeriodValue): LucideIcon {
 
             <section
                 v-if="takenSlots.length > 0"
-                class="space-y-3 border-t border-border/70 pt-6 sm:space-y-4 sm:pt-8"
-                :aria-label="t('patient.dashboard.todayMedications.takenSection.title')"
+                class="border-border/70 space-y-3 border-t pt-6 sm:space-y-4 sm:pt-8"
+                :aria-label="
+                    t('patient.dashboard.todayMedications.takenSection.title')
+                "
             >
-                <h3 class="px-0.5 text-lg font-bold text-text-muted sm:text-xl">
-                    {{ t('patient.dashboard.todayMedications.takenSection.title') }}
+                <h3 class="text-text-muted px-0.5 text-lg font-bold sm:text-xl">
+                    {{
+                        t(
+                            'patient.dashboard.todayMedications.takenSection.title',
+                        )
+                    }}
                 </h3>
 
                 <div class="flex flex-col gap-4 sm:gap-5">

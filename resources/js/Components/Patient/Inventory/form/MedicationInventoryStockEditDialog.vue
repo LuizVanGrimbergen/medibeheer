@@ -6,11 +6,14 @@ import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/f
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/Components/ui/dialog';
 import {
-    usePatientActionSuccessScreen,
-    type PatientActionSuccessDetail,
-} from '@/composables/usePatientActionSuccessScreen';
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from '@/Components/ui/dialog';
+import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
@@ -111,7 +114,10 @@ function mergeAddIntoCurrentStockForSubmit(): boolean {
 
     const snapshot = serverCurrentStockAtOpen.value.trim();
 
-    const add = parseMedicationStockNumericValue(stockToAdd.value, props.doseUnit);
+    const add = parseMedicationStockNumericValue(
+        stockToAdd.value,
+        props.doseUnit,
+    );
 
     if (add === null || add <= 0) {
         addStockError.value = t('patient.inventory.addStockInvalidAmount');
@@ -209,8 +215,12 @@ function submitStock(): void {
                 router.flushAll();
                 closeDialog();
                 showStockUpdateSuccess({
-                    title: t('patient.actionSuccess.inventory.stockUpdated.title'),
-                    message: t('patient.actionSuccess.inventory.stockUpdated.message'),
+                    title: t(
+                        'patient.actionSuccess.inventory.stockUpdated.title',
+                    ),
+                    message: t(
+                        'patient.actionSuccess.inventory.stockUpdated.message',
+                    ),
                     details: successDetails,
                 });
             },
@@ -220,16 +230,17 @@ function submitStock(): void {
 </script>
 
 <template>
-    <Dialog
-        :open="props.open"
-        @update:open="emit('update:open', $event)"
-    >
+    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
         <DialogContent
             :class="props.dialogContentClass"
             :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
         >
-            <DialogHeader class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1">
-                <DialogTitle class="text-xl font-bold leading-tight text-text-heading md:text-2xl">
+            <DialogHeader
+                class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
+            >
+                <DialogTitle
+                    class="text-text-heading text-xl leading-tight font-bold md:text-2xl"
+                >
                     {{ t('patient.inventory.editStockDialogTitle') }}
                 </DialogTitle>
             </DialogHeader>
@@ -241,24 +252,33 @@ function submitStock(): void {
                 @submit.prevent="submitStock"
             >
                 <div
-                    class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] touch-pan-y"
+                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
                     <div class="space-y-3 md:space-y-3">
                         <Card
-                            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
+                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
                         >
                             <CardContent class="p-0">
                                 <div
-                                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 md:space-y-6 md:rounded-3xl md:px-5 md:py-5 lg:px-7 lg:py-7"
+                                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-6 md:rounded-3xl md:px-5 md:py-5 lg:px-7 lg:py-7"
                                 >
                                     <MedicationStockBoxRefillCalculator
                                         v-model:amount-to-add="stockToAdd"
                                         :id-prefix="props.idPrefix"
                                         :dose-unit="props.doseUnit"
-                                        :current-stock="serverCurrentStockAtOpen"
-                                        :stock-progress-tone="props.stockProgressTone"
-                                        :stock-pieces-per-package="props.stockPiecesPerPackage"
-                                        :error-message="addStockError || form.errors.current_stock"
+                                        :current-stock="
+                                            serverCurrentStockAtOpen
+                                        "
+                                        :stock-progress-tone="
+                                            props.stockProgressTone
+                                        "
+                                        :stock-pieces-per-package="
+                                            props.stockPiecesPerPackage
+                                        "
+                                        :error-message="
+                                            addStockError ||
+                                            form.errors.current_stock
+                                        "
                                     />
                                 </div>
                             </CardContent>
@@ -270,11 +290,13 @@ function submitStock(): void {
                     class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
                 >
                     <Card
-                        class="rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] md:rounded-3xl"
+                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] md:rounded-3xl"
                     >
-                        <CardContent class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4">
+                        <CardContent
+                            class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4"
+                        >
                             <div
-                                class="flex min-w-0 w-full flex-col gap-2 md:flex-row-reverse md:gap-3"
+                                class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
                             >
                                 <button
                                     type="submit"
@@ -306,7 +328,9 @@ function submitStock(): void {
                                     "
                                     @click.stop.prevent="closeDialog"
                                 >
-                                    {{ t('patient.medications.actions.cancel') }}
+                                    {{
+                                        t('patient.medications.actions.cancel')
+                                    }}
                                 </button>
                             </div>
                         </CardContent>

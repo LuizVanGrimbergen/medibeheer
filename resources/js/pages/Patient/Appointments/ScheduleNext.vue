@@ -40,13 +40,15 @@ const descriptionKey =
                 <h1 :class="patientPageTitleClass">
                     {{ t('patient.appointments.scheduleNext.title') }}
                 </h1>
-                <p class="max-w-prose text-base leading-relaxed text-text-muted">
+                <p
+                    class="text-text-muted max-w-prose text-base leading-relaxed"
+                >
                     {{ t(descriptionKey) }}
                 </p>
             </div>
 
             <div
-                class="flex min-w-0 w-full flex-col gap-3 rounded-3xl border-2 border-border/80 bg-surface p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
+                class="border-border/80 bg-surface flex w-full min-w-0 flex-col gap-3 rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
             >
                 <Button
                     type="button"

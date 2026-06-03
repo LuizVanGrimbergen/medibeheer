@@ -41,7 +41,7 @@ function scrollToDeepLinkedMedication(): void {
 
     const id = Number(medicationId);
 
-    if (! props.medications.data.some((medication) => medication.id === id)) {
+    if (!props.medications.data.some((medication) => medication.id === id)) {
         return;
     }
 
@@ -60,7 +60,9 @@ watch(
     { immediate: true, deep: true },
 );
 
-const medicationRegisterListStatusRank = (medication: MedicationListItem): number => {
+const medicationRegisterListStatusRank = (
+    medication: MedicationListItem,
+): number => {
     if (medication.list_status === 'active') {
         return 0;
     }
@@ -77,7 +79,8 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
 
     items.sort((left, right) => {
         const statusRank =
-            medicationRegisterListStatusRank(left) - medicationRegisterListStatusRank(right);
+            medicationRegisterListStatusRank(left) -
+            medicationRegisterListStatusRank(right);
 
         if (statusRank !== 0) {
             return statusRank;
@@ -103,7 +106,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
         >
             <p
                 v-if="!props.family.has_linked_patient"
-                class="max-w-prose text-sm leading-relaxed text-text-muted"
+                class="text-text-muted max-w-prose text-sm leading-relaxed"
             >
                 {{ t('family.medications.notLinked') }}
             </p>
@@ -121,13 +124,15 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                 />
 
                 <section class="space-y-4">
-                    <h2 class="text-lg font-semibold text-text-heading md:text-base">
+                    <h2
+                        class="text-text-heading text-lg font-semibold md:text-base"
+                    >
                         {{ t('patient.medications.history.registerHeading') }}
                     </h2>
 
                     <ul
                         v-if="props.medications.data.length > 0"
-                        class="flex min-w-0 w-full flex-col gap-6 md:gap-4"
+                        class="flex w-full min-w-0 flex-col gap-6 md:gap-4"
                     >
                         <li
                             v-for="medication in sortedRegisterMedications"
@@ -135,21 +140,21 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                             :key="medication.id"
                             class="min-w-0 scroll-mt-6"
                         >
-                        <MedicationCard
-                            :medication="medication"
-                            :show-actions="false"
-                            show-stock
-                            stock-update-route-name="family.medications.stocks.update"
-                            list-status-ended-label-key="family.medications.listStatus.ended"
-                            list-status-removed-label-key="family.medications.listStatus.removed"
-                        />
+                            <MedicationCard
+                                :medication="medication"
+                                :show-actions="false"
+                                show-stock
+                                stock-update-route-name="family.medications.stocks.update"
+                                list-status-ended-label-key="family.medications.listStatus.ended"
+                                list-status-removed-label-key="family.medications.listStatus.removed"
+                            />
                         </li>
                     </ul>
 
                     <NumberedPagination
                         v-if="
                             props.medications.data.length > 0 &&
-                                props.medications.meta.last_page > 1
+                            props.medications.meta.last_page > 1
                         "
                         route-name="family.medications"
                         :meta="props.medications.meta"
@@ -160,7 +165,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                         v-if="props.medications.meta.total === 0"
                         class="border-border"
                     >
-                        <CardContent class="py-10 text-sm text-text-muted">
+                        <CardContent class="text-text-muted py-10 text-sm">
                             {{ t('family.medications.empty') }}
                         </CardContent>
                     </Card>

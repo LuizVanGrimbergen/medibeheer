@@ -16,15 +16,15 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
 import {
     APPOINTMENT_FORM_STEP_ORDER,
     appointmentFormStepClientValidatedFieldKeys,
     collectAppointmentFormStepValidationFieldErrors,
     firstAppointmentFormStepContainingFieldErrors,
 } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
-import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
-import { getPatientAppointmentDialogFormFieldErrors } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
 import type { PatientAppointmentFormPermitPastStartsAtOptions } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
+import { getPatientAppointmentDialogFormFieldErrors } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
 import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
@@ -91,15 +91,16 @@ const progressLabel = computed(() =>
 
 const isNotesStep = computed(() => step.value === 'notes');
 
-const permitPastStartsAtOptions = computed<PatientAppointmentFormPermitPastStartsAtOptions>(() => {
-    const ms = props.schedulePermitPastStartsAtIfSameInstantMs;
+const permitPastStartsAtOptions =
+    computed<PatientAppointmentFormPermitPastStartsAtOptions>(() => {
+        const ms = props.schedulePermitPastStartsAtIfSameInstantMs;
 
-    if (ms === null || ms === undefined) {
-        return {};
-    }
+        if (ms === null || ms === undefined) {
+            return {};
+        }
 
-    return { permitPastStartsAtIfSameInstantMs: ms };
-});
+        return { permitPastStartsAtIfSameInstantMs: ms };
+    });
 
 type LooseInertiaForm = {
     setError: (key: string, value: string) => void;
@@ -116,7 +117,9 @@ function clearClientFieldErrorsForStep(stepId: AppointmentFormStepId): void {
     );
 }
 
-function applyFieldErrorsToForm(fieldErrors: Partial<Record<string, string>>): void {
+function applyFieldErrorsToForm(
+    fieldErrors: Partial<Record<string, string>>,
+): void {
     const target = looseInertiaForm(props.form);
 
     for (const [rawKey, message] of Object.entries(fieldErrors)) {
@@ -270,7 +273,10 @@ function handlePrimaryAction(): void {
                 step.value = nextStep;
             }
 
-            scrollAppointmentFormFirstFieldErrorIntoView(step.value, fieldErrors);
+            scrollAppointmentFormFirstFieldErrorIntoView(
+                step.value,
+                fieldErrors,
+            );
 
             return;
         }
@@ -333,20 +339,21 @@ watch(
 </script>
 
 <template>
-    <Dialog
-        :open="props.open"
-        @update:open="emit('update:open', $event)"
-    >
+    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
         <DialogContent
             :class="props.dialogContentClass"
             :overlay-class="patientShellDialogOverlayAboveAppChromeClass('sm')"
         >
-            <DialogHeader class="shrink-0 space-y-2 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1.5 sm:pt-0">
-                <DialogTitle class="text-2xl font-bold leading-tight text-text-heading">
+            <DialogHeader
+                class="shrink-0 space-y-2 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1.5 sm:pt-0"
+            >
+                <DialogTitle
+                    class="text-text-heading text-2xl leading-tight font-bold"
+                >
                     {{ props.title }}
                 </DialogTitle>
                 <DialogDescription
-                    class="block text-base font-medium leading-relaxed text-text-heading"
+                    class="text-text-heading block text-base leading-relaxed font-medium"
                     aria-live="polite"
                 >
                     {{ progressLabel }}
@@ -360,21 +367,23 @@ watch(
                 @submit.prevent="handlePrimaryAction"
             >
                 <div
-                    class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] touch-pan-y"
+                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
                     <div class="space-y-3 sm:space-y-4">
                         <Card
-                            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                         >
                             <CardContent class="p-0">
                                 <div
-                                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
+                                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
                                 >
                                     <AppointmentProviderStep
                                         v-if="step === 'provider'"
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
-                                        :doctor-type-values="props.doctorTypeValues"
+                                        :doctor-type-values="
+                                            props.doctorTypeValues
+                                        "
                                         :show-doctor-type-placeholder="
                                             props.showDoctorTypePlaceholder
                                         "
@@ -391,7 +400,8 @@ watch(
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
                                         :starts-at-date-input-min-iso="
-                                            props.startsAtDateInputMinIso ?? null
+                                            props.startsAtDateInputMinIso ??
+                                            null
                                         "
                                     />
 
@@ -399,7 +409,9 @@ watch(
                                         v-if="step === 'transport'"
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
-                                        :transport-families="props.transportFamilies"
+                                        :transport-families="
+                                            props.transportFamilies
+                                        "
                                     />
 
                                     <AppointmentNotesStep
@@ -417,11 +429,13 @@ watch(
                     class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
                 >
                     <Card
-                        class="rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] sm:rounded-3xl"
+                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] sm:rounded-3xl"
                     >
-                        <CardContent class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8">
+                        <CardContent
+                            class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8"
+                        >
                             <div
-                                class="flex min-w-0 w-full flex-col gap-2 sm:flex-row-reverse sm:gap-3"
+                                class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
                             >
                                 <button
                                     v-if="!isNotesStep"
@@ -435,9 +449,13 @@ watch(
                                             patientAppointmentFormPrimaryPairButtonClass,
                                         )
                                     "
-                                    @click.stop.prevent="tryAdvanceFromCurrentStep"
+                                    @click.stop.prevent="
+                                        tryAdvanceFromCurrentStep
+                                    "
                                 >
-                                    {{ t('patient.appointments.steps.continue') }}
+                                    {{
+                                        t('patient.appointments.steps.continue')
+                                    }}
                                 </button>
 
                                 <button
@@ -473,8 +491,12 @@ watch(
                                 >
                                     {{
                                         step === 'provider'
-                                            ? t('patient.appointments.actions.cancel')
-                                            : t('patient.appointments.steps.back')
+                                            ? t(
+                                                  'patient.appointments.actions.cancel',
+                                              )
+                                            : t(
+                                                  'patient.appointments.steps.back',
+                                              )
                                     }}
                                 </button>
                             </div>

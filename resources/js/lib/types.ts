@@ -73,11 +73,7 @@ export type AcceptedMedicationPlanProposal = {
     accepted_at: string | null;
 };
 
-export const DAILY_MOOD_SCORE_VALUES = [
-    'bad',
-    'ok',
-    'good',
-] as const;
+export const DAILY_MOOD_SCORE_VALUES = ['bad', 'ok', 'good'] as const;
 
 export type DailyMoodScoreValue = (typeof DAILY_MOOD_SCORE_VALUES)[number];
 
@@ -123,7 +119,7 @@ export type AppointmentDoctorType =
     | 'dentist'
     | 'hospital'
     | 'general_practitioner'
-    | 'specialist'
+    | 'specialist';
 
 export const APPOINTMENT_DOCTOR_TYPE_VALUES = [
     'dentist',
@@ -209,7 +205,8 @@ export const MEDICATION_DOSE_UNIT_VALUES = [
     'unit',
 ] as const;
 
-export type MedicationDoseUnitValue = (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
+export type MedicationDoseUnitValue =
+    (typeof MEDICATION_DOSE_UNIT_VALUES)[number];
 
 export const MEDICATION_MEAL_TIMING_VALUES = [
     'before_food',
@@ -218,7 +215,8 @@ export const MEDICATION_MEAL_TIMING_VALUES = [
     'unrelated',
 ] as const;
 
-export type MedicationMealTimingValue = (typeof MEDICATION_MEAL_TIMING_VALUES)[number];
+export type MedicationMealTimingValue =
+    (typeof MEDICATION_MEAL_TIMING_VALUES)[number];
 
 export type MedicationIntakeFrequencyEveryNDaysValue = `every_${
     | 2
@@ -279,16 +277,19 @@ export type MedicationIntakeFrequencyEveryNDaysValue = `every_${
     | 57
     | 58
     | 59
-    | 60
-}_days`;
+    | 60}_days`;
 
 export const MEDICATION_INTAKE_FREQUENCY_VALUES = [
     'daily',
-    ...(Array.from({ length: 59 }, (_, index) => `every_${index + 2}_days`) as readonly MedicationIntakeFrequencyEveryNDaysValue[]),
+    ...(Array.from(
+        { length: 59 },
+        (_, index) => `every_${index + 2}_days`,
+    ) as readonly MedicationIntakeFrequencyEveryNDaysValue[]),
     'weekdays',
 ] as const;
 
-export type MedicationIntakeFrequencyValue = (typeof MEDICATION_INTAKE_FREQUENCY_VALUES)[number];
+export type MedicationIntakeFrequencyValue =
+    (typeof MEDICATION_INTAKE_FREQUENCY_VALUES)[number];
 
 export type MedicationScheduleListItem = {
     meal_timing: MedicationMealTimingValue;

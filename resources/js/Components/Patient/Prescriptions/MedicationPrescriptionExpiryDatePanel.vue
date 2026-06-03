@@ -58,25 +58,19 @@ const expiryDateHeading = computed((): string => {
         v-if="formattedExpiryDate !== null && expiryDateIso !== null"
         class="flex w-full min-w-0 justify-start"
     >
-        <div
-            class="min-w-0 flex-1"
-            :class="expiryPanelClass"
-        >
+        <div class="min-w-0 flex-1" :class="expiryPanelClass">
             <div :class="expiryPanelIconWrapClass">
-                <CalendarDays
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
+                <CalendarDays class="size-5 sm:size-6" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span
-                    class="text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                    class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
                 >
                     {{ expiryDateHeading }}
                 </span>
                 <time
                     :datetime="expiryDateIso"
-                    class="whitespace-pre-wrap wrap-break-word text-2xl font-bold leading-none tracking-tight text-text-heading sm:text-3xl"
+                    class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap sm:text-3xl"
                 >
                     {{ formattedExpiryDate }}
                 </time>

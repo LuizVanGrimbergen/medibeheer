@@ -9,7 +9,10 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
-import type { LinkedCareTeamMember, PendingCareTeamInvitation } from '@/lib/types';
+import type {
+    LinkedCareTeamMember,
+    PendingCareTeamInvitation,
+} from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 
@@ -31,7 +34,8 @@ const { t } = useI18n();
 const pendingFamilyInvitationsOpen = ref(false);
 const linkedFamilyMembersOpen = ref(false);
 
-const sectionHeadingClass = 'text-xl font-bold leading-snug text-text-heading md:text-2xl';
+const sectionHeadingClass =
+    'text-xl font-bold leading-snug text-text-heading md:text-2xl';
 
 const labelClass =
     'mb-2 block text-base font-semibold leading-snug text-text-heading md:text-lg';
@@ -83,25 +87,16 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
 
 <template>
     <section
-        class="rounded-2xl border-2 border-border bg-surface p-6 shadow-sm sm:p-8"
+        class="border-border bg-surface rounded-2xl border-2 p-6 shadow-sm sm:p-8"
         aria-labelledby="family-invite-heading"
     >
-        <h2
-            id="family-invite-heading"
-            :class="sectionHeadingClass"
-        >
+        <h2 id="family-invite-heading" :class="sectionHeadingClass">
             {{ t('patient.family.inviteHeading') }}
         </h2>
 
-        <form
-            class="mt-6 flex flex-col gap-5"
-            @submit.prevent="submitInvite"
-        >
+        <form class="mt-6 flex flex-col gap-5" @submit.prevent="submitInvite">
             <div>
-                <Label
-                    for="family-invite-email"
-                    :class="labelClass"
-                >
+                <Label for="family-invite-email" :class="labelClass">
                     {{ t('patient.family.emailLabel') }}
                 </Label>
                 <Input
@@ -109,7 +104,14 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
                     v-model="inviteForm.email"
                     type="email"
                     autocomplete="email"
-                    :class="cn(fieldInputClass, inviteForm.errors.email ? 'border-danger ring-2 ring-danger/20' : null)"
+                    :class="
+                        cn(
+                            fieldInputClass,
+                            inviteForm.errors.email
+                                ? 'border-danger ring-danger/20 ring-2'
+                                : null,
+                        )
+                    "
                     :placeholder="t('patient.family.emailPlaceholder')"
                     :aria-invalid="Boolean(inviteForm.errors.email)"
                 />
@@ -122,8 +124,11 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
 
             <Button
                 type="submit"
-                class="min-h-12 w-full touch-manipulation text-base font-semibold md:min-h-14 md:text-lg sm:w-auto"
-                :disabled="inviteForm.processing || props.family_invitation_store_url === ''"
+                class="min-h-12 w-full touch-manipulation text-base font-semibold sm:w-auto md:min-h-14 md:text-lg"
+                :disabled="
+                    inviteForm.processing ||
+                    props.family_invitation_store_url === ''
+                "
             >
                 {{ t('patient.family.sendInvite') }}
             </Button>
@@ -143,7 +148,11 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
                 v-for="inv in props.family_invitations"
                 :key="inv.public_id"
                 :title="t('patient.family.pendingOutgoingItemLabel')"
-                :subtitle="t('patient.family.expiresAt', { date: formatCareTeamExpiry(inv.expires_at) })"
+                :subtitle="
+                    t('patient.family.expiresAt', {
+                        date: formatCareTeamExpiry(inv.expires_at),
+                    })
+                "
                 :action-label="t('patient.family.revoke')"
                 :confirm-title="t('patient.family.revokeConfirmTitle')"
                 :confirm-description="t('patient.family.revokeConfirmMessage')"
@@ -170,7 +179,9 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
                 :action-label="t('patient.family.unlink')"
                 :confirm-title="t('patient.family.unlinkConfirmTitle')"
                 :confirm-description="
-                    t('patient.family.unlinkConfirmMessage', { name: member.name })
+                    t('patient.family.unlinkConfirmMessage', {
+                        name: member.name,
+                    })
                 "
                 :confirm-label="t('patient.family.unlinkConfirmAction')"
                 :cancel-label="t('patient.family.cancel')"

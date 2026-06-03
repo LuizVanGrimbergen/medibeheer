@@ -17,9 +17,12 @@ import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescrip
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
 
 const open = defineModel<boolean>('open', { required: true });
-const selectedMedicationId = defineModel<number | null>('selectedMedicationId', {
-    required: true,
-});
+const selectedMedicationId = defineModel<number | null>(
+    'selectedMedicationId',
+    {
+        required: true,
+    },
+);
 
 const props = defineProps<{
     form: PatientPrescriptionForm;
@@ -53,12 +56,12 @@ const { t } = useI18n();
                 class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
             >
                 <DialogTitle
-                    class="text-xl font-bold leading-tight text-text-heading md:text-2xl"
+                    class="text-text-heading text-xl leading-tight font-bold md:text-2xl"
                 >
                     {{ t('patient.prescriptions.dialogTitle') }}
                 </DialogTitle>
                 <DialogDescription
-                    class="block text-sm font-medium leading-snug text-text-heading md:text-base md:leading-relaxed"
+                    class="text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed"
                     aria-live="polite"
                 >
                     {{ progressLabel }}
@@ -72,24 +75,32 @@ const { t } = useI18n();
                 @submit.prevent="emit('submit')"
             >
                 <div
-                    class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch] touch-pan-y"
+                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
                 >
                     <div class="space-y-3 md:space-y-3">
                         <Card
-                            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
+                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
                         >
                             <CardContent class="p-0">
                                 <div
-                                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
+                                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
                                 >
                                     <PrescriptionDetailsStep
                                         v-if="currentStep === 1"
                                         :id-prefix="props.idPrefix"
-                                        v-model:selected-medication-id="selectedMedicationId"
+                                        v-model:selected-medication-id="
+                                            selectedMedicationId
+                                        "
                                         :form="props.form"
-                                        :medication-choices="props.medicationChoices"
-                                        :quantity-client-error="props.quantityClientError"
-                                        :medication-client-error="props.medicationClientError"
+                                        :medication-choices="
+                                            props.medicationChoices
+                                        "
+                                        :quantity-client-error="
+                                            props.quantityClientError
+                                        "
+                                        :medication-client-error="
+                                            props.medicationClientError
+                                        "
                                     />
 
                                     <PrescriptionExpiryDatesStep
@@ -110,7 +121,7 @@ const { t } = useI18n();
                     class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
                 >
                     <Card
-                        class="rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] md:rounded-3xl"
+                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] md:rounded-3xl"
                     >
                         <CardContent
                             class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4"

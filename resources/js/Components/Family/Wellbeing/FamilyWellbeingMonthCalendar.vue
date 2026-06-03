@@ -32,7 +32,9 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n();
 
-function moodForCell(cell: HistoryMonthCalendarCell): DailyMoodScoreValue | null {
+function moodForCell(
+    cell: HistoryMonthCalendarCell,
+): DailyMoodScoreValue | null {
     if (cell.dateKey === null) {
         return null;
     }
@@ -70,7 +72,9 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         grid-caption-key="family.wellbeing.calendar.gridAria"
         :prev-month-aria-label="t('family.wellbeing.calendar.prevMonth')"
         :next-month-aria-label="t('family.wellbeing.calendar.nextMonth')"
-        :open-day-details-aria-label="t('family.wellbeing.calendar.openDayDetails')"
+        :open-day-details-aria-label="
+            t('family.wellbeing.calendar.openDayDetails')
+        "
         :day-aria-label="dayAriaLabel"
         @select-date="emit('selectDate', $event)"
     >
@@ -82,23 +86,29 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         </template>
 
         <template #legend>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <Frown
-                    class="size-4 shrink-0 stroke-2 text-danger"
+                    class="text-danger size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('family.wellbeing.mood.bad') }}
             </span>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <Meh
-                    class="size-4 shrink-0 stroke-2 text-warning"
+                    class="text-warning size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('family.wellbeing.mood.ok') }}
             </span>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <Smile
-                    class="size-4 shrink-0 stroke-2 text-success"
+                    class="text-success size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('family.wellbeing.mood.good') }}

@@ -12,7 +12,7 @@ const page = usePage<PageProps>();
 <template>
     <section class="space-y-6">
         <div>
-            <h2 class="text-lg font-semibold text-text">
+            <h2 class="text-text text-lg font-semibold">
                 {{ t('privacy.settings.legalLinksTitle') }}
             </h2>
             <ul class="mt-3 space-y-2 text-base">
@@ -21,7 +21,7 @@ const page = usePage<PageProps>();
                         :href="page.props.legal.privacyUrl"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="font-semibold text-primary hover:opacity-80"
+                        class="text-primary font-semibold hover:opacity-80"
                     >
                         {{ t('privacy.settings.privacyLink') }}
                     </a>
@@ -31,7 +31,7 @@ const page = usePage<PageProps>();
                         :href="page.props.legal.cookiesUrl"
                         target="_blank"
                         rel="noopener noreferrer"
-                        class="font-semibold text-primary hover:opacity-80"
+                        class="text-primary font-semibold hover:opacity-80"
                     >
                         {{ t('privacy.settings.cookiesLink') }}
                     </a>
@@ -40,16 +40,13 @@ const page = usePage<PageProps>();
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-text">
+            <h2 class="text-text text-lg font-semibold">
                 {{ t('privacy.settings.exportTitle') }}
             </h2>
-            <p class="mt-1 text-sm text-text-muted">
+            <p class="text-text-muted mt-1 text-sm">
                 {{ t('privacy.settings.exportDescription') }}
             </p>
-            <Button
-                as-child
-                class="mt-4"
-            >
+            <Button as-child class="mt-4">
                 <a :href="route('settings.export')">
                     <Download class="mr-2 h-4 w-4" />
                     {{ t('privacy.settings.exportAction') }}
@@ -57,14 +54,14 @@ const page = usePage<PageProps>();
             </Button>
         </div>
 
-        <div class="border-t border-border pt-6">
-            <p class="text-sm text-text-muted">
+        <div class="border-border border-t pt-6">
+            <p class="text-text-muted text-sm">
                 {{ t('profile.delete.description') }}
             </p>
             <Button
                 as-child
                 variant="outline"
-                class="mt-4 border-danger text-danger hover:bg-danger/10"
+                class="border-danger text-danger hover:bg-danger/10 mt-4"
             >
                 <Link :href="route('settings.edit', { section: 'delete' })">
                     {{ t('profile.delete.action') }}

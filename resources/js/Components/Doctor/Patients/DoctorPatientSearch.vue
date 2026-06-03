@@ -43,7 +43,10 @@ const hasPatients = computed(() => props.patients.length > 0);
 const hasSearchQuery = computed(() => normalizedSearchQuery.value !== '');
 
 const showNoResults = computed(
-    () => hasPatients.value && hasSearchQuery.value && filteredPatients.value.length === 0,
+    () =>
+        hasPatients.value &&
+        hasSearchQuery.value &&
+        filteredPatients.value.length === 0,
 );
 
 const selectedPatient = computed(() => {
@@ -75,7 +78,6 @@ const collapsedSummary = computed((): string => {
         count: String(props.patients.length),
     });
 });
-
 </script>
 
 <template>
@@ -98,32 +100,32 @@ const collapsedSummary = computed((): string => {
             :clear-label="t('doctor.patients.searchClear')"
         />
 
-        <p
-            v-if="!hasPatients"
-            class="text-sm leading-relaxed text-text-muted"
-        >
+        <p v-if="!hasPatients" class="text-text-muted text-sm leading-relaxed">
             {{ t('doctor.patients.empty') }}
         </p>
 
         <p
             v-else-if="showNoResults"
-            class="text-sm leading-relaxed text-text-muted"
+            class="text-text-muted text-sm leading-relaxed"
         >
-            {{ t('doctor.patients.searchNoResults', { query: searchQuery.trim() }) }}
+            {{
+                t('doctor.patients.searchNoResults', {
+                    query: searchQuery.trim(),
+                })
+            }}
         </p>
 
-        <ul
-            v-else
-            class="flex flex-col gap-3 md:gap-2.5"
-            role="list"
-        >
-            <li
-                v-for="patient in filteredPatients"
-                :key="patient.public_id"
-            >
+        <ul v-else class="flex flex-col gap-3 md:gap-2.5" role="list">
+            <li v-for="patient in filteredPatients" :key="patient.public_id">
                 <SelectableNavLink
-                    :href="route('doctor.dashboard', { patient: patient.public_id })"
-                    :selected="props.selectedPatientPublicId === patient.public_id"
+                    :href="
+                        route('doctor.dashboard', {
+                            patient: patient.public_id,
+                        })
+                    "
+                    :selected="
+                        props.selectedPatientPublicId === patient.public_id
+                    "
                 >
                     {{ patient.name }}
                 </SelectableNavLink>

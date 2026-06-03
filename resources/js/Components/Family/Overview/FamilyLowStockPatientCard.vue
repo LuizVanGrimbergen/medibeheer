@@ -36,7 +36,9 @@ function supplyEstimateLine(days: number): string {
         return t('patient.inventory.supplyEstimateApproxOneDay');
     }
 
-    return t('patient.inventory.supplyEstimateApproxDays', { days: String(days) });
+    return t('patient.inventory.supplyEstimateApproxDays', {
+        days: String(days),
+    });
 }
 </script>
 
@@ -49,7 +51,7 @@ function supplyEstimateLine(days: number): string {
         <Card
             :class="
                 cn(
-                    'rounded-2xl border-danger/70 bg-surface shadow-sm transition group-hover:bg-surface-2 dark:border-danger/80',
+                    'border-danger/70 bg-surface group-hover:bg-surface-2 dark:border-danger/80 rounded-2xl shadow-sm transition',
                 )
             "
         >
@@ -58,12 +60,12 @@ function supplyEstimateLine(days: number): string {
                     <div class="min-w-0 flex-1 space-y-2.5">
                         <div class="space-y-1">
                             <p
-                                class="text-base font-semibold leading-snug text-text-heading md:text-[0.9375rem]"
+                                class="text-text-heading text-base leading-snug font-semibold md:text-[0.9375rem]"
                             >
                                 {{ props.patient.patient_name }}
                             </p>
                             <p
-                                class="inline-flex items-center gap-1.5 text-sm font-semibold text-danger"
+                                class="text-danger inline-flex items-center gap-1.5 text-sm font-semibold"
                             >
                                 <AlertTriangle
                                     :size="16"
@@ -72,12 +74,12 @@ function supplyEstimateLine(days: number): string {
                                 />
                                 {{ t('patient.inventory.lowStockBadge') }}
                             </p>
-                            <p class="text-sm text-text-muted">
+                            <p class="text-text-muted text-sm">
                                 {{ patientSummary(props.patient) }}
                             </p>
                         </div>
 
-                        <ul class="space-y-2 border-t border-border/70 pt-2.5">
+                        <ul class="border-border/70 space-y-2 border-t pt-2.5">
                             <li
                                 v-for="medication in props.patient.medications"
                                 :key="medication.id"
@@ -85,15 +87,23 @@ function supplyEstimateLine(days: number): string {
                             >
                                 <Pill
                                     :size="16"
-                                    class="mt-0.5 shrink-0 text-danger"
+                                    class="text-danger mt-0.5 shrink-0"
                                     aria-hidden="true"
                                 />
                                 <div class="min-w-0 space-y-0.5">
-                                    <p class="text-sm font-medium leading-snug text-text">
+                                    <p
+                                        class="text-text text-sm leading-snug font-medium"
+                                    >
                                         {{ medication.name }}
                                     </p>
-                                    <p class="text-sm leading-snug text-text-muted">
-                                        {{ supplyEstimateLine(medication.supply_estimate_days) }}
+                                    <p
+                                        class="text-text-muted text-sm leading-snug"
+                                    >
+                                        {{
+                                            supplyEstimateLine(
+                                                medication.supply_estimate_days,
+                                            )
+                                        }}
                                     </p>
                                 </div>
                             </li>
@@ -102,7 +112,7 @@ function supplyEstimateLine(days: number): string {
 
                     <ChevronRight
                         :size="18"
-                        class="mt-0.5 shrink-0 text-text-muted transition group-hover:text-text"
+                        class="text-text-muted group-hover:text-text mt-0.5 shrink-0 transition"
                         aria-hidden="true"
                     />
                 </div>

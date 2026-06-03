@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { Calendar, CalendarClock, Clock, Package, Scale } from 'lucide-vue-next';
+import {
+    Calendar,
+    CalendarClock,
+    Clock,
+    Package,
+    Scale,
+} from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockControls from '@/Components/Medications/MedicationStockControls.vue';
@@ -56,8 +62,8 @@ const { t, locale } = useI18n();
 
 const isInactiveListItem = computed(
     () =>
-        props.medication.list_status === 'ended'
-        || props.medication.list_status === 'removed',
+        props.medication.list_status === 'ended' ||
+        props.medication.list_status === 'removed',
 );
 
 const listStatusLabel = computed((): string | null => {
@@ -89,12 +95,12 @@ const formatYmdForMedicationCard = (ymd: string): string => {
     const d = parts[2];
 
     if (
-        y === undefined
-        || m === undefined
-        || d === undefined
-        || Number.isNaN(y)
-        || Number.isNaN(m)
-        || Number.isNaN(d)
+        y === undefined ||
+        m === undefined ||
+        d === undefined ||
+        Number.isNaN(y) ||
+        Number.isNaN(m) ||
+        Number.isNaN(d)
     ) {
         return ymd;
     }
@@ -109,64 +115,70 @@ const formatYmdForMedicationCard = (ymd: string): string => {
     }).format(date);
 };
 
-const scheduleDateRow = computed((): {
-    rangeDisplay: string;
-    startDisplay: string;
-    endDisplay: string;
-    startIso: string | null;
-    endIso: string | null;
-    ariaLabel: string;
-} | null => {
-    const first = props.medication.schedules[0];
+const scheduleDateRow = computed(
+    (): {
+        rangeDisplay: string;
+        startDisplay: string;
+        endDisplay: string;
+        startIso: string | null;
+        endIso: string | null;
+        ariaLabel: string;
+    } | null => {
+        const first = props.medication.schedules[0];
 
-    if (first === undefined) {
-        return null;
-    }
+        if (first === undefined) {
+            return null;
+        }
 
-    const startTrimmed = first.start_date?.trim() ?? '';
-    const endTrimmed = first.end_date?.trim() ?? '';
+        const startTrimmed = first.start_date?.trim() ?? '';
+        const endTrimmed = first.end_date?.trim() ?? '';
 
-    if (startTrimmed.length < 1 && endTrimmed.length < 1) {
-        return null;
-    }
+        if (startTrimmed.length < 1 && endTrimmed.length < 1) {
+            return null;
+        }
 
-    const startDisplay =
-        startTrimmed.length < 1 ? '—' : formatYmdForMedicationCard(startTrimmed);
-    const endDisplay =
-        endTrimmed.length < 1
-            ? t('patient.medications.intakePeriodPresets.ongoing')
-            : formatYmdForMedicationCard(endTrimmed);
+        const startDisplay =
+            startTrimmed.length < 1
+                ? '—'
+                : formatYmdForMedicationCard(startTrimmed);
+        const endDisplay =
+            endTrimmed.length < 1
+                ? t('patient.medications.intakePeriodPresets.ongoing')
+                : formatYmdForMedicationCard(endTrimmed);
 
-    return {
-        rangeDisplay: t('patient.medications.cardIntakePeriodRange', {
-            start: startDisplay,
-            end: endDisplay,
-        }),
-        startDisplay,
-        endDisplay,
-        startIso: startTrimmed.length < 1 ? null : startTrimmed,
-        endIso: endTrimmed.length < 1 ? null : endTrimmed,
-        ariaLabel: t('patient.medications.cardIntakePeriodAria', {
-            start: startDisplay,
-            end: endDisplay,
-        }),
-    };
-});
+        return {
+            rangeDisplay: t('patient.medications.cardIntakePeriodRange', {
+                start: startDisplay,
+                end: endDisplay,
+            }),
+            startDisplay,
+            endDisplay,
+            startIso: startTrimmed.length < 1 ? null : startTrimmed,
+            endIso: endTrimmed.length < 1 ? null : endTrimmed,
+            ariaLabel: t('patient.medications.cardIntakePeriodAria', {
+                start: startDisplay,
+                end: endDisplay,
+            }),
+        };
+    },
+);
 
 const doseTimesDisplay = computed(() => sortedDoseTimes.value.join(', '));
 
-const prescriptionExpiryDateRow = computed((): { display: string; iso: string } | null => {
-    const trimmed = props.medication.prescription_expiry_date?.trim() ?? '';
+const prescriptionExpiryDateRow = computed(
+    (): { display: string; iso: string } | null => {
+        const trimmed = props.medication.prescription_expiry_date?.trim() ?? '';
 
-    if (trimmed.length < 1) {
-        return null;
-    }
+        if (trimmed.length < 1) {
+            return null;
+        }
 
-    return {
-        display: formatYmdForMedicationCard(trimmed),
-        iso: trimmed,
-    };
-});
+        return {
+            display: formatYmdForMedicationCard(trimmed),
+            iso: trimmed,
+        };
+    },
+);
 
 const minutesSinceMidnight = (value: string): number | null => {
     const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
@@ -179,10 +191,10 @@ const minutesSinceMidnight = (value: string): number | null => {
     const minutes = Number(match[2]);
 
     if (
-        Number.isNaN(hours)
-        || Number.isNaN(minutes)
-        || hours > 23
-        || minutes > 59
+        Number.isNaN(hours) ||
+        Number.isNaN(minutes) ||
+        hours > 23 ||
+        minutes > 59
     ) {
         return null;
     }
@@ -242,14 +254,16 @@ const strengthLine = computed(() => props.medication.strength?.trim() || null);
 
 const hasMedicationDetailsGroup = computed(
     () =>
-        doseLine.value !== null
-        || strengthLine.value !== null
-        || sortedDoseTimes.value.length > 0
-        || scheduleDateRow.value !== null
-        || prescriptionExpiryDateRow.value !== null,
+        doseLine.value !== null ||
+        strengthLine.value !== null ||
+        sortedDoseTimes.value.length > 0 ||
+        scheduleDateRow.value !== null ||
+        prescriptionExpiryDateRow.value !== null,
 );
 
-const typeLabel = computed(() => medicationTypeLabel(t, props.medication.type_medication));
+const typeLabel = computed(() =>
+    medicationTypeLabel(t, props.medication.type_medication),
+);
 
 const headerSummary = computed(() =>
     medicationCardHeaderSummary(t, {
@@ -261,7 +275,9 @@ const headerSummary = computed(() =>
     }),
 );
 
-const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
+const stockProgressTone = computed(() =>
+    medicationListVisualTone(props.medication),
+);
 
 const medicationVisualToneClasses = computed(() =>
     medicationListVisualToneClasses(stockProgressTone.value),
@@ -275,12 +291,14 @@ const medicationPillIconClass = computed(
     () => medicationVisualToneClasses.value.pillIcon,
 );
 
-const notePreview = computed(() => medicationIntakeNotePreview(props.medication));
+const notePreview = computed(() =>
+    medicationIntakeNotePreview(props.medication),
+);
 </script>
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="bg-surface text-text w-full min-w-0 rounded-3xl border shadow-md shadow-black/[0.04]"
         :class="[
             medicationVisualToneClasses.border,
             isInactiveListItem ? 'opacity-90' : null,
@@ -302,7 +320,9 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                 <div
                     class="flex min-w-0 items-start gap-4"
                     :class="
-                        hasEditOrDeleteActions ? patientPageCardHeaderWithActionsClass : null
+                        hasEditOrDeleteActions
+                            ? patientPageCardHeaderWithActionsClass
+                            : null
                     "
                 >
                     <div
@@ -318,7 +338,7 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                     </div>
                     <div class="min-w-0 flex-1 space-y-1.5">
                         <p
-                            class="text-lg font-bold leading-snug text-text-heading sm:text-xl"
+                            class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
                         >
                             {{ medication.name }}
                         </p>
@@ -330,7 +350,7 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                         </p>
                         <p
                             v-if="listStatusLabel !== null"
-                            class="text-base font-semibold leading-snug text-text-muted"
+                            class="text-text-muted text-base leading-snug font-semibold"
                         >
                             {{ listStatusLabel }}
                         </p>
@@ -346,10 +366,16 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                 <CollapsibleContent>
                     <div class="space-y-6 pt-4">
-                        <PatientListCardDetailsGroup v-if="hasMedicationDetailsGroup">
+                        <PatientListCardDetailsGroup
+                            v-if="hasMedicationDetailsGroup"
+                        >
                             <PatientListCardDetailsGroupItem
                                 v-if="doseLine !== null"
-                                :label="t('patient.medications.overview.amountPerIntake')"
+                                :label="
+                                    t(
+                                        'patient.medications.overview.amountPerIntake',
+                                    )
+                                "
                             >
                                 <template #icon>
                                     <Package
@@ -362,7 +388,9 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                             <PatientListCardDetailsGroupItem
                                 v-if="strengthLine !== null"
-                                :label="t('patient.medications.fields.strength')"
+                                :label="
+                                    t('patient.medications.fields.strength')
+                                "
                             >
                                 <template #icon>
                                     <Scale
@@ -375,7 +403,9 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                             <PatientListCardDetailsGroupItem
                                 v-if="sortedDoseTimes.length > 0"
-                                :label="t('patient.medications.fields.doseTime')"
+                                :label="
+                                    t('patient.medications.fields.doseTime')
+                                "
                             >
                                 <template #icon>
                                     <Clock
@@ -388,7 +418,9 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                             <PatientListCardDetailsGroupItem
                                 v-if="scheduleDateRow !== null"
-                                :label="t('patient.medications.fields.intakePeriod')"
+                                :label="
+                                    t('patient.medications.fields.intakePeriod')
+                                "
                                 raw-value
                             >
                                 <template #icon>
@@ -407,7 +439,11 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                             <PatientListCardDetailsGroupItem
                                 v-if="prescriptionExpiryDateRow !== null"
-                                :label="t('patient.medications.fields.prescriptionExpiryDateShort')"
+                                :label="
+                                    t(
+                                        'patient.medications.fields.prescriptionExpiryDateShort',
+                                    )
+                                "
                                 raw-value
                             >
                                 <template #icon>
@@ -417,7 +453,11 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                                     />
                                 </template>
                                 <p :class="patientPageCardDetailValueClass">
-                                    <time :datetime="prescriptionExpiryDateRow.iso">
+                                    <time
+                                        :datetime="
+                                            prescriptionExpiryDateRow.iso
+                                        "
+                                    >
                                         {{ prescriptionExpiryDateRow.display }}
                                     </time>
                                 </p>
@@ -426,7 +466,7 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
 
                         <p
                             v-if="notePreview !== null"
-                            class="border-l-[3px] border-primary py-0.5 pl-3.5 text-base italic leading-relaxed text-text sm:text-lg"
+                            class="border-primary text-text border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed italic sm:text-lg"
                         >
                             {{ notePreview }}
                         </p>
@@ -436,8 +476,10 @@ const notePreview = computed(() => medicationIntakeNotePreview(props.medication)
                             :medication="medication"
                             :update-route-name="props.stockUpdateRouteName"
                             :id-prefix="`medication-card-stock-${medication.id}`"
-                            :can-adjust-stock="medication.list_status === 'active'"
-                            class="border-t border-border/70 pt-5"
+                            :can-adjust-stock="
+                                medication.list_status === 'active'
+                            "
+                            class="border-border/70 border-t pt-5"
                         />
                     </div>
 

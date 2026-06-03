@@ -4,7 +4,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistoryMonthCalendar from '@/Components/History/HistoryMonthCalendar.vue';
 import MedicationIntakeCalendarDayIndicator from '@/Components/Patient/Medications/MedicationIntakeCalendarDayIndicator.vue';
-import { formatHistoryCalendarLongDate, todayIsoDateKey } from '@/lib/history/formatHistoryCalendarDate';
+import {
+    formatHistoryCalendarLongDate,
+    todayIsoDateKey,
+} from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { indexMedicationIntakeCalendarDays } from '@/lib/patient/medications/history/indexMedicationIntakeCalendarDays';
 import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
@@ -35,7 +38,9 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n();
 
-const daysByDate = computed(() => indexMedicationIntakeCalendarDays(props.calendarDays));
+const daysByDate = computed(() =>
+    indexMedicationIntakeCalendarDays(props.calendarDays),
+);
 
 function calendarDayForCell(
     cell: HistoryMonthCalendarCell,
@@ -57,11 +62,15 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
     const todayKey = todayIsoDateKey();
 
     if (day === undefined || day.status === 'no_schedule') {
-        return t('patient.medications.history.calendar.dayNoSchedule', { date: longDate });
+        return t('patient.medications.history.calendar.dayNoSchedule', {
+            date: longDate,
+        });
     }
 
     if (day.status === 'none_taken' && day.date > todayKey) {
-        return t('patient.medications.history.calendar.dayNoIntake', { date: longDate });
+        return t('patient.medications.history.calendar.dayNoIntake', {
+            date: longDate,
+        });
     }
 
     return t('patient.medications.history.calendar.dayWithStatus', {
@@ -81,9 +90,15 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         :show-month-navigation="props.showMonthNavigation"
         :header-title="props.headerTitle"
         grid-caption-key="patient.medications.history.calendar.gridAria"
-        :prev-month-aria-label="t('patient.medications.history.calendar.prevMonth')"
-        :next-month-aria-label="t('patient.medications.history.calendar.nextMonth')"
-        :open-day-details-aria-label="t('patient.medications.history.calendar.openDayDetails')"
+        :prev-month-aria-label="
+            t('patient.medications.history.calendar.prevMonth')
+        "
+        :next-month-aria-label="
+            t('patient.medications.history.calendar.nextMonth')
+        "
+        :open-day-details-aria-label="
+            t('patient.medications.history.calendar.openDayDetails')
+        "
         :day-aria-label="dayAriaLabel"
         @select-date="emit('selectDate', $event)"
     >
@@ -95,23 +110,29 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         </template>
 
         <template #legend>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <Check
-                    class="size-4 shrink-0 stroke-2 text-success"
+                    class="text-success size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('patient.medications.history.status.complete') }}
             </span>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <Minus
-                    class="size-4 shrink-0 stroke-2 text-warning"
+                    class="text-warning size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('patient.medications.history.status.partial') }}
             </span>
-            <span class="inline-flex items-center gap-1.5 font-medium text-text-heading">
+            <span
+                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
+            >
                 <AlertCircle
-                    class="size-4 shrink-0 stroke-2 text-danger"
+                    class="text-danger size-4 shrink-0 stroke-2"
                     aria-hidden="true"
                 />
                 {{ t('patient.medications.history.status.none_taken') }}

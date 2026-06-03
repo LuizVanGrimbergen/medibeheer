@@ -20,7 +20,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="box-border w-[840px] space-y-5 bg-bg p-10 text-text">
+    <div class="bg-bg text-text box-border w-[840px] space-y-5 p-10">
         <header class="space-y-2">
             <div class="flex flex-wrap items-start justify-between gap-3">
                 <h1 :class="patientPageTitleClass">
@@ -44,7 +44,7 @@ defineProps<{
                         {{ payload.periodHeading }}
                     </h2>
                     <p
-                        class="text-xl font-bold tabular-nums leading-none text-text-heading"
+                        class="text-text-heading text-xl leading-none font-bold tabular-nums"
                     >
                         {{ payload.daysLabel }}
                     </p>
@@ -65,22 +65,19 @@ defineProps<{
 
         <p
             v-if="payload.emptyMessage !== null"
-            class="rounded-2xl border border-border/80 bg-surface-2/80 px-4 py-5 text-base leading-relaxed text-text md:text-lg"
+            class="border-border/80 bg-surface-2/80 text-text rounded-2xl border px-4 py-5 text-base leading-relaxed md:text-lg"
         >
             {{ payload.emptyMessage }}
         </p>
 
-        <section
-            v-if="payload.items.length > 0"
-            class="space-y-4"
-        >
+        <section v-if="payload.items.length > 0" class="space-y-4">
             <h2 :class="patientPageSectionTitleClass">
                 {{ payload.listHeading }}
             </h2>
 
             <p
                 v-if="payload.savedPackageHint !== null"
-                class="text-base leading-relaxed text-text-muted"
+                class="text-text-muted text-base leading-relaxed"
             >
                 {{ payload.savedPackageHint }}
             </p>
@@ -93,10 +90,14 @@ defineProps<{
                 >
                     <Card :class="inventoryVacationResultsCardClass">
                         <CardContent class="space-y-4 p-5 sm:p-6">
-                            <p class="text-lg font-bold leading-snug text-text-heading">
+                            <p
+                                class="text-text-heading text-lg leading-snug font-bold"
+                            >
                                 {{ item.name }}
                             </p>
-                            <InventoryVacationShareMedicationPickup :item="item" />
+                            <InventoryVacationShareMedicationPickup
+                                :item="item"
+                            />
                         </CardContent>
                     </Card>
                 </li>
@@ -105,12 +106,12 @@ defineProps<{
 
         <p
             v-if="payload.skippedNote !== null"
-            class="text-sm leading-relaxed text-text-muted sm:text-base"
+            class="text-text-muted text-sm leading-relaxed sm:text-base"
         >
             {{ payload.skippedNote }}
         </p>
 
-        <footer class="text-sm text-text-muted sm:text-base">
+        <footer class="text-text-muted text-sm sm:text-base">
             {{ payload.footerLabel }}
         </footer>
     </div>

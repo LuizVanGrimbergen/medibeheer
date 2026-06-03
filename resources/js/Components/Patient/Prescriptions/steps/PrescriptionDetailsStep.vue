@@ -16,9 +16,12 @@ import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescrip
 import type { MedicationTypeValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-const selectedMedicationId = defineModel<number | null>('selectedMedicationId', {
-    required: true,
-});
+const selectedMedicationId = defineModel<number | null>(
+    'selectedMedicationId',
+    {
+        required: true,
+    },
+);
 
 const props = defineProps<{
     form: PatientPrescriptionForm;
@@ -46,8 +49,8 @@ const medicationErrorMessage = computed((): string | undefined => {
     return undefined;
 });
 
-const medicationSelectInvalid = computed(
-    () => Boolean(medicationErrorMessage.value),
+const medicationSelectInvalid = computed(() =>
+    Boolean(medicationErrorMessage.value),
 );
 
 function medicationTypeLabel(type: string): string {
@@ -109,8 +112,12 @@ function prescriptionQuantityOptionLabel(value: number): string {
             required
             :error-message="quantityErrorMessage"
             :option-label="prescriptionQuantityOptionLabel"
-            :custom-trigger-label="t('patient.medications.intakePeriodPresets.custom')"
-            :custom-placeholder="t('patient.prescriptions.quantity.customPlaceholder')"
+            :custom-trigger-label="
+                t('patient.medications.intakePeriodPresets.custom')
+            "
+            :custom-placeholder="
+                t('patient.prescriptions.quantity.customPlaceholder')
+            "
             :custom-select-aria-label="
                 t('patient.prescriptions.quantity.customSelectAriaLabel')
             "

@@ -5,6 +5,8 @@ type LooseInertiaForm = {
     clearErrors: (...keys: string[]) => void;
 };
 
-export function looseMedicationWizardInertiaForm(form: MedicationCreateFormWithErrors): LooseInertiaForm {
+export function looseMedicationWizardInertiaForm(
+    form: MedicationCreateFormWithErrors,
+): LooseInertiaForm {
     return form as unknown as LooseInertiaForm;
 }

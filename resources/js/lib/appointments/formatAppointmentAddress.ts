@@ -5,7 +5,9 @@ export type AppointmentAddressFields = {
     city: string | null;
 };
 
-export function formatAppointmentAddress(appointment: AppointmentAddressFields): string {
+export function formatAppointmentAddress(
+    appointment: AppointmentAddressFields,
+): string {
     const street = (appointment.street ?? '').trim();
     const houseNumber = (appointment.house_number ?? '').trim();
     const line1 = [street, houseNumber].filter(Boolean).join(' ');

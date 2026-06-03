@@ -1,5 +1,5 @@
-import { computed, ref  } from 'vue';
-import type {ComputedRef} from 'vue';
+import type { ComputedRef } from 'vue';
+import { computed, ref } from 'vue';
 import type { Composer } from 'vue-i18n';
 import { createInventoryVacationShareFiles } from '@/lib/patient/inventory/createInventoryVacationShareFiles';
 import { inventoryVacationShareFilename } from '@/lib/patient/inventory/inventoryVacationShareFilename';
@@ -16,7 +16,11 @@ type UseInventoryVacationShareToPhotosOptions = {
     t: Composer['t'];
 };
 
-function shareStepTitle(listTitle: string, fileIndex: number, total: number): string {
+function shareStepTitle(
+    listTitle: string,
+    fileIndex: number,
+    total: number,
+): string {
     if (total <= 1) {
         return listTitle;
     }
@@ -24,7 +28,9 @@ function shareStepTitle(listTitle: string, fileIndex: number, total: number): st
     return `${listTitle} (${fileIndex + 1}/${total})`;
 }
 
-export function useInventoryVacationShareToPhotos(options: UseInventoryVacationShareToPhotosOptions) {
+export function useInventoryVacationShareToPhotos(
+    options: UseInventoryVacationShareToPhotosOptions,
+) {
     const isSaving = ref(false);
     const saveError = ref<string | null>(null);
     const saveShareHintVisible = ref(false);
@@ -89,8 +95,13 @@ export function useInventoryVacationShareToPhotos(options: UseInventoryVacationS
         isSaving.value = true;
 
         try {
-            const filename = inventoryVacationShareFilename(options.startsOn.value);
-            const files = await createInventoryVacationShareFiles(payload, filename);
+            const filename = inventoryVacationShareFilename(
+                options.startsOn.value,
+            );
+            const files = await createInventoryVacationShareFiles(
+                payload,
+                filename,
+            );
 
             if (canShareVacationImagesFromBrowser()) {
                 shareListTitle.value = payload.title;

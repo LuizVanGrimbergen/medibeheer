@@ -11,8 +11,8 @@ import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/optio
 import { medicationDoseUnitRequiresStrength } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { medicationDoseUnitOptionsForSelect } from '@/lib/patient/medications/options/medicationDoseUnitOptions';
 import { medicationStrengthUnitChipForAmount } from '@/lib/patient/medications/options/medicationStrengthUnitChipForAmount';
-import { MEDICATION_STRENGTH_UNIT_OPTIONS } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import type { MedicationStrengthUnitValue } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
+import { MEDICATION_STRENGTH_UNIT_OPTIONS } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import { defaultDoseUnitForMedicationType } from '@/lib/patient/medications/options/medicationTypeDefaultDoseUnit';
 import { MEDICATION_TYPE_OPTIONS } from '@/lib/patient/medications/options/medicationTypeIcons';
 import {
@@ -109,7 +109,8 @@ watch(
             return;
         }
 
-        form.strength_unit = doseUnit === 'milliliter' ? 'milliliter' : 'milligram';
+        form.strength_unit =
+            doseUnit === 'milliliter' ? 'milliliter' : 'milligram';
     },
 );
 
@@ -135,7 +136,8 @@ function defaultStrengthUnitForMedicationType(
                 :for="`${idPrefix}-name`"
                 :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
             >
-                {{ t('patient.medications.fields.name') }} <span class="text-danger">*</span>
+                {{ t('patient.medications.fields.name') }}
+                <span class="text-danger">*</span>
             </Label>
             <Input
                 :id="`${idPrefix}-name`"
@@ -164,20 +166,22 @@ function defaultStrengthUnitForMedicationType(
             />
         </div>
 
-        <div class="min-w-0 w-full">
+        <div class="w-full min-w-0">
             <p
                 :id="`${idPrefix}-type-label`"
                 :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
             >
-                {{ t('patient.medications.fields.type') }} <span class="text-danger">*</span>
+                {{ t('patient.medications.fields.type') }}
+                <span class="text-danger">*</span>
             </p>
             <div
                 :id="`${idPrefix}-type`"
                 :class="
                     cn(
-                        'grid grid-cols-3 gap-x-2 gap-y-3 touch-manipulation md:gap-x-3 md:gap-y-3',
-                        form.errors.type_medication && form.type_medication === ''
-                            ? 'rounded-2xl p-0.5 ring-2 ring-danger/25'
+                        'grid touch-manipulation grid-cols-3 gap-x-2 gap-y-3 md:gap-x-3 md:gap-y-3',
+                        form.errors.type_medication &&
+                            form.type_medication === ''
+                            ? 'ring-danger/25 rounded-2xl p-0.5 ring-2'
                             : null,
                     )
                 "
@@ -185,7 +189,9 @@ function defaultStrengthUnitForMedicationType(
                 :aria-labelledby="`${idPrefix}-type-label`"
                 :aria-invalid="Boolean(form.errors.type_medication)"
                 :aria-describedby="
-                    form.errors.type_medication ? `${idPrefix}-type-error` : undefined
+                    form.errors.type_medication
+                        ? `${idPrefix}-type-error`
+                        : undefined
                 "
             >
                 <div
@@ -201,7 +207,7 @@ function defaultStrengthUnitForMedicationType(
                         <button
                             :id="`${idPrefix}-type-option-${option.type}`"
                             type="button"
-                            class="absolute inset-0 flex items-center justify-center rounded-xl border-2 p-2 transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:rounded-2xl md:border-[3px] md:p-3 md:focus-visible:ring-4"
+                            class="focus-visible:border-focus focus-visible:ring-focus/30 absolute inset-0 flex items-center justify-center rounded-xl border-2 p-2 transition-colors focus-visible:ring-2 focus-visible:outline-none md:rounded-2xl md:border-[3px] md:p-3 md:focus-visible:ring-4"
                             :class="
                                 cn(
                                     form.type_medication === option.type
@@ -231,7 +237,7 @@ function defaultStrengthUnitForMedicationType(
                     </div>
                     <span
                         :id="`${idPrefix}-type-option-${option.type}-label`"
-                        class="flex min-h-10 max-w-full cursor-pointer select-none items-center justify-center wrap-break-word hyphens-auto px-0.5 text-center font-body text-sm font-bold leading-snug touch-manipulation md:max-w-27 md:text-base md:leading-snug"
+                        class="font-body flex min-h-10 max-w-full cursor-pointer touch-manipulation items-center justify-center px-0.5 text-center text-sm leading-snug font-bold wrap-break-word hyphens-auto select-none md:max-w-27 md:text-base md:leading-snug"
                         :class="
                             form.type_medication === option.type
                                 ? 'text-text-heading'

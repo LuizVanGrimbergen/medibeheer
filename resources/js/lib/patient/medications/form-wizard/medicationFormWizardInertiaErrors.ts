@@ -10,7 +10,8 @@ export function medicationWizardStepForInertiaFormErrors(
         (errors.name !== undefined && errors.name.length > 0) ||
         (errors.dose !== undefined && errors.dose.length > 0) ||
         (errors.dose_unit !== undefined && errors.dose_unit.length > 0) ||
-        (errors.type_medication !== undefined && errors.type_medication.length > 0) ||
+        (errors.type_medication !== undefined &&
+            errors.type_medication.length > 0) ||
         (errors.strength !== undefined && errors.strength.length > 0);
 
     if (hasDetailServerError) {
@@ -22,7 +23,8 @@ export function medicationWizardStepForInertiaFormErrors(
     const intakeWeekdaysError = errors['schedule.intake_weekdays'];
     const hasStepTwoServerError =
         (mealTimingError !== undefined && mealTimingError.length > 0) ||
-        (intakeFrequencyError !== undefined && intakeFrequencyError.length > 0) ||
+        (intakeFrequencyError !== undefined &&
+            intakeFrequencyError.length > 0) ||
         (intakeWeekdaysError !== undefined && intakeWeekdaysError.length > 0);
 
     if (hasStepTwoServerError) {
@@ -57,7 +59,8 @@ export function medicationWizardStepForInertiaFormErrors(
     if (
         (noteError !== undefined && noteError.length > 0) ||
         (currentStockError !== undefined && currentStockError.length > 0) ||
-        (stockPiecesPerPackageError !== undefined && stockPiecesPerPackageError.length > 0)
+        (stockPiecesPerPackageError !== undefined &&
+            stockPiecesPerPackageError.length > 0)
     ) {
         return 6;
     }

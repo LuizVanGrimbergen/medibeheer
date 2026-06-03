@@ -104,12 +104,17 @@ const submit = () => {
             :roles="roles"
             :selected-role="selectedRole"
             :get-href="
-                (role) => authRouteWithEncryptedRole('register', props.roleTokens, role)
+                (role) =>
+                    authRouteWithEncryptedRole(
+                        'register',
+                        props.roleTokens,
+                        role,
+                    )
             "
         />
         <p
             v-if="bannerErrorMessage !== ''"
-            class="mb-4 rounded-lg border border-danger/40 bg-danger/10 px-4 py-3 text-center text-base font-semibold text-danger"
+            class="border-danger/40 bg-danger/10 text-danger mb-4 rounded-lg border px-4 py-3 text-center text-base font-semibold"
         >
             {{ bannerErrorMessage }}
         </p>
@@ -123,197 +128,258 @@ const submit = () => {
             </div>
 
             <form class="space-y-5" novalidate @submit.prevent="submit">
-            <div>
-                <Label for="name" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.register.nameLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <Input
-                    id="name"
-                    v-model="form.name"
-                    name="name"
-                    type="text"
-                    autocomplete="name"
-                    :placeholder="t('auth.register.namePlaceholder')"
-                    required
-                    autofocus
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                />
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
+                <div>
+                    <Label
+                        for="name"
+                        class="text-text mb-2 block text-2xl/none font-medium"
+                    >
+                        {{ t('auth.register.nameLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
+                    <Input
+                        id="name"
+                        v-model="form.name"
+                        name="name"
+                        type="text"
+                        autocomplete="name"
+                        :placeholder="t('auth.register.namePlaceholder')"
+                        required
+                        autofocus
+                        class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
+                    />
+                    <InputError class="mt-2" :message="form.errors.name" />
+                </div>
 
-            <div>
-                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.register.emailLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <Input
-                    id="email"
-                    v-model="form.email"
-                    type="email"
-                    autocomplete="email"
-                    :placeholder="t('auth.register.emailPlaceholder')"
-                    required
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                />
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                <div>
+                    <Label
+                        for="email"
+                        class="text-text mb-2 block text-2xl/none font-medium"
+                    >
+                        {{ t('auth.register.emailLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
+                    <Input
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        autocomplete="email"
+                        :placeholder="t('auth.register.emailPlaceholder')"
+                        required
+                        class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
+                    />
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
 
-            <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.register.pwdLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <div
-                    class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
-                >
+                <div>
+                    <Label
+                        for="password"
+                        class="text-text mb-2 block text-2xl/none font-medium"
+                    >
+                        {{ t('auth.register.pwdLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
+                    <div
+                        class="border-border bg-surface focus-within:ring-focus/25 mt-1 overflow-hidden rounded-xl border focus-within:ring-2"
+                    >
+                        <div class="relative">
+                            <Input
+                                id="password"
+                                v-model="form.password"
+                                :type="showPassword ? 'text' : 'password'"
+                                :autocomplete="
+                                    showPassword ? 'off' : 'new-password'
+                                "
+                                :placeholder="t('auth.register.pwdPlaceholder')"
+                                required
+                                class="text-text placeholder:text-text-muted h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 pr-12 text-xl shadow-none focus-visible:ring-0"
+                            />
+                            <button
+                                type="button"
+                                class="text-text-muted hover:text-text absolute top-1/2 right-3 -translate-y-1/2 transition"
+                                :aria-label="
+                                    showPassword
+                                        ? 'Hide password'
+                                        : 'Show password'
+                                "
+                                @click="showPassword = !showPassword"
+                            >
+                                <EyeOff v-if="showPassword" :size="20" />
+                                <Eye v-else :size="20" />
+                            </button>
+                        </div>
+
+                        <PasswordRequirementsCard
+                            integrated
+                            :password="form.password"
+                            :minimum-length="minimumPasswordLength"
+                        />
+                    </div>
+                    <InputError class="mt-2" :message="form.errors.password" />
+                </div>
+
+                <div>
+                    <Label
+                        for="password_confirmation"
+                        class="text-text mb-2 block text-2xl/none font-medium"
+                    >
+                        {{ t('auth.register.pwdConfirmLabel') }}
+                        <span class="text-danger">*</span>
+                    </Label>
                     <div class="relative">
                         <Input
-                            id="password"
-                            v-model="form.password"
-                            :type="showPassword ? 'text' : 'password'"
-                            :autocomplete="showPassword ? 'off' : 'new-password'"
-                            :placeholder="t('auth.register.pwdPlaceholder')"
+                            id="password_confirmation"
+                            v-model="form.password_confirmation"
+                            :type="
+                                showPasswordConfirmation ? 'text' : 'password'
+                            "
+                            :autocomplete="
+                                showPasswordConfirmation
+                                    ? 'off'
+                                    : 'new-password'
+                            "
+                            :placeholder="
+                                t('auth.register.pwdConfirmPlaceholder')
+                            "
                             required
-                            class="h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 pr-12 text-xl text-text shadow-none placeholder:text-text-muted focus-visible:ring-0"
+                            class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 pr-12 text-xl"
                         />
                         <button
                             type="button"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                            :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                            @click="showPassword = !showPassword"
+                            class="text-text-muted hover:text-text absolute top-1/2 right-3 -translate-y-1/2 transition"
+                            :aria-label="
+                                showPasswordConfirmation
+                                    ? 'Hide password confirmation'
+                                    : 'Show password confirmation'
+                            "
+                            @click="
+                                showPasswordConfirmation =
+                                    !showPasswordConfirmation
+                            "
                         >
-                            <EyeOff v-if="showPassword" :size="20" />
+                            <EyeOff
+                                v-if="showPasswordConfirmation"
+                                :size="20"
+                            />
                             <Eye v-else :size="20" />
                         </button>
                     </div>
-
-                    <PasswordRequirementsCard
-                        integrated
-                        :password="form.password"
-                        :minimum-length="minimumPasswordLength"
+                    <InputError
+                        class="mt-2"
+                        :message="form.errors.password_confirmation"
                     />
                 </div>
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
 
-            <div>
-                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
-                    {{ t('auth.register.pwdConfirmLabel') }}
-                    <span class="text-danger">*</span>
-                </Label>
-                <div class="relative">
-                    <Input
-                        id="password_confirmation"
-                        v-model="form.password_confirmation"
-                        :type="showPasswordConfirmation ? 'text' : 'password'"
-                        :autocomplete="showPasswordConfirmation ? 'off' : 'new-password'"
-                        :placeholder="t('auth.register.pwdConfirmPlaceholder')"
-                        required
-                        class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 pr-12 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
-                    />
-                    <button
-                        type="button"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition hover:text-text"
-                        :aria-label="showPasswordConfirmation ? 'Hide password confirmation' : 'Show password confirmation'"
-                        @click="showPasswordConfirmation = !showPasswordConfirmation"
+                <fieldset class="space-y-3 border-0 p-0">
+                    <legend
+                        class="text-text mb-2 block w-full text-2xl/none font-medium"
                     >
-                        <EyeOff v-if="showPasswordConfirmation" :size="20" />
-                        <Eye v-else :size="20" />
-                    </button>
-                </div>
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
+                        {{ t('privacy.register.sectionTitle') }}
+                    </legend>
 
-            <fieldset class="space-y-3 border-0 p-0">
-                <legend class="mb-2 block w-full text-2xl/none font-medium text-text">
-                    {{ t('privacy.register.sectionTitle') }}
-                </legend>
-
-                <div
-                    class="flex cursor-pointer items-start gap-4 rounded-2xl border-2 border-border/70 bg-surface px-4 py-3 transition-colors hover:bg-surface-hover focus-within:ring-2 focus-within:ring-focus/25"
-                    @click="form.accepted_privacy_policy = !form.accepted_privacy_policy"
-                >
-                    <Checkbox
-                        id="register-consent-privacy"
-                        :model-value="form.accepted_privacy_policy"
-                        :disabled="form.processing"
-                        required
-                        class="mt-0.5 size-6 shrink-0"
-                        @click.stop
-                        @update:model-value="
-                            (value) => {
-                                form.accepted_privacy_policy = value === true;
-                            }
+                    <div
+                        class="border-border/70 bg-surface hover:bg-surface-hover focus-within:ring-focus/25 flex cursor-pointer items-start gap-4 rounded-2xl border-2 px-4 py-3 transition-colors focus-within:ring-2"
+                        @click="
+                            form.accepted_privacy_policy =
+                                !form.accepted_privacy_policy
                         "
-                    />
-                    <Label
-                        for="register-consent-privacy"
-                        class="min-w-0 cursor-pointer text-lg font-medium leading-relaxed text-text wrap-break-word"
                     >
-                        <span class="text-danger">*</span>
-                        {{ ' ' }}
-                        {{ t('privacy.register.privacyPrefix') }}
-                        <a
-                            :href="route('legal.privacy')"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="font-semibold text-primary underline underline-offset-2 hover:opacity-80"
+                        <Checkbox
+                            id="register-consent-privacy"
+                            :model-value="form.accepted_privacy_policy"
+                            :disabled="form.processing"
+                            required
+                            class="mt-0.5 size-6 shrink-0"
                             @click.stop
+                            @update:model-value="
+                                (value) => {
+                                    form.accepted_privacy_policy =
+                                        value === true;
+                                }
+                            "
+                        />
+                        <Label
+                            for="register-consent-privacy"
+                            class="text-text min-w-0 cursor-pointer text-lg leading-relaxed font-medium wrap-break-word"
                         >
-                            {{ t('privacy.register.privacyLink') }}
-                        </a>
-                        {{ t('privacy.register.privacySuffix', { version: props.privacyPolicyVersion }) }}
-                    </Label>
-                </div>
-                <InputError :message="form.errors.accepted_privacy_policy" />
-
-                <div
-                    class="flex cursor-pointer items-start gap-4 rounded-2xl border-2 border-border/70 bg-surface px-4 py-3 transition-colors hover:bg-surface-hover focus-within:ring-2 focus-within:ring-focus/25"
-                    @click="
-                        form.accepted_health_data_processing = !form.accepted_health_data_processing
-                    "
-                >
-                    <Checkbox
-                        id="register-consent-health-data"
-                        :model-value="form.accepted_health_data_processing"
-                        :disabled="form.processing"
-                        required
-                        class="mt-0.5 size-6 shrink-0"
-                        @click.stop
-                        @update:model-value="
-                            (value) => {
-                                form.accepted_health_data_processing = value === true;
-                            }
-                        "
+                            <span class="text-danger">*</span>
+                            {{ ' ' }}
+                            {{ t('privacy.register.privacyPrefix') }}
+                            <a
+                                :href="route('legal.privacy')"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-primary font-semibold underline underline-offset-2 hover:opacity-80"
+                                @click.stop
+                            >
+                                {{ t('privacy.register.privacyLink') }}
+                            </a>
+                            {{
+                                t('privacy.register.privacySuffix', {
+                                    version: props.privacyPolicyVersion,
+                                })
+                            }}
+                        </Label>
+                    </div>
+                    <InputError
+                        :message="form.errors.accepted_privacy_policy"
                     />
-                    <Label
-                        for="register-consent-health-data"
-                        class="min-w-0 cursor-pointer text-lg font-medium leading-relaxed text-text wrap-break-word"
-                    >
-                        <span class="text-danger">*</span>
-                        {{ ' ' }}
-                        {{ t('privacy.register.healthDataLabel') }}
-                    </Label>
-                </div>
-                <InputError :message="form.errors.accepted_health_data_processing" />
-            </fieldset>
 
-            <Button
-                type="submit"
-                :disabled="form.processing"
-                size="lg"
-                class="w-full text-xl"
-            >
-                {{ t('auth.register.submit') }}
-            </Button>
+                    <div
+                        class="border-border/70 bg-surface hover:bg-surface-hover focus-within:ring-focus/25 flex cursor-pointer items-start gap-4 rounded-2xl border-2 px-4 py-3 transition-colors focus-within:ring-2"
+                        @click="
+                            form.accepted_health_data_processing =
+                                !form.accepted_health_data_processing
+                        "
+                    >
+                        <Checkbox
+                            id="register-consent-health-data"
+                            :model-value="form.accepted_health_data_processing"
+                            :disabled="form.processing"
+                            required
+                            class="mt-0.5 size-6 shrink-0"
+                            @click.stop
+                            @update:model-value="
+                                (value) => {
+                                    form.accepted_health_data_processing =
+                                        value === true;
+                                }
+                            "
+                        />
+                        <Label
+                            for="register-consent-health-data"
+                            class="text-text min-w-0 cursor-pointer text-lg leading-relaxed font-medium wrap-break-word"
+                        >
+                            <span class="text-danger">*</span>
+                            {{ ' ' }}
+                            {{ t('privacy.register.healthDataLabel') }}
+                        </Label>
+                    </div>
+                    <InputError
+                        :message="form.errors.accepted_health_data_processing"
+                    />
+                </fieldset>
+
+                <Button
+                    type="submit"
+                    :disabled="form.processing"
+                    size="lg"
+                    class="w-full text-xl"
+                >
+                    {{ t('auth.register.submit') }}
+                </Button>
             </form>
 
-            <p class="mt-7 text-center text-lg text-text-muted">
+            <p class="text-text-muted mt-7 text-center text-lg">
                 {{ t('auth.register.loginPrompt') }}
                 <Link
-                    :href="authRouteWithEncryptedRole('login', props.roleTokens, selectedRole)"
-                    class="font-semibold text-primary hover:opacity-80"
+                    :href="
+                        authRouteWithEncryptedRole(
+                            'login',
+                            props.roleTokens,
+                            selectedRole,
+                        )
+                    "
+                    class="text-primary font-semibold hover:opacity-80"
                 >
                     {{ t('auth.register.loginAction') }}
                 </Link>

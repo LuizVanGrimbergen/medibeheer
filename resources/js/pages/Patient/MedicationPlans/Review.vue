@@ -62,37 +62,62 @@ function decline(): void {
     <PatientLayout>
         <PatientPageShell :title="t('patient.medicationPlans.review.title')">
             <div>
-                <p class="text-sm leading-relaxed text-text-muted">
+                <p class="text-text-muted text-sm leading-relaxed">
                     {{
                         t('patient.medicationPlans.review.intro', {
-                            name: props.family_member_name || t('patient.medicationPlans.review.unknownFamily'),
+                            name:
+                                props.family_member_name ||
+                                t(
+                                    'patient.medicationPlans.review.unknownFamily',
+                                ),
                         })
                     }}
                 </p>
             </div>
 
-            <Card class="rounded-2xl border-border">
-                <CardHeader class="border-b border-border px-5 py-4">
-                    <CardTitle class="text-lg font-semibold text-text-heading">
-                        {{ props.medication_name ?? t('family.medicationPlans.unnamed') }}
+            <Card class="border-border rounded-2xl">
+                <CardHeader class="border-border border-b px-5 py-4">
+                    <CardTitle class="text-text-heading text-lg font-semibold">
+                        {{
+                            props.medication_name ??
+                            t('family.medicationPlans.unnamed')
+                        }}
                     </CardTitle>
                 </CardHeader>
-                <CardContent class="flex flex-col gap-3 px-5 py-5 text-sm text-text">
+                <CardContent
+                    class="text-text flex flex-col gap-3 px-5 py-5 text-sm"
+                >
                     <p v-if="props.dose">
-                        <span class="font-semibold text-text-heading">{{ t('patient.medicationPlans.review.dose') }}:</span>
+                        <span class="text-text-heading font-semibold"
+                            >{{
+                                t('patient.medicationPlans.review.dose')
+                            }}:</span
+                        >
                         {{ props.dose }}
                         <span v-if="doseUnitLabel"> ({{ doseUnitLabel }})</span>
                     </p>
                     <p v-if="props.strength">
-                        <span class="font-semibold text-text-heading">{{ t('patient.medicationPlans.review.strength') }}:</span>
+                        <span class="text-text-heading font-semibold"
+                            >{{
+                                t('patient.medicationPlans.review.strength')
+                            }}:</span
+                        >
                         {{ props.strength }}
                     </p>
                     <p v-if="props.current_stock">
-                        <span class="font-semibold text-text-heading">{{ t('patient.medicationPlans.review.stock') }}:</span>
+                        <span class="text-text-heading font-semibold"
+                            >{{
+                                t('patient.medicationPlans.review.stock')
+                            }}:</span
+                        >
                         {{ props.current_stock }}
                     </p>
                     <p v-if="props.note">
-                        <span class="font-semibold text-text-heading">{{ t('patient.medicationPlans.review.note') }}:</span>
+                        <span class="text-text-heading font-semibold"
+                            >{{
+                                t('patient.medicationPlans.review.note')
+                            }}:</span
+                        >
                         {{ props.note }}
                     </p>
                 </CardContent>

@@ -18,7 +18,11 @@ function addDaysToYmdLocal(startYmd: string, daysToAdd: number): string | null {
     const day = Number(match[3]);
     const d = new Date(year, month - 1, day);
 
-    if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) {
+    if (
+        d.getFullYear() !== year ||
+        d.getMonth() !== month - 1 ||
+        d.getDate() !== day
+    ) {
         return null;
     }
 
@@ -66,7 +70,11 @@ export function inclusiveCalendarDaysBetweenIsoDates(
         Number(startMatch[2]) - 1,
         Number(startMatch[3]),
     );
-    const utcEnd = Date.UTC(Number(endMatch[1]), Number(endMatch[2]) - 1, Number(endMatch[3]));
+    const utcEnd = Date.UTC(
+        Number(endMatch[1]),
+        Number(endMatch[2]) - 1,
+        Number(endMatch[3]),
+    );
 
     if (utcEnd < utcStart) {
         return null;

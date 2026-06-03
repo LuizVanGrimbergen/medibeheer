@@ -28,23 +28,26 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const stockDisplayDoseUnit = computed(() =>
-    medicationStockDisplayDoseUnit(props.form.dose_unit, props.form.strength_unit),
+    medicationStockDisplayDoseUnit(
+        props.form.dose_unit,
+        props.form.strength_unit,
+    ),
 );
 </script>
 
 <template>
     <div class="space-y-3 md:space-y-4">
-        <div
-            v-if="props.showStockFields"
-            class="space-y-8"
-        >
+        <div v-if="props.showStockFields" class="space-y-8">
             <fieldset>
                 <legend :class="cn(patientFormLabelClass, 'text-xl')">
-                    {{ t('patient.medications.fields.currentStock') }} <span class="text-danger">*</span>
+                    {{ t('patient.medications.fields.currentStock') }}
+                    <span class="text-danger">*</span>
                 </legend>
                 <MedicationStockBoxCalculator
                     v-model="props.form.current_stock"
-                    v-model:pieces-per-package="props.form.stock_pieces_per_package"
+                    v-model:pieces-per-package="
+                        props.form.stock_pieces_per_package
+                    "
                     :id-prefix="props.idPrefix"
                     :medication-type="props.form.type_medication"
                     :dose-unit="stockDisplayDoseUnit ?? ''"
@@ -75,12 +78,16 @@ const stockDisplayDoseUnit = computed(() =>
                     cn(
                         patientFormFieldInputClass,
                         'mt-2 min-h-42 w-full resize-y py-4 text-lg leading-relaxed md:min-h-48 md:text-xl',
-                        props.form.errors.note ? patientFormFieldInvalidClass : null,
+                        props.form.errors.note
+                            ? patientFormFieldInvalidClass
+                            : null,
                     )
                 "
                 :aria-invalid="Boolean(props.form.errors.note)"
                 :aria-describedby="
-                    props.form.errors.note ? `${props.idPrefix}-note-error` : undefined
+                    props.form.errors.note
+                        ? `${props.idPrefix}-note-error`
+                        : undefined
                 "
             />
             <InputError

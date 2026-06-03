@@ -17,5 +17,7 @@ export function medicationStockSupportsUnitSuffix(
         return false;
     }
 
-    return (MEDICATION_STOCK_UNIT_SUFFIX_DOSE_UNITS as readonly string[]).includes(doseUnit);
+    return (
+        MEDICATION_STOCK_UNIT_SUFFIX_DOSE_UNITS as readonly string[]
+    ).includes(doseUnit);
 }

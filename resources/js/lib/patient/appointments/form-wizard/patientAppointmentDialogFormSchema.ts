@@ -1,13 +1,15 @@
 import type { RequestPayload } from '@inertiajs/core';
 import { z } from 'zod';
-import { APPOINTMENT_DOCTOR_TYPE_VALUES, APPOINTMENT_STATUS_VALUES } from '@/lib/types';
 import type { AppointmentDoctorType } from '@/lib/types';
+import {
+    APPOINTMENT_DOCTOR_TYPE_VALUES,
+    APPOINTMENT_STATUS_VALUES,
+} from '@/lib/types';
 import appointmentsNl from '@/translations/nl/patient/appointments';
 import { parseLocalAppointmentDateTime } from '../validation/appointmentStartsAtLocalValidation';
 
-export const PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS: AppointmentDoctorType[] = [
-    ...APPOINTMENT_DOCTOR_TYPE_VALUES,
-];
+export const PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS: AppointmentDoctorType[] =
+    [...APPOINTMENT_DOCTOR_TYPE_VALUES];
 
 const appointmentDoctorTypeValueSchema = z.enum(APPOINTMENT_DOCTOR_TYPE_VALUES);
 
@@ -20,7 +22,11 @@ const patientAppointmentDialogFormFieldsSchema = z.object({
         .trim()
         .min(1, appointmentsNl.stepValidation.providerNameRequired)
         .max(255),
-    street: z.string().trim().min(1, appointmentsNl.stepValidation.streetRequired).max(500),
+    street: z
+        .string()
+        .trim()
+        .min(1, appointmentsNl.stepValidation.streetRequired)
+        .max(500),
     house_number: z.string().trim().max(32),
     postal_code: z
         .string()
@@ -28,16 +34,28 @@ const patientAppointmentDialogFormFieldsSchema = z.object({
         .min(1, appointmentsNl.stepValidation.postalCodeRequired)
         .min(4, appointmentsNl.validation.postalCodeMinLength)
         .max(32),
-    city: z.string().trim().min(1, appointmentsNl.stepValidation.cityRequired).max(255),
-    starts_at_date: z.string().trim().min(1, appointmentsNl.stepValidation.startsAtDateRequired),
-    starts_at_time: z.string().trim().min(1, appointmentsNl.stepValidation.startsAtTimeRequired),
+    city: z
+        .string()
+        .trim()
+        .min(1, appointmentsNl.stepValidation.cityRequired)
+        .max(255),
+    starts_at_date: z
+        .string()
+        .trim()
+        .min(1, appointmentsNl.stepValidation.startsAtDateRequired),
+    starts_at_time: z
+        .string()
+        .trim()
+        .min(1, appointmentsNl.stepValidation.startsAtTimeRequired),
     notes: z.string().max(10000),
     needs_transport: z.boolean(),
     transport_family_ids: z.array(z.number().int()),
     status: appointmentStatusValueSchema,
 });
 
-type PatientAppointmentDialogFormParsed = z.infer<typeof patientAppointmentDialogFormFieldsSchema>;
+type PatientAppointmentDialogFormParsed = z.infer<
+    typeof patientAppointmentDialogFormFieldsSchema
+>;
 
 function superRefinePatientAppointmentDialogForm(
     permitPastStartsAtIfSameInstantMs?: number,
@@ -55,7 +73,8 @@ function superRefinePatientAppointmentDialogForm(
             ctx.addIssue({
                 code: 'custom',
                 path: ['transport_family_ids'],
-                message: appointmentsNl.stepValidation.transportRecipientsRequired,
+                message:
+                    appointmentsNl.stepValidation.transportRecipientsRequired,
             });
         }
 
@@ -113,7 +132,9 @@ function createPatientAppointmentDialogFormSchema(
     options?: PatientAppointmentFormPermitPastStartsAtOptions,
 ) {
     return patientAppointmentDialogFormFieldsSchema.superRefine(
-        superRefinePatientAppointmentDialogForm(options?.permitPastStartsAtIfSameInstantMs),
+        superRefinePatientAppointmentDialogForm(
+            options?.permitPastStartsAtIfSameInstantMs,
+        ),
     );
 }
 
@@ -129,7 +150,8 @@ export function getPatientAppointmentDialogFormFieldErrors(
     snapshot: PatientAppointmentDialogFormValues,
     options?: PatientAppointmentFormPermitPastStartsAtOptions,
 ): Partial<Record<string, string>> {
-    const result = createPatientAppointmentDialogFormSchema(options).safeParse(snapshot);
+    const result =
+        createPatientAppointmentDialogFormSchema(options).safeParse(snapshot);
 
     if (result.success) {
         return {};
@@ -154,9 +176,13 @@ export function getPatientAppointmentDialogFormFieldErrors(
     return out;
 }
 
-function buildRequestPayloadFromValidatedForm(data: PatientAppointmentDialogFormParsed): RequestPayload {
+function buildRequestPayloadFromValidatedForm(
+    data: PatientAppointmentDialogFormParsed,
+): RequestPayload {
     if (data.doctor_type === '') {
-        throw new Error('Appointment form passed validation with an empty doctor type.');
+        throw new Error(
+            'Appointment form passed validation with an empty doctor type.',
+        );
     }
 
     const {
@@ -184,7 +210,9 @@ function buildRequestPayloadFromValidatedForm(data: PatientAppointmentDialogForm
         needs_transport: needsTransport,
         status,
         starts_at:
-            startsAtDate && startsAtTime ? `${startsAtDate}T${startsAtTime}` : '',
+            startsAtDate && startsAtTime
+                ? `${startsAtDate}T${startsAtTime}`
+                : '',
         notes: notes === '' ? null : notes,
     };
 
@@ -199,7 +227,8 @@ export function patientAppointmentFormValuesToRequestPayload(
     values: Record<string, unknown>,
     options?: PatientAppointmentFormPermitPastStartsAtOptions,
 ): RequestPayload {
-    const parsed = createPatientAppointmentDialogFormSchema(options).parse(values);
+    const parsed =
+        createPatientAppointmentDialogFormSchema(options).parse(values);
 
     return buildRequestPayloadFromValidatedForm(parsed);
 }

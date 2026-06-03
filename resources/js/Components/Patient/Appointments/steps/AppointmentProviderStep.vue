@@ -16,17 +16,13 @@ import {
 import type { AppointmentDoctorType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-const {
-    form,
-    idPrefix,
-    doctorTypeValues,
-    showDoctorTypePlaceholder,
-} = defineProps<{
-    form: AppointmentFormWithErrors;
-    idPrefix: string;
-    doctorTypeValues: AppointmentDoctorType[];
-    showDoctorTypePlaceholder: boolean;
-}>();
+const { form, idPrefix, doctorTypeValues, showDoctorTypePlaceholder } =
+    defineProps<{
+        form: AppointmentFormWithErrors;
+        idPrefix: string;
+        doctorTypeValues: AppointmentDoctorType[];
+        showDoctorTypePlaceholder: boolean;
+    }>();
 
 const { t, te } = useI18n();
 
@@ -52,7 +48,8 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     :for="`${idPrefix}-doctor-type`"
                     :class="patientFormLabelClass"
                 >
-                    {{ t('patient.appointments.fields.doctorType') }} <span class="text-danger">*</span>
+                    {{ t('patient.appointments.fields.doctorType') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <select
                     :id="`${idPrefix}-doctor-type`"
@@ -74,13 +71,11 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                             : undefined
                     "
                 >
-                    <option
-                        v-if="showDoctorTypePlaceholder"
-                        disabled
-                        value=""
-                    >
+                    <option v-if="showDoctorTypePlaceholder" disabled value="">
                         {{
-                            t('patient.appointments.fields.doctorTypePlaceholder')
+                            t(
+                                'patient.appointments.fields.doctorTypePlaceholder',
+                            )
                         }}
                     </option>
                     <option
@@ -102,7 +97,8 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     :for="`${idPrefix}-provider-name`"
                     :class="patientFormLabelClass"
                 >
-                    {{ t('patient.appointments.fields.providerName') }} <span class="text-danger">*</span>
+                    {{ t('patient.appointments.fields.providerName') }}
+                    <span class="text-danger">*</span>
                 </Label>
                 <Input
                     :id="`${idPrefix}-provider-name`"

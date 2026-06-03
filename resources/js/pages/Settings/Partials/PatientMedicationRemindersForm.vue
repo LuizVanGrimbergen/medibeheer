@@ -24,60 +24,84 @@ const {
         <div class="flex items-start gap-3">
             <component
                 :is="remindersEnabled ? Bell : BellOff"
-                class="mt-0.5 size-6 shrink-0 text-primary"
+                class="text-primary mt-0.5 size-6 shrink-0"
                 aria-hidden="true"
             />
 
             <div class="min-w-0 flex-1 space-y-4">
                 <div class="space-y-2">
-                    <h2 class="text-lg font-semibold text-text">
+                    <h2 class="text-text text-lg font-semibold">
                         {{ t('patient.medicationReminders.settingsTitle') }}
                     </h2>
 
                     <p
                         v-if="cardVariant === 'missing_config'"
-                        class="text-base leading-relaxed text-text-muted"
+                        class="text-text-muted text-base leading-relaxed"
                     >
                         {{ t('patient.medicationReminders.missingConfig') }}
                     </p>
 
                     <p
                         v-else-if="cardVariant === 'denied'"
-                        class="text-base leading-relaxed text-text-muted"
+                        class="text-text-muted text-base leading-relaxed"
                     >
                         {{ t('patient.medicationReminders.deniedDescription') }}
                     </p>
 
                     <template v-else>
-                        <p class="text-base leading-relaxed text-text-muted">
-                            {{ t('patient.medicationReminders.settingsDescription') }}
+                        <p class="text-text-muted text-base leading-relaxed">
+                            {{
+                                t(
+                                    'patient.medicationReminders.settingsDescription',
+                                )
+                            }}
                         </p>
 
                         <p
                             v-if="remindersEnabled"
-                            class="text-base font-medium text-text"
+                            class="text-text text-base font-medium"
                         >
-                            {{ t('patient.medicationReminders.settingsEnabledStatus') }}
+                            {{
+                                t(
+                                    'patient.medicationReminders.settingsEnabledStatus',
+                                )
+                            }}
                         </p>
 
                         <p
                             v-else
-                            class="text-base leading-relaxed text-text-muted"
+                            class="text-text-muted text-base leading-relaxed"
                         >
-                            {{ t('patient.medicationReminders.settingsDisabledStatus') }}
+                            {{
+                                t(
+                                    'patient.medicationReminders.settingsDisabledStatus',
+                                )
+                            }}
                         </p>
 
                         <p
-                            v-if="!remindersEnabled && browserSupportsPush && canEnableReminders"
-                            class="text-base leading-relaxed text-text-muted"
+                            v-if="
+                                !remindersEnabled &&
+                                browserSupportsPush &&
+                                canEnableReminders
+                            "
+                            class="text-text-muted text-base leading-relaxed"
                         >
-                            {{ t('patient.medicationReminders.installRequiredNote') }}
+                            {{
+                                t(
+                                    'patient.medicationReminders.installRequiredNote',
+                                )
+                            }}
                         </p>
                     </template>
                 </div>
 
                 <Button
-                    v-if="remindersEnabled && cardVariant !== 'missing_config' && cardVariant !== 'denied'"
+                    v-if="
+                        remindersEnabled &&
+                        cardVariant !== 'missing_config' &&
+                        cardVariant !== 'denied'
+                    "
                     type="button"
                     variant="outline"
                     size="lg"
@@ -99,10 +123,7 @@ const {
                     {{ t('patient.medicationReminders.enableButton') }}
                 </Button>
 
-                <p
-                    v-if="registrationError"
-                    class="text-base text-destructive"
-                >
+                <p v-if="registrationError" class="text-destructive text-base">
                     {{ registrationError }}
                 </p>
             </div>

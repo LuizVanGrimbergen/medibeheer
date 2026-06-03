@@ -57,16 +57,13 @@ const iconClass = computed((): string => {
         v-if="glyph !== null"
         :is="glyph"
         :class="
-            cn(
-                'size-[1.05rem] shrink-0 stroke-[2.25] sm:size-5',
-                iconClass,
-            )
+            cn('size-[1.05rem] shrink-0 stroke-[2.25] sm:size-5', iconClass)
         "
         aria-hidden="true"
     />
     <span
         v-else
-        class="size-1.5 rounded-full bg-border sm:size-2"
+        class="bg-border size-1.5 rounded-full sm:size-2"
         aria-hidden="true"
     />
 </template>

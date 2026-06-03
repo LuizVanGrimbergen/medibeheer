@@ -30,7 +30,7 @@ function revert(): void {
 </script>
 
 <template>
-    <div :class="cn('min-w-0 w-full', props.class)">
+    <div :class="cn('w-full min-w-0', props.class)">
         <div v-if="!modelValue">
             <AppointmentPairActionButtons
                 :disabled="disabled"
@@ -38,17 +38,11 @@ function revert(): void {
                 :secondary-href="cancelFormHref"
             >
                 <template #primary>
-                    <CheckCircle2
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
+                    <CheckCircle2 class="size-6 shrink-0" aria-hidden="true" />
                     {{ t('patient.appointments.doneToggle.markDone') }}
                 </template>
                 <template #secondary>
-                    <CircleX
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
+                    <CircleX class="size-6 shrink-0" aria-hidden="true" />
                     {{ t('patient.appointments.doneToggle.markCancelled') }}
                 </template>
             </AppointmentPairActionButtons>
@@ -59,12 +53,9 @@ function revert(): void {
             class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
         >
             <p
-                class="flex items-center gap-2 text-lg font-semibold leading-snug text-success"
+                class="text-success flex items-center gap-2 text-lg leading-snug font-semibold"
             >
-                <CheckCircle2
-                    class="size-6 shrink-0"
-                    aria-hidden="true"
-                />
+                <CheckCircle2 class="size-6 shrink-0" aria-hidden="true" />
                 {{ t('patient.appointments.doneToggle.markDone') }}
             </p>
             <Button

@@ -3,18 +3,22 @@ export default {
     backToSettings: 'Terug naar instellingen',
     information: {
         title: 'Profielinformatie',
-        description: 'Werk de profielinformatie en het e-mailadres van uw account bij.',
+        description:
+            'Werk de profielinformatie en het e-mailadres van uw account bij.',
         nameLabel: 'Naam',
         emailLabel: 'E-mailadres',
         emailUnverified: 'Uw e-mailadres is nog niet geverifieerd.',
-        resendVerification: 'Klik hier om de verificatiemail opnieuw te versturen.',
-        verificationSent: 'Er is een nieuwe verificatielink naar uw e-mailadres verstuurd.',
+        resendVerification:
+            'Klik hier om de verificatiemail opnieuw te versturen.',
+        verificationSent:
+            'Er is een nieuwe verificatielink naar uw e-mailadres verstuurd.',
         save: 'Opslaan',
         saved: 'Opgeslagen.',
     },
     password: {
         title: 'Wachtwoord wijzigen',
-        description: 'Gebruik een lang en willekeurig wachtwoord om uw account veilig te houden.',
+        description:
+            'Gebruik een lang en willekeurig wachtwoord om uw account veilig te houden.',
         currentPassword: 'Huidig wachtwoord',
         newPassword: 'Nieuw wachtwoord',
         confirmPassword: 'Bevestig wachtwoord',
@@ -23,7 +27,8 @@ export default {
     },
     securityActivity: {
         title: 'Beveiligingsactiviteit',
-        description: 'Overzicht van inlogpogingen en andere beveiligingsgebeurtenissen op uw account.',
+        description:
+            'Overzicht van inlogpogingen en andere beveiligingsgebeurtenissen op uw account.',
         empty: 'Nog geen beveiligingsactiviteit geregistreerd.',
         descriptions: {
             auth_login_succeeded: 'Ingelogd',

@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Bell, CalendarDays, LayoutGrid, Link2, Pill, Smile } from 'lucide-vue-next';
-import { computed } from 'vue';
+import {
+    Bell,
+    CalendarDays,
+    LayoutGrid,
+    Link2,
+    Pill,
+    Smile,
+} from 'lucide-vue-next';
 import type { ComputedRef } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
@@ -118,25 +125,25 @@ const visibleFamilyNavItems = computed((): readonly FamilyNavItem[] => {
     return allFamilyNavItems;
 });
 
-const activeFamilyNavRoute = computed((): FamilyNavItem['routeName'] | undefined => {
-    const pathname = pathOnly(page.url);
+const activeFamilyNavRoute = computed(
+    (): FamilyNavItem['routeName'] | undefined => {
+        const pathname = pathOnly(page.url);
 
-    if (
-        pathname === pathOnly(route('family.link') as string)
-        || pathname.startsWith('/family/medication-plans')
-    ) {
-        return 'family.link';
-    }
+        if (
+            pathname === pathOnly(route('family.link') as string) ||
+            pathname.startsWith('/family/medication-plans')
+        ) {
+            return 'family.link';
+        }
 
-    return visibleFamilyNavItems.value.find(
-        (item) => pathname === pathOnly(route(item.routeName) as string),
-    )?.routeName;
-});
+        return visibleFamilyNavItems.value.find(
+            (item) => pathname === pathOnly(route(item.routeName) as string),
+        )?.routeName;
+    },
+);
 
 function footerNavClass(routeName: FamilyNavItem['routeName']): string {
-    const density = smAndUp.value
-        ? 'gap-1.5 py-2.5 px-2'
-        : 'gap-1 py-2 px-1';
+    const density = smAndUp.value ? 'gap-1.5 py-2.5 px-2' : 'gap-1 py-2 px-1';
     const base = `flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl transition-colors ${density}`;
 
     if (activeFamilyNavRoute.value === routeName) {
@@ -203,7 +210,7 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
             </div>
 
             <nav
-                class="z-40 shrink-0 border-t border-border bg-surface"
+                class="border-border bg-surface z-40 shrink-0 border-t"
                 :aria-label="t('family.navigation.mobileFooterAriaLabel')"
             >
                 <div
@@ -229,7 +236,11 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
                         />
                         <span
                             :class="footerLabelClass"
-                            :aria-hidden="wellbeingNavUsesDetailedAria(item) ? true : undefined"
+                            :aria-hidden="
+                                wellbeingNavUsesDetailedAria(item)
+                                    ? true
+                                    : undefined
+                            "
                         >
                             {{ t(item.labelKey) }}
                         </span>

@@ -1,6 +1,6 @@
 import type { ComposerTranslation } from 'vue-i18n';
-import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import type { MedicationDoseUnitValue } from '@/lib/types';
+import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 
 export function parseMedicationDoseNumericCount(dose: string): number | null {
     const trimmed = dose.trim();
@@ -24,7 +24,10 @@ export function medicationDoseUnitChipForAmount(
     doseAmount: string,
     doseUnit: string,
 ): string {
-    if (doseUnit === '' || !(MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(doseUnit)) {
+    if (
+        doseUnit === '' ||
+        !(MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(doseUnit)
+    ) {
         return '—';
     }
 

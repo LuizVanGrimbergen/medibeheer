@@ -8,7 +8,9 @@ type MedicationIntakeDateTimeParts = {
     minute: number;
 };
 
-function medicationIntakeDateTimeParts(reference: Date): MedicationIntakeDateTimeParts {
+function medicationIntakeDateTimeParts(
+    reference: Date,
+): MedicationIntakeDateTimeParts {
     const formatter = new Intl.DateTimeFormat('en-GB', {
         timeZone: MEDICATION_INTAKE_TIMEZONE,
         year: 'numeric',
@@ -32,7 +34,10 @@ function medicationIntakeDateTimeParts(reference: Date): MedicationIntakeDateTim
     };
 }
 
-export function buildMedicationTakenAtForToday(timeHHmm: string, reference: Date = new Date()): string | null {
+export function buildMedicationTakenAtForToday(
+    timeHHmm: string,
+    reference: Date = new Date(),
+): string | null {
     const match = /^(\d{1,2}):(\d{2})$/.exec(timeHHmm.trim());
 
     if (match === null) {
@@ -51,7 +56,9 @@ export function buildMedicationTakenAtForToday(timeHHmm: string, reference: Date
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
 }
 
-export function currentMedicationIntakeTimeHHmm(reference: Date = new Date()): string {
+export function currentMedicationIntakeTimeHHmm(
+    reference: Date = new Date(),
+): string {
     const { hour, minute } = medicationIntakeDateTimeParts(reference);
 
     return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;

@@ -1,4 +1,4 @@
-import type { Appointment as PatientAppointment, Paginated } from '@/lib/types';
+import type { Paginated, Appointment as PatientAppointment } from '@/lib/types';
 
 export type PatientAppointmentView = 'planned';
 

@@ -46,8 +46,14 @@ function timesPerDayOptionLabel(count: number): string {
         required
         :error-message="form.errors['schedule.times_per_day']"
         :option-label="timesPerDayOptionLabel"
-        :custom-trigger-label="t('patient.medications.intakePeriodPresets.custom')"
-        :custom-placeholder="t('patient.medications.timesPerDay.customPlaceholder')"
-        :custom-select-aria-label="t('patient.medications.timesPerDay.customSelectAriaLabel')"
+        :custom-trigger-label="
+            t('patient.medications.intakePeriodPresets.custom')
+        "
+        :custom-placeholder="
+            t('patient.medications.timesPerDay.customPlaceholder')
+        "
+        :custom-select-aria-label="
+            t('patient.medications.timesPerDay.customSelectAriaLabel')
+        "
     />
 </template>

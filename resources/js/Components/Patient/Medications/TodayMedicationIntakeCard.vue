@@ -75,11 +75,17 @@ const form = useForm<{
 
 const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 
-const notePreview = computed(() => medicationIntakeNotePreview(props.intakeSlot));
+const notePreview = computed(() =>
+    medicationIntakeNotePreview(props.intakeSlot),
+);
 
-const typeLabel = computed(() => medicationTypeLabel(t, props.intakeSlot.type_medication));
+const typeLabel = computed(() =>
+    medicationTypeLabel(t, props.intakeSlot.type_medication),
+);
 
-const headerSummary = computed(() => medicationTodayIntakeHeaderSummary(t, props.intakeSlot));
+const headerSummary = computed(() =>
+    medicationTodayIntakeHeaderSummary(t, props.intakeSlot),
+);
 
 const stockProgressTone = computed(() =>
     medicationVisualToneFromContext({
@@ -105,12 +111,19 @@ const markTakenAriaLabel = computed(() =>
     }),
 );
 
-const intakeFormError = computed(() => form.errors.taken_at ?? form.errors.dose_time);
+const intakeFormError = computed(
+    () => form.errors.taken_at ?? form.errors.dose_time,
+);
 
 function buildIntakeRequestPayload(
     data: { medication_schedule_id: number; dose_time: string },
     payload: { lateIntake?: boolean; takenAtIso?: string },
-): { medication_schedule_id: number; dose_time: string; late_intake?: boolean; taken_at?: string } {
+): {
+    medication_schedule_id: number;
+    dose_time: string;
+    late_intake?: boolean;
+    taken_at?: string;
+} {
     const request: {
         medication_schedule_id: number;
         dose_time: string;
@@ -132,19 +145,23 @@ function buildIntakeRequestPayload(
     return request;
 }
 
-function submitIntake(payload: { lateIntake?: boolean; takenAtIso?: string }): void {
+function submitIntake(payload: {
+    lateIntake?: boolean;
+    takenAtIso?: string;
+}): void {
     if (isTaken.value || form.processing) {
         return;
     }
 
-    form
-        .transform((data) => buildIntakeRequestPayload(data, payload))
-        .post(route('patient.medication-intakes.store'), {
+    form.transform((data) => buildIntakeRequestPayload(data, payload)).post(
+        route('patient.medication-intakes.store'),
+        {
             preserveScroll: true,
             onSuccess: () => {
                 showCustomTimePanel.value = false;
             },
-        });
+        },
+    );
 }
 
 function markTakenWithinWindow(): void {
@@ -173,13 +190,13 @@ function confirmCustomTakenTime(): void {
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border-2 bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="bg-surface text-text w-full min-w-0 rounded-3xl border-2 shadow-md shadow-black/[0.04]"
         :class="intakeCardToneClasses.border"
     >
         <CardContent class="relative flex flex-col gap-5 p-5 sm:gap-6 sm:p-6">
             <AlertTriangle
                 v-if="showCriticalSupplyAlert"
-                class="pointer-events-none absolute right-4 top-4 z-10 size-6 shrink-0 animate-supply-alert-flicker text-danger sm:right-6 sm:top-6 sm:size-7"
+                class="animate-supply-alert-flicker text-danger pointer-events-none absolute top-4 right-4 z-10 size-6 shrink-0 sm:top-6 sm:right-6 sm:size-7"
                 role="img"
                 :aria-label="t('patient.inventory.lowStockBadge')"
             />
@@ -202,13 +219,15 @@ function confirmCustomTakenTime(): void {
 
                     <div class="min-w-0 flex-1">
                         <h4
-                            class="wrap-break-word text-xl font-bold leading-snug text-text-heading sm:text-2xl"
+                            class="text-text-heading text-xl leading-snug font-bold wrap-break-word sm:text-2xl"
                         >
                             {{ intakeSlot.name }}
                         </h4>
                         <p
                             v-if="!isOpen"
-                            :class="cn('mt-1', patientPageCardHeaderSummaryClass)"
+                            :class="
+                                cn('mt-1', patientPageCardHeaderSummaryClass)
+                            "
                         >
                             {{ headerSummary }}
                         </p>
@@ -227,34 +246,46 @@ function confirmCustomTakenTime(): void {
                         <div class="flex flex-col gap-4 sm:gap-5">
                             <div
                                 class="grid min-w-0 gap-3 sm:gap-4"
-                                :class="doseLine !== null ? 'grid-cols-2' : 'grid-cols-1'"
+                                :class="
+                                    doseLine !== null
+                                        ? 'grid-cols-2'
+                                        : 'grid-cols-1'
+                                "
                             >
                                 <div
                                     v-if="doseLine !== null"
-                                    class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
+                                    class="border-border/70 bg-bg flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
                                 >
                                     <span
-                                        class="text-sm font-semibold leading-snug text-text-muted sm:text-base"
+                                        class="text-text-muted text-sm leading-snug font-semibold sm:text-base"
                                     >
-                                        {{ t('patient.dashboard.todayMedications.intakeCard.dose') }}
+                                        {{
+                                            t(
+                                                'patient.dashboard.todayMedications.intakeCard.dose',
+                                            )
+                                        }}
                                     </span>
                                     <span
-                                        class="wrap-break-word text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
+                                        class="text-text-heading text-xl leading-tight font-bold wrap-break-word tabular-nums sm:text-2xl"
                                     >
                                         {{ doseLine }}
                                     </span>
                                 </div>
 
                                 <div
-                                    class="flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border border-border/70 bg-bg px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
+                                    class="border-border/70 bg-bg flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
                                 >
                                     <span
-                                        class="text-sm font-semibold leading-snug text-text-muted sm:text-base"
+                                        class="text-text-muted text-sm leading-snug font-semibold sm:text-base"
                                     >
-                                        {{ t('patient.dashboard.todayMedications.intakeCard.time') }}
+                                        {{
+                                            t(
+                                                'patient.dashboard.todayMedications.intakeCard.time',
+                                            )
+                                        }}
                                     </span>
                                     <span
-                                        class="text-xl font-bold tabular-nums leading-tight text-text-heading sm:text-2xl"
+                                        class="text-text-heading text-xl leading-tight font-bold tabular-nums sm:text-2xl"
                                     >
                                         {{ intakeSlot.dose_time }}
                                     </span>
@@ -265,11 +296,17 @@ function confirmCustomTakenTime(): void {
                                 v-if="notePreview !== null"
                                 class="flex flex-col gap-1.5"
                             >
-                                <span class="text-sm font-semibold text-text-muted sm:text-base">
-                                    {{ t('patient.dashboard.todayMedications.intakeCard.note') }}
+                                <span
+                                    class="text-text-muted text-sm font-semibold sm:text-base"
+                                >
+                                    {{
+                                        t(
+                                            'patient.dashboard.todayMedications.intakeCard.note',
+                                        )
+                                    }}
                                 </span>
                                 <p
-                                    class="min-w-0 whitespace-pre-wrap wrap-break-word text-base leading-relaxed text-text sm:text-lg"
+                                    class="text-text min-w-0 text-base leading-relaxed wrap-break-word whitespace-pre-wrap sm:text-lg"
                                 >
                                     {{ notePreview }}
                                 </p>
@@ -285,17 +322,16 @@ function confirmCustomTakenTime(): void {
                 </CollapsibleContent>
             </Collapsible>
 
-            <div
-                v-if="showBeforeWindowState"
-                class="mt-5 flex flex-col gap-3"
-            >
+            <div v-if="showBeforeWindowState" class="mt-5 flex flex-col gap-3">
                 <Button
                     type="button"
                     class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
                     variant="outline"
                     disabled
                 >
-                    {{ t('patient.dashboard.todayMedications.notYetTimeToTake') }}
+                    {{
+                        t('patient.dashboard.todayMedications.notYetTimeToTake')
+                    }}
                 </Button>
             </div>
 
@@ -326,7 +362,9 @@ function confirmCustomTakenTime(): void {
                         :disabled="form.processing"
                         @click="markTakenNow"
                     >
-                        {{ t('patient.dashboard.todayMedications.markTakenNow') }}
+                        {{
+                            t('patient.dashboard.todayMedications.markTakenNow')
+                        }}
                     </Button>
                     <Button
                         type="button"
@@ -336,19 +374,27 @@ function confirmCustomTakenTime(): void {
                         :aria-expanded="showCustomTimePanel"
                         @click="openCustomTimePanel"
                     >
-                        {{ t('patient.dashboard.todayMedications.markTakenCustom') }}
+                        {{
+                            t(
+                                'patient.dashboard.todayMedications.markTakenCustom',
+                            )
+                        }}
                     </Button>
                 </div>
 
                 <div
                     v-if="showCustomTimePanel"
-                    class="space-y-3 rounded-2xl border border-border/70 bg-bg p-4 sm:p-5"
+                    class="border-border/70 bg-bg space-y-3 rounded-2xl border p-4 sm:p-5"
                 >
                     <Label
                         :for="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.dashboard.todayMedications.customTakenTimeLabel') }}
+                        {{
+                            t(
+                                'patient.dashboard.todayMedications.customTakenTimeLabel',
+                            )
+                        }}
                     </Label>
                     <input
                         :id="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
@@ -359,7 +405,9 @@ function confirmCustomTakenTime(): void {
                         :class="
                             cn(
                                 patientFormNativeDateTimeInputClass,
-                                intakeFormError ? patientFormFieldInvalidClass : null,
+                                intakeFormError
+                                    ? patientFormFieldInvalidClass
+                                    : null,
                             )
                         "
                         :aria-invalid="Boolean(intakeFormError)"
@@ -371,7 +419,11 @@ function confirmCustomTakenTime(): void {
                         :disabled="form.processing"
                         @click="confirmCustomTakenTime"
                     >
-                        {{ t('patient.dashboard.todayMedications.confirmCustomTaken') }}
+                        {{
+                            t(
+                                'patient.dashboard.todayMedications.confirmCustomTaken',
+                            )
+                        }}
                     </Button>
                 </div>
                 <InputError
@@ -383,13 +435,13 @@ function confirmCustomTakenTime(): void {
             <Button
                 v-else-if="isTaken"
                 type="button"
-                class="mt-5 min-h-14 w-full touch-manipulation rounded-2xl border-2 border-success bg-success/10 text-lg font-bold text-text-heading hover:bg-success/10 sm:min-h-12 sm:text-base"
+                class="border-success bg-success/10 text-text-heading hover:bg-success/10 mt-5 min-h-14 w-full touch-manipulation rounded-2xl border-2 text-lg font-bold sm:min-h-12 sm:text-base"
                 variant="outline"
                 disabled
                 :aria-pressed="true"
             >
                 <Check
-                    class="size-6 shrink-0 text-success sm:size-5"
+                    class="text-success size-6 shrink-0 sm:size-5"
                     aria-hidden="true"
                 />
                 {{ t('patient.dashboard.todayMedications.taken') }}

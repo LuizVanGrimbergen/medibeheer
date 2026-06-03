@@ -20,9 +20,13 @@ export const medicationFormErrorScrollOrder = [
     'schedule.end_date',
 ] as const;
 
-export type MedicationFormWizardScrollFieldKey = (typeof medicationFormErrorScrollOrder)[number];
+export type MedicationFormWizardScrollFieldKey =
+    (typeof medicationFormErrorScrollOrder)[number];
 
-export const medicationFormFieldDomSuffix: Record<MedicationFormWizardScrollFieldKey, string> = {
+export const medicationFormFieldDomSuffix: Record<
+    MedicationFormWizardScrollFieldKey,
+    string
+> = {
     name: 'name',
     type_medication: 'type',
     dose: 'dose',

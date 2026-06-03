@@ -27,7 +27,8 @@ export default {
     pendingCollapsedMany: '{count} uitnodigingen wachten op antwoord',
     unlinkHint: 'Alleen doen als u deze arts niet meer wilt koppelen.',
     unlinkConfirmTitle: 'Koppeling verbreken?',
-    unlinkConfirmMessage: 'Weet u zeker dat u {name} wilt loskoppelen? Deze arts kan dan niet meer meekijken.',
+    unlinkConfirmMessage:
+        'Weet u zeker dat u {name} wilt loskoppelen? Deze arts kan dan niet meer meekijken.',
     unlinkConfirmAction: 'Ja, koppeling verbreken',
     revokeHint: 'Alleen doen als u de uitnodiging wilt annuleren.',
     revokeConfirmTitle: 'Uitnodiging intrekken?',

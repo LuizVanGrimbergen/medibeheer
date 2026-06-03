@@ -14,7 +14,9 @@ type FamilyMedicationPlansPageProps = PageProps & {
 const { t } = useI18n();
 const page = usePage<FamilyMedicationPlansPageProps>();
 
-const { form, submit } = useFamilyMedicationPlanProposalFormPage({ mode: 'create' });
+const { form, submit } = useFamilyMedicationPlanProposalFormPage({
+    mode: 'create',
+});
 
 function cancel(): void {
     router.visit(route('family.link'));
@@ -30,7 +32,9 @@ function cancel(): void {
         <FamilyPageShell
             :title="t('family.medicationPlans.createTitle')"
             :family="page.props.family"
-            :show-active-patient="page.props.family?.has_linked_patient ?? false"
+            :show-active-patient="
+                page.props.family?.has_linked_patient ?? false
+            "
         >
             <FamilyMedicationPlanProposalFormCard
                 :title="t('family.medicationPlans.createTitle')"

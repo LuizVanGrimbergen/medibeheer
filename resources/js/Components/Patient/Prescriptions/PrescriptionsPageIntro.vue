@@ -31,10 +31,7 @@ const { t } = useI18n();
                 type="button"
                 @click="emit('addPrescriptionClick')"
             >
-                <FileText
-                    class="size-6 shrink-0"
-                    aria-hidden="true"
-                />
+                <FileText class="size-6 shrink-0" aria-hidden="true" />
                 {{ t('patient.prescriptions.addPrescription') }}
             </Button>
 
@@ -47,10 +44,7 @@ const { t } = useI18n();
                     )
                 "
             >
-                <CalendarPlus
-                    class="size-6 shrink-0"
-                    aria-hidden="true"
-                />
+                <CalendarPlus class="size-6 shrink-0" aria-hidden="true" />
                 {{ t('patient.appointments.newAppointment') }}
             </Link>
         </div>

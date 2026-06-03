@@ -15,7 +15,8 @@ const emit = defineEmits<{
     click: [];
 }>();
 
-const { formatDateOnly, formatTimeOnly, doctorTypeLabel } = useAppointmentDisplay();
+const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
+    useAppointmentDisplay();
 
 const accentIconClass =
     props.variant === 'pending'
@@ -27,7 +28,9 @@ const cardBorderClass =
         ? 'border-stock-near/70 dark:border-stock-near-dark/75'
         : 'border-primary/50';
 
-function appointmentTitle(appointment: FamilyAcceptedTransportAppointment): string {
+function appointmentTitle(
+    appointment: FamilyAcceptedTransportAppointment,
+): string {
     const provider = appointment.provider_name.trim();
 
     if (provider !== '') {
@@ -37,7 +40,9 @@ function appointmentTitle(appointment: FamilyAcceptedTransportAppointment): stri
     return doctorTypeLabel(appointment.doctor_type);
 }
 
-function appointmentAddress(appointment: FamilyAcceptedTransportAppointment): string {
+function appointmentAddress(
+    appointment: FamilyAcceptedTransportAppointment,
+): string {
     return formatAppointmentAddress(appointment);
 }
 </script>
@@ -51,7 +56,7 @@ function appointmentAddress(appointment: FamilyAcceptedTransportAppointment): st
         <Card
             :class="
                 cn(
-                    'bg-surface shadow-sm transition group-hover:bg-surface-2',
+                    'bg-surface group-hover:bg-surface-2 shadow-sm transition',
                     'rounded-2xl',
                     cardBorderClass,
                 )
@@ -62,50 +67,62 @@ function appointmentAddress(appointment: FamilyAcceptedTransportAppointment): st
                     <div class="min-w-0 flex-1 space-y-2.5">
                         <div class="space-y-0.5">
                             <p
-                                class="text-base font-semibold leading-snug text-text-heading md:text-[0.9375rem]"
+                                class="text-text-heading text-base leading-snug font-semibold md:text-[0.9375rem]"
                             >
                                 {{ appointmentTitle(props.appointment) }}
                             </p>
-                            <p class="text-sm font-medium text-text">
+                            <p class="text-text text-sm font-medium">
                                 {{ props.appointment.patient_name }}
                             </p>
                         </div>
 
                         <div
-                            class="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text"
+                            class="text-text flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"
                         >
-                            <span class="inline-flex min-w-0 items-center gap-1.5">
+                            <span
+                                class="inline-flex min-w-0 items-center gap-1.5"
+                            >
                                 <Calendar
                                     :size="16"
                                     :class="cn('shrink-0', accentIconClass)"
                                     aria-hidden="true"
                                 />
                                 <span class="font-medium">
-                                    {{ formatDateOnly(props.appointment.starts_at) }}
+                                    {{
+                                        formatDateOnly(
+                                            props.appointment.starts_at,
+                                        )
+                                    }}
                                 </span>
                             </span>
-                            <span class="inline-flex min-w-0 items-center gap-1.5">
+                            <span
+                                class="inline-flex min-w-0 items-center gap-1.5"
+                            >
                                 <Clock
                                     :size="16"
                                     :class="cn('shrink-0', accentIconClass)"
                                     aria-hidden="true"
                                 />
                                 <span class="font-medium tabular-nums">
-                                    {{ formatTimeOnly(props.appointment.starts_at) }}
+                                    {{
+                                        formatTimeOnly(
+                                            props.appointment.starts_at,
+                                        )
+                                    }}
                                 </span>
                             </span>
                         </div>
 
                         <p
                             v-if="appointmentAddress(props.appointment) !== ''"
-                            class="flex items-start gap-1.5 text-sm leading-snug text-text-muted"
+                            class="text-text-muted flex items-start gap-1.5 text-sm leading-snug"
                         >
                             <MapPin
                                 :size="16"
                                 :class="cn('mt-0.5 shrink-0', accentIconClass)"
                                 aria-hidden="true"
                             />
-                            <span class="min-w-0 wrap-break-word text-pretty">
+                            <span class="min-w-0 text-pretty wrap-break-word">
                                 {{ appointmentAddress(props.appointment) }}
                             </span>
                         </p>
@@ -113,7 +130,7 @@ function appointmentAddress(appointment: FamilyAcceptedTransportAppointment): st
 
                     <ChevronRight
                         :size="18"
-                        class="mt-0.5 shrink-0 text-text-muted transition group-hover:text-text"
+                        class="text-text-muted group-hover:text-text mt-0.5 shrink-0 transition"
                         aria-hidden="true"
                     />
                 </div>

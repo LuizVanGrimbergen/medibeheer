@@ -27,7 +27,9 @@ export type UseMedicationEditDialogOptions = {
     onSubmit: () => void;
 };
 
-export function useMedicationEditDialog(options: UseMedicationEditDialogOptions) {
+export function useMedicationEditDialog(
+    options: UseMedicationEditDialogOptions,
+) {
     const editingStep = ref<MedicationEditDialogStep>(0);
 
     watch(
@@ -71,11 +73,14 @@ export function useMedicationEditDialog(options: UseMedicationEditDialogOptions)
 
         void nextTick(() => {
             const suffix =
-                focusElementIdSuffix !== undefined && focusElementIdSuffix.length > 0
+                focusElementIdSuffix !== undefined &&
+                focusElementIdSuffix.length > 0
                     ? focusElementIdSuffix
                     : 'name';
 
-            const el = document.getElementById(`${options.idPrefix()}-${suffix}`);
+            const el = document.getElementById(
+                `${options.idPrefix()}-${suffix}`,
+            );
 
             if (el === null) {
                 return;
@@ -97,12 +102,17 @@ export function useMedicationEditDialog(options: UseMedicationEditDialogOptions)
 
         if (!result.ok) {
             form.clearErrors();
-            applyMedicationWizardFieldErrorsToForm(form, result.mergedFieldErrors);
+            applyMedicationWizardFieldErrorsToForm(
+                form,
+                result.mergedFieldErrors,
+            );
             scrollMedicationFormFirstFieldErrorIntoView(
                 options.idPrefix(),
                 result.mergedFieldErrors,
             );
-            editingStep.value = medicationWizardStepToEditDialogStep(result.step);
+            editingStep.value = medicationWizardStepToEditDialogStep(
+                result.step,
+            );
 
             return;
         }

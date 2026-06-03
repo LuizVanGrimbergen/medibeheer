@@ -40,17 +40,25 @@ async function onDone(): Promise<void> {
 
 <template>
     <Head>
-        <title>{{ t('patient.dashboard.medicationIntakePushSuccess.eyebrow') }}</title>
+        <title>
+            {{ t('patient.dashboard.medicationIntakePushSuccess.eyebrow') }}
+        </title>
     </Head>
 
-    <div class="min-h-svh min-h-dvh bg-surface">
+    <div class="bg-surface min-h-dvh min-h-svh">
         <PatientActionSuccessScreen
             v-model:open="open"
             :teleport="false"
-            :eyebrow="t('patient.dashboard.medicationIntakePushSuccess.eyebrow')"
+            :eyebrow="
+                t('patient.dashboard.medicationIntakePushSuccess.eyebrow')
+            "
             :title="props.medication_name"
-            :subtitle="t('patient.dashboard.medicationIntakePushSuccess.subtitle')"
-            :done-label="t('patient.dashboard.medicationIntakePushSuccess.done')"
+            :subtitle="
+                t('patient.dashboard.medicationIntakePushSuccess.subtitle')
+            "
+            :done-label="
+                t('patient.dashboard.medicationIntakePushSuccess.done')
+            "
             @done="onDone"
         />
     </div>

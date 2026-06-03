@@ -47,7 +47,12 @@ const calculatedAddAmount = computed((): number | null => {
     const boxes = Number.parseInt(numberOfBoxes.value, 10);
     const pieces = Number.parseInt(piecesPerBox.value, 10);
 
-    if (Number.isNaN(boxes) || Number.isNaN(pieces) || boxes <= 0 || pieces <= 0) {
+    if (
+        Number.isNaN(boxes) ||
+        Number.isNaN(pieces) ||
+        boxes <= 0 ||
+        pieces <= 0
+    ) {
         return null;
     }
 
@@ -92,7 +97,9 @@ const hasDisplayableDoseUnit = computed((): boolean => {
         return false;
     }
 
-    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(props.doseUnit);
+    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(
+        props.doseUnit,
+    );
 });
 
 const doseUnitChipForAmount = (amount: number): string | null => {
@@ -175,7 +182,7 @@ const describedById = computed((): string | undefined => {
 function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
     const input = event.target as HTMLInputElement;
     const cleaned = input.value.replace(/\D/g, '');
-    
+
     if (target === 'boxes') {
         numberOfBoxes.value = cleaned;
     } else {
@@ -188,25 +195,24 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
     <div class="space-y-4 md:space-y-5">
         <div :class="currentStockPanelClass">
             <div :class="currentStockIconWrapClass">
-                <Layers
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
+                <Layers class="size-5 sm:size-6" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class="text-sm font-semibold leading-snug text-text-heading sm:text-base">
+                <span
+                    class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+                >
                     {{ t('patient.medications.fields.currentStock') }}
                 </span>
                 <div class="flex items-baseline gap-2">
                     <span
                         v-if="currentStockAmountDisplay !== null"
-                        class="whitespace-pre-wrap wrap-break-word text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-3xl"
+                        class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
                     >
                         {{ currentStockAmountDisplay }}
                     </span>
                     <span
                         v-if="currentStockDoseUnitChip !== null"
-                        class="text-lg font-semibold text-text-heading sm:text-xl"
+                        class="text-text-heading text-lg font-semibold sm:text-xl"
                     >
                         {{ currentStockDoseUnitChip }}
                     </span>
@@ -230,7 +236,9 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     pattern="[0-9]*"
                     autocomplete="off"
                     maxlength="6"
-                    :placeholder="t('patient.inventory.addStockBoxesPlaceholder')"
+                    :placeholder="
+                        t('patient.inventory.addStockBoxesPlaceholder')
+                    "
                     :class="
                         cn(
                             patientFormFieldInputClass,
@@ -244,7 +252,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     @input="handleNumberInput($event, 'boxes')"
                 />
             </div>
-            
+
             <div>
                 <Label
                     :for="piecesFieldId"
@@ -260,7 +268,9 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     pattern="[0-9]*"
                     autocomplete="off"
                     maxlength="6"
-                    :placeholder="t('patient.inventory.addStockPiecesPerBoxPlaceholder')"
+                    :placeholder="
+                        t('patient.inventory.addStockPiecesPerBoxPlaceholder')
+                    "
                     :class="
                         cn(
                             patientFormFieldInputClass,
@@ -282,24 +292,23 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             :for="`${boxFieldId} ${piecesFieldId}`"
         >
             <div :class="newTotalStockIconWrapClass">
-                <Layers
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
+                <Layers class="size-5 sm:size-6" aria-hidden="true" />
             </div>
             <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class="text-sm font-semibold leading-snug text-text-heading sm:text-base">
+                <span
+                    class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+                >
                     {{ t('patient.inventory.addStockNewTotal') }}
                 </span>
                 <div class="flex items-baseline gap-2">
                     <span
-                        class="whitespace-pre-wrap wrap-break-word text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-3xl"
+                        class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
                     >
                         {{ newTotalStock }}
                     </span>
                     <span
                         v-if="newTotalDoseUnitChip !== null"
-                        class="text-lg font-semibold text-text-heading sm:text-xl"
+                        class="text-text-heading text-lg font-semibold sm:text-xl"
                     >
                         {{ newTotalDoseUnitChip }}
                     </span>
@@ -307,9 +316,6 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             </div>
         </output>
 
-        <InputError
-            :id="`${idPrefix}-refill-error`"
-            :message="errorMessage"
-        />
+        <InputError :id="`${idPrefix}-refill-error`" :message="errorMessage" />
     </div>
 </template>

@@ -22,7 +22,11 @@ const registrationError = ref<string | null>(null);
 
 function readDashboardPromptDismissed(): boolean {
     try {
-        return globalThis.localStorage.getItem(dashboardPromptDismissedStorageKey) === '1';
+        return (
+            globalThis.localStorage.getItem(
+                dashboardPromptDismissedStorageKey,
+            ) === '1'
+        );
     } catch {
         return false;
     }
@@ -40,8 +44,12 @@ function readCsrfToken(): string | null {
     return decodeURIComponent(match[1]);
 }
 
-function resolvePushManager(registration: ServiceWorkerRegistration): PushManager {
-    const navigatorWithPush = navigator as Navigator & { pushManager?: PushManager };
+function resolvePushManager(
+    registration: ServiceWorkerRegistration,
+): PushManager {
+    const navigatorWithPush = navigator as Navigator & {
+        pushManager?: PushManager;
+    };
 
     if (navigatorWithPush.pushManager != null) {
         return navigatorWithPush.pushManager;
@@ -61,7 +69,8 @@ async function unsubscribeInBrowser(): Promise<void> {
         return;
     }
 
-    const subscription = await resolvePushManager(registration).getSubscription();
+    const subscription =
+        await resolvePushManager(registration).getSubscription();
 
     if (subscription === null) {
         return;
@@ -101,7 +110,9 @@ async function subscribeWithApplicationServerKey(
 export function usePatientMedicationPushReminders() {
     const page = usePage<PageProps>();
 
-    const publicKey = computed((): string | null => page.props.webpush?.publicKey ?? null);
+    const publicKey = computed(
+        (): string | null => page.props.webpush?.publicKey ?? null,
+    );
 
     const isSubscribedOnServer = computed(
         (): boolean => page.props.webpush?.subscribed ?? false,
@@ -109,9 +120,9 @@ export function usePatientMedicationPushReminders() {
 
     const browserSupportsPush = computed(
         (): boolean =>
-            globalThis.Notification !== undefined
-            && 'serviceWorker' in navigator
-            && 'PushManager' in globalThis,
+            globalThis.Notification !== undefined &&
+            'serviceWorker' in navigator &&
+            'PushManager' in globalThis,
     );
 
     const canEnableReminders = computed(
@@ -126,7 +137,9 @@ export function usePatientMedicationPushReminders() {
         return globalThis.Notification.permission;
     });
 
-    const isPermissionDenied = computed((): boolean => permission.value === 'denied');
+    const isPermissionDenied = computed(
+        (): boolean => permission.value === 'denied',
+    );
 
     const shouldShowCard = computed((): boolean => {
         if (!browserSupportsPush.value || publicKey.value === null) {
@@ -141,14 +154,18 @@ export function usePatientMedicationPushReminders() {
     });
 
     const shouldShowDashboardPrompt = computed(
-        (): boolean => !isDashboardPromptDismissed.value && shouldShowCard.value,
+        (): boolean =>
+            !isDashboardPromptDismissed.value && shouldShowCard.value,
     );
 
     function dismissDashboardPrompt(): void {
         isDashboardPromptDismissed.value = true;
 
         try {
-            globalThis.localStorage.setItem(dashboardPromptDismissedStorageKey, '1');
+            globalThis.localStorage.setItem(
+                dashboardPromptDismissedStorageKey,
+                '1',
+            );
         } catch {
             return;
         }
@@ -166,45 +183,59 @@ export function usePatientMedicationPushReminders() {
         return 'enable';
     });
 
-    const remindersEnabled = computed((): boolean => isSubscribedOnServer.value);
+    const remindersEnabled = computed(
+        (): boolean => isSubscribedOnServer.value,
+    );
 
     async function destroySubscriptionsOnServer(): Promise<void> {
         const csrfToken = readCsrfToken();
 
-        const response = await fetch(route('patient.push-subscriptions.destroy'), {
-            method: 'DELETE',
-            headers: {
-                Accept: 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                ...(csrfToken !== null ? { 'X-XSRF-TOKEN': csrfToken } : {}),
+        const response = await fetch(
+            route('patient.push-subscriptions.destroy'),
+            {
+                method: 'DELETE',
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(csrfToken !== null
+                        ? { 'X-XSRF-TOKEN': csrfToken }
+                        : {}),
+                },
+                credentials: 'same-origin',
             },
-            credentials: 'same-origin',
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to remove push subscriptions.');
         }
     }
 
-    async function storeSubscriptionOnServer(subscription: PushSubscription): Promise<void> {
+    async function storeSubscriptionOnServer(
+        subscription: PushSubscription,
+    ): Promise<void> {
         const json = subscription.toJSON() as PushSubscriptionJson;
         const csrfToken = readCsrfToken();
 
-        const response = await fetch(route('patient.push-subscriptions.store'), {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest',
-                ...(csrfToken !== null ? { 'X-XSRF-TOKEN': csrfToken } : {}),
+        const response = await fetch(
+            route('patient.push-subscriptions.store'),
+            {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    ...(csrfToken !== null
+                        ? { 'X-XSRF-TOKEN': csrfToken }
+                        : {}),
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    endpoint: json.endpoint,
+                    keys: json.keys,
+                    contentEncoding: 'aesgcm',
+                }),
             },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                endpoint: json.endpoint,
-                keys: json.keys,
-                contentEncoding: 'aesgcm',
-            }),
-        });
+        );
 
         if (!response.ok) {
             throw new Error('Failed to store push subscription.');
@@ -223,7 +254,8 @@ export function usePatientMedicationPushReminders() {
             let permissionResult = permission.value;
 
             if (permissionResult === 'default') {
-                permissionResult = await globalThis.Notification.requestPermission();
+                permissionResult =
+                    await globalThis.Notification.requestPermission();
             }
 
             if (permissionResult !== 'granted') {
@@ -258,7 +290,9 @@ export function usePatientMedicationPushReminders() {
             registrationError.value =
                 error instanceof Error
                     ? error.message
-                    : i18n.global.t('patient.medicationReminders.registrationUnknownError');
+                    : i18n.global.t(
+                          'patient.medicationReminders.registrationUnknownError',
+                      );
         } finally {
             isRegistering.value = false;
         }
@@ -277,7 +311,9 @@ export function usePatientMedicationPushReminders() {
             registrationError.value =
                 error instanceof Error
                     ? error.message
-                    : i18n.global.t('patient.medicationReminders.registrationUnknownError');
+                    : i18n.global.t(
+                          'patient.medicationReminders.registrationUnknownError',
+                      );
         } finally {
             isUnregistering.value = false;
         }

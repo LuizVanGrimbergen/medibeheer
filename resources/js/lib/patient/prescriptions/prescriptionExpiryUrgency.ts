@@ -1,10 +1,9 @@
 import { daysUntilLocalDateYmd } from '@/lib/patient/medications/urgency/daysUntilLocalDateYmd';
+import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import {
     medicationUrgencyProgressPercent,
-    medicationUrgencyToneFromDaysRemaining
-    
+    medicationUrgencyToneFromDaysRemaining,
 } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
-import type {MedicationUrgencyTone} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 
 export type PrescriptionExpiryUrgencyContext = {
     days_remaining: number;

@@ -31,11 +31,8 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const {
-    selectedCalendarDate,
-    selectedDaySectionRef,
-    onSelectCalendarDate,
-} = useHistorySelectedDay(() => props.calendarMonth);
+const { selectedCalendarDate, selectedDaySectionRef, onSelectCalendarDate } =
+    useHistorySelectedDay(() => props.calendarMonth);
 
 const slotsByDate = computed((): Map<string, MedicationIntakeHistorySlot[]> => {
     const map = new Map<string, MedicationIntakeHistorySlot[]>();
@@ -72,9 +69,7 @@ const selectedDayHasSchedule = computed((): boolean => {
     }
 
     return props.calendarDays.some(
-        (day) =>
-            day.date === date &&
-            day.status !== 'no_schedule',
+        (day) => day.date === date && day.status !== 'no_schedule',
     );
 });
 </script>
@@ -97,22 +92,19 @@ const selectedDayHasSchedule = computed((): boolean => {
         >
             <p
                 v-if="!selectedDayHasSchedule"
-                class="text-sm leading-relaxed text-text-muted"
+                class="text-text-muted text-sm leading-relaxed"
             >
                 {{ t(props.selectedDayNoScheduleKey) }}
             </p>
 
             <p
                 v-else-if="selectedDaySlots.length === 0"
-                class="text-sm leading-relaxed text-text-muted"
+                class="text-text-muted text-sm leading-relaxed"
             >
                 {{ t(props.selectedDayNoIntakesKey) }}
             </p>
 
-            <div
-                v-else
-                class="flex flex-col gap-4"
-            >
+            <div v-else class="flex flex-col gap-4">
                 <MedicationIntakeHistorySlotCard
                     v-for="slot in selectedDaySlots"
                     :key="`${slot.medication_schedule_id}-${slot.dose_time}`"

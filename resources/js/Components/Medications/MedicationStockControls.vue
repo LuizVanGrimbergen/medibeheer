@@ -45,7 +45,9 @@ const resolvedIdPrefix = computed(
 
 const stockFormId = computed(() => `${resolvedIdPrefix.value}-form`);
 
-const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
+const stockProgressTone = computed(() =>
+    medicationListVisualTone(props.medication),
+);
 
 const stockProgressPercent = computed((): number | null => {
     const stock = primaryStock.value;
@@ -85,7 +87,9 @@ const supplyEstimateLine = computed((): string => {
             return t('patient.inventory.supplyEstimateApproxOneDay');
         }
 
-        return t('patient.inventory.supplyEstimateApproxDays', { days: String(days) });
+        return t('patient.inventory.supplyEstimateApproxDays', {
+            days: String(days),
+        });
     }
 
     return t('patient.inventory.supplyEstimateUnknown');
@@ -97,10 +101,14 @@ const stockProgressAriaLabel = computed((): string =>
     }),
 );
 
-const primaryStockAmountTrimmed = computed((): string => primaryStock.value?.current_stock.trim() ?? '');
+const primaryStockAmountTrimmed = computed(
+    (): string => primaryStock.value?.current_stock.trim() ?? '',
+);
 
 const stockDisplayDoseUnit = computed(() => {
-    const parsedStrength = parseMedicationStrengthFromStored(props.medication.strength);
+    const parsedStrength = parseMedicationStrengthFromStored(
+        props.medication.strength,
+    );
 
     return medicationStockDisplayDoseUnit(
         props.medication.dose_unit,
@@ -127,35 +135,31 @@ const currentStockDisplayLine = computed((): string =>
                 :status-line="supplyEstimateLine"
                 :progress-aria-label="stockProgressAriaLabel"
                 :critical-alert-label="t('patient.inventory.lowStockBadge')"
-                :warning-alert-label="t('patient.inventory.warningStockIconAria')"
+                :warning-alert-label="
+                    t('patient.inventory.warningStockIconAria')
+                "
             />
 
             <p
                 v-else
-                class="text-base font-semibold leading-relaxed text-text-heading sm:text-lg"
+                class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
             >
                 {{ supplyEstimateLine }}
             </p>
 
             <div class="flex w-full min-w-0 justify-start">
-                <div
-                    class="min-w-0 flex-1"
-                    :class="currentStockPanelClass"
-                >
+                <div class="min-w-0 flex-1" :class="currentStockPanelClass">
                     <div :class="currentStockIconWrapClass">
-                        <Layers
-                            class="size-5 sm:size-6"
-                            aria-hidden="true"
-                        />
+                        <Layers class="size-5 sm:size-6" aria-hidden="true" />
                     </div>
                     <div class="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span
-                            class="text-sm font-semibold leading-snug text-text-heading sm:text-base"
+                            class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
                         >
                             {{ t('patient.medications.fields.currentStock') }}
                         </span>
                         <span
-                            class="whitespace-pre-wrap wrap-break-word text-2xl font-bold tabular-nums leading-none tracking-tight text-text-heading sm:text-3xl"
+                            class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
                         >
                             {{ currentStockDisplayLine }}
                         </span>
@@ -190,10 +194,7 @@ const currentStockDisplayLine = computed((): string =>
             </div>
         </template>
 
-        <p
-            v-else
-            class="text-base leading-relaxed text-text-muted sm:text-lg"
-        >
+        <p v-else class="text-text-muted text-base leading-relaxed sm:text-lg">
             {{ t('patient.inventory.stockMissing') }}
         </p>
 
@@ -205,7 +206,9 @@ const currentStockDisplayLine = computed((): string =>
             :dose-unit="stockDisplayDoseUnit"
             :stock="primaryStock"
             :stock-progress-tone="stockProgressTone"
-            :stock-pieces-per-package="props.medication.stock_pieces_per_package"
+            :stock-pieces-per-package="
+                props.medication.stock_pieces_per_package
+            "
             :form-id="stockFormId"
             :id-prefix="resolvedIdPrefix"
             :dialog-content-class="dialogContentClass"

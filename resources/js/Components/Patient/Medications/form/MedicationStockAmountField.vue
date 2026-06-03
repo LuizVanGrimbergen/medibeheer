@@ -38,7 +38,9 @@ const hasDisplayableDoseUnit = computed((): boolean => {
         return false;
     }
 
-    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(props.doseUnit);
+    return (MEDICATION_DOSE_UNIT_VALUES as readonly string[]).includes(
+        props.doseUnit,
+    );
 });
 
 const doseUnitChip = computed((): string | null => {
@@ -80,10 +82,7 @@ const describedById = computed((): string | undefined => {
 
 <template>
     <div>
-        <Label
-            :for="fieldId"
-            :class="cn(patientFormLabelClass, 'text-xl')"
-        >
+        <Label :for="fieldId" :class="cn(patientFormLabelClass, 'text-xl')">
             {{ t(labelKey) }}
         </Label>
         <div
@@ -92,9 +91,11 @@ const describedById = computed((): string | undefined => {
             class="mt-2"
             :class="
                 cn(
-                    'flex min-h-14 w-full min-w-0 overflow-hidden rounded-2xl border-2 bg-surface transition-[border-color,box-shadow] touch-manipulation',
-                    'focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/25',
-                    errorMessage ? 'border-danger ring-2 ring-danger/25' : 'border-border',
+                    'bg-surface flex min-h-14 w-full min-w-0 touch-manipulation overflow-hidden rounded-2xl border-2 transition-[border-color,box-shadow]',
+                    'focus-within:border-focus focus-within:ring-focus/25 focus-within:ring-2',
+                    errorMessage
+                        ? 'border-danger ring-danger/25 ring-2'
+                        : 'border-border',
                 )
             "
         >
@@ -106,16 +107,18 @@ const describedById = computed((): string | undefined => {
                 autocomplete="off"
                 :maxlength="maxlength"
                 :placeholder="placeholder"
-                class="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                class="text-text placeholder:text-text-muted min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 :class="patientFormLargeTouchFieldClass"
                 :aria-invalid="Boolean(errorMessage)"
                 :aria-describedby="describedById"
             />
             <div
-                class="flex shrink-0 items-center self-stretch border-l-2 border-border px-4"
+                class="border-border flex shrink-0 items-center self-stretch border-l-2 px-4"
                 aria-hidden="true"
             >
-                <span class="text-base font-semibold leading-normal text-text-heading">
+                <span
+                    class="text-text-heading text-base leading-normal font-semibold"
+                >
                     {{ doseUnitChip }}
                 </span>
             </div>
@@ -140,9 +143,6 @@ const describedById = computed((): string | undefined => {
             :aria-invalid="Boolean(errorMessage)"
             :aria-describedby="describedById"
         />
-        <InputError
-            :id="`${fieldId}-error`"
-            :message="errorMessage"
-        />
+        <InputError :id="`${fieldId}-error`" :message="errorMessage" />
     </div>
 </template>

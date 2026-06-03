@@ -24,14 +24,10 @@ const { t } = useI18n();
 const hasActions = computed(
     () => props.canCreateMedication || props.hasActiveMedications,
 );
-
 </script>
 
 <template>
-    <div
-        v-if="hasActions"
-        :class="patientPageActionsBarClass"
-    >
+    <div v-if="hasActions" :class="patientPageActionsBarClass">
         <div :class="patientPageActionsGridClass">
             <Button
                 v-if="canCreateMedication"
@@ -40,10 +36,7 @@ const hasActions = computed(
                 type="button"
                 @click="emit('newMedicationClick')"
             >
-                <Pill
-                    class="size-6 shrink-0"
-                    aria-hidden="true"
-                />
+                <Pill class="size-6 shrink-0" aria-hidden="true" />
                 {{ t('patient.medications.newMedication') }}
             </Button>
 
@@ -55,10 +48,7 @@ const hasActions = computed(
                 :class="patientPageIntroButtonClass"
             >
                 <Link :href="route('patient.medications.pharmacist-overview')">
-                    <ClipboardList
-                        class="size-6 shrink-0"
-                        aria-hidden="true"
-                    />
+                    <ClipboardList class="size-6 shrink-0" aria-hidden="true" />
                     {{ t('patient.medications.pharmacistOverview.button') }}
                 </Link>
             </Button>

@@ -90,7 +90,9 @@ export function firstAppointmentFormStepContainingFieldErrors(
     return null;
 }
 
-function fieldErrorsForProviderStep(values: StepSnapshot): AppointmentFormInlineStepErrors {
+function fieldErrorsForProviderStep(
+    values: StepSnapshot,
+): AppointmentFormInlineStepErrors {
     const out: AppointmentFormInlineStepErrors = {};
 
     if (values.doctor_type === '') {
@@ -104,7 +106,9 @@ function fieldErrorsForProviderStep(values: StepSnapshot): AppointmentFormInline
     return out;
 }
 
-function fieldErrorsForAddressStep(values: StepSnapshot): AppointmentFormInlineStepErrors {
+function fieldErrorsForAddressStep(
+    values: StepSnapshot,
+): AppointmentFormInlineStepErrors {
     const out: AppointmentFormInlineStepErrors = {};
 
     if (values.street.trim().length < 1) {
@@ -151,7 +155,10 @@ function fieldErrorsForScheduleStep(
     const parsed = parseLocalAppointmentDateTime(dateTrimmed, timeTrimmed);
 
     if (parsed === null) {
-        const reparsedDateOnly = parseLocalAppointmentDateTime(dateTrimmed, '12:00');
+        const reparsedDateOnly = parseLocalAppointmentDateTime(
+            dateTrimmed,
+            '12:00',
+        );
 
         if (reparsedDateOnly === null) {
             out.starts_at_date = appointmentsNl.validation.startsAtDateInvalid;
@@ -175,11 +182,14 @@ function fieldErrorsForScheduleStep(
     return out;
 }
 
-function fieldErrorsForTransportStep(values: StepSnapshot): AppointmentFormInlineStepErrors {
+function fieldErrorsForTransportStep(
+    values: StepSnapshot,
+): AppointmentFormInlineStepErrors {
     const out: AppointmentFormInlineStepErrors = {};
 
     if (values.needs_transport && values.transport_family_ids.length < 1) {
-        out.transport_family_ids = appointmentsNl.stepValidation.transportRecipientsRequired;
+        out.transport_family_ids =
+            appointmentsNl.stepValidation.transportRecipientsRequired;
     }
 
     return out;

@@ -40,8 +40,12 @@ export function medicationPlanProposalInitialToFormState(
 
     base.name = initial.name;
     base.dose = initial.dose?.trim() ?? '';
-    base.dose_unit = (initial.dose_unit ?? base.dose_unit) as MedicationDoseUnitValue | '';
-    base.type_medication = (initial.type_medication ?? base.type_medication) as MedicationTypeValue | '';
+    base.dose_unit = (initial.dose_unit ?? base.dose_unit) as
+        | MedicationDoseUnitValue
+        | '';
+    base.type_medication = (initial.type_medication ?? base.type_medication) as
+        | MedicationTypeValue
+        | '';
     const parsedStrength = parseMedicationStrengthFromStored(initial.strength);
     base.strength = parsedStrength.strength;
     base.strength_amount = parsedStrength.strength_amount;
@@ -59,12 +63,25 @@ export function medicationPlanProposalInitialToFormState(
     const slotCount = count ?? 1;
 
     base.schedule = {
-        meal_timing: (schedule.meal_timing ?? '') as MedicationMealTimingValue | '',
-        intake_frequency: schedule.intake_frequency as MedicationIntakeFrequencyValue | '',
-        intake_weekdays: schedule.intake_weekdays === null ? [] : [...schedule.intake_weekdays],
+        meal_timing: (schedule.meal_timing ?? '') as
+            | MedicationMealTimingValue
+            | '',
+        intake_frequency: schedule.intake_frequency as
+            | MedicationIntakeFrequencyValue
+            | '',
+        intake_weekdays:
+            schedule.intake_weekdays === null
+                ? []
+                : [...schedule.intake_weekdays],
         times_per_day: schedule.times_per_day,
-        dose_time_slots: buildMedicationScheduleDoseTimeSlots(schedule.dose_time, slotCount),
-        snooze_time_slots: buildMedicationScheduleSnoozeTimeSlots(schedule.snooze_time, slotCount),
+        dose_time_slots: buildMedicationScheduleDoseTimeSlots(
+            schedule.dose_time,
+            slotCount,
+        ),
+        snooze_time_slots: buildMedicationScheduleSnoozeTimeSlots(
+            schedule.snooze_time,
+            slotCount,
+        ),
         start_date: schedule.start_date ?? '',
         end_date: schedule.end_date ?? '',
     };

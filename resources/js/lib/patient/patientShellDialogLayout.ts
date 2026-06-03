@@ -33,16 +33,24 @@ const patientShellDialogDesktopFromMd = [
  *
  * @param desktopFrom use `sm` for appointment flows (first centered layout at 640px; fullscreen below sm), `md` for medication (768px; fullscreen below md).
  */
-export function patientShellDialogContentClass(desktopFrom: 'sm' | 'md'): string {
+export function patientShellDialogContentClass(
+    desktopFrom: 'sm' | 'md',
+): string {
     const mobile =
-        desktopFrom === 'md' ? patientShellDialogMobileClassMaxMd : patientShellDialogMobileClassMaxSm;
+        desktopFrom === 'md'
+            ? patientShellDialogMobileClassMaxMd
+            : patientShellDialogMobileClassMaxSm;
     const desktop =
-        desktopFrom === 'md' ? patientShellDialogDesktopFromMd : patientShellDialogDesktopFromSm;
+        desktopFrom === 'md'
+            ? patientShellDialogDesktopFromMd
+            : patientShellDialogDesktopFromSm;
 
     return `${mobile} ${desktop}`;
 }
 
 /** DialogOverlay: sit above app chrome (z-100) while the shell is fullscreen. Must match `patientShellDialogContentClass` breakpoint. */
-export function patientShellDialogOverlayAboveAppChromeClass(desktopFrom: 'sm' | 'md'): string {
+export function patientShellDialogOverlayAboveAppChromeClass(
+    desktopFrom: 'sm' | 'md',
+): string {
     return desktopFrom === 'sm' ? 'max-sm:!z-[108]' : 'max-md:!z-[108]';
 }

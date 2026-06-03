@@ -22,7 +22,9 @@ const hasMultiplePatients = computed(() => patients.value.length > 1);
 
 const isOpen = ref(hasMultiplePatients.value);
 
-const activePatient = computed(() => patients.value.find((patient) => patient.is_active) ?? null);
+const activePatient = computed(
+    () => patients.value.find((patient) => patient.is_active) ?? null,
+);
 
 const lowStockPatientIdSet = computed(
     () => new Set(props.lowStockPatientIds ?? []),
@@ -85,10 +87,7 @@ function patientHasLowStock(patientId: number): boolean {
         <ul
             class="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3 xl:grid-cols-3"
         >
-            <li
-                v-for="patient in patients"
-                :key="patient.id"
-            >
+            <li v-for="patient in patients" :key="patient.id">
                 <button
                     type="button"
                     class="flex h-full w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition md:px-4 md:py-3"
@@ -100,10 +99,16 @@ function patientHasLowStock(patientId: number): boolean {
                     :disabled="patient.is_active"
                     :aria-label="
                         patient.is_active
-                            ? t('family.overview.linkedPatientActiveAria', { name: patient.name })
-                            : t('family.overview.linkedPatientSwitchAria', { name: patient.name })
+                            ? t('family.overview.linkedPatientActiveAria', {
+                                  name: patient.name,
+                              })
+                            : t('family.overview.linkedPatientSwitchAria', {
+                                  name: patient.name,
+                              })
                     "
-                    @click="switchPatient(patient.switch_url, patient.is_active)"
+                    @click="
+                        switchPatient(patient.switch_url, patient.is_active)
+                    "
                 >
                     <div
                         class="flex size-11 shrink-0 items-center justify-center rounded-full text-base font-bold md:size-10"
@@ -119,7 +124,7 @@ function patientHasLowStock(patientId: number): boolean {
 
                     <div class="min-w-0 flex-1">
                         <p
-                            class="truncate text-base font-semibold text-text-heading md:text-base"
+                            class="text-text-heading truncate text-base font-semibold md:text-base"
                         >
                             {{ patient.name }}
                         </p>
@@ -143,7 +148,7 @@ function patientHasLowStock(patientId: number): boolean {
 
                     <Check
                         v-if="patient.is_active"
-                        class="size-5 shrink-0 text-primary md:size-5"
+                        class="text-primary size-5 shrink-0 md:size-5"
                         aria-hidden="true"
                     />
                 </button>
@@ -153,34 +158,35 @@ function patientHasLowStock(patientId: number): boolean {
 
     <div
         v-else-if="hasPatients && activePatient !== null"
-        class="flex items-center gap-3 rounded-2xl border border-primary/50 bg-primary/6 px-4 py-4 shadow-sm md:px-5 md:py-4"
+        class="border-primary/50 bg-primary/6 flex items-center gap-3 rounded-2xl border px-4 py-4 shadow-sm md:px-5 md:py-4"
     >
         <div
-            class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-base font-bold text-white md:size-10"
+            class="bg-primary flex size-11 shrink-0 items-center justify-center rounded-full text-base font-bold text-white md:size-10"
             aria-hidden="true"
         >
             {{ patientInitial(activePatient.name) }}
         </div>
 
         <div class="min-w-0 flex-1">
-            <p class="text-xs font-semibold uppercase tracking-wide text-text-muted">
+            <p
+                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
+            >
                 {{ t('family.overview.linkedPatientsHeading') }}
             </p>
-            <p class="mt-1 truncate text-lg font-semibold text-text-heading md:text-base">
+            <p
+                class="text-text-heading mt-1 truncate text-lg font-semibold md:text-base"
+            >
                 {{ activePatient.name }}
             </p>
             <Badge
                 v-if="patientHasLowStock(activePatient.id)"
                 variant="secondary"
-                class="mt-2 border-danger/25 bg-danger/10 text-danger"
+                class="border-danger/25 bg-danger/10 text-danger mt-2"
             >
                 {{ t('patient.inventory.lowStockBadge') }}
             </Badge>
         </div>
 
-        <Check
-            class="size-5 shrink-0 text-primary"
-            aria-hidden="true"
-        />
+        <Check class="text-primary size-5 shrink-0" aria-hidden="true" />
     </div>
 </template>

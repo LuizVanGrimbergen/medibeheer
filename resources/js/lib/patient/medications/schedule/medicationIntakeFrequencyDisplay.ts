@@ -17,7 +17,12 @@ export const MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN = 5;
 export const MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX = 60;
 
 export const MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS = Array.from(
-    { length: MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX - MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN + 1 },
+    {
+        length:
+            MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MAX -
+            MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN +
+            1,
+    },
     (_, index) => index + MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_MIN,
 );
 
@@ -53,7 +58,9 @@ export function isCustomIntakeFrequencyInterval(frequency: string): boolean {
 }
 
 export function isWizardIntakeFrequencyPreset(frequency: string): boolean {
-    return (MEDICATION_INTAKE_FREQUENCY_WIZARD_PRESETS as readonly string[]).includes(frequency);
+    return (
+        MEDICATION_INTAKE_FREQUENCY_WIZARD_PRESETS as readonly string[]
+    ).includes(frequency);
 }
 
 export function medicationIntakeFrequencyLabel(
@@ -74,7 +81,9 @@ export function medicationIntakeFrequencyLabel(
         return frequency;
     }
 
-    return t('patient.medications.intakeFrequencies.everyNDays', { n: dayCount });
+    return t('patient.medications.intakeFrequencies.everyNDays', {
+        n: dayCount,
+    });
 }
 
 export function medicationIntakeFrequencySummaryLabel(
@@ -94,7 +103,9 @@ export function medicationIntakeFrequencySummaryLabel(
             return baseLabel;
         }
 
-        const parts = intakeWeekdays.map((day) => t(`patient.medications.weekdayIso.${day}`));
+        const parts = intakeWeekdays.map((day) =>
+            t(`patient.medications.weekdayIso.${day}`),
+        );
 
         return `${baseLabel} (${parts.join(', ')})`;
     }

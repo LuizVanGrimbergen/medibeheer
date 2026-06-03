@@ -5,8 +5,8 @@ import { Label } from '@/Components/ui/label';
 import {
     isPatientFormCountCustomValue,
     isPatientFormCountPresetValue,
-    patientFormCountCustomOptions,
     PATIENT_FORM_COUNT_PRESET_VALUES,
+    patientFormCountCustomOptions,
 } from '@/lib/patient/form/patientFormCountPresetConstants';
 import {
     patientFormFieldInvalidClass,
@@ -49,8 +49,8 @@ const prefersCustomCount = ref(
 
 const showCustomCountSelect = computed(
     () =>
-        prefersCustomCount.value
-        || isPatientFormCountCustomValue(
+        prefersCustomCount.value ||
+        isPatientFormCountCustomValue(
             count.value,
             props.customMin,
             props.customMax,
@@ -62,8 +62,7 @@ const customCountOptions = computed(() =>
 );
 
 const presetButtonClass = (preset: number): string => {
-    const selected =
-        !showCustomCountSelect.value && count.value === preset;
+    const selected = !showCustomCountSelect.value && count.value === preset;
 
     return selected
         ? 'border-primary bg-primary/10 text-text-heading'
@@ -102,9 +101,9 @@ const customCountSelect = computed({
         const parsed = Number(value);
 
         if (
-            !Number.isInteger(parsed)
-            || parsed < props.customMin
-            || parsed > props.customMax
+            !Number.isInteger(parsed) ||
+            parsed < props.customMin ||
+            parsed > props.customMax
         ) {
             return;
         }
@@ -151,14 +150,13 @@ watch(count, (value) => {
             :class="cn(patientFormLabelClass, 'text-xl')"
         >
             {{ label }}
-            <span
-                v-if="required"
-                class="text-danger"
-            > *</span>
+            <span v-if="required" class="text-danger"> *</span>
         </Label>
         <div
             :id="`${idPrefix}-count`"
-            :class="cn('mt-2 space-y-4 touch-manipulation', fieldsetInvalidClass)"
+            :class="
+                cn('mt-2 touch-manipulation space-y-4', fieldsetInvalidClass)
+            "
         >
             <div
                 class="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
@@ -174,11 +172,9 @@ watch(count, (value) => {
                     :id="`${idPrefix}-count-option-${preset}`"
                     :key="preset"
                     type="button"
-                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                    class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                     :class="presetButtonClass(preset)"
-                    :aria-pressed="
-                        !showCustomCountSelect && count === preset
-                    "
+                    :aria-pressed="!showCustomCountSelect && count === preset"
                     @click="selectPreset(preset)"
                 >
                     {{ optionLabel(preset) }}
@@ -186,7 +182,7 @@ watch(count, (value) => {
                 <button
                     :id="`${idPrefix}-count-custom-trigger`"
                     type="button"
-                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                    class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                     :class="customTriggerButtonClass"
                     :aria-pressed="showCustomCountSelect"
                     @click="selectCustom"
@@ -212,10 +208,7 @@ watch(count, (value) => {
                     errorMessage ? `${idPrefix}-count-error` : undefined
                 "
             >
-                <option
-                    disabled
-                    value=""
-                >
+                <option disabled value="">
                     {{ customPlaceholder }}
                 </option>
                 <option
@@ -227,9 +220,6 @@ watch(count, (value) => {
                 </option>
             </select>
         </div>
-        <InputError
-            :id="`${idPrefix}-count-error`"
-            :message="errorMessage"
-        />
+        <InputError :id="`${idPrefix}-count-error`" :message="errorMessage" />
     </div>
 </template>

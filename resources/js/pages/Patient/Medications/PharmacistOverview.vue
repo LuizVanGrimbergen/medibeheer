@@ -28,18 +28,22 @@ const { t } = useI18n();
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.medications.pharmacistOverview.title')">
+        <PatientPageShell
+            :title="t('patient.medications.pharmacistOverview.title')"
+        >
             <div class="space-y-3">
                 <h1 :class="patientPageTitleClass">
                     {{ t('patient.medications.pharmacistOverview.title') }}
                 </h1>
                 <p :class="patientPageIntroClass">
-                    {{ t('patient.medications.pharmacistOverview.description') }}
+                    {{
+                        t('patient.medications.pharmacistOverview.description')
+                    }}
                 </p>
             </div>
 
             <ul
-                class="flex min-w-0 w-full flex-col gap-5"
+                class="flex w-full min-w-0 flex-col gap-5"
                 :aria-label="t('patient.medications.pharmacistOverview.title')"
             >
                 <li
@@ -48,10 +52,12 @@ const { t } = useI18n();
                     class="min-w-0"
                 >
                     <Card
-                        class="min-w-0 w-full rounded-3xl border border-border bg-surface text-text shadow-md shadow-black/[0.04]"
+                        class="border-border bg-surface text-text w-full min-w-0 rounded-3xl border shadow-md shadow-black/[0.04]"
                     >
                         <CardContent class="p-6 sm:p-7">
-                            <p class="text-lg font-bold leading-snug text-text-heading sm:text-xl">
+                            <p
+                                class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+                            >
                                 {{ medicationName }}
                             </p>
                         </CardContent>
@@ -59,11 +65,11 @@ const { t } = useI18n();
                 </li>
             </ul>
 
-            <div class="border-t border-border pt-4">
+            <div class="border-border border-t pt-4">
                 <Button
                     as-child
                     size="lg"
-                    class="min-h-14 w-full touch-manipulation gap-2.5 px-6 font-body text-lg font-bold"
+                    class="font-body min-h-14 w-full touch-manipulation gap-2.5 px-6 text-lg font-bold"
                 >
                     <Link :href="route('patient.medications')">
                         {{ t('patient.medications.pharmacistOverview.done') }}

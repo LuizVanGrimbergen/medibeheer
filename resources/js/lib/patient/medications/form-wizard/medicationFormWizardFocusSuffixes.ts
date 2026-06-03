@@ -2,21 +2,26 @@ import {
     isCustomIntakeFrequencyInterval,
     MEDICATION_INTAKE_FREQUENCY_SUMMARY_OPTION_PRESETS,
 } from '@/lib/patient/medications/schedule/medicationIntakeFrequencyDisplay';
-import { MEDICATION_MEAL_TIMING_VALUES } from '@/lib/types';
 import type { MedicationTypeValue } from '@/lib/types';
+import { MEDICATION_MEAL_TIMING_VALUES } from '@/lib/types';
 
 export type MedicationWizardIntakeFrequencyFocusSchedule = {
     intake_frequency: string;
     intake_weekdays: readonly number[];
 };
 
-export function resolveMedicationWizardMealTimingFocusSuffix(mealTimingRaw: string): string {
-    const mealTiming = mealTimingRaw === '' ? MEDICATION_MEAL_TIMING_VALUES[0] : mealTimingRaw;
+export function resolveMedicationWizardMealTimingFocusSuffix(
+    mealTimingRaw: string,
+): string {
+    const mealTiming =
+        mealTimingRaw === '' ? MEDICATION_MEAL_TIMING_VALUES[0] : mealTimingRaw;
 
     return `schedule-meal-timing-option-${mealTiming}`;
 }
 
-export function resolveMedicationWizardTimesPerDayFocusSuffix(timesPerDayTrimmed: string): string {
+export function resolveMedicationWizardTimesPerDayFocusSuffix(
+    timesPerDayTrimmed: string,
+): string {
     if (/^[1-4]$/.test(timesPerDayTrimmed)) {
         return `schedule-times-per-day-option-${timesPerDayTrimmed}`;
     }
@@ -37,7 +42,11 @@ export function resolveMedicationWizardIntakeFrequencyFocusSuffix(
         return `schedule-intake-weekday-${schedule.intake_weekdays[0]}`;
     }
 
-    if ((MEDICATION_INTAKE_FREQUENCY_SUMMARY_OPTION_PRESETS as readonly string[]).includes(frequency)) {
+    if (
+        (
+            MEDICATION_INTAKE_FREQUENCY_SUMMARY_OPTION_PRESETS as readonly string[]
+        ).includes(frequency)
+    ) {
         return `schedule-intake-frequency-option-${frequency}`;
     }
 
@@ -48,7 +57,9 @@ export function resolveMedicationWizardIntakeFrequencyFocusSuffix(
     return 'schedule-intake-frequency-option-daily';
 }
 
-export function resolveMedicationWizardTypeFocusSuffix(typeMedication: MedicationTypeValue | ''): string {
+export function resolveMedicationWizardTypeFocusSuffix(
+    typeMedication: MedicationTypeValue | '',
+): string {
     if (typeMedication === '') {
         return 'type';
     }

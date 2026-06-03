@@ -21,7 +21,11 @@ function hasDebugInstallBannerFlag(): boolean {
         return false;
     }
 
-    return new URLSearchParams(globalThis.window.location.search).get('pwaInstallBanner') === '1';
+    return (
+        new URLSearchParams(globalThis.window.location.search).get(
+            'pwaInstallBanner',
+        ) === '1'
+    );
 }
 
 function isStandaloneDisplayMode(): boolean {
@@ -29,10 +33,13 @@ function isStandaloneDisplayMode(): boolean {
         return false;
     }
 
-    const mediaStandalone = globalThis.window.matchMedia?.('(display-mode: standalone)').matches === true;
+    const mediaStandalone =
+        globalThis.window.matchMedia?.('(display-mode: standalone)').matches ===
+        true;
     const navigatorStandalone =
         'standalone' in globalThis.navigator &&
-        (globalThis.navigator as Navigator & { standalone?: boolean }).standalone === true;
+        (globalThis.navigator as Navigator & { standalone?: boolean })
+            .standalone === true;
 
     return mediaStandalone || navigatorStandalone;
 }
@@ -45,18 +52,27 @@ function isIosSafari(): boolean {
     const navigator = globalThis.window.navigator;
     const userAgent = globalThis.navigator.userAgent;
     const isIosDevice = /iPhone|iPad|iPod/i.test(userAgent);
-    const isIpadOsDesktopMode = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+    const isIpadOsDesktopMode =
+        navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
     const isAppleMobileDevice = isIosDevice || isIpadOsDesktopMode;
     const usesSafariEngine = /WebKit/i.test(userAgent);
-    const isOtherBrowserShell = /CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo|YaBrowser/i.test(userAgent);
+    const isOtherBrowserShell =
+        /CriOS|FxiOS|EdgiOS|OPiOS|DuckDuckGo|YaBrowser/i.test(userAgent);
     const hasSafariToken = /Safari/i.test(userAgent);
 
-    return isAppleMobileDevice && usesSafariEngine && hasSafariToken && !isOtherBrowserShell;
+    return (
+        isAppleMobileDevice &&
+        usesSafariEngine &&
+        hasSafariToken &&
+        !isOtherBrowserShell
+    );
 }
 
 function wasDismissedBefore(): boolean {
     try {
-        return globalThis.window.localStorage.getItem(dismissedStorageKey) === '1';
+        return (
+            globalThis.window.localStorage.getItem(dismissedStorageKey) === '1'
+        );
     } catch {
         return false;
     }
@@ -98,19 +114,21 @@ function dismiss(): void {
 <template>
     <Alert
         v-if="showBanner"
-        class="mt-4 rounded-2xl border-2 border-primary/35 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+        class="border-primary/35 bg-surface text-text mt-4 rounded-2xl border-2 shadow-md shadow-black/[0.04] sm:rounded-3xl"
     >
-        <AlertTitle class="text-lg font-semibold leading-snug text-text-heading sm:text-xl">
+        <AlertTitle
+            class="text-text-heading text-lg leading-snug font-semibold sm:text-xl"
+        >
             {{ t('app.pwa.iosInstallTitle') }}
         </AlertTitle>
 
         <AlertDescription class="space-y-3 sm:space-y-4">
-            <p class="text-base leading-relaxed text-text-muted sm:text-lg">
+            <p class="text-text-muted text-base leading-relaxed sm:text-lg">
                 {{ t('app.pwa.iosInstallSubtitle') }}
             </p>
 
             <ol
-                class="list-decimal space-y-2 pl-6 text-base leading-relaxed text-text sm:text-lg"
+                class="text-text list-decimal space-y-2 pl-6 text-base leading-relaxed sm:text-lg"
                 :aria-label="t('app.pwa.iosInstallAriaLabel')"
             >
                 <li>{{ t('app.pwa.iosInstallStepOpenShare') }}</li>
@@ -118,13 +136,13 @@ function dismiss(): void {
                 <li>{{ t('app.pwa.iosInstallStepOpenApp') }}</li>
             </ol>
 
-            <p class="text-base leading-relaxed text-text-muted sm:text-lg">
+            <p class="text-text-muted text-base leading-relaxed sm:text-lg">
                 {{ t('app.pwa.iosInstallHelp') }}
             </p>
 
             <p
                 v-if="showMedicationReminderNote"
-                class="rounded-xl border border-primary/25 bg-primary/8 px-4 py-3 text-base font-medium leading-relaxed text-text sm:text-lg"
+                class="border-primary/25 bg-primary/8 text-text rounded-xl border px-4 py-3 text-base leading-relaxed font-medium sm:text-lg"
             >
                 {{ t('app.pwa.iosInstallMedicationNote') }}
             </p>
