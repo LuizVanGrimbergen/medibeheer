@@ -9,6 +9,8 @@ export default {
     },
     login: {
         metaTitle: 'Log in',
+        metaDescription:
+            'Log in bij Medibeheer om medicatie, innames, voorraad en afspraken veilig te beheren als patiënt, familie of zorgverlener.',
         heroTitlePrefix: 'Samen zorgen, altijd verbonden met',
         heroSubtitle: 'Log in om door te gaan naar uw dashboard',
         roleNotices: {
@@ -27,7 +29,9 @@ export default {
         forgotPassword: 'Wachtwoord vergeten?',
     },
     register: {
-        metaTitle: 'Register',
+        metaTitle: 'Registreren',
+        metaDescription:
+            'Maak een gratis Medibeheer-account aan voor veilig medicatiebeheer, innames en afspraken, voor patiënten, familie en zorgverleners.',
         titleAccent: 'Account',
         title: 'aanmaken',
         subtitle: 'Registreer om door te gaan naar uw dashboard',
@@ -67,6 +71,8 @@ export default {
     },
     resetPwd: {
         metaTitle: 'Reset wachtwoord',
+        metaDescription:
+            'Stel een nieuw wachtwoord in voor uw Medibeheer-account via uw persoonlijke resetlink.',
         title: 'Nieuw wachtwoord instellen',
         subtitle:
             'Kies een nieuw wachtwoord om weer veilig toegang te krijgen.',
@@ -78,6 +84,8 @@ export default {
     },
     forgotPwd: {
         metaTitle: 'Wachtwoord vergeten',
+        metaDescription:
+            'Wachtwoord vergeten? Vraag een veilige resetlink aan voor uw Medibeheer-account.',
         title: 'Wachtwoord vergeten',
         intro: 'Wachtwoord vergeten? Geen probleem. Vul uw e-mailadres in en we sturen u een link om een nieuw wachtwoord te kiezen.',
         emailLabel: 'E-mailadres',
@@ -86,6 +94,8 @@ export default {
     },
     confirmPwd: {
         metaTitle: 'Wachtwoord bevestigen',
+        metaDescription:
+            'Bevestig uw wachtwoord om verder te gaan in uw beveiligde Medibeheer-omgeving.',
         title: 'Bevestig uw wachtwoord',
         intro: 'Dit is een beveiligde omgeving. Bevestig uw wachtwoord om verder te gaan.',
         pwdLabel: `Wacht${'woord'}`,
@@ -93,6 +103,8 @@ export default {
     },
     verifyEmail: {
         metaTitle: 'E-mailverificatie',
+        metaDescription:
+            'Verifieer uw e-mailadres om uw Medibeheer-account te activeren.',
         title: 'Verifieer uw e-mailadres',
         intro: 'Bedankt voor uw registratie! Voordat u verdergaat, verifieer uw e-mailadres via de link die we u net hebben gemaild. Geen e-mail ontvangen? Dan sturen we met plezier een nieuwe.',
         linkSent: 'Nieuwe verificatielink naar uw e-mailadres verstuurd.',
