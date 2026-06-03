@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import MedicationFormDialogFooter from '@/Components/Patient/Medications/form/MedicationFormDialogFooter.vue';
 import type {
     MedicationCreateFormWithErrors,
@@ -14,6 +14,7 @@ import MedicationScheduleDurationStep from '@/Components/Patient/Medications/ste
 import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
 import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 
 const props = defineProps<{
     title: string;
@@ -48,6 +49,15 @@ const {
 
 const showWizardProgress = computed(
     () => !props.startAtSummary || currentStep.value !== 7,
+);
+
+const isWizardOpen = ref(true);
+const progressLabelRef = ref<HTMLElement | null>(null);
+
+const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
+    currentStep,
+    isWizardOpen,
+    { progressLabelRef },
 );
 
 watch(
@@ -85,47 +95,53 @@ watch(
                 novalidate
                 @submit.prevent="handleSubmit"
             >
-                <p v-if="showWizardProgress" class="text-text-muted text-sm">
+                <p
+                    v-if="showWizardProgress"
+                    ref="progressLabelRef"
+                    class="text-text-muted text-sm"
+                >
                     {{ medicationProgressLabel }}
                 </p>
 
-                <MedicationDetailsStep
-                    v-if="currentStep === 1"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                />
-                <MedicationScheduleMealsAndFrequencyStep
-                    v-else-if="currentStep === 2"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                />
-                <MedicationScheduleTimesPerDayStep
-                    v-else-if="currentStep === 3"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                />
-                <MedicationScheduleDoseTimesStep
-                    v-else-if="currentStep === 4"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                />
-                <MedicationScheduleDurationStep
-                    v-else-if="currentStep === 5"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                />
-                <MedicationNoteStep
-                    v-else-if="currentStep === 6"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                    show-stock-fields
-                />
-                <MedicationCreateSummaryStep
-                    v-else-if="currentStep === 7"
-                    :form="form"
-                    :id-prefix="idPrefix"
-                    :go-to-wizard-step="goToMedicationWizardStepFromSummary"
-                />
+                <div ref="wizardStepPanelRef" class="flex min-w-0 flex-col gap-6">
+                    <MedicationDetailsStep
+                        v-if="currentStep === 1"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                    />
+                    <MedicationScheduleMealsAndFrequencyStep
+                        v-else-if="currentStep === 2"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                    />
+                    <MedicationScheduleTimesPerDayStep
+                        v-else-if="currentStep === 3"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                    />
+                    <MedicationScheduleDoseTimesStep
+                        v-else-if="currentStep === 4"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                    />
+                    <MedicationScheduleDurationStep
+                        v-else-if="currentStep === 5"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                    />
+                    <MedicationNoteStep
+                        v-else-if="currentStep === 6"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                        show-stock-fields
+                    />
+                    <MedicationCreateSummaryStep
+                        v-else-if="currentStep === 7"
+                        :form="form"
+                        :id-prefix="idPrefix"
+                        :go-to-wizard-step="goToMedicationWizardStepFromSummary"
+                    />
+                </div>
 
                 <MedicationFormDialogFooter
                     :current-step="currentStep"
