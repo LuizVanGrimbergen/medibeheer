@@ -45,7 +45,7 @@ const verificationLinkSentMessage = computed(() =>
                 :href="route('logout')"
                 method="post"
                 as="button"
-                class="inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-xl bg-primary px-8 text-xl font-semibold text-white transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-focus/20"
+                class="bg-primary focus:ring-focus/20 inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-xl px-8 text-xl font-semibold text-white transition hover:opacity-90 focus:ring-2 focus:outline-none"
             >
                 {{ t('auth.verifyEmail.logoutAction') }}
             </Link>

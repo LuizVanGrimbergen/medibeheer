@@ -37,7 +37,10 @@ const hasPatients = computed(() => props.patients.length > 0);
 const hasSearchQuery = computed(() => normalizedSearchQuery.value !== '');
 
 const showNoResults = computed(
-    () => hasPatients.value && hasSearchQuery.value && filteredPatients.value.length === 0,
+    () =>
+        hasPatients.value &&
+        hasSearchQuery.value &&
+        filteredPatients.value.length === 0,
 );
 
 const collapsedSummary = computed((): string => {
@@ -82,24 +85,22 @@ function unlinkPatient(patient: LinkedPatient): void {
             :clear-label="t('doctor.patients.searchClear')"
         />
 
-        <p
-            v-if="!hasPatients"
-            class="text-sm leading-relaxed text-text-muted"
-        >
+        <p v-if="!hasPatients" class="text-text-muted text-sm leading-relaxed">
             {{ t('doctor.patients.empty') }}
         </p>
 
         <p
             v-else-if="showNoResults"
-            class="text-sm leading-relaxed text-text-muted"
+            class="text-text-muted text-sm leading-relaxed"
         >
-            {{ t('doctor.patients.searchNoResults', { query: searchQuery.trim() }) }}
+            {{
+                t('doctor.patients.searchNoResults', {
+                    query: searchQuery.trim(),
+                })
+            }}
         </p>
 
-        <div
-            v-else
-            class="flex flex-col gap-3 md:gap-2.5"
-        >
+        <div v-else class="flex flex-col gap-3 md:gap-2.5">
             <PatientFamilyCareTeamRowItem
                 v-for="patient in filteredPatients"
                 :key="patient.public_id"
@@ -108,7 +109,9 @@ function unlinkPatient(patient: LinkedPatient): void {
                 :action-label="t('doctor.patients.unlink')"
                 :confirm-title="t('doctor.patients.unlinkConfirmTitle')"
                 :confirm-description="
-                    t('doctor.patients.unlinkConfirmMessage', { name: patient.name })
+                    t('doctor.patients.unlinkConfirmMessage', {
+                        name: patient.name,
+                    })
                 "
                 :confirm-label="t('doctor.patients.unlinkConfirmAction')"
                 :cancel-label="t('doctor.patients.cancel')"

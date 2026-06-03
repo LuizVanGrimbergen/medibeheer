@@ -5,7 +5,11 @@ export function formatInventoryVacationDateLabel(iso: string): string {
         return iso;
     }
 
-    const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+    const date = new Date(
+        Number(match[1]),
+        Number(match[2]) - 1,
+        Number(match[3]),
+    );
 
     return new Intl.DateTimeFormat('nl-NL', {
         day: 'numeric',

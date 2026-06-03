@@ -38,15 +38,20 @@ function cancel(): void {
         <FamilyPageShell
             :title="t('family.medicationPlans.addItemTitle')"
             :family="page.props.family"
-            :show-active-patient="page.props.family?.has_linked_patient ?? false"
+            :show-active-patient="
+                page.props.family?.has_linked_patient ?? false
+            "
         >
             <div class="flex flex-col gap-4">
-                <Button
-                    as-child
-                    variant="ghost"
-                    class="w-fit px-0"
-                >
-                    <Link :href="route('family.medication-plans.edit', props.proposal_id)">
+                <Button as-child variant="ghost" class="w-fit px-0">
+                    <Link
+                        :href="
+                            route(
+                                'family.medication-plans.edit',
+                                props.proposal_id,
+                            )
+                        "
+                    >
                         {{ t('family.medicationPlans.backToEdit') }}
                     </Link>
                 </Button>

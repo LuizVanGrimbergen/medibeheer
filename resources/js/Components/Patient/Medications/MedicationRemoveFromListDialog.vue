@@ -26,11 +26,11 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <Dialog
-        :open="props.open"
-        @update:open="emit('update:open', $event)"
-    >
-        <DialogContent @pointer-down-outside="emit('cancel')" @escape-key-down="emit('cancel')">
+    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
+        <DialogContent
+            @pointer-down-outside="emit('cancel')"
+            @escape-key-down="emit('cancel')"
+        >
             <DialogHeader>
                 <DialogTitle>
                     {{ t('patient.medications.deleteConfirm.title') }}

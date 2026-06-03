@@ -3,8 +3,7 @@ export default {
     metaDescription:
         'Overzicht van de vervaldatums van uw medicatievoorschriften in Medibeheer.',
     listHeading: 'Uw voorschriften per medicatie',
-    empty:
-        'U heeft nog geen voorschriften toegevoegd. Tik op “Voorschrift toevoegen” om te beginnen.',
+    empty: 'U heeft nog geen voorschriften toegevoegd. Tik op “Voorschrift toevoegen” om te beginnen.',
     emptyMedications:
         'U heeft nog geen medicaties. Voeg eerst medicatie toe om voorschriften te kunnen registreren.',
     prescriptionExpiryMissing: 'Nog geen vervaldatum ingevuld',
@@ -26,7 +25,8 @@ export default {
     medicationRequired: 'Kies een medicatie.',
     expiryDatesRequired: 'Vul voor elk voorschrift een vervaldatum in.',
     expiryDateLabel: 'Vervaldatum voorschrift {number}',
-    expiryDateLastPrescriptionLabel: 'Vervaldatum laatste voorschrift ({number})',
+    expiryDateLastPrescriptionLabel:
+        'Vervaldatum laatste voorschrift ({number})',
     lastPrescriptionAppointmentTag: 'Laatste voorschrift',
     expiredBadge: 'Voorschrift verlopen',
     expiryCriticalAlertLabel: 'Dringend vernieuwen',
@@ -47,7 +47,8 @@ export default {
     pickupStatus: {
         markButton: 'Opgehaald bij de apotheek',
         markButtonNumbered: 'Voorschrift {number} opgehaald bij de apotheek',
-        markButtonAriaLabel: 'Bevestigen: voorschrift opgehaald bij de apotheek',
+        markButtonAriaLabel:
+            'Bevestigen: voorschrift opgehaald bij de apotheek',
         markButtonAriaLabelNumbered:
             'Bevestigen: voorschrift {number} opgehaald bij de apotheek',
         pickedUpBadge: 'Opgehaald',

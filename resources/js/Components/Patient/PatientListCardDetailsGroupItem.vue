@@ -19,10 +19,7 @@ const props = withDefaults(
 
 <template>
     <div class="flex gap-4 sm:gap-5">
-        <div
-            v-if="$slots.icon"
-            :class="patientPageCardDetailIconWrapperClass"
-        >
+        <div v-if="$slots.icon" :class="patientPageCardDetailIconWrapperClass">
             <slot name="icon" />
         </div>
         <div class="min-w-0 flex-1 space-y-1.5">
@@ -30,10 +27,7 @@ const props = withDefaults(
                 {{ props.label }}
             </p>
             <slot v-if="props.rawValue" />
-            <p
-                v-else
-                :class="patientPageCardDetailValueClass"
-            >
+            <p v-else :class="patientPageCardDetailValueClass">
                 <slot />
             </p>
         </div>

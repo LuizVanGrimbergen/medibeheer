@@ -1,11 +1,8 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { watch } from 'vue';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import {
-    medicationPlanProposalInitialToFormState
-    
-} from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
-import type {MedicationPlanProposalFormInitial} from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
+import type { MedicationPlanProposalFormInitial } from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
+import { medicationPlanProposalInitialToFormState } from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
 import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
@@ -17,7 +14,9 @@ function attachMedicationScheduleTimeSlotWatcher(
     watch(
         () => form.schedule.times_per_day,
         () => {
-            const count = parseMedicationTimesPerDayCount(form.schedule.times_per_day);
+            const count = parseMedicationTimesPerDayCount(
+                form.schedule.times_per_day,
+            );
 
             if (count === null) {
                 return;
@@ -46,8 +45,10 @@ function attachMedicationScheduleTimeSlotWatcher(
             if (syncedSnoozeSlots.length < count) {
                 form.schedule.snooze_time_slots = [
                     ...syncedSnoozeSlots,
-                    ...Array.from({ length: count - syncedSnoozeSlots.length }, () =>
-                        String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
+                    ...Array.from(
+                        { length: count - syncedSnoozeSlots.length },
+                        () =>
+                            String(MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES),
                     ),
                 ];
 
@@ -55,7 +56,10 @@ function attachMedicationScheduleTimeSlotWatcher(
             }
 
             if (syncedSnoozeSlots.length > count) {
-                form.schedule.snooze_time_slots = syncedSnoozeSlots.slice(0, count);
+                form.schedule.snooze_time_slots = syncedSnoozeSlots.slice(
+                    0,
+                    count,
+                );
             }
         },
     );
@@ -96,7 +100,9 @@ export function useFamilyMedicationPlanProposalFormPage(
     options: UseFamilyMedicationPlanProposalFormPageOptions,
 ) {
     const defaults =
-        options.mode !== 'create' && options.initial !== null && options.initial !== undefined
+        options.mode !== 'create' &&
+        options.initial !== null &&
+        options.initial !== undefined
             ? medicationPlanProposalInitialToFormState(options.initial)
             : blankMedicationCreateForm();
 
@@ -108,7 +114,9 @@ export function useFamilyMedicationPlanProposalFormPage(
         const payload = medicationCreateFormStateToRequestPayload(form.data());
 
         if (options.mode === 'create') {
-            form.transform(() => payload).post(route('family.medication-plans.store'));
+            form.transform(() => payload).post(
+                route('family.medication-plans.store'),
+            );
 
             return;
         }
@@ -119,12 +127,18 @@ export function useFamilyMedicationPlanProposalFormPage(
 
         if (options.mode === 'addItem') {
             form.transform(() => payload).post(
-                route('family.medication-plans.items.store', options.proposalId),
+                route(
+                    'family.medication-plans.items.store',
+                    options.proposalId,
+                ),
                 {
                     onSuccess: () => {
                         if (submitOptions?.thenAddAnother) {
                             router.visit(
-                                route('family.medication-plans.items.create', options.proposalId),
+                                route(
+                                    'family.medication-plans.items.create',
+                                    options.proposalId,
+                                ),
                             );
                         }
                     },
@@ -134,7 +148,10 @@ export function useFamilyMedicationPlanProposalFormPage(
             return;
         }
 
-        const updateUrl = route('family.medication-plans.update', options.proposalId);
+        const updateUrl = route(
+            'family.medication-plans.update',
+            options.proposalId,
+        );
 
         form.transform(() => ({
             ...payload,
@@ -145,7 +162,12 @@ export function useFamilyMedicationPlanProposalFormPage(
                     return;
                 }
 
-                router.visit(route('family.medication-plans.items.create', options.proposalId));
+                router.visit(
+                    route(
+                        'family.medication-plans.items.create',
+                        options.proposalId,
+                    ),
+                );
             },
         });
     }

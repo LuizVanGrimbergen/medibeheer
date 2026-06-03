@@ -37,13 +37,12 @@ function markPickedUp(): void {
         size="lg"
         :disabled="disabled"
         :class="markButtonClass"
-        :aria-label="t('patient.prescriptions.pickupStatus.markButtonAriaLabel')"
+        :aria-label="
+            t('patient.prescriptions.pickupStatus.markButtonAriaLabel')
+        "
         @click="markPickedUp"
     >
-        <PackageCheck
-            class="size-6 shrink-0"
-            aria-hidden="true"
-        />
+        <PackageCheck class="size-6 shrink-0" aria-hidden="true" />
         {{ t('patient.prescriptions.pickupStatus.markButton') }}
     </Button>
 </template>

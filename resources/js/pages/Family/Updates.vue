@@ -21,9 +21,13 @@ const props = defineProps<
 
 const { t } = useI18n();
 
-const periodToggleValue = computed((): string => String(props.updates_period_days));
+const periodToggleValue = computed((): string =>
+    String(props.updates_period_days),
+);
 
-const activePatientId = computed((): number | null => props.family.active_patient_id);
+const activePatientId = computed(
+    (): number | null => props.family.active_patient_id,
+);
 
 const hasCheckins = computed((): boolean => props.updates_checkins.length > 0);
 
@@ -83,24 +87,23 @@ function onPeriodToggleUpdate(next: string): void {
 
             <p
                 v-if="!props.family.has_linked_patient"
-                class="max-w-prose text-sm leading-relaxed text-text-muted"
+                class="text-text-muted max-w-prose text-sm leading-relaxed"
             >
                 {{ t('family.updates.notLinked') }}
             </p>
 
             <p
                 v-else-if="!hasUpdates"
-                class="max-w-prose text-sm leading-relaxed text-text-muted"
+                class="text-text-muted max-w-prose text-sm leading-relaxed"
             >
                 {{ t('family.updates.emptyInPeriod') }}
             </p>
 
             <template v-else>
-                <section
-                    v-if="hasCheckins"
-                    class="space-y-4"
-                >
-                    <h2 class="text-lg font-semibold text-text-heading md:text-base">
+                <section v-if="hasCheckins" class="space-y-4">
+                    <h2
+                        class="text-text-heading text-lg font-semibold md:text-base"
+                    >
                         {{ t('family.updates.wellbeingHeading') }}
                     </h2>
 
@@ -111,11 +114,10 @@ function onPeriodToggleUpdate(next: string): void {
                     />
                 </section>
 
-                <section
-                    v-if="hasMedicationIntakes"
-                    class="space-y-4"
-                >
-                    <h2 class="text-lg font-semibold text-text-heading md:text-base">
+                <section v-if="hasMedicationIntakes" class="space-y-4">
+                    <h2
+                        class="text-text-heading text-lg font-semibold md:text-base"
+                    >
                         {{ t('family.updates.medicationsHeading') }}
                     </h2>
 

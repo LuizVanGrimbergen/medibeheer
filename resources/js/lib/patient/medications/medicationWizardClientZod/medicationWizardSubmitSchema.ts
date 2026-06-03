@@ -3,12 +3,19 @@ import { z } from 'zod';
 import { medicationWizardDetailsSchema } from './medicationDetailsClientSchema';
 import { medicationWizardScheduleSliceSchema } from './medicationScheduleClientSchema';
 import { medicationWizardStepValidation } from './wizardStepMessages';
-import { trimmedNonEmptyMax, trimmedPositiveIntegerMax } from './wizardStringFieldPatterns';
+import {
+    trimmedNonEmptyMax,
+    trimmedPositiveIntegerMax,
+} from './wizardStringFieldPatterns';
 
 export const medicationWizardCreateFormClientSchemaFinal = z.intersection(
     medicationWizardDetailsSchema,
     z.object({
-        current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
+        current_stock: trimmedNonEmptyMax(
+            500,
+            'stockCurrentRequired',
+            'stockCurrentMax',
+        ),
         stock_pieces_per_package: trimmedPositiveIntegerMax(
             9999,
             'stockPiecesPerPackageRequired',

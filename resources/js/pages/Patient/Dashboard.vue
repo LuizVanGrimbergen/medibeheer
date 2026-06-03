@@ -80,10 +80,17 @@ watch(documentVisibility, (state) => {
     maybeReloadWhenCalendarDayAdvanced();
 
     router.reload({
-        only: ['today_checkin', 'today_medication_intakes', 'pending_push_medication_mark'],
+        only: [
+            'today_checkin',
+            'today_medication_intakes',
+            'pending_push_medication_mark',
+        ],
         onSuccess: (reloadedPage) => {
             redirectToPushSuccessIfPending(
-                reloadedPage.props.pending_push_medication_mark as string | null | undefined,
+                reloadedPage.props.pending_push_medication_mark as
+                    | string
+                    | null
+                    | undefined,
             );
         },
     });
@@ -106,7 +113,9 @@ onMounted(() => {
     redirectToPushSuccessIfPending(props.pending_push_medication_mark);
 
     if ('BroadcastChannel' in globalThis) {
-        pushMarkBroadcastChannel = new BroadcastChannel('medibeheer-medication-push-mark');
+        pushMarkBroadcastChannel = new BroadcastChannel(
+            'medibeheer-medication-push-mark',
+        );
         pushMarkBroadcastChannel.onmessage = () => {
             router.visit(PUSH_MARK_SUCCESS_ROUTE, { replace: true });
         };
@@ -132,7 +141,9 @@ onMounted(() => {
         router.reload({
             only: ['pending_push_medication_mark'],
             onSuccess: (reloadedPage) => {
-                const name = reloadedPage.props.pending_push_medication_mark as string | null;
+                const name = reloadedPage.props.pending_push_medication_mark as
+                    | string
+                    | null;
 
                 if (name === null) {
                     return;
@@ -195,12 +206,12 @@ const dailyCheckinEncouragementFlash = computed((): string | null => {
 
             <Card
                 v-if="isTodayCheckinLoading"
-                class="animate-pulse rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                class="border-border/80 bg-surface text-text animate-pulse rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                 aria-busy="true"
             >
                 <CardContent class="space-y-4 p-5 sm:p-6 md:p-7">
-                    <div class="h-7 w-2/3 max-w-xs rounded-xl bg-surface-2" />
-                    <div class="h-24 rounded-2xl bg-surface-2" />
+                    <div class="bg-surface-2 h-7 w-2/3 max-w-xs rounded-xl" />
+                    <div class="bg-surface-2 h-24 rounded-2xl" />
                 </CardContent>
             </Card>
 
@@ -217,7 +228,9 @@ const dailyCheckinEncouragementFlash = computed((): string | null => {
 
             <PatientMedicationReminderPrompt />
 
-            <TodayMedicationIntakesSection :slots="props.today_medication_intakes" />
+            <TodayMedicationIntakesSection
+                :slots="props.today_medication_intakes"
+            />
         </PatientPageShell>
     </PatientLayout>
 </template>

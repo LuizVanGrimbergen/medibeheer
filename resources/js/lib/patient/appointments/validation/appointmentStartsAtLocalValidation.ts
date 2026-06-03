@@ -9,7 +9,10 @@ export function localCalendarDateIsoToday(): string {
     return `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
 }
 
-export function parseLocalAppointmentDateTime(dateStr: string, timeStr: string): Date | null {
+export function parseLocalAppointmentDateTime(
+    dateStr: string,
+    timeStr: string,
+): Date | null {
     const dateMatch = LOCAL_DATE_ISO_RE.exec(dateStr.trim());
 
     if (dateMatch === null) {
@@ -29,14 +32,14 @@ export function parseLocalAppointmentDateTime(dateStr: string, timeStr: string):
     const minute = Number(timeMatch[2]);
 
     if (
-        month < 1
-        || month > 12
-        || day < 1
-        || day > 31
-        || hour < 0
-        || hour > 23
-        || minute < 0
-        || minute > 59
+        month < 1 ||
+        month > 12 ||
+        day < 1 ||
+        day > 31 ||
+        hour < 0 ||
+        hour > 23 ||
+        minute < 0 ||
+        minute > 59
     ) {
         return null;
     }
@@ -44,11 +47,11 @@ export function parseLocalAppointmentDateTime(dateStr: string, timeStr: string):
     const candidate = new Date(year, month - 1, day, hour, minute, 0);
 
     if (
-        candidate.getFullYear() !== year
-        || candidate.getMonth() !== month - 1
-        || candidate.getDate() !== day
-        || candidate.getHours() !== hour
-        || candidate.getMinutes() !== minute
+        candidate.getFullYear() !== year ||
+        candidate.getMonth() !== month - 1 ||
+        candidate.getDate() !== day ||
+        candidate.getHours() !== hour ||
+        candidate.getMinutes() !== minute
     ) {
         return null;
     }

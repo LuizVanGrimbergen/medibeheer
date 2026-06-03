@@ -2,7 +2,11 @@ import { z } from 'zod';
 
 import { medicationWizardStepValidation } from './wizardStepMessages';
 
-export function trimmedNonEmptyMax(maxLen: number, requiredKey: string, maxKey: string) {
+export function trimmedNonEmptyMax(
+    maxLen: number,
+    requiredKey: string,
+    maxKey: string,
+) {
     return z.string().superRefine((val, ctx) => {
         const trimmed = val.trim();
 

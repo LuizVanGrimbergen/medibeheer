@@ -15,9 +15,9 @@ export function formatPrescriptionExpiryDateLabel(
     const date = new Date(year, month - 1, day);
 
     if (
-        date.getFullYear() !== year
-        || date.getMonth() !== month - 1
-        || date.getDate() !== day
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
     ) {
         return trimmed;
     }

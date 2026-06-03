@@ -6,8 +6,8 @@ import type {
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { medicationWizardDetailsSchema } from './medicationDetailsClientSchema';
 import {
-    medicationWizardDurationFieldsSchema,
     medicationWizardDoseTimesFieldsSchema,
+    medicationWizardDurationFieldsSchema,
     medicationWizardScheduleTimingFieldsSchema,
     medicationWizardTimesPerDayOnlySchema,
 } from './medicationScheduleClientSchema';
@@ -24,7 +24,10 @@ import type {
     MedicationWizardSubmitClientValidationResult,
 } from './types';
 import { medicationWizardStepValidation } from './wizardStepMessages';
-import { trimmedNonEmptyMax, trimmedPositiveIntegerMax } from './wizardStringFieldPatterns';
+import {
+    trimmedNonEmptyMax,
+    trimmedPositiveIntegerMax,
+} from './wizardStringFieldPatterns';
 
 export function tryMedicationWizardDetailsStep(
     data: Pick<
@@ -44,7 +47,12 @@ export function tryMedicationWizardDetailsStep(
         return { ok: true };
     }
 
-    return { ok: false, fieldErrors: medicationWizardZodIssuesToFlatFieldErrors(parsed.error.issues) };
+    return {
+        ok: false,
+        fieldErrors: medicationWizardZodIssuesToFlatFieldErrors(
+            parsed.error.issues,
+        ),
+    };
 }
 
 export function tryMedicationWizardScheduleTimingStep(
@@ -145,7 +153,11 @@ export function tryMedicationWizardNoteStockStep(
                     });
                 }
             }),
-            current_stock: trimmedNonEmptyMax(500, 'stockCurrentRequired', 'stockCurrentMax'),
+            current_stock: trimmedNonEmptyMax(
+                500,
+                'stockCurrentRequired',
+                'stockCurrentMax',
+            ),
             stock_pieces_per_package: trimmedPositiveIntegerMax(
                 9999,
                 'stockPiecesPerPackageRequired',
@@ -159,7 +171,12 @@ export function tryMedicationWizardNoteStockStep(
         return { ok: true };
     }
 
-    return { ok: false, fieldErrors: medicationWizardZodIssuesToFlatFieldErrors(parsed.error.issues) };
+    return {
+        ok: false,
+        fieldErrors: medicationWizardZodIssuesToFlatFieldErrors(
+            parsed.error.issues,
+        ),
+    };
 }
 
 export function evaluateMedicationWizardSubmitClientValidation(
@@ -173,7 +190,9 @@ export function evaluateMedicationWizardSubmitClientValidation(
         return { ok: true };
     }
 
-    const mergedFieldErrors = medicationWizardZodIssuesToFlatFieldErrors(parsed.error.issues);
+    const mergedFieldErrors = medicationWizardZodIssuesToFlatFieldErrors(
+        parsed.error.issues,
+    );
 
     if (!hasNonEmptyFieldMessage(mergedFieldErrors)) {
         return { ok: true };
@@ -182,6 +201,8 @@ export function evaluateMedicationWizardSubmitClientValidation(
     return {
         ok: false,
         mergedFieldErrors,
-        step: medicationWizardStepAfterFullClientParseFailure(mergedFieldErrors),
+        step: medicationWizardStepAfterFullClientParseFailure(
+            mergedFieldErrors,
+        ),
     };
 }

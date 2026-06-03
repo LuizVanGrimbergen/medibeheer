@@ -5,7 +5,9 @@ import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/
 
 export type PatientAppointmentsPageProps = PatientAppointmentsScreenProps;
 
-export function usePatientAppointmentsPage(props: PatientAppointmentsScreenProps) {
+export function usePatientAppointmentsPage(
+    props: PatientAppointmentsScreenProps,
+) {
     const formDialogs = usePatientAppointmentFormDialogs(props);
     const remoteActions = usePatientAppointmentRemoteActions();
 

@@ -50,7 +50,9 @@ const showCustomIntakeFrequencySelect = computed(
         isCustomIntakeFrequencyInterval(form.schedule.intake_frequency),
 );
 
-function setIntakeFrequencyPreset(frequency: MedicationIntakeFrequencyValue): void {
+function setIntakeFrequencyPreset(
+    frequency: MedicationIntakeFrequencyValue,
+): void {
     prefersCustomIntakeFrequency.value = false;
     form.schedule.intake_frequency = frequency;
 
@@ -100,7 +102,9 @@ function toggleIsoWeekday(day: (typeof ISO_WEEKDAY_NUMBERS)[number]): void {
 
 const intakeFrequencyCustomDaysSelect = computed({
     get(): string {
-        const dayCount = parseEveryNDaysFrequency(form.schedule.intake_frequency);
+        const dayCount = parseEveryNDaysFrequency(
+            form.schedule.intake_frequency,
+        );
 
         if (
             dayCount === null ||
@@ -137,18 +141,19 @@ const intakeFrequencyCustomDaysSelect = computed({
 <template>
     <div class="space-y-3 md:space-y-3">
         <Card
-            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
+            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
         >
             <CardContent class="p-0">
                 <div
-                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
+                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
                 >
                     <div>
                         <p
                             :id="`${idPrefix}-schedule-meal-timing-label`"
                             :class="cn(patientFormLabelClass, 'text-xl')"
                         >
-                            {{ t('patient.medications.fields.mealTiming') }} <span class="text-danger">*</span>
+                            {{ t('patient.medications.fields.mealTiming') }}
+                            <span class="text-danger">*</span>
                         </p>
                         <div
                             :id="`${idPrefix}-schedule-meal-timing`"
@@ -156,7 +161,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                                 cn(
                                     'mt-2 touch-manipulation',
                                     form.errors['schedule.meal_timing']
-                                        ? 'rounded-2xl p-0.5 ring-2 ring-danger/25'
+                                        ? 'ring-danger/25 rounded-2xl p-0.5 ring-2'
                                         : null,
                                 )
                             "
@@ -165,7 +170,9 @@ const intakeFrequencyCustomDaysSelect = computed({
                                 class="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
                                 role="radiogroup"
                                 :aria-labelledby="`${idPrefix}-schedule-meal-timing-label`"
-                                :aria-invalid="Boolean(form.errors['schedule.meal_timing'])"
+                                :aria-invalid="
+                                    Boolean(form.errors['schedule.meal_timing'])
+                                "
                                 :aria-describedby="
                                     form.errors['schedule.meal_timing']
                                         ? `${idPrefix}-schedule-meal-timing-error`
@@ -177,16 +184,22 @@ const intakeFrequencyCustomDaysSelect = computed({
                                     :id="`${idPrefix}-schedule-meal-timing-option-${timing}`"
                                     :key="timing"
                                     type="button"
-                                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                                    class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                                     :class="
                                         form.schedule.meal_timing === timing
                                             ? 'border-primary bg-primary/10 text-text-heading'
                                             : 'border-border bg-surface text-text hover:bg-surface-hover'
                                     "
-                                    :aria-pressed="form.schedule.meal_timing === timing"
+                                    :aria-pressed="
+                                        form.schedule.meal_timing === timing
+                                    "
                                     @click="form.schedule.meal_timing = timing"
                                 >
-                                    {{ t(`patient.medications.mealTimings.${timing}`) }}
+                                    {{
+                                        t(
+                                            `patient.medications.mealTimings.${timing}`,
+                                        )
+                                    }}
                                 </button>
                             </div>
                         </div>
@@ -200,26 +213,29 @@ const intakeFrequencyCustomDaysSelect = computed({
         </Card>
 
         <Card
-            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] md:rounded-3xl"
+            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
         >
             <CardContent class="p-0">
                 <div
-                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
+                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
                 >
                     <div>
                         <p
                             :id="`${idPrefix}-schedule-intake-frequency-label`"
                             :class="cn(patientFormLabelClass, 'text-xl')"
                         >
-                            {{ t('patient.medications.fields.intakeFrequency') }} <span class="text-danger">*</span>
+                            {{
+                                t('patient.medications.fields.intakeFrequency')
+                            }}
+                            <span class="text-danger">*</span>
                         </p>
                         <div
                             :id="`${idPrefix}-schedule-intake-frequency`"
                             :class="
                                 cn(
-                                    'mt-2 space-y-4 touch-manipulation',
+                                    'mt-2 touch-manipulation space-y-4',
                                     hasIntakeFrequencyBlockError
-                                        ? 'rounded-2xl p-0.5 ring-2 ring-danger/25'
+                                        ? 'ring-danger/25 rounded-2xl p-0.5 ring-2'
                                         : null,
                                 )
                             "
@@ -247,34 +263,47 @@ const intakeFrequencyCustomDaysSelect = computed({
                                     :id="`${idPrefix}-schedule-intake-frequency-option-${frequency}`"
                                     :key="frequency"
                                     type="button"
-                                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                                    class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                                     :class="
                                         !showCustomIntakeFrequencySelect &&
-                                            form.schedule.intake_frequency === frequency
+                                        form.schedule.intake_frequency ===
+                                            frequency
                                             ? 'border-primary bg-primary/10 text-text-heading'
                                             : 'border-border bg-surface text-text hover:bg-surface-hover'
                                     "
                                     :aria-pressed="
                                         !showCustomIntakeFrequencySelect &&
-                                            form.schedule.intake_frequency === frequency
+                                        form.schedule.intake_frequency ===
+                                            frequency
                                     "
                                     @click="setIntakeFrequencyPreset(frequency)"
                                 >
-                                    {{ medicationIntakeFrequencyLabel(t, frequency) }}
+                                    {{
+                                        medicationIntakeFrequencyLabel(
+                                            t,
+                                            frequency,
+                                        )
+                                    }}
                                 </button>
                                 <button
                                     :id="`${idPrefix}-schedule-intake-frequency-custom`"
                                     type="button"
-                                    class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                                    class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                                     :class="
                                         showCustomIntakeFrequencySelect
                                             ? 'border-primary bg-primary/10 text-text-heading'
                                             : 'border-border bg-surface text-text hover:bg-surface-hover'
                                     "
-                                    :aria-pressed="showCustomIntakeFrequencySelect"
+                                    :aria-pressed="
+                                        showCustomIntakeFrequencySelect
+                                    "
                                     @click="selectCustomIntakeFrequency"
                                 >
-                                    {{ t('patient.medications.intakePeriodPresets.custom') }}
+                                    {{
+                                        t(
+                                            'patient.medications.intakePeriodPresets.custom',
+                                        )
+                                    }}
                                 </button>
                             </div>
                             <select
@@ -283,7 +312,9 @@ const intakeFrequencyCustomDaysSelect = computed({
                                 v-model="intakeFrequencyCustomDaysSelect"
                                 class="w-full text-base md:text-lg"
                                 :aria-label="
-                                    t('patient.medications.intakeFrequencies.customIntervalSelectAriaLabel')
+                                    t(
+                                        'patient.medications.intakeFrequencies.customIntervalSelectAriaLabel',
+                                    )
                                 "
                                 :class="
                                     cn(
@@ -309,7 +340,11 @@ const intakeFrequencyCustomDaysSelect = computed({
                                 "
                             >
                                 <option disabled value="">
-                                    {{ t('patient.medications.intakeFrequencies.customIntervalPlaceholder') }}
+                                    {{
+                                        t(
+                                            'patient.medications.intakeFrequencies.customIntervalPlaceholder',
+                                        )
+                                    }}
                                 </option>
                                 <option
                                     v-for="dayCount in MEDICATION_INTAKE_FREQUENCY_CUSTOM_DAY_OPTIONS"
@@ -317,31 +352,49 @@ const intakeFrequencyCustomDaysSelect = computed({
                                     :value="String(dayCount)"
                                 >
                                     {{
-                                        t('patient.medications.intakeFrequencies.everyNDays', {
-                                            n: dayCount,
-                                        })
+                                        t(
+                                            'patient.medications.intakeFrequencies.everyNDays',
+                                            {
+                                                n: dayCount,
+                                            },
+                                        )
                                     }}
                                 </option>
                             </select>
                             <button
                                 :id="`${idPrefix}-schedule-intake-frequency-option-weekdays`"
                                 type="button"
-                                class="w-full min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 touch-manipulation md:min-h-[3.75rem] md:px-5 md:text-lg"
+                                class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 w-full touch-manipulation rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                                 :class="
-                                    form.schedule.intake_frequency === 'weekdays'
+                                    form.schedule.intake_frequency ===
+                                    'weekdays'
                                         ? 'border-primary bg-primary/10 text-text-heading'
                                         : 'border-border bg-surface text-text hover:bg-surface-hover'
                                 "
-                                :aria-pressed="form.schedule.intake_frequency === 'weekdays'"
+                                :aria-pressed="
+                                    form.schedule.intake_frequency ===
+                                    'weekdays'
+                                "
                                 @click="setIntakeFrequencyWeekdays()"
                             >
-                                {{ t('patient.medications.intakeFrequencies.weekdaysButton') }}
+                                {{
+                                    t(
+                                        'patient.medications.intakeFrequencies.weekdaysButton',
+                                    )
+                                }}
                             </button>
                             <fieldset
-                                v-if="form.schedule.intake_frequency === 'weekdays'"
+                                v-if="
+                                    form.schedule.intake_frequency ===
+                                    'weekdays'
+                                "
                                 :id="`${idPrefix}-schedule-intake-weekdays`"
                                 class="m-0 min-w-0 space-y-2 border-0 p-0"
-                                :aria-invalid="Boolean(form.errors['schedule.intake_weekdays'])"
+                                :aria-invalid="
+                                    Boolean(
+                                        form.errors['schedule.intake_weekdays'],
+                                    )
+                                "
                                 :aria-describedby="
                                     form.errors['schedule.intake_weekdays']
                                         ? `${idPrefix}-schedule-intake-weekdays-error`
@@ -350,26 +403,42 @@ const intakeFrequencyCustomDaysSelect = computed({
                             >
                                 <legend
                                     :id="`${idPrefix}-schedule-intake-weekdays-label`"
-                                    class="float-none w-full px-0 text-sm font-semibold leading-snug text-text-heading md:text-base"
+                                    class="text-text-heading float-none w-full px-0 text-sm leading-snug font-semibold md:text-base"
                                 >
-                                    {{ t('patient.medications.fields.intakeWeekdays') }}
+                                    {{
+                                        t(
+                                            'patient.medications.fields.intakeWeekdays',
+                                        )
+                                    }}
                                 </legend>
-                                <div class="flex flex-wrap gap-2 touch-manipulation">
+                                <div
+                                    class="flex touch-manipulation flex-wrap gap-2"
+                                >
                                     <button
                                         v-for="day in ISO_WEEKDAY_NUMBERS"
                                         :id="`${idPrefix}-schedule-intake-weekday-${day}`"
                                         :key="day"
                                         type="button"
-                                        class="min-h-12 min-w-[3.25rem] rounded-2xl border-2 px-3 text-base font-bold leading-none transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 touch-manipulation md:min-h-14 md:min-w-16 md:text-lg"
+                                        class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-12 min-w-[3.25rem] touch-manipulation rounded-2xl border-2 px-3 text-base leading-none font-bold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-14 md:min-w-16 md:text-lg"
                                         :class="
-                                            form.schedule.intake_weekdays.includes(day)
+                                            form.schedule.intake_weekdays.includes(
+                                                day,
+                                            )
                                                 ? 'border-primary bg-primary/10 text-text-heading'
                                                 : 'border-border bg-surface text-text hover:bg-surface-hover'
                                         "
-                                        :aria-pressed="form.schedule.intake_weekdays.includes(day)"
+                                        :aria-pressed="
+                                            form.schedule.intake_weekdays.includes(
+                                                day,
+                                            )
+                                        "
                                         @click="toggleIsoWeekday(day)"
                                     >
-                                        {{ t(`patient.medications.weekdayIso.${day}`) }}
+                                        {{
+                                            t(
+                                                `patient.medications.weekdayIso.${day}`,
+                                            )
+                                        }}
                                     </button>
                                 </div>
                             </fieldset>

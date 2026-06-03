@@ -18,21 +18,25 @@ export function usePatientPrescriptionCompleteActions() {
             return;
         }
 
-        router.patch(route('patient.prescriptions.update', prescriptionId), payload, {
-            preserveScroll: true,
-            onStart: () => {
-                prescriptionIdsAwaitingResponse.value = [
-                    ...prescriptionIdsAwaitingResponse.value,
-                    prescriptionId,
-                ];
+        router.patch(
+            route('patient.prescriptions.update', prescriptionId),
+            payload,
+            {
+                preserveScroll: true,
+                onStart: () => {
+                    prescriptionIdsAwaitingResponse.value = [
+                        ...prescriptionIdsAwaitingResponse.value,
+                        prescriptionId,
+                    ];
+                },
+                onFinish: () => {
+                    prescriptionIdsAwaitingResponse.value =
+                        prescriptionIdsAwaitingResponse.value.filter(
+                            (id) => id !== prescriptionId,
+                        );
+                },
             },
-            onFinish: () => {
-                prescriptionIdsAwaitingResponse.value =
-                    prescriptionIdsAwaitingResponse.value.filter(
-                        (id) => id !== prescriptionId,
-                    );
-            },
-        });
+        );
     }
 
     function updatePrescriptionPickupStatus(

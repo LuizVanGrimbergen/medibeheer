@@ -3,8 +3,7 @@ export default {
     metaDescription:
         'Overzicht van uw medicatievoorraad in Medibeheer. Zie hoeveel u nog heeft en plan vakantie.',
     listHeading: 'Uw voorraad per medicatie',
-    empty:
-        'U heeft nog geen medicaties. Voeg eerst medicaties toe om hier uw voorraad te zien.',
+    empty: 'U heeft nog geen medicaties. Voeg eerst medicaties toe om hier uw voorraad te zien.',
     stockMissing: 'Geen voorraadgegevens',
     lowStockBadge: 'Dringend bijbestellen',
     warningStockIconAria: 'Uw voorraad is bijna op.',
@@ -84,6 +83,7 @@ export default {
     vacationSkippedNote:
         '{count} medicatie(s) konden niet worden berekend (geen voorraad of inname onbekend).',
     vacationInvalidDates: 'Kies een geldige vertrek- en terugkomstdatum.',
-    vacationEndsBeforeStart: 'De terugkomstdatum moet op of na de vertrekdatum liggen.',
+    vacationEndsBeforeStart:
+        'De terugkomstdatum moet op of na de vertrekdatum liggen.',
     vacationLoading: 'Bezig met berekenen…',
 };

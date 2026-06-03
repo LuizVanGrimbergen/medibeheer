@@ -37,7 +37,7 @@ const homeHref = computed(() => {
 </script>
 
 <template>
-    <nav class="sticky top-0 z-100 border-b border-border bg-surface">
+    <nav class="border-border bg-surface sticky top-0 z-100 border-b">
         <div
             v-if="isDoctor"
             class="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-4 sm:px-6 lg:px-8"
@@ -52,7 +52,9 @@ const homeHref = computed(() => {
             <DoctorNavbarLinks class="justify-self-center" />
 
             <div class="flex items-center justify-end gap-5 justify-self-end">
-                <span class="hidden text-sm font-medium text-text-muted sm:inline">
+                <span
+                    class="text-text-muted hidden text-sm font-medium sm:inline"
+                >
                     {{ props.userName }}
                 </span>
 
@@ -73,15 +75,14 @@ const homeHref = computed(() => {
             v-else
             class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
         >
-            <Link
-                :href="homeHref"
-                class="transition hover:opacity-80"
-            >
+            <Link :href="homeHref" class="transition hover:opacity-80">
                 <AppLogo />
             </Link>
 
             <div class="flex items-center gap-5">
-                <span class="hidden text-sm font-medium text-text-muted sm:inline">
+                <span
+                    class="text-text-muted hidden text-sm font-medium sm:inline"
+                >
                     {{ props.userName }}
                 </span>
 

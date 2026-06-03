@@ -38,4 +38,3 @@ export function declineTransport(declineUrl: string | null): void {
 
     router.post(declineUrl, {}, { preserveScroll: true });
 }
-

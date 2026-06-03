@@ -63,14 +63,16 @@ const {
         <PatientPageShell :title="t('patient.medications.listHeading')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"
-                :has-active-medications="props.active_medications.meta.total > 0"
+                :has-active-medications="
+                    props.active_medications.meta.total > 0
+                "
                 @new-medication-click="createDialogOpen = true"
             />
 
             <section class="space-y-5">
                 <ul
                     v-if="props.active_medications.data.length > 0"
-                    class="flex min-w-0 w-full flex-col gap-5"
+                    class="flex w-full min-w-0 flex-col gap-5"
                 >
                     <li
                         v-for="medication in props.active_medications.data"
@@ -88,7 +90,7 @@ const {
                 <NumberedPagination
                     v-if="
                         props.active_medications.data.length > 0 &&
-                            props.active_medications.meta.last_page > 1
+                        props.active_medications.meta.last_page > 1
                     "
                     route-name="patient.medications"
                     :meta="props.active_medications.meta"
@@ -96,10 +98,10 @@ const {
 
                 <Card
                     v-if="props.active_medications.meta.total === 0"
-                    class="rounded-2xl border-2 border-dashed border-border bg-surface-2/70 text-text shadow-none"
+                    class="border-border bg-surface-2/70 text-text rounded-2xl border-2 border-dashed shadow-none"
                 >
                     <CardContent
-                        class="px-5 py-14 text-center text-lg leading-relaxed text-text-muted sm:px-8"
+                        class="text-text-muted px-5 py-14 text-center text-lg leading-relaxed sm:px-8"
                     >
                         {{ t('patient.medications.empty') }}
                     </CardContent>

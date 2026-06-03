@@ -30,7 +30,9 @@ const deleteUser = () => {
         onSuccess: () => closeModal(),
         onError: () => {
             nextTick(() => {
-                const passwordField = document.getElementById('delete-account-password');
+                const passwordField = document.getElementById(
+                    'delete-account-password',
+                );
                 passwordField?.focus();
             });
         },
@@ -51,19 +53,16 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-text">
+            <h2 class="text-text text-lg font-medium">
                 {{ t('profile.delete.title') }}
             </h2>
 
-            <p class="mt-1 text-sm text-text-muted">
+            <p class="text-text-muted mt-1 text-sm">
                 {{ t('profile.delete.description') }}
             </p>
         </header>
 
-        <Button
-            variant="destructive"
-            @click="confirmUserDeletion"
-        >
+        <Button variant="destructive" @click="confirmUserDeletion">
             {{ t('profile.delete.action') }}
         </Button>
 
@@ -91,11 +90,10 @@ const closeModal = () => {
                     @enter="deleteUser"
                 />
 
-                <DialogFooter class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                    <Button
-                        variant="outline"
-                        @click="closeModal"
-                    >
+                <DialogFooter
+                    class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"
+                >
+                    <Button variant="outline" @click="closeModal">
                         {{ t('profile.delete.cancel') }}
                     </Button>
 

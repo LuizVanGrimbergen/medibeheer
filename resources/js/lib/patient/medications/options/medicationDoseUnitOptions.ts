@@ -12,7 +12,10 @@ export const MEDICATION_DOSE_UNIT_OPTIONS: MedicationDoseUnitOption[] =
         labelKey: value,
     }));
 
-const DOSE_UNITS_HIDDEN_UNLESS_SELECTED = ['unit', 'drop'] as const satisfies readonly MedicationDoseUnitValue[];
+const DOSE_UNITS_HIDDEN_UNLESS_SELECTED = [
+    'unit',
+    'drop',
+] as const satisfies readonly MedicationDoseUnitValue[];
 
 export function medicationDoseUnitOptionsForSelect(
     currentDoseUnit: MedicationDoseUnitValue | '',

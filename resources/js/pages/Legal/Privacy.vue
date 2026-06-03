@@ -25,14 +25,11 @@ const sectionKeys = [
         meta-title-key="privacy.metaTitle"
         :policy-version="policyVersion"
     >
-        <section
-            v-for="key in sectionKeys"
-            :key="key"
-        >
-            <h2 class="text-xl font-semibold text-primary">
+        <section v-for="key in sectionKeys" :key="key">
+            <h2 class="text-primary text-xl font-semibold">
                 {{ t(`privacy.sections.${key}.title`) }}
             </h2>
-            <p class="mt-2 text-text-muted">
+            <p class="text-text-muted mt-2">
                 {{ t(`privacy.sections.${key}.body`) }}
             </p>
         </section>

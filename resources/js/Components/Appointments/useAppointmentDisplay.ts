@@ -19,7 +19,7 @@ export function resolveAppointmentDoctorTypeLabel(
 ): string {
     const key = `patient.appointments.doctorTypes.${type}`;
 
-    if (! te(key)) {
+    if (!te(key)) {
         return t('patient.appointments.doctorTypes.fallback');
     }
 
@@ -34,10 +34,8 @@ export function useAppointmentDisplay(): {
     const { t, te } = useI18n();
 
     return {
-        formatDateOnly: (iso: string) =>
-            dateOnlyDisplay.format(new Date(iso)),
-        formatTimeOnly: (iso: string) =>
-            timeOnlyDisplay.format(new Date(iso)),
+        formatDateOnly: (iso: string) => dateOnlyDisplay.format(new Date(iso)),
+        formatTimeOnly: (iso: string) => timeOnlyDisplay.format(new Date(iso)),
         doctorTypeLabel: (type: string) =>
             resolveAppointmentDoctorTypeLabel(t, te, type),
     };

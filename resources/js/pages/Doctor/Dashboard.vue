@@ -39,7 +39,9 @@ const hasPatientOverview = computed(() => props.patient_overview !== null);
         >
             <DoctorPatientSearch
                 :patients="props.patients"
-                :selected-patient-public-id="props.patient_overview?.selected_patient.public_id ?? null"
+                :selected-patient-public-id="
+                    props.patient_overview?.selected_patient.public_id ?? null
+                "
                 :autofocus="!hasPatientOverview"
             />
 

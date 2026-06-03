@@ -25,11 +25,11 @@ const form = useForm({
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-text">
+            <h2 class="text-text text-lg font-medium">
                 {{ t('profile.information.title') }}
             </h2>
 
-            <p class="mt-1 text-sm text-text-muted">
+            <p class="text-text-muted mt-1 text-sm">
                 {{ t('profile.information.description') }}
             </p>
         </header>
@@ -39,14 +39,17 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <Label for="name" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="name"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.information.nameLabel') }}
                 </Label>
 
                 <Input
                     id="name"
                     type="text"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                     v-model="form.name"
                     required
                     autofocus
@@ -57,14 +60,17 @@ const form = useForm({
             </div>
 
             <div>
-                <Label for="email" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="email"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.information.emailLabel') }}
                 </Label>
 
                 <Input
                     id="email"
                     type="email"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                     v-model="form.email"
                     required
                     autocomplete="username"
@@ -74,24 +80,30 @@ const form = useForm({
             </div>
 
             <div>
-                <Label for="current_password" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="current_password"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.password.currentPassword') }}
                 </Label>
 
                 <Input
                     id="current_password"
                     type="password"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                     v-model="form.current_password"
                     autocomplete="current-password"
                 />
 
-                <InputError class="mt-2" :message="form.errors.current_password" />
+                <InputError
+                    class="mt-2"
+                    :message="form.errors.current_password"
+                />
             </div>
 
             <div
                 v-if="props.mustVerifyEmail && user.email_verified_at === null"
-                class="space-y-1 text-sm text-text-muted"
+                class="text-text-muted space-y-1 text-sm"
             >
                 <p>{{ t('profile.information.emailUnverified') }}</p>
                 <Link
@@ -99,23 +111,20 @@ const form = useForm({
                     method="post"
                     as="button"
                     type="button"
-                    class="rounded-md font-medium text-primary hover:opacity-80"
+                    class="text-primary rounded-md font-medium hover:opacity-80"
                 >
                     {{ t('profile.information.resendVerification') }}
                 </Link>
                 <p
                     v-if="props.status === 'verification-link-sent'"
-                    class="font-medium text-success"
+                    class="text-success font-medium"
                 >
                     {{ t('profile.information.verificationSent') }}
                 </p>
             </div>
 
             <div class="flex items-center gap-4">
-                <Button
-                    type="submit"
-                    :disabled="form.processing"
-                >
+                <Button type="submit" :disabled="form.processing">
                     {{ t('profile.information.save') }}
                 </Button>
 
@@ -127,7 +136,7 @@ const form = useForm({
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-text-muted"
+                        class="text-text-muted text-sm"
                     >
                         {{ t('profile.information.saved') }}
                     </p>

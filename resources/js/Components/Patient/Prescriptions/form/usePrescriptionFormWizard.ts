@@ -1,12 +1,9 @@
-import { computed, ref, watch } from 'vue';
 import type { Ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
-import {
-    PRESCRIPTION_FORM_WIZARD_STEP_COUNT
-    
-} from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
-import type {PrescriptionFormWizardStep} from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
+import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
+import { PRESCRIPTION_FORM_WIZARD_STEP_COUNT } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
 
 const PRESCRIPTION_QUANTITY_MIN = 1;
 const PRESCRIPTION_QUANTITY_MAX = 24;
@@ -59,8 +56,8 @@ export function usePrescriptionFormWizard(options: {
 
             const hasExpiryFieldError = Object.keys(errors).some(
                 (key) =>
-                    key === 'prescription_expiry_dates'
-                    || key.startsWith('prescription_expiry_dates.'),
+                    key === 'prescription_expiry_dates' ||
+                    key.startsWith('prescription_expiry_dates.'),
             );
 
             if (hasExpiryFieldError) {
@@ -76,9 +73,9 @@ export function usePrescriptionFormWizard(options: {
         const parsedQuantity = clampPrescriptionQuantity(options.form.quantity);
 
         if (
-            !Number.isFinite(options.form.quantity)
-            || parsedQuantity < PRESCRIPTION_QUANTITY_MIN
-            || parsedQuantity > PRESCRIPTION_QUANTITY_MAX
+            !Number.isFinite(options.form.quantity) ||
+            parsedQuantity < PRESCRIPTION_QUANTITY_MIN ||
+            parsedQuantity > PRESCRIPTION_QUANTITY_MAX
         ) {
             options.quantityClientError.value =
                 'patient.prescriptions.quantityInvalid';

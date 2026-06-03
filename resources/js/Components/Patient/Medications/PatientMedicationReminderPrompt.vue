@@ -24,65 +24,90 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
 <template>
     <section
         v-if="shouldShowDashboardPrompt"
-        class="relative rounded-xl border border-border bg-surface p-4 shadow-sm sm:p-5"
+        class="border-border bg-surface relative rounded-xl border p-4 shadow-sm sm:p-5"
     >
         <Button
             type="button"
             variant="ghost"
             size="icon"
-            class="absolute top-3 right-3 size-10 shrink-0 text-text-muted hover:text-text"
-            :aria-label="t('patient.medicationReminders.dismissPromptAriaLabel')"
+            class="text-text-muted hover:text-text absolute top-3 right-3 size-10 shrink-0"
+            :aria-label="
+                t('patient.medicationReminders.dismissPromptAriaLabel')
+            "
             @click="dismissDashboardPrompt"
         >
-            <X
-                class="size-5"
-                aria-hidden="true"
-            />
+            <X class="size-5" aria-hidden="true" />
         </Button>
 
         <div class="flex items-start gap-3 pe-10">
             <component
                 :is="cardVariant === 'denied' ? BellOff : Bell"
-                class="mt-1 size-6 shrink-0 text-primary"
+                class="text-primary mt-1 size-6 shrink-0"
                 aria-hidden="true"
             />
 
             <div class="min-w-0 flex-1 space-y-4">
                 <div class="space-y-2">
-                    <h2 class="text-base font-semibold text-text-heading sm:text-lg">
+                    <h2
+                        class="text-text-heading text-base font-semibold sm:text-lg"
+                    >
                         {{ t('patient.medicationReminders.promptTitle') }}
                     </h2>
 
                     <p
                         v-if="cardVariant === 'missing_config'"
-                        class="text-base leading-relaxed text-text-muted"
+                        class="text-text-muted text-base leading-relaxed"
                     >
                         {{ t('patient.medicationReminders.missingConfig') }}
                     </p>
 
                     <p
                         v-else-if="cardVariant === 'denied'"
-                        class="text-base leading-relaxed text-text-muted"
+                        class="text-text-muted text-base leading-relaxed"
                     >
                         {{ t('patient.medicationReminders.deniedDescription') }}
                     </p>
 
                     <template v-else>
-                        <p class="text-base leading-relaxed text-text-muted">
-                            {{ t('patient.medicationReminders.promptDescription') }}
+                        <p class="text-text-muted text-base leading-relaxed">
+                            {{
+                                t(
+                                    'patient.medicationReminders.promptDescription',
+                                )
+                            }}
                         </p>
 
-                        <p class="text-base leading-relaxed text-text-muted">
-                            {{ t('patient.medicationReminders.installRequiredNote') }}
+                        <p class="text-text-muted text-base leading-relaxed">
+                            {{
+                                t(
+                                    'patient.medicationReminders.installRequiredNote',
+                                )
+                            }}
                         </p>
 
                         <ol
-                            class="list-decimal space-y-2 pl-6 text-base leading-relaxed text-text-muted"
-                            :aria-label="t('patient.medicationReminders.onboardingStepsAriaLabel')"
+                            class="text-text-muted list-decimal space-y-2 pl-6 text-base leading-relaxed"
+                            :aria-label="
+                                t(
+                                    'patient.medicationReminders.onboardingStepsAriaLabel',
+                                )
+                            "
                         >
-                            <li>{{ t('patient.medicationReminders.stepOpenNotification') }}</li>
-                            <li>{{ t('patient.medicationReminders.stepConfirm') }}</li>
-                            <li>{{ t('patient.medicationReminders.stepNoApp') }}</li>
+                            <li>
+                                {{
+                                    t(
+                                        'patient.medicationReminders.stepOpenNotification',
+                                    )
+                                }}
+                            </li>
+                            <li>
+                                {{
+                                    t('patient.medicationReminders.stepConfirm')
+                                }}
+                            </li>
+                            <li>
+                                {{ t('patient.medicationReminders.stepNoApp') }}
+                            </li>
                         </ol>
                     </template>
                 </div>
@@ -98,21 +123,18 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
                     {{ t('patient.medicationReminders.enableButton') }}
                 </Button>
 
-                <p class="text-base leading-relaxed text-text-muted">
+                <p class="text-text-muted text-base leading-relaxed">
                     {{ t('patient.medicationReminders.dismissPromptHint') }}
                     <Link
                         :href="settingsMedicationRemindersUrl"
-                        class="font-medium text-primary underline-offset-2 hover:underline"
+                        class="text-primary font-medium underline-offset-2 hover:underline"
                         @click="dismissDashboardPrompt"
                     >
                         {{ t('patient.medicationReminders.settingsTitle') }}
                     </Link>
                 </p>
 
-                <p
-                    v-if="registrationError"
-                    class="text-base text-destructive"
-                >
+                <p v-if="registrationError" class="text-destructive text-base">
                     {{ registrationError }}
                 </p>
             </div>

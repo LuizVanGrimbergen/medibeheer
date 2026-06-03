@@ -7,16 +7,17 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { todayLocalIsoDate } from '@/lib/patient/medications/schedule/medicationScheduleDuration';
+import type {
+    MedicationScheduleDurationPresetKey,
+    MedicationScheduleDurationTimedPresetKey,
+} from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
     applyMedicationScheduleDurationPreset,
     applyMedicationScheduleOngoingPreset,
     detectMedicationScheduleDurationPreset,
     MEDICATION_SCHEDULE_DURATION_ONGOING_KEY,
-    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS
-    
-    
+    MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS,
 } from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
-import type {MedicationScheduleDurationPresetKey, MedicationScheduleDurationTimedPresetKey} from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
     patientFormFieldInputClass,
     patientFormFieldInvalidClass,
@@ -52,12 +53,17 @@ const activeDurationChoice = computed(
     },
 );
 
-const showCustomDateFields = computed(() => activeDurationChoice.value === 'custom');
+const showCustomDateFields = computed(
+    () => activeDurationChoice.value === 'custom',
+);
 
-const durationPresetLabel = (preset: MedicationScheduleDurationPresetKey): string =>
-    t(`patient.medications.intakePeriodPresets.${preset}`);
+const durationPresetLabel = (
+    preset: MedicationScheduleDurationPresetKey,
+): string => t(`patient.medications.intakePeriodPresets.${preset}`);
 
-const selectTimedPreset = (preset: MedicationScheduleDurationTimedPresetKey): void => {
+const selectTimedPreset = (
+    preset: MedicationScheduleDurationTimedPresetKey,
+): void => {
     prefersCustomDuration.value = false;
     applyMedicationScheduleDurationPreset(form.schedule, preset);
 };
@@ -115,16 +121,20 @@ watch(
         <fieldset class="min-w-0 border-0 p-0">
             <legend
                 :id="`${idPrefix}-schedule-duration-intake-period`"
-                :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
+                :class="
+                    cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')
+                "
             >
-                {{ t('patient.medications.fields.intakePeriod') }} <span class="text-danger">*</span>
+                {{ t('patient.medications.fields.intakePeriod') }}
+                <span class="text-danger">*</span>
             </legend>
             <div
                 :class="
                     cn(
-                        'mt-2 space-y-4 touch-manipulation',
-                        form.errors['schedule.start_date'] || form.errors['schedule.end_date']
-                            ? 'rounded-2xl p-0.5 ring-2 ring-danger/25'
+                        'mt-2 touch-manipulation space-y-4',
+                        form.errors['schedule.start_date'] ||
+                            form.errors['schedule.end_date']
+                            ? 'ring-danger/25 rounded-2xl p-0.5 ring-2'
                             : null,
                     )
                 "
@@ -136,12 +146,12 @@ watch(
                     :aria-invalid="
                         Boolean(
                             form.errors['schedule.start_date'] ||
-                                form.errors['schedule.end_date'],
+                            form.errors['schedule.end_date'],
                         )
                     "
                     :aria-describedby="
                         form.errors['schedule.start_date'] ||
-                            form.errors['schedule.end_date']
+                        form.errors['schedule.end_date']
                             ? `${idPrefix}-schedule-duration-error`
                             : undefined
                     "
@@ -151,7 +161,7 @@ watch(
                         :id="`${idPrefix}-schedule-duration-preset-${preset}`"
                         :key="preset"
                         type="button"
-                        class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                        class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                         :class="
                             activeDurationChoice === preset
                                 ? 'border-primary bg-primary/10 text-text-heading'
@@ -165,7 +175,7 @@ watch(
                     <button
                         :id="`${idPrefix}-schedule-duration-custom`"
                         type="button"
-                        class="min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base font-semibold leading-snug transition-colors focus-visible:border-focus focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/30 md:min-h-[3.75rem] md:px-5 md:text-lg"
+                        class="focus-visible:border-focus focus-visible:ring-focus/30 min-h-14 rounded-2xl border-2 px-4 py-3.5 text-left text-base leading-snug font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none md:min-h-[3.75rem] md:px-5 md:text-lg"
                         :class="
                             activeDurationChoice === 'custom'
                                 ? 'border-primary bg-primary/10 text-text-heading'
@@ -174,13 +184,12 @@ watch(
                         :aria-pressed="activeDurationChoice === 'custom'"
                         @click="selectCustom"
                     >
-                        {{ t('patient.medications.intakePeriodPresets.custom') }}
+                        {{
+                            t('patient.medications.intakePeriodPresets.custom')
+                        }}
                     </button>
                 </div>
-                <div
-                    v-if="showCustomDateFields"
-                    class="mt-6 space-y-8 md:mt-8"
-                >
+                <div v-if="showCustomDateFields" class="mt-6 space-y-8 md:mt-8">
                     <div>
                         <Label
                             :for="`${idPrefix}-schedule-start-date`"
@@ -203,7 +212,9 @@ watch(
                                         : null,
                                 )
                             "
-                            :aria-invalid="Boolean(form.errors['schedule.start_date'])"
+                            :aria-invalid="
+                                Boolean(form.errors['schedule.start_date'])
+                            "
                             :aria-describedby="
                                 form.errors['schedule.start_date']
                                     ? `${idPrefix}-schedule-start-date-error`
@@ -238,7 +249,9 @@ watch(
                                         : null,
                                 )
                             "
-                            :aria-invalid="Boolean(form.errors['schedule.end_date'])"
+                            :aria-invalid="
+                                Boolean(form.errors['schedule.end_date'])
+                            "
                             :aria-describedby="
                                 form.errors['schedule.end_date']
                                     ? `${idPrefix}-schedule-end-date-error`
@@ -255,11 +268,13 @@ watch(
             <InputError
                 v-if="
                     !showCustomDateFields &&
-                        (form.errors['schedule.start_date'] || form.errors['schedule.end_date'])
+                    (form.errors['schedule.start_date'] ||
+                        form.errors['schedule.end_date'])
                 "
                 :id="`${idPrefix}-schedule-duration-error`"
                 :message="
-                    form.errors['schedule.start_date'] ?? form.errors['schedule.end_date']
+                    form.errors['schedule.start_date'] ??
+                    form.errors['schedule.end_date']
                 "
             />
         </fieldset>

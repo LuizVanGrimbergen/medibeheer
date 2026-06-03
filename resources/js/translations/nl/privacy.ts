@@ -61,7 +61,8 @@ export default {
     },
     settings: {
         title: 'Privacy en gegevens',
-        description: 'Bekijk het beleid, exporteer uw gegevens of verwijder uw account.',
+        description:
+            'Bekijk het beleid, exporteer uw gegevens of verwijder uw account.',
         exportTitle: 'Gegevens exporteren',
         exportDescription:
             'Download een JSON-bestand met uw accountgegevens en, voor patiënten, uw medicatie- en gezondheidsgegevens.',

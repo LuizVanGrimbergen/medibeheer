@@ -14,7 +14,8 @@ export default {
         'Op iPhone: zet Medibeheer eerst op uw beginscherm (zie de gele balk bovenaan). Open de app daarna via dat icoon, niet via Safari.',
     onboardingStepsAriaLabel: 'Zo werkt de medicatie-herinnering',
     stepOpenNotification: 'Wanneer u een melding krijgt: tik op de melding.',
-    stepConfirm: 'Medibeheer opent met een groot scherm: uw medicatie is ingenomen.',
+    stepConfirm:
+        'Medibeheer opent met een groot scherm: uw medicatie is ingenomen.',
     stepNoApp: 'Tik op Gereed als u klaar bent.',
     deniedDescription:
         'Meldingen staan uit voor deze site. Open de instellingen van uw browser (icoon naast het webadres) en zet meldingen op Toestaan. Vernieuw daarna deze pagina.',
@@ -24,7 +25,9 @@ export default {
     dismissPromptAriaLabel: 'Herinnering sluiten',
     dismissPromptHint:
         'U kunt medicatie-herinneringen later inschakelen onder Instellingen.',
-    registrationDenied: 'Meldingen zijn niet toegestaan. Zet meldingen aan in de instellingen van uw browser.',
-    registrationServiceWorkerFailed: 'Herinneringen konden niet worden ingeschakeld. Vernieuw de pagina en probeer opnieuw.',
+    registrationDenied:
+        'Meldingen zijn niet toegestaan. Zet meldingen aan in de instellingen van uw browser.',
+    registrationServiceWorkerFailed:
+        'Herinneringen konden niet worden ingeschakeld. Vernieuw de pagina en probeer opnieuw.',
     registrationUnknownError: 'Er ging iets mis. Probeer het later opnieuw.',
 };

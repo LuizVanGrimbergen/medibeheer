@@ -1,7 +1,6 @@
 import { medicationUrgencyProgressPercent } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import type { MedicationSupplyEstimateQuality } from '@/lib/types';
 
-
 export function medicationStockProgressPercent(
     supplyEstimateDays: number | null,
     supplyEstimateQuality: MedicationSupplyEstimateQuality,

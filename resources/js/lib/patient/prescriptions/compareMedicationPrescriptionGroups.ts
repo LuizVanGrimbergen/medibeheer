@@ -4,7 +4,10 @@ function soonestExpirySortKey(
     group: MedicationPrescriptionGroupListItem,
 ): string | null {
     const dates = group.prescriptions
-        .map((prescription) => prescription.prescription_expiry_date?.trim() ?? '')
+        .map(
+            (prescription) =>
+                prescription.prescription_expiry_date?.trim() ?? '',
+        )
         .filter((date) => date.length > 0)
         .sort((left, right) => left.localeCompare(right));
 

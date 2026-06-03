@@ -23,7 +23,9 @@ const { t } = useI18n();
 type CheckinStep = 'mood' | 'symptoms' | 'note';
 
 const step = ref<CheckinStep>('mood');
-const showActionBar = computed(() => step.value === 'symptoms' || step.value === 'note');
+const showActionBar = computed(
+    () => step.value === 'symptoms' || step.value === 'note',
+);
 const previousMood = ref<DailyMoodScoreValue | null>(null);
 const {
     form,
@@ -109,11 +111,11 @@ watch(
 <template>
     <div v-if="!today_checkin" class="space-y-3 sm:space-y-4">
         <Card
-            class="rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:rounded-3xl"
+            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
         >
             <CardContent class="p-0">
                 <div
-                    class="space-y-5 rounded-2xl bg-surface px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
+                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
                 >
                     <DailyCheckinMoodStep
                         v-if="step === 'mood'"
@@ -140,11 +142,11 @@ watch(
 
         <Card
             v-if="showActionBar"
-            class="rounded-2xl border border-border/80 bg-transparent text-text shadow-sm shadow-black/[0.03] sm:rounded-3xl"
+            class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] sm:rounded-3xl"
         >
             <CardContent class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8">
                 <div
-                    class="flex min-w-0 w-full flex-col-reverse gap-2 sm:flex-row sm:gap-3"
+                    class="flex w-full min-w-0 flex-col-reverse gap-2 sm:flex-row sm:gap-3"
                 >
                     <Button
                         type="button"
@@ -152,12 +154,20 @@ watch(
                         size="lg"
                         :class="patientSoftDangerActionButtonClass"
                         :disabled="form.processing"
-                        @click="step === 'symptoms' ? backToMoodStep() : backFromNote()"
+                        @click="
+                            step === 'symptoms'
+                                ? backToMoodStep()
+                                : backFromNote()
+                        "
                     >
                         {{
                             step === 'symptoms'
-                                ? t('patient.dashboard.dailyCheckins.symptoms.cancel')
-                                : t('patient.dashboard.dailyCheckins.noteDialog.cancel')
+                                ? t(
+                                      'patient.dashboard.dailyCheckins.symptoms.cancel',
+                                  )
+                                : t(
+                                      'patient.dashboard.dailyCheckins.noteDialog.cancel',
+                                  )
                         }}
                     </Button>
 
@@ -170,7 +180,11 @@ watch(
                         :disabled="form.processing"
                         @click="openNoteStep"
                     >
-                        {{ t('patient.dashboard.dailyCheckins.symptoms.continue') }}
+                        {{
+                            t(
+                                'patient.dashboard.dailyCheckins.symptoms.continue',
+                            )
+                        }}
                     </Button>
 
                     <Button
@@ -182,7 +196,11 @@ watch(
                         :disabled="submitDisabled"
                         @click="submitCheckin"
                     >
-                        {{ t('patient.dashboard.dailyCheckins.noteDialog.confirm') }}
+                        {{
+                            t(
+                                'patient.dashboard.dailyCheckins.noteDialog.confirm',
+                            )
+                        }}
                     </Button>
                 </div>
             </CardContent>

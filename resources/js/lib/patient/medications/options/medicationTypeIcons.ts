@@ -1,10 +1,5 @@
 import type { LucideIcon } from 'lucide-vue-next';
-import {
-    Droplets,
-    Package2,
-    Pill,
-    Syringe,
-} from 'lucide-vue-next';
+import { Droplets, Package2, Pill, Syringe } from 'lucide-vue-next';
 import type { MedicationTypeValue } from '@/lib/types';
 import { MEDICATION_TYPE_VALUES } from '@/lib/types';
 

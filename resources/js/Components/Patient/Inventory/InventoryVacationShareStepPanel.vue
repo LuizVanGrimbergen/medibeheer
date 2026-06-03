@@ -20,7 +20,7 @@ const { t } = useI18n();
 
 <template>
     <div :class="inventoryVacationShareStepPanelClass">
-        <p class="text-base leading-relaxed text-text sm:text-lg">
+        <p class="text-text text-base leading-relaxed sm:text-lg">
             {{
                 t('patient.inventory.vacationShareStepPrompt', {
                     current: String(stepCurrent),
@@ -31,7 +31,7 @@ const { t } = useI18n();
 
         <p
             v-if="stepsCompleted > 0"
-            class="text-sm leading-relaxed text-text-muted sm:text-base"
+            class="text-text-muted text-sm leading-relaxed sm:text-base"
         >
             {{
                 t('patient.inventory.vacationShareStepProgress', {
@@ -54,10 +54,7 @@ const { t } = useI18n();
             "
             @click="emit('share')"
         >
-            <Images
-                class="size-6 shrink-0"
-                aria-hidden="true"
-            />
+            <Images class="size-6 shrink-0" aria-hidden="true" />
             <span>
                 {{
                     t('patient.inventory.vacationShareStepButton', {

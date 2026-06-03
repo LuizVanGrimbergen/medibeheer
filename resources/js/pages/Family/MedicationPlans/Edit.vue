@@ -62,7 +62,9 @@ function saveAndAddAnother(): void {
         <FamilyPageShell
             :title="t('family.medicationPlans.editTitle')"
             :family="page.props.family"
-            :show-active-patient="page.props.family?.has_linked_patient ?? false"
+            :show-active-patient="
+                page.props.family?.has_linked_patient ?? false
+            "
         >
             <FamilyMedicationPlanProposalFormCard
                 v-if="!showExternalActions"

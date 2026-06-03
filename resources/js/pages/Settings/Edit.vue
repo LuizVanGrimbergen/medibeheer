@@ -73,139 +73,172 @@ const props = defineProps<{
             class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
         >
             <div class="py-12">
-                <div class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8">
                 <div
-                    v-if="selectedSection === null"
-                    class="space-y-4"
+                    class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8"
                 >
-                    <SettingsWidgetLink
-                        :href="route('settings.edit', { section: 'information' })"
-                        rounded-class="rounded-3xl"
-                    >
-                        <template #leading>
-                            <div
-                                class="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-xl font-bold text-white sm:h-16 sm:w-16"
-                            >
-                                {{ userInitial }}
-                            </div>
-                        </template>
-                        <p class="text-xl font-bold text-primary">
-                            {{ userName }}
-                        </p>
-                        <p class="text-base text-text-muted">
-                            {{ userEmail }}
-                        </p>
-                    </SettingsWidgetLink>
+                    <div v-if="selectedSection === null" class="space-y-4">
+                        <SettingsWidgetLink
+                            :href="
+                                route('settings.edit', {
+                                    section: 'information',
+                                })
+                            "
+                            rounded-class="rounded-3xl"
+                        >
+                            <template #leading>
+                                <div
+                                    class="bg-primary flex h-14 w-14 items-center justify-center rounded-full text-xl font-bold text-white sm:h-16 sm:w-16"
+                                >
+                                    {{ userInitial }}
+                                </div>
+                            </template>
+                            <p class="text-primary text-xl font-bold">
+                                {{ userName }}
+                            </p>
+                            <p class="text-text-muted text-base">
+                                {{ userEmail }}
+                            </p>
+                        </SettingsWidgetLink>
 
-                    <SettingsWidgetLink
-                        :href="route('settings.edit', { section: 'password' })"
-                    >
-                        <p class="text-lg font-semibold text-primary">
-                            {{ t('profile.password.title') }}
-                        </p>
-                        <p class="mt-1 text-sm text-text-muted">
-                            {{ t('profile.password.description') }}
-                        </p>
-                    </SettingsWidgetLink>
+                        <SettingsWidgetLink
+                            :href="
+                                route('settings.edit', { section: 'password' })
+                            "
+                        >
+                            <p class="text-primary text-lg font-semibold">
+                                {{ t('profile.password.title') }}
+                            </p>
+                            <p class="text-text-muted mt-1 text-sm">
+                                {{ t('profile.password.description') }}
+                            </p>
+                        </SettingsWidgetLink>
 
-                    <SettingsWidgetLink
-                        :href="route('settings.edit', { section: 'privacy-data' })"
-                    >
-                        <p class="text-lg font-semibold text-primary">
-                            {{ t('privacy.settings.title') }}
-                        </p>
-                        <p class="mt-1 text-sm text-text-muted">
-                            {{ t('privacy.settings.description') }}
-                        </p>
-                    </SettingsWidgetLink>
+                        <SettingsWidgetLink
+                            :href="
+                                route('settings.edit', {
+                                    section: 'privacy-data',
+                                })
+                            "
+                        >
+                            <p class="text-primary text-lg font-semibold">
+                                {{ t('privacy.settings.title') }}
+                            </p>
+                            <p class="text-text-muted mt-1 text-sm">
+                                {{ t('privacy.settings.description') }}
+                            </p>
+                        </SettingsWidgetLink>
 
-                    <SettingsWidgetLink
-                        v-if="showMedicationRemindersSettings"
-                        :href="route('settings.edit', { section: 'medication-reminders' })"
-                    >
-                        <p class="text-lg font-semibold text-primary">
-                            {{ t('patient.medicationReminders.settingsTitle') }}
-                        </p>
-                        <p class="mt-1 text-sm text-text-muted">
-                            {{ t('patient.medicationReminders.settingsLinkDescription') }}
-                        </p>
-                    </SettingsWidgetLink>
+                        <SettingsWidgetLink
+                            v-if="showMedicationRemindersSettings"
+                            :href="
+                                route('settings.edit', {
+                                    section: 'medication-reminders',
+                                })
+                            "
+                        >
+                            <p class="text-primary text-lg font-semibold">
+                                {{
+                                    t(
+                                        'patient.medicationReminders.settingsTitle',
+                                    )
+                                }}
+                            </p>
+                            <p class="text-text-muted mt-1 text-sm">
+                                {{
+                                    t(
+                                        'patient.medicationReminders.settingsLinkDescription',
+                                    )
+                                }}
+                            </p>
+                        </SettingsWidgetLink>
 
-                    <SettingsWidgetLink
-                        :href="route('settings.edit', { section: 'security-activity' })"
-                    >
-                        <p class="text-lg font-semibold text-primary">
-                            {{ t('profile.securityActivity.title') }}
-                        </p>
-                        <p class="mt-1 text-sm text-text-muted">
-                            {{ t('profile.securityActivity.description') }}
-                        </p>
-                    </SettingsWidgetLink>
+                        <SettingsWidgetLink
+                            :href="
+                                route('settings.edit', {
+                                    section: 'security-activity',
+                                })
+                            "
+                        >
+                            <p class="text-primary text-lg font-semibold">
+                                {{ t('profile.securityActivity.title') }}
+                            </p>
+                            <p class="text-text-muted mt-1 text-sm">
+                                {{ t('profile.securityActivity.description') }}
+                            </p>
+                        </SettingsWidgetLink>
 
-                    <SettingsWidgetLink
-                        :href="route('settings.edit', { section: 'delete' })"
-                    >
-                        <p class="text-lg font-semibold text-primary">
-                            {{ t('profile.delete.title') }}
-                        </p>
-                        <p class="mt-1 text-sm text-text-muted">
-                            {{ t('profile.delete.description') }}
-                        </p>
-                    </SettingsWidgetLink>
-                </div>
-
-                <div
-                    v-if="selectedSection !== null"
-                    class="space-y-4"
-                >
-                    <Link
-                        :href="route('settings.edit')"
-                        class="inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold text-primary transition hover:opacity-80"
-                    >
-                        <ArrowLeft :size="18" />
-                        <span>{{ t('profile.backToSettings') }}</span>
-                    </Link>
-
-                    <div class="rounded-lg border border-border bg-surface p-4 shadow-sm sm:p-8">
-                        <UpdateProfileInformationForm
-                            v-if="selectedSection === 'information'"
-                            :must-verify-email="props.mustVerifyEmail"
-                            :status="props.status"
-                        />
-
-                        <UpdatePasswordForm
-                            v-if="selectedSection === 'password'"
-                        />
-
-                        <PrivacyDataForm
-                            v-if="selectedSection === 'privacy-data'"
-                        />
-
-                        <PatientMedicationRemindersForm
-                            v-if="selectedSection === 'medication-reminders' && showMedicationRemindersSettings"
-                        />
-
-                        <SecurityActivityLog
-                            v-if="selectedSection === 'security-activity' && props.securityActivities !== null"
-                            :security-activities="props.securityActivities"
-                        />
-
-                        <DeleteUserForm
-                            v-if="selectedSection === 'delete'"
-                        />
+                        <SettingsWidgetLink
+                            :href="
+                                route('settings.edit', { section: 'delete' })
+                            "
+                        >
+                            <p class="text-primary text-lg font-semibold">
+                                {{ t('profile.delete.title') }}
+                            </p>
+                            <p class="text-text-muted mt-1 text-sm">
+                                {{ t('profile.delete.description') }}
+                            </p>
+                        </SettingsWidgetLink>
                     </div>
-                </div>
 
-                <div class="mt-auto flex justify-center pt-8">
-                    <Link
-                        :href="route('logout')"
-                        method="post"
-                        as="button"
-                        class="inline-flex items-center rounded-md border border-border bg-surface px-5 py-2.5 text-sm font-semibold text-danger transition duration-150 ease-in-out hover:bg-surface-hover focus:outline-none"
-                    >
-                        {{ t('app.navigation.logout') }}
-                    </Link>
-                </div>
+                    <div v-if="selectedSection !== null" class="space-y-4">
+                        <Link
+                            :href="route('settings.edit')"
+                            class="text-primary inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition hover:opacity-80"
+                        >
+                            <ArrowLeft :size="18" />
+                            <span>{{ t('profile.backToSettings') }}</span>
+                        </Link>
+
+                        <div
+                            class="border-border bg-surface rounded-lg border p-4 shadow-sm sm:p-8"
+                        >
+                            <UpdateProfileInformationForm
+                                v-if="selectedSection === 'information'"
+                                :must-verify-email="props.mustVerifyEmail"
+                                :status="props.status"
+                            />
+
+                            <UpdatePasswordForm
+                                v-if="selectedSection === 'password'"
+                            />
+
+                            <PrivacyDataForm
+                                v-if="selectedSection === 'privacy-data'"
+                            />
+
+                            <PatientMedicationRemindersForm
+                                v-if="
+                                    selectedSection ===
+                                        'medication-reminders' &&
+                                    showMedicationRemindersSettings
+                                "
+                            />
+
+                            <SecurityActivityLog
+                                v-if="
+                                    selectedSection === 'security-activity' &&
+                                    props.securityActivities !== null
+                                "
+                                :security-activities="props.securityActivities"
+                            />
+
+                            <DeleteUserForm
+                                v-if="selectedSection === 'delete'"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="mt-auto flex justify-center pt-8">
+                        <Link
+                            :href="route('logout')"
+                            method="post"
+                            as="button"
+                            class="border-border bg-surface text-danger hover:bg-surface-hover inline-flex items-center rounded-md border px-5 py-2.5 text-sm font-semibold transition duration-150 ease-in-out focus:outline-none"
+                        >
+                            {{ t('app.navigation.logout') }}
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

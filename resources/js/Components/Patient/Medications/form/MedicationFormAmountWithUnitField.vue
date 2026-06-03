@@ -2,7 +2,10 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
-import { patientFormLabelClass, patientFormSelectChevronStyle } from '@/lib/patient/patientFormFieldClasses';
+import {
+    patientFormLabelClass,
+    patientFormSelectChevronStyle,
+} from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const amount = defineModel<string>('amount', { required: true });
@@ -63,17 +66,20 @@ const unitDescribedBy = computed((): string | undefined => {
 <template>
     <fieldset class="min-w-0 border-0 p-0">
         <legend :class="cn(patientFormLabelClass, 'text-lg md:text-xl')">
-            {{ legend }}<span v-if="amountRequired || unitRequired" class="text-danger"> *</span>
+            {{ legend
+            }}<span v-if="amountRequired || unitRequired" class="text-danger">
+                *</span
+            >
         </legend>
         <div
             :id="groupId"
             class="mt-2"
             :class="
                 cn(
-                    'flex min-h-14 w-full min-w-0 overflow-hidden rounded-2xl border-2 bg-surface transition-[border-color,box-shadow] touch-manipulation',
-                    'focus-within:border-focus focus-within:ring-2 focus-within:ring-focus/25',
+                    'bg-surface flex min-h-14 w-full min-w-0 touch-manipulation overflow-hidden rounded-2xl border-2 transition-[border-color,box-shadow]',
+                    'focus-within:border-focus focus-within:ring-focus/25 focus-within:ring-2',
                     groupHasError
-                        ? 'border-danger ring-2 ring-danger/25'
+                        ? 'border-danger ring-danger/25 ring-2'
                         : 'border-border',
                 )
             "
@@ -88,28 +94,27 @@ const unitDescribedBy = computed((): string | undefined => {
                 maxlength="500"
                 :inputmode="amountInputMode"
                 :placeholder="amountPlaceholder"
-                class="min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                class="text-text placeholder:text-text-muted min-h-14 min-w-0 flex-1 border-0 bg-transparent px-4 py-3.5 text-lg leading-normal focus:outline-none focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 :aria-invalid="Boolean(amountError)"
                 :aria-required="amountRequired"
                 :aria-describedby="amountDescribedBy"
             />
-            <div class="relative flex shrink-0 self-stretch border-l-2 border-border">
+            <div
+                class="border-border relative flex shrink-0 self-stretch border-l-2"
+            >
                 <select
                     :id="unitSelectId"
                     v-model="unit"
                     :name="unitName"
                     :aria-label="unitAriaLabel"
-                    class="min-h-14 min-w-22 max-w-40 cursor-pointer appearance-none border-0 bg-transparent bg-size-[1.25rem] bg-position-[right_0.75rem_center] bg-no-repeat py-3.5 pl-3 pr-11 text-base font-semibold leading-normal text-text-heading focus:outline-none focus-visible:outline-none touch-manipulation"
+                    class="text-text-heading min-h-14 max-w-40 min-w-22 cursor-pointer touch-manipulation appearance-none border-0 bg-transparent bg-size-[1.25rem] bg-position-[right_0.75rem_center] bg-no-repeat py-3.5 pr-11 pl-3 text-base leading-normal font-semibold focus:outline-none focus-visible:outline-none"
                     :style="patientFormSelectChevronStyle"
                     :required="unitRequired"
                     :aria-invalid="Boolean(unitError)"
                     :aria-required="unitRequired"
                     :aria-describedby="unitDescribedBy"
                 >
-                    <option
-                        disabled
-                        value=""
-                    >
+                    <option disabled value="">
                         {{ t('patient.medications.fields.selectPlaceholder') }}
                     </option>
                     <option
@@ -122,13 +127,7 @@ const unitDescribedBy = computed((): string | undefined => {
                 </select>
             </div>
         </div>
-        <InputError
-            :id="`${amountInputId}-error`"
-            :message="amountError"
-        />
-        <InputError
-            :id="`${unitSelectId}-error`"
-            :message="unitError"
-        />
+        <InputError :id="`${amountInputId}-error`" :message="amountError" />
+        <InputError :id="`${unitSelectId}-error`" :message="unitError" />
     </fieldset>
 </template>

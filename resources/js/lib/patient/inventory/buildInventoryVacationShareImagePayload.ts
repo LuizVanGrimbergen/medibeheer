@@ -24,7 +24,10 @@ type BuildInventoryVacationShareImagePayloadInput = {
     skippedNote: string | null;
     footerLabel: string;
     doseUnitForItem: (doseUnit: string | null) => string | null;
-    doseUnitChipForItem: (amount: string, doseUnit: string | null) => string | null;
+    doseUnitChipForItem: (
+        amount: string,
+        doseUnit: string | null,
+    ) => string | null;
 };
 
 export function buildInventoryVacationShareImagePayload(
@@ -49,7 +52,8 @@ export function buildInventoryVacationShareImagePayload(
             );
             const isLiquid = item.type_medication === 'liquid';
             const hasSavedPackage =
-                item.stock_pieces_per_package !== null && item.stock_pieces_per_package > 0;
+                item.stock_pieces_per_package !== null &&
+                item.stock_pieces_per_package > 0;
 
             let primaryValue: string | null = null;
             let secondaryValue: string | null = null;
@@ -70,12 +74,17 @@ export function buildInventoryVacationShareImagePayload(
             }
 
             const totalNumeric =
-                pickupNumeric !== null && pickupNumeric > 0 ? String(pickupNumeric) : null;
+                pickupNumeric !== null && pickupNumeric > 0
+                    ? String(pickupNumeric)
+                    : null;
 
             let totalUnitChip: string | null = null;
 
             if (totalNumeric !== null) {
-                totalUnitChip = input.doseUnitChipForItem(totalNumeric, item.dose_unit);
+                totalUnitChip = input.doseUnitChipForItem(
+                    totalNumeric,
+                    item.dose_unit,
+                );
             }
 
             return {
@@ -93,7 +102,8 @@ export function buildInventoryVacationShareImagePayload(
                 totalUnitChip,
             };
         }),
-        emptyMessage: input.result.items.length === 0 ? input.emptyMessage : null,
+        emptyMessage:
+            input.result.items.length === 0 ? input.emptyMessage : null,
         skippedNote: input.skippedNote,
         footerLabel: input.footerLabel,
         pageLabel: null,

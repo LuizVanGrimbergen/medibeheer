@@ -44,9 +44,12 @@ export default {
         pwdNextRule: 'Volgende stap: {rule}',
         pwdShowAllRules: 'Alle {count} regels bekijken',
         pwdHideAllRules: 'Minder tonen',
-        pwdStrengthRemaining: 'U heeft nog {count} tekens nodig (minstens 12 in totaal).',
-        pwdStrengthContinue: 'Goed bezig. Vul de resterende punten hieronder aan.',
-        pwdStrengthAllMet: 'Prima. Uw wachtwoord voldoet aan alle {count} regels.',
+        pwdStrengthRemaining:
+            'U heeft nog {count} tekens nodig (minstens 12 in totaal).',
+        pwdStrengthContinue:
+            'Goed bezig. Vul de resterende punten hieronder aan.',
+        pwdStrengthAllMet:
+            'Prima. Uw wachtwoord voldoet aan alle {count} regels.',
         pwdProgress: '{done} van {total} regels zijn in orde',
         pwdRulesListAria: 'Wachtwoordregels',
         pwdRuleMinLength: 'Minstens {count} tekens lang',
@@ -65,7 +68,8 @@ export default {
     resetPwd: {
         metaTitle: 'Reset wachtwoord',
         title: 'Nieuw wachtwoord instellen',
-        subtitle: 'Kies een nieuw wachtwoord om weer veilig toegang te krijgen.',
+        subtitle:
+            'Kies een nieuw wachtwoord om weer veilig toegang te krijgen.',
         emailLabel: 'E-mailadres',
         emailPlaceholder: "uw{'@'}email.be",
         pwdLabel: `Wacht${'woord'}`,
@@ -75,8 +79,7 @@ export default {
     forgotPwd: {
         metaTitle: 'Wachtwoord vergeten',
         title: 'Wachtwoord vergeten',
-        intro:
-            'Wachtwoord vergeten? Geen probleem. Vul uw e-mailadres in en we sturen u een link om een nieuw wachtwoord te kiezen.',
+        intro: 'Wachtwoord vergeten? Geen probleem. Vul uw e-mailadres in en we sturen u een link om een nieuw wachtwoord te kiezen.',
         emailLabel: 'E-mailadres',
         emailPlaceholder: "uw{'@'}email.be",
         submit: 'Resetlink versturen',
@@ -91,8 +94,7 @@ export default {
     verifyEmail: {
         metaTitle: 'E-mailverificatie',
         title: 'Verifieer uw e-mailadres',
-        intro:
-            'Bedankt voor uw registratie! Voordat u verdergaat, verifieer uw e-mailadres via de link die we u net hebben gemaild. Geen e-mail ontvangen? Dan sturen we met plezier een nieuwe.',
+        intro: 'Bedankt voor uw registratie! Voordat u verdergaat, verifieer uw e-mailadres via de link die we u net hebben gemaild. Geen e-mail ontvangen? Dan sturen we met plezier een nieuwe.',
         linkSent: 'Nieuwe verificatielink naar uw e-mailadres verstuurd.',
         resendAction: 'Verificatiemail opnieuw versturen',
         logoutAction: 'Inloggen',

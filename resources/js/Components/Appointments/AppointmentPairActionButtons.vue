@@ -45,7 +45,9 @@ const secondaryLayoutClass = cn(
 </script>
 
 <template>
-    <div class="flex min-w-0 w-full flex-col gap-3 sm:flex-row-reverse sm:gap-3">
+    <div
+        class="flex w-full min-w-0 flex-col gap-3 sm:flex-row-reverse sm:gap-3"
+    >
         <template v-if="primaryHref">
             <Button
                 v-if="disabled"

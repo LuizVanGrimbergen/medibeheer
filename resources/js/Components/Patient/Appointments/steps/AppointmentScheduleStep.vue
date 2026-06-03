@@ -47,14 +47,12 @@ const minStartsAtTimeHm = computed(() => {
         </div>
 
         <fieldset class="space-y-5 border-0 p-0">
-            <legend
-                class="sr-only"
-            >
+            <legend class="sr-only">
                 {{ t('patient.appointments.fields.startsAtGroupLegend') }}
             </legend>
             <p
                 :id="`${idPrefix}-starts-at-hint`"
-                class="text-lg leading-relaxed text-text-muted"
+                class="text-text-muted text-lg leading-relaxed"
             >
                 {{ t('patient.appointments.fields.startsAtHint') }}
             </p>
@@ -62,9 +60,10 @@ const minStartsAtTimeHm = computed(() => {
                 <div>
                     <Label
                         :for="`${idPrefix}-starts-at-date`"
-                        class="mb-2 block text-xl font-semibold leading-snug text-text-heading"
+                        class="text-text-heading mb-2 block text-xl leading-snug font-semibold"
                     >
-                        {{ t('patient.appointments.fields.startsAtDate') }} <span class="text-danger">*</span>
+                        {{ t('patient.appointments.fields.startsAtDate') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-starts-at-date`"
@@ -92,9 +91,10 @@ const minStartsAtTimeHm = computed(() => {
                 <div>
                     <Label
                         :for="`${idPrefix}-starts-at-time`"
-                        class="mb-2 block text-xl font-semibold leading-snug text-text-heading"
+                        class="text-text-heading mb-2 block text-xl leading-snug font-semibold"
                     >
-                        {{ t('patient.appointments.fields.startsAtTime') }} <span class="text-danger">*</span>
+                        {{ t('patient.appointments.fields.startsAtTime') }}
+                        <span class="text-danger">*</span>
                     </Label>
                     <input
                         :id="`${idPrefix}-starts-at-time`"

@@ -29,7 +29,9 @@ const collapsedSummary = computed(() => {
     });
 });
 
-function openPatientAppointments(appointment: FamilyAcceptedTransportAppointment): void {
+function openPatientAppointments(
+    appointment: FamilyAcceptedTransportAppointment,
+): void {
     router.post(
         appointment.switch_url,
         {},
@@ -57,10 +59,7 @@ function openPatientAppointments(appointment: FamilyAcceptedTransportAppointment
         </template>
 
         <ul class="space-y-4 md:space-y-3">
-            <li
-                v-for="appointment in props.appointments"
-                :key="appointment.id"
-            >
+            <li v-for="appointment in props.appointments" :key="appointment.id">
                 <FamilyTransportAppointmentCard
                     :appointment="appointment"
                     variant="accepted"

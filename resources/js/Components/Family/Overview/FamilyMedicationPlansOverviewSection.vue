@@ -40,11 +40,15 @@ function revokeProposal(proposal: FamilyMedicationPlanProposalSummary): void {
     router.post(proposal.revoke_url, {}, { preserveScroll: true });
 }
 
-function duplicateProposal(proposal: FamilyMedicationPlanProposalSummary): void {
+function duplicateProposal(
+    proposal: FamilyMedicationPlanProposalSummary,
+): void {
     router.post(proposal.duplicate_url, {}, { preserveScroll: true });
 }
 
-function proposalItemClass(proposal: FamilyMedicationPlanProposalSummary): string {
+function proposalItemClass(
+    proposal: FamilyMedicationPlanProposalSummary,
+): string {
     if (proposal.status === 'accepted') {
         return 'min-w-0 rounded-xl border bg-surface text-text shadow-sm border-success/55 dark:border-success/65';
     }
@@ -67,31 +71,37 @@ function proposalItemClass(proposal: FamilyMedicationPlanProposalSummary): strin
             <ClipboardList class="size-5" />
         </template>
 
-        <p class="text-sm leading-relaxed text-text-muted">
+        <p class="text-text-muted text-sm leading-relaxed">
             {{ t('family.overview.medicationPlansIntro') }}
         </p>
 
-        <ul
-            v-if="props.proposals.length > 0"
-            class="flex flex-col gap-3"
-        >
+        <ul v-if="props.proposals.length > 0" class="flex flex-col gap-3">
             <li
                 v-for="proposal in props.proposals"
                 :key="proposal.id"
                 :class="proposalItemClass(proposal)"
             >
-                <div class="relative flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-start sm:justify-between">
+                <div
+                    class="relative flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-start sm:justify-between"
+                >
                     <div class="min-w-0">
-                        <p class="font-semibold text-text-heading">
-                            {{ proposal.medication_name ?? t('family.medicationPlans.unnamed') }}
+                        <p class="text-text-heading font-semibold">
+                            {{
+                                proposal.medication_name ??
+                                t('family.medicationPlans.unnamed')
+                            }}
                         </p>
                         <p
                             v-if="proposal.patient_name !== null"
-                            class="text-sm text-text-muted"
+                            class="text-text-muted text-sm"
                         >
-                            {{ t('family.overview.medicationPlansAcceptedBy', { name: proposal.patient_name }) }}
+                            {{
+                                t('family.overview.medicationPlansAcceptedBy', {
+                                    name: proposal.patient_name,
+                                })
+                            }}
                         </p>
-                        <p class="text-sm text-text-muted">
+                        <p class="text-text-muted text-sm">
                             {{ statusLabel(proposal.status) }}
                         </p>
                     </div>
@@ -117,11 +127,7 @@ function proposalItemClass(proposal: FamilyMedicationPlanProposalSummary): strin
                         >
                             <Pencil :size="18" />
                         </Button>
-                        <Button
-                            v-if="proposal.can_publish"
-                            as-child
-                            size="sm"
-                        >
+                        <Button v-if="proposal.can_publish" as-child size="sm">
                             <Link :href="proposal.publish_url">
                                 {{ t('family.medicationPlans.publish') }}
                             </Link>
@@ -141,18 +147,12 @@ function proposalItemClass(proposal: FamilyMedicationPlanProposalSummary): strin
             </li>
         </ul>
 
-        <p
-            v-else
-            class="text-sm text-text-muted"
-        >
+        <p v-else class="text-text-muted text-sm">
             {{ t('family.overview.medicationPlansEmpty') }}
         </p>
 
         <div class="flex flex-col gap-2 sm:flex-row">
-            <Button
-                as-child
-                class="w-full sm:w-auto"
-            >
+            <Button as-child class="w-full sm:w-auto">
                 <Link :href="route('family.medication-plans.create')">
                     <Plus class="size-4" />
                     {{ t('family.medicationPlans.create') }}
@@ -169,6 +169,5 @@ function proposalItemClass(proposal: FamilyMedicationPlanProposalSummary): strin
                 </Link>
             </Button>
         </div>
-
     </FamilyOverviewCollapsibleSection>
 </template>

@@ -13,7 +13,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
 </script>
 
 <template>
@@ -25,10 +24,7 @@ const { t } = useI18n();
                 type="button"
                 @click="emit('newAppointmentClick')"
             >
-                <CalendarPlus
-                    class="size-6 shrink-0"
-                    aria-hidden="true"
-                />
+                <CalendarPlus class="size-6 shrink-0" aria-hidden="true" />
                 {{ t('patient.appointments.newAppointment') }}
             </Button>
         </div>

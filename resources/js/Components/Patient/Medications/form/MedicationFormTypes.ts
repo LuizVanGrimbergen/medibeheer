@@ -45,8 +45,9 @@ type MedicationScheduleFormErrorKeys =
     | 'schedule.start_date'
     | 'schedule.end_date';
 
-type MedicationCreateFormInertiaErrors = FormDataErrors<MedicationCreateFormState> &
-    Partial<Record<MedicationScheduleFormErrorKeys, string>>;
+type MedicationCreateFormInertiaErrors =
+    FormDataErrors<MedicationCreateFormState> &
+        Partial<Record<MedicationScheduleFormErrorKeys, string>>;
 
 export type MedicationCreateFormWithErrors = Omit<
     InertiaForm<MedicationCreateFormState>,

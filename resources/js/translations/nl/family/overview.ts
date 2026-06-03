@@ -29,7 +29,8 @@ export default {
     medicationPlansCollapsedMany: '{count} medicatieplannen',
     medicationPlansIntro:
         'Maak een medicatieplan voor de patiënt en verstuur het per e-mail.',
-    medicationPlansEmpty: 'U heeft nog geen medicatieplannen. Maak een nieuw plan aan.',
+    medicationPlansEmpty:
+        'U heeft nog geen medicatieplannen. Maak een nieuw plan aan.',
     medicationPlansViewAll: 'Alle plannen bekijken',
     medicationPlansAcceptedBy: 'Geïmporteerd door {name}',
 };

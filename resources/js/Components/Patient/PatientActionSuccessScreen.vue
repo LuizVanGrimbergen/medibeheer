@@ -69,8 +69,7 @@ const trimmedSubtitle = computed((): string | null => {
 
 const visibleDetails = computed((): PatientActionSuccessDetail[] =>
     props.details.filter(
-        (detail) =>
-            detail.label.trim() !== '' && detail.value.trim() !== '',
+        (detail) => detail.label.trim() !== '' && detail.value.trim() !== '',
     ),
 );
 
@@ -85,13 +84,10 @@ function dismiss(): void {
 </script>
 
 <template>
-    <Teleport
-        to="body"
-        :disabled="!props.teleport"
-    >
+    <Teleport to="body" :disabled="!props.teleport">
         <div
             v-if="open"
-            class="fixed inset-0 z-[110] flex min-h-svh min-h-dvh flex-col bg-surface"
+            class="bg-surface fixed inset-0 z-[110] flex min-h-dvh min-h-svh flex-col"
             role="dialog"
             aria-modal="true"
             :aria-labelledby="titleId"
@@ -100,10 +96,10 @@ function dismiss(): void {
                 class="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center sm:px-10"
             >
                 <div
-                    class="mb-8 flex size-20 items-center justify-center rounded-2xl border-2 border-success/40 bg-success/10 sm:size-24"
+                    class="border-success/40 bg-success/10 mb-8 flex size-20 items-center justify-center rounded-2xl border-2 sm:size-24"
                 >
                     <CircleCheck
-                        class="size-12 text-success sm:size-14"
+                        class="text-success size-12 sm:size-14"
                         aria-hidden="true"
                         stroke-width="2"
                     />
@@ -111,7 +107,7 @@ function dismiss(): void {
 
                 <p
                     v-if="trimmedEyebrow !== null"
-                    class="text-lg font-medium text-text-muted sm:text-xl"
+                    class="text-text-muted text-lg font-medium sm:text-xl"
                 >
                     {{ trimmedEyebrow }}
                 </p>
@@ -120,8 +116,8 @@ function dismiss(): void {
                     :id="titleId"
                     :class="
                         trimmedEyebrow !== null
-                            ? 'mt-4 max-w-full text-balance text-3xl font-bold leading-tight tracking-tight text-text-heading sm:text-4xl lg:text-5xl'
-                            : 'max-w-full text-balance text-3xl font-bold leading-tight tracking-tight text-text-heading sm:text-4xl lg:text-5xl'
+                            ? 'text-text-heading mt-4 max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl'
+                            : 'text-text-heading max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl'
                     "
                 >
                     {{ props.title }}
@@ -129,18 +125,18 @@ function dismiss(): void {
 
                 <p
                     v-if="trimmedSubtitle !== null"
-                    class="mt-4 max-w-sm text-base leading-relaxed text-text-muted sm:text-lg"
+                    class="text-text-muted mt-4 max-w-sm text-base leading-relaxed sm:text-lg"
                 >
                     {{ trimmedSubtitle }}
                 </p>
 
                 <Card
                     v-if="showSummaryCard"
-                    class="mt-8 w-full max-w-lg rounded-2xl border border-border/80 bg-surface text-text shadow-md shadow-black/[0.04] sm:mt-10 sm:rounded-3xl"
+                    class="border-border/80 bg-surface text-text mt-8 w-full max-w-lg rounded-2xl border shadow-md shadow-black/[0.04] sm:mt-10 sm:rounded-3xl"
                 >
                     <CardContent class="p-0">
                         <div
-                            class="rounded-2xl bg-surface px-4 py-4 text-left sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
+                            class="bg-surface rounded-2xl px-4 py-4 text-left sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
                         >
                             <p
                                 v-if="trimmedMessage !== null"
@@ -175,7 +171,7 @@ function dismiss(): void {
             </div>
 
             <div
-                class="shrink-0 border-t border-border bg-surface px-4 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:px-6"
+                class="border-border bg-surface shrink-0 border-t px-4 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:px-6"
             >
                 <Button
                     type="button"

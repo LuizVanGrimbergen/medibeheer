@@ -101,7 +101,11 @@ function handleConfirm(): void {
             :description="props.confirmDescription"
             :confirm-label="props.confirmLabel"
             :cancel-label="props.cancelLabel"
-            @update:open="(open) => { confirmOpen = open; }"
+            @update:open="
+                (open) => {
+                    confirmOpen = open;
+                }
+            "
             @confirm="handleConfirm"
         />
     </div>

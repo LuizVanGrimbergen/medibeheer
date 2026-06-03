@@ -12,7 +12,10 @@ import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/me
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { prescriptionExpiryUrgencyContext } from '@/lib/patient/prescriptions/prescriptionExpiryUrgency';
-import type { MedicationPrescriptionListItem, MedicationTypeValue } from '@/lib/types';
+import type {
+    MedicationPrescriptionListItem,
+    MedicationTypeValue,
+} from '@/lib/types';
 
 const props = defineProps<{
     prescription: MedicationPrescriptionListItem;
@@ -23,7 +26,9 @@ const { t } = useI18n();
 const isOpen = ref(false);
 
 const urgencyContext = computed(() =>
-    prescriptionExpiryUrgencyContext(props.prescription.prescription_expiry_date),
+    prescriptionExpiryUrgencyContext(
+        props.prescription.prescription_expiry_date,
+    ),
 );
 
 const prescriptionUrgencyTone = computed((): MedicationUrgencyTone | null => {
@@ -55,18 +60,17 @@ const expiryProgressAriaLabel = computed((): string => {
         days: String(context.days_remaining),
     });
 });
-
 </script>
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="bg-surface text-text w-full min-w-0 rounded-3xl border shadow-md shadow-black/[0.04]"
         :class="prescriptionVisualToneClasses.border"
     >
         <CardContent class="relative p-6 sm:p-7">
             <div
                 v-if="prescription.is_last_in_batch"
-                class="mb-4 flex w-full min-w-0 sm:absolute sm:right-6 sm:top-6 sm:z-10 sm:mb-0 sm:w-auto sm:justify-end"
+                class="mb-4 flex w-full min-w-0 sm:absolute sm:top-6 sm:right-6 sm:z-10 sm:mb-0 sm:w-auto sm:justify-end"
             >
                 <PrescriptionLastAppointmentTag />
             </div>
@@ -75,16 +79,14 @@ const expiryProgressAriaLabel = computed((): string => {
                 <MedicationListCardLead
                     :name="prescription.medication.name"
                     :type-medication="
-                        prescription.medication.type_medication as MedicationTypeValue
+                        prescription.medication
+                            .type_medication as MedicationTypeValue
                     "
                     :tone="prescriptionUrgencyTone"
                     :show-type-label="false"
                     :class="prescription.is_last_in_batch ? 'sm:pr-44' : null"
                 >
-                    <template
-                        v-if="!isOpen"
-                        #subtitle
-                    >
+                    <template v-if="!isOpen" #subtitle>
                         <MedicationUrgencyProgressSection
                             v-if="urgencyContext !== null"
                             :tone="urgencyContext.tone"
@@ -92,15 +94,19 @@ const expiryProgressAriaLabel = computed((): string => {
                             :status-line="expiryStatusLine"
                             :progress-aria-label="expiryProgressAriaLabel"
                             :critical-alert-label="
-                                t('patient.prescriptions.expiryCriticalAlertLabel')
+                                t(
+                                    'patient.prescriptions.expiryCriticalAlertLabel',
+                                )
                             "
-                            :warning-alert-label="t('patient.prescriptions.expiryWarningAria')"
+                            :warning-alert-label="
+                                t('patient.prescriptions.expiryWarningAria')
+                            "
                             :show-progress-bar="false"
                         />
 
                         <p
                             v-else
-                            class="text-base font-semibold leading-relaxed text-text-heading sm:text-lg"
+                            class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
                         >
                             {{ expiryStatusLine }}
                         </p>
@@ -118,7 +124,7 @@ const expiryProgressAriaLabel = computed((): string => {
                 <CollapsibleContent>
                     <MedicationPrescriptionListItemSection
                         :prescription="prescription"
-                        class="mt-5 border-t border-border/70 pt-5"
+                        class="border-border/70 mt-5 border-t pt-5"
                     />
 
                     <PatientListCardDetailsToggle

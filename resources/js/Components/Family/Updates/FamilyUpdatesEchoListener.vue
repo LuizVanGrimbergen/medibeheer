@@ -8,7 +8,10 @@ const props = defineProps<{
 
 const channelName = `patient.${props.patientId}.family-updates`;
 
-const familyUpdateEvents = ['.daily-checkin.created', '.medication-intake.recorded'] as const;
+const familyUpdateEvents = [
+    '.daily-checkin.created',
+    '.medication-intake.recorded',
+] as const;
 
 useEcho(channelName, [...familyUpdateEvents], () => {
     reloadFamilyUpdatesPage();
@@ -16,8 +19,5 @@ useEcho(channelName, [...familyUpdateEvents], () => {
 </script>
 
 <template>
-    <span
-        class="hidden"
-        aria-hidden="true"
-    />
+    <span class="hidden" aria-hidden="true" />
 </template>

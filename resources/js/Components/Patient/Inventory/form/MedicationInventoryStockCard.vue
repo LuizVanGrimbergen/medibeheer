@@ -17,7 +17,9 @@ const props = withDefaults(
     },
 );
 
-const stockProgressTone = computed(() => medicationListVisualTone(props.medication));
+const stockProgressTone = computed(() =>
+    medicationListVisualTone(props.medication),
+);
 
 const inventoryVisualToneClasses = computed(() =>
     medicationUrgencyToneClasses(stockProgressTone.value),
@@ -26,14 +28,16 @@ const inventoryVisualToneClasses = computed(() =>
 
 <template>
     <Card
-        class="min-w-0 w-full rounded-3xl border bg-surface text-text shadow-md shadow-black/[0.04]"
+        class="bg-surface text-text w-full min-w-0 rounded-3xl border shadow-md shadow-black/[0.04]"
         :class="inventoryVisualToneClasses.border"
     >
         <CardContent class="relative space-y-6 p-6 sm:p-7">
             <div class="space-y-4">
                 <MedicationListCardLead
                     :name="medication.name"
-                    :type-medication="medication.type_medication as MedicationTypeValue"
+                    :type-medication="
+                        medication.type_medication as MedicationTypeValue
+                    "
                     :tone="stockProgressTone"
                 />
 
@@ -41,7 +45,7 @@ const inventoryVisualToneClasses = computed(() =>
                     :medication="medication"
                     :update-route-name="props.updateRouteName"
                     :id-prefix="`patient-inventory-stock-${medication.id}`"
-                    class="border-t border-border/70 pt-5"
+                    class="border-border/70 border-t pt-5"
                 />
             </div>
         </CardContent>

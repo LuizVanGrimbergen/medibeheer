@@ -4,7 +4,8 @@ export default {
     medications: {
         created: {
             title: 'Medicatie toegevoegd',
-            message: 'Uw medicatie staat in het overzicht. U kunt nu inname en voorraad verder instellen.',
+            message:
+                'Uw medicatie staat in het overzicht. U kunt nu inname en voorraad verder instellen.',
         },
     },
     prescriptions: {

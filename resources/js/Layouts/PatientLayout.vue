@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import { Calendar, FileText, House, Package, Pill, UserRound } from 'lucide-vue-next';
-import { computed } from 'vue';
+import {
+    Calendar,
+    FileText,
+    House,
+    Package,
+    Pill,
+    UserRound,
+} from 'lucide-vue-next';
 import type { ComputedRef } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientFlashActionSuccessScreen from '@/Components/Patient/PatientFlashActionSuccessScreen.vue';
 import { useTailwindBreakpoints } from '@/composables/useTailwindBreakpoints';
@@ -98,18 +105,18 @@ const patientNavItems: readonly PatientNavItem[] = [
     },
 ];
 
-const activePatientNavRoute = computed((): PatientNavItem['routeName'] | undefined => {
-    const pathname = pathOnly(page.url);
+const activePatientNavRoute = computed(
+    (): PatientNavItem['routeName'] | undefined => {
+        const pathname = pathOnly(page.url);
 
-    return patientNavItems.find(
-        (item) => pathname === pathOnly(route(item.routeName) as string),
-    )?.routeName;
-});
+        return patientNavItems.find(
+            (item) => pathname === pathOnly(route(item.routeName) as string),
+        )?.routeName;
+    },
+);
 
 function footerNavClass(routeName: PatientNavItem['routeName']): string {
-    const density = smAndUp.value
-        ? 'gap-1.5 py-2.5 px-2'
-        : 'gap-1 py-2 px-1';
+    const density = smAndUp.value ? 'gap-1.5 py-2.5 px-2' : 'gap-1 py-2 px-1';
     const base = `flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl transition-colors ${density}`;
 
     if (activePatientNavRoute.value === routeName) {
@@ -149,7 +156,7 @@ const footerLabelClass = computed(() =>
             </div>
 
             <nav
-                class="z-40 shrink-0 border-t border-border bg-surface"
+                class="border-border bg-surface z-40 shrink-0 border-t"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
             >
                 <div

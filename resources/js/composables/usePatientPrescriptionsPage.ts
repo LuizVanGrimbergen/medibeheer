@@ -2,10 +2,8 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePrescriptionFormWizard } from '@/Components/Patient/Prescriptions/form/usePrescriptionFormWizard';
-import {
-    usePatientActionSuccessScreen,
-    type PatientActionSuccessDetail,
-} from '@/composables/usePatientActionSuccessScreen';
+import type { PatientActionSuccessDetail } from '@/composables/usePatientActionSuccessScreen';
+import { usePatientActionSuccessScreen } from '@/composables/usePatientActionSuccessScreen';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
@@ -55,9 +53,7 @@ export function usePatientPrescriptionsPage(
         prescription_expiry_dates: [''],
     });
 
-    const canAddPrescription = computed(
-        () => medicationChoices().length > 0,
-    );
+    const canAddPrescription = computed(() => medicationChoices().length > 0);
 
     watch(
         () => form.quantity,
@@ -121,7 +117,9 @@ export function usePatientPrescriptionsPage(
         }
 
         const medicationName =
-            medicationChoices().find((choice) => choice.id === medicationId)?.name?.trim() ?? '';
+            medicationChoices()
+                .find((choice) => choice.id === medicationId)
+                ?.name?.trim() ?? '';
         const successDetails: PatientActionSuccessDetail[] = [];
 
         if (medicationName !== '') {
@@ -145,8 +143,12 @@ export function usePatientPrescriptionsPage(
                 onSuccess: () => {
                     closeAddPrescriptionDialog();
                     addSuccessScreen.show({
-                        title: t('patient.actionSuccess.prescriptions.created.title'),
-                        message: t('patient.actionSuccess.prescriptions.created.message'),
+                        title: t(
+                            'patient.actionSuccess.prescriptions.created.title',
+                        ),
+                        message: t(
+                            'patient.actionSuccess.prescriptions.created.message',
+                        ),
                         details: successDetails,
                     });
                 },

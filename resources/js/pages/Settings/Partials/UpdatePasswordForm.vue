@@ -43,18 +43,21 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-text">
+            <h2 class="text-text text-lg font-medium">
                 {{ t('profile.password.title') }}
             </h2>
 
-            <p class="mt-1 text-sm text-text-muted">
+            <p class="text-text-muted mt-1 text-sm">
                 {{ t('profile.password.description') }}
             </p>
         </header>
 
         <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
             <div>
-                <Label for="current_password" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="current_password"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.password.currentPassword') }}
                 </Label>
 
@@ -63,7 +66,7 @@ const updatePassword = () => {
                     ref="currentPasswordInput"
                     v-model="form.current_password"
                     type="password"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                     autocomplete="current-password"
                 />
 
@@ -74,19 +77,22 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <Label for="password" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="password"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.password.newPassword') }}
                 </Label>
 
                 <div
-                    class="mt-1 overflow-hidden rounded-xl border border-border bg-surface focus-within:ring-2 focus-within:ring-focus/25"
+                    class="border-border bg-surface focus-within:ring-focus/25 mt-1 overflow-hidden rounded-xl border focus-within:ring-2"
                 >
                     <Input
                         id="password"
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
-                        class="h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 text-xl text-text shadow-none placeholder:text-text-muted focus-visible:ring-0"
+                        class="text-text placeholder:text-text-muted h-auto w-full rounded-none border-0 bg-transparent px-4 py-3 text-xl shadow-none focus-visible:ring-0"
                         autocomplete="new-password"
                     />
 
@@ -101,7 +107,10 @@ const updatePassword = () => {
             </div>
 
             <div>
-                <Label for="password_confirmation" class="mb-2 block text-2xl/none font-medium text-text">
+                <Label
+                    for="password_confirmation"
+                    class="text-text mb-2 block text-2xl/none font-medium"
+                >
                     {{ t('profile.password.confirmPassword') }}
                 </Label>
 
@@ -109,7 +118,7 @@ const updatePassword = () => {
                     id="password_confirmation"
                     v-model="form.password_confirmation"
                     type="password"
-                    class="mt-1 h-auto w-full rounded-xl border-border bg-surface px-4 py-3 text-xl text-text placeholder:text-text-muted focus-visible:ring-focus/20"
+                    class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:ring-focus/20 mt-1 h-auto w-full rounded-xl px-4 py-3 text-xl"
                     autocomplete="new-password"
                 />
 
@@ -120,10 +129,7 @@ const updatePassword = () => {
             </div>
 
             <div class="flex items-center gap-4">
-                <Button
-                    type="submit"
-                    :disabled="form.processing"
-                >
+                <Button type="submit" :disabled="form.processing">
                     {{ t('profile.password.save') }}
                 </Button>
 
@@ -135,7 +141,7 @@ const updatePassword = () => {
                 >
                     <p
                         v-if="form.recentlySuccessful"
-                        class="text-sm text-text-muted"
+                        class="text-text-muted text-sm"
                     >
                         {{ t('profile.password.saved') }}
                     </p>

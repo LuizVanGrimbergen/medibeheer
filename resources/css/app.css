@@ -10,10 +10,13 @@
 @plugin '@tailwindcss/forms';
 
 @theme {
-
     /* Fonts */
-    --font-body: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
-    --font-headers: 'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui, sans-serif;
+    --font-body:
+        'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui,
+        sans-serif;
+    --font-headers:
+        'Atkinson Hyperlegible', 'Verdana', 'Arial', ui-sans-serif, system-ui,
+        sans-serif;
 
     /* Typography scale */
     --text-2xs: 0.6875rem;
@@ -49,9 +52,21 @@
     --color-role-patient: #2f6fae;
     --color-role-doctor: #10b981;
     --color-role-family: #ec4899;
-    --color-role-patient-active: color-mix(in srgb, var(--color-role-patient) 70%, black);
-    --color-role-doctor-active: color-mix(in srgb, var(--color-role-doctor) 70%, black);
-    --color-role-family-active: color-mix(in srgb, var(--color-role-family) 70%, black);
+    --color-role-patient-active: color-mix(
+        in srgb,
+        var(--color-role-patient) 70%,
+        black
+    );
+    --color-role-doctor-active: color-mix(
+        in srgb,
+        var(--color-role-doctor) 70%,
+        black
+    );
+    --color-role-family-active: color-mix(
+        in srgb,
+        var(--color-role-family) 70%,
+        black
+    );
     --color-success: #10b981;
     --color-warning: #f4b740;
     --color-warning-text: #5b3a1a;
@@ -77,10 +92,10 @@
     --color-input-text: #1f334a;
     --color-input-placeholder: #2f6fae;
 
-    --animate-supply-alert-flicker: supply-alert-flicker 1.4s ease-in-out infinite;
+    --animate-supply-alert-flicker: supply-alert-flicker 1.4s ease-in-out
+        infinite;
     --animate-collapsible-down: collapsible-down 0.2s ease-out;
     --animate-collapsible-up: collapsible-up 0.2s ease-out;
-
 }
 
 @keyframes supply-alert-flicker {
@@ -172,23 +187,23 @@
     }
 
     .daily-checkin-mood-step-title {
-        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+        @apply text-text-heading text-xl leading-snug font-bold sm:text-2xl lg:text-3xl;
     }
 
     .daily-checkin-mood-step-description {
-        @apply text-base leading-relaxed text-text sm:text-lg;
+        @apply text-text text-base leading-relaxed sm:text-lg;
     }
 
     .daily-checkin-step-title {
-        @apply text-xl font-bold leading-snug text-text-heading sm:text-2xl lg:text-3xl;
+        @apply text-text-heading text-xl leading-snug font-bold sm:text-2xl lg:text-3xl;
     }
 
     .daily-checkin-step-description {
-        @apply text-base leading-relaxed text-text sm:text-lg;
+        @apply text-text text-base leading-relaxed sm:text-lg;
     }
 
     .daily-checkin-step-label {
-        @apply text-base font-semibold leading-snug text-text-heading sm:text-lg;
+        @apply text-text-heading text-base leading-snug font-semibold sm:text-lg;
     }
 
     .daily-checkin-symptom-chip {
