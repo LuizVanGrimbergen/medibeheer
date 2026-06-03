@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { useI18n } from 'vue-i18n';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
@@ -27,9 +28,11 @@ const submit = () => {
 </script>
 
 <template>
-    <Head>
-        <title>{{ t('auth.confirmPwd.metaTitle') }}</title>
-    </Head>
+    <SeoHead
+        :title="t('auth.confirmPwd.metaTitle')"
+        :description="t('auth.confirmPwd.metaDescription')"
+        no-index
+    />
 
     <AuthPageContainer
         title-key="auth.confirmPwd.title"

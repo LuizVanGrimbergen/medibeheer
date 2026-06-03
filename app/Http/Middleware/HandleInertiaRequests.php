@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\User;
 use App\Support\FamilyDashboardState;
+use App\Support\Seo;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -49,6 +50,14 @@ class HandleInertiaRequests extends Middleware
                 'privacyUrl' => route('legal.privacy', absolute: false),
                 'cookiesUrl' => route('legal.cookies', absolute: false),
                 'policyVersion' => config('privacy.policy_version'),
+            ],
+            'seo' => fn (): array => [
+                'indexable' => Seo::shouldIndex($request),
+                'siteName' => config('app.name'),
+                'description' => config('seo.description'),
+                'canonicalUrl' => Seo::canonicalUrl($request),
+                'ogImageUrl' => Seo::ogImageUrl(),
+                'locale' => Seo::openGraphLocale(),
             ],
         ];
 

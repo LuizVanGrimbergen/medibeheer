@@ -26,8 +26,19 @@ function validRegistrationPayload(array $overrides = []): array
 }
 
 test('privacy and cookie policy pages can be rendered', function () {
-    $this->get(route('legal.privacy'))->assertOk();
-    $this->get(route('legal.cookies'))->assertOk();
+    $contactEmail = config('mail.from.address');
+
+    $this->get(route('legal.privacy'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Legal/Privacy')
+            ->has('contactEmail')
+            ->where('contactEmail', $contactEmail)
+            ->has('retention'));
+
+    $this->get(route('legal.cookies'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Legal/Cookies'));
 });
 
 test('registration stores user consents', function () {

@@ -16,6 +16,10 @@
     <link rel="icon" href="/images/medibeheer-pwa.png" type="image/png" sizes="192x192">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 
+    @isset($structuredDataJson)
+        <script type="application/ld+json">{!! $structuredDataJson !!}</script>
+    @endisset
+
     <!-- Scripts -->
     @routes
     @vite('resources/js/app.ts')

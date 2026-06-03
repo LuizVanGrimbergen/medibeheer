@@ -22,7 +22,10 @@ const pageComponents = import.meta.glob<DefineComponent>('./pages/**/*.vue');
 
 const bootstrapApp = () => {
     createInertiaApp({
-        title: (title) => `${title} - ${appName}`,
+        title: (title) =>
+            title !== '' && title !== null && title !== undefined
+                ? `${title} - ${appName}`
+                : appName,
         resolve: async (name) => {
             const page = (await resolvePageComponent(
                 `./pages/${name}.vue`,

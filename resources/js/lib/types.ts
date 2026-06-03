@@ -100,10 +100,20 @@ type WebPushSharedProps = {
     subscribed: boolean;
 };
 
+export type SeoSharedProps = {
+    indexable: boolean;
+    siteName: string;
+    description: string;
+    canonicalUrl: string;
+    ogImageUrl: string;
+    locale: string;
+};
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: Auth;
+    seo: SeoSharedProps;
     flash: {
         error: string | null;
         success: string | null;

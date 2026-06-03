@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
 import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
@@ -24,9 +25,10 @@ const submit = () => {
 </script>
 
 <template>
-    <Head>
-        <title>{{ t('auth.forgotPwd.metaTitle') }}</title>
-    </Head>
+    <SeoHead
+        :title="t('auth.forgotPwd.metaTitle')"
+        :description="t('auth.forgotPwd.metaDescription')"
+    />
 
     <AuthPageContainer
         title-key="auth.forgotPwd.title"
