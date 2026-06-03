@@ -2,6 +2,8 @@ import type { Component } from 'vue';
 
 export type RoleKey = 'patient' | 'doctor' | 'family_member';
 
+export type RoleTokens = Record<RoleKey, string>;
+
 export type RoleOption = {
     key: RoleKey;
     label: string;
