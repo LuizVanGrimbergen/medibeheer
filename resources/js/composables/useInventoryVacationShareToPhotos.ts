@@ -1,8 +1,9 @@
-import { computed, ref, type ComputedRef } from 'vue';
+import { computed, ref  } from 'vue';
+import type {ComputedRef} from 'vue';
 import type { Composer } from 'vue-i18n';
 import { createInventoryVacationShareFiles } from '@/lib/patient/inventory/createInventoryVacationShareFiles';
-import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 import { inventoryVacationShareFilename } from '@/lib/patient/inventory/inventoryVacationShareFilename';
+import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 import {
     canShareVacationImagesFromBrowser,
     shareOrDownloadInventoryVacationShareFiles,
