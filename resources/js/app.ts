@@ -10,7 +10,12 @@ import {
     listenForMedicationPushServiceWorkerUpdates,
     registerMedicationPushServiceWorker,
 } from '@/lib/medicationPushServiceWorker';
+import { route as ziggyRoute } from 'ziggy-js';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+
+if (globalThis.window !== undefined) {
+    globalThis.route = ziggyRoute;
+}
 
 function shouldRegisterMedicationPushServiceWorker(pageProps: unknown): boolean {
     if (typeof pageProps !== 'object' || pageProps === null) {
