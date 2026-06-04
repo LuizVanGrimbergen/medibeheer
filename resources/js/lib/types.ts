@@ -25,6 +25,7 @@ export type Auth = {
 
 export type PendingCareTeamInvitation = {
     public_id: string;
+    invited_email: string;
     expires_at: string;
     revoke_url: string;
 };

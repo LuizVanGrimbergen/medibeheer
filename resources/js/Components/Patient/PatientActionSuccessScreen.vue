@@ -3,6 +3,9 @@ import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import {
+    patientActionSuccessSubtitleClass,
+    patientActionSuccessTitleAfterEyebrowClass,
+    patientActionSuccessTitleClass,
     patientPageCardDetailLabelClass,
     patientPageCardDetailsGroupClass,
     patientPageCardDetailValueClass,
@@ -130,8 +133,8 @@ function dismiss(): void {
                     :id="titleId"
                     :class="
                         trimmedEyebrow !== null
-                            ? 'text-text-heading mt-4 max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl'
-                            : 'text-text-heading max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl'
+                            ? patientActionSuccessTitleAfterEyebrowClass
+                            : patientActionSuccessTitleClass
                     "
                 >
                     {{ props.title }}
@@ -139,7 +142,7 @@ function dismiss(): void {
 
                 <p
                     v-if="trimmedSubtitle !== null"
-                    class="text-text-muted mt-4 max-w-sm text-base leading-relaxed sm:text-lg"
+                    :class="patientActionSuccessSubtitleClass"
                 >
                     {{ trimmedSubtitle }}
                 </p>
