@@ -34,6 +34,7 @@ export default {
     pendingOutgoingIntro:
         'Deze uitnodiging wacht nog op een reactie van uw familielid. U kunt ze intrekken als u dat wilt.',
     pendingOutgoingItemLabel: 'Uitnodiging verstuurd',
+    pendingOutgoingExpiresAt: 'Geldig tot {date}',
     expiresAt: 'Geldig tot {date}',
     revoke: 'Intrekken',
     noPending: 'Geen openstaande uitnodigingen.',

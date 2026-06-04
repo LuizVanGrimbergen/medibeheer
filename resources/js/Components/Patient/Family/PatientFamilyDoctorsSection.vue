@@ -155,9 +155,9 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
             <PatientFamilyCareTeamRowItem
                 v-for="inv in props.doctorInvitations"
                 :key="inv.public_id"
-                :title="t('patient.doctors.pendingItemLabel')"
+                :title="inv.invited_email"
                 :subtitle="
-                    t('patient.doctors.expiresAt', {
+                    t('patient.doctors.pendingExpiresAt', {
                         date: formatCareTeamExpiry(inv.expires_at),
                     })
                 "
