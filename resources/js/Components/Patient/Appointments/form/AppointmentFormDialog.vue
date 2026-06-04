@@ -7,6 +7,7 @@ import AppointmentNotesStep from '@/Components/Patient/Appointments/steps/Appoin
 import AppointmentProviderStep from '@/Components/Patient/Appointments/steps/AppointmentProviderStep.vue';
 import AppointmentScheduleStep from '@/Components/Patient/Appointments/steps/AppointmentScheduleStep.vue';
 import AppointmentTransportStep from '@/Components/Patient/Appointments/steps/AppointmentTransportStep.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
@@ -30,7 +31,10 @@ import {
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    patientShellDialogOverlayAboveAppChromeClass,
+    patientShellWizardFormClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
 
 const props = defineProps<{
@@ -372,12 +376,13 @@ watch(
 
             <form
                 :id="props.formId"
-                class="flex min-h-0 flex-1 flex-col"
+                :class="patientShellWizardFormClass"
                 novalidate
                 @submit.prevent="handlePrimaryAction"
             >
-                <div
-                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
+                <PatientShellWizardScrollBody
+                    :active="props.open"
+                    :step-key="step"
                 >
                     <div ref="wizardStepPanelRef" class="space-y-3 sm:space-y-4">
                         <Card
@@ -433,72 +438,54 @@ watch(
                             </CardContent>
                         </Card>
                     </div>
-                </div>
 
-                <div
-                    class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
-                >
-                    <Card
-                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] sm:rounded-3xl"
-                    >
-                        <CardContent
-                            class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8"
+                    <template #footer>
+                        <div
+                            class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
                         >
-                            <div
-                                class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
+                            <Button
+                                v-if="!isNotesStep"
+                                type="button"
+                                variant="default"
+                                size="lg"
+                                :class="
+                                    patientAppointmentFormPrimaryPairButtonClass
+                                "
+                                @click.stop.prevent="tryAdvanceFromCurrentStep"
                             >
-                                <Button
-                                    v-if="!isNotesStep"
-                                    type="button"
-                                    variant="default"
-                                    size="lg"
-                                    :class="
-                                        patientAppointmentFormPrimaryPairButtonClass
-                                    "
-                                    @click.stop.prevent="
-                                        tryAdvanceFromCurrentStep
-                                    "
-                                >
-                                    {{
-                                        t('patient.appointments.steps.continue')
-                                    }}
-                                </Button>
+                                {{ t('patient.appointments.steps.continue') }}
+                            </Button>
 
-                                <Button
-                                    v-else
-                                    type="submit"
-                                    variant="default"
-                                    size="lg"
-                                    :disabled="props.form.processing"
-                                    :class="
-                                        patientAppointmentFormPrimaryPairButtonClass
-                                    "
-                                >
-                                    {{ t('patient.appointments.actions.save') }}
-                                </Button>
+                            <Button
+                                v-else
+                                type="submit"
+                                variant="default"
+                                size="lg"
+                                :disabled="props.form.processing"
+                                :class="
+                                    patientAppointmentFormPrimaryPairButtonClass
+                                "
+                            >
+                                {{ t('patient.appointments.actions.save') }}
+                            </Button>
 
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    size="lg"
-                                    :disabled="props.form.processing"
-                                    :class="patientSoftDangerActionButtonClass"
-                                    @click.stop.prevent="handleCancelOrBack"
-                                >
-                                    {{
-                                        step === 'provider'
-                                            ? t(
-                                                  'patient.appointments.actions.cancel',
-                                              )
-                                            : t(
-                                                  'patient.appointments.steps.back',
-                                              )
-                                    }}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="lg"
+                                :disabled="props.form.processing"
+                                :class="patientSoftDangerActionButtonClass"
+                                @click.stop.prevent="handleCancelOrBack"
+                            >
+                                {{
+                                    step === 'provider'
+                                        ? t('patient.appointments.actions.cancel')
+                                        : t('patient.appointments.steps.back')
+                                }}
+                            </Button>
+                        </div>
+                    </template>
+                </PatientShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

@@ -2,7 +2,11 @@ import inertia from '@inertiajs/vite';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig, loadEnv } from 'vite';
+
+const projectRoot = path.dirname(fileURLToPath(import.meta.url));
 
 function hostnameFromAppUrl(appUrl: string): string | null {
     try {
@@ -77,6 +81,9 @@ export default defineConfig(({ mode }) => {
             },
         },
         resolve: {
+            alias: {
+                'ziggy-js': path.resolve(projectRoot, 'vendor/tightenco/ziggy'),
+            },
             dedupe: ['@vueuse/core', '@vueuse/shared'],
         },
         build: {
@@ -106,7 +113,7 @@ export default defineConfig(({ mode }) => {
             },
         },
         ssr: {
-            noExternal: ['oh-vue-icons'],
+            noExternal: ['oh-vue-icons', 'ziggy-js'],
         },
     };
 });

@@ -9,6 +9,7 @@ import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/st
 import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
 import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
 import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
@@ -19,7 +20,10 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    patientShellDialogOverlayAboveAppChromeClass,
+    patientShellWizardFormClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import { ref, toRef } from 'vue';
 
 const props = defineProps<{
@@ -101,12 +105,13 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
 
             <form
                 :id="props.formId"
-                class="flex min-h-0 flex-1 flex-col"
+                :class="patientShellWizardFormClass"
                 novalidate
                 @submit.prevent="handleSubmit"
             >
-                <div
-                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
+                <PatientShellWizardScrollBody
+                    :active="props.open"
+                    :step-key="editingStep"
                 >
                     <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
                         <MedicationScheduleMealsAndFrequencyStep
@@ -161,46 +166,34 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                             </CardContent>
                         </Card>
                     </div>
-                </div>
 
-                <div
-                    class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
-                >
-                    <Card
-                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] md:rounded-3xl"
-                    >
-                        <CardContent
-                            class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4"
+                    <template #footer>
+                        <div
+                            class="flex min-w-0 flex-col gap-2 md:flex-row-reverse md:flex-wrap md:gap-3"
                         >
-                            <div
-                                class="flex min-w-0 flex-col gap-2 md:flex-row-reverse md:flex-wrap md:gap-3"
+                            <Button
+                                v-if="editingStep >= 1"
+                                type="submit"
+                                variant="default"
+                                size="lg"
+                                :disabled="props.processing"
+                                :class="primaryButtonClass"
                             >
-                                <Button
-                                    v-if="editingStep >= 1"
-                                    type="submit"
-                                    variant="default"
-                                    size="lg"
-                                    :disabled="props.processing"
-                                    :class="primaryButtonClass"
-                                >
-                                    {{ t('patient.medications.actions.save') }}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="secondary"
-                                    size="lg"
-                                    :disabled="props.processing"
-                                    :class="secondaryButtonClass"
-                                    @click.stop.prevent="emit('cancel')"
-                                >
-                                    {{
-                                        t('patient.medications.actions.cancel')
-                                    }}
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                                {{ t('patient.medications.actions.save') }}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="lg"
+                                :disabled="props.processing"
+                                :class="secondaryButtonClass"
+                                @click.stop.prevent="emit('cancel')"
+                            >
+                                {{ t('patient.medications.actions.cancel') }}
+                            </Button>
+                        </div>
+                    </template>
+                </PatientShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

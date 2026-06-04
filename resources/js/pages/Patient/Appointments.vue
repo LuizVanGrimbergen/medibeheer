@@ -21,8 +21,6 @@ const {
     doctorTypeOptions,
     createSuccessOpen,
     createSuccessTitle,
-    createSuccessMessage,
-    createSuccessDetails,
     createDialogOpen,
     form,
     editForm,
@@ -55,8 +53,6 @@ const {
         <PatientActionSuccessScreen
             v-model:open="createSuccessOpen"
             :title="createSuccessTitle"
-            :message="createSuccessMessage"
-            :details="createSuccessDetails"
             :done-label="t('patient.actionSuccess.done')"
         />
 

@@ -94,9 +94,13 @@ class PatientAppointmentController extends Controller
                 || ($followUp === 'cancelled' && $statusEnum === AppointmentStatus::CANCELLED)
             )
         ) {
-            return redirect()->route('patient.appointments.schedule-next', [
-                'outcome' => $followUp,
-            ]);
+            $outcomePageRoute = $followUp === 'done'
+                ? 'patient.appointments.complete'
+                : 'patient.appointments.cancel';
+
+            return redirect()
+                ->route($outcomePageRoute, ['appointment' => $appointment])
+                ->with('appointment_follow_up_outcome', $followUp);
         }
 
         return redirect()->route('patient.appointments');

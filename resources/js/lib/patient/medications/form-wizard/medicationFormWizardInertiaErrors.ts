@@ -53,11 +53,13 @@ export function medicationWizardStepForInertiaFormErrors(
     }
 
     const noteError = errors.note;
+    const stockBoxesError = errors.stock_number_of_boxes;
     const currentStockError = errors.current_stock;
     const stockPiecesPerPackageError = errors.stock_pieces_per_package;
 
     if (
         (noteError !== undefined && noteError.length > 0) ||
+        (stockBoxesError !== undefined && stockBoxesError.length > 0) ||
         (currentStockError !== undefined && currentStockError.length > 0) ||
         (stockPiecesPerPackageError !== undefined &&
             stockPiecesPerPackageError.length > 0)

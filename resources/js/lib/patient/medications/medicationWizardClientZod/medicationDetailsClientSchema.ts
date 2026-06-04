@@ -6,14 +6,29 @@ import {
 } from '@/lib/patient/medications/options/medicationDoseUnitForm';
 import { MEDICATION_STRENGTH_UNIT_VALUES } from '@/lib/patient/medications/options/medicationStrengthUnitForm';
 import { MEDICATION_TYPE_VALUES } from '@/lib/types';
-import { isMemberOf } from '../validation/medicationFormValidationPrimitives';
+import {
+    isMemberOf,
+    parseMedicationDoseNumericCount,
+} from '../validation/medicationFormValidationPrimitives';
 import { medicationWizardStepValidation } from './wizardStepMessages';
 import { trimmedNonEmptyMax } from './wizardStringFieldPatterns';
 
 export const medicationWizardDetailsSchema = z
     .object({
         name: trimmedNonEmptyMax(500, 'nameRequired', 'nameMax'),
-        dose: trimmedNonEmptyMax(500, 'doseRequired', 'doseMax'),
+        dose: trimmedNonEmptyMax(500, 'doseRequired', 'doseMax').superRefine(
+            (val, ctx) => {
+                const amount = parseMedicationDoseNumericCount(val);
+
+                if (amount === null || amount <= 0) {
+                    ctx.addIssue({
+                        code: 'custom',
+                        message:
+                            medicationWizardStepValidation('doseInvalid'),
+                    });
+                }
+            },
+        ),
         dose_unit: z.string().superRefine((val, ctx) => {
             const allowed =
                 val === 'drop' ||

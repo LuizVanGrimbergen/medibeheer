@@ -24,10 +24,26 @@ final class ShowPatientAppointmentCancelPageController extends Controller
 
         $this->authorize('update', $appointment);
 
+        $followUpOutcome = $request->session()->pull('appointment_follow_up_outcome');
+
+        if (
+            $appointment->status === AppointmentStatus::CANCELLED
+            && $followUpOutcome === 'cancelled'
+        ) {
+            return $this->renderOutcomePage($appointment, showScheduleNextPrompt: true);
+        }
+
         if ($appointment->status !== AppointmentStatus::SCHEDULED) {
             return redirect()->route('patient.appointments');
         }
 
+        return $this->renderOutcomePage($appointment);
+    }
+
+    private function renderOutcomePage(
+        Appointment $appointment,
+        bool $showScheduleNextPrompt = false,
+    ): Response {
         $appointment->load([
             'transportFamily.user',
             'transportInvitations' => static fn ($query) => $query->select(
@@ -46,6 +62,7 @@ final class ShowPatientAppointmentCancelPageController extends Controller
 
         return Inertia::render('Patient/Appointments/Cancel', [
             'appointment' => (new PatientAppointmentResource($appointment))->resolve(),
+            'show_schedule_next_prompt' => $showScheduleNextPrompt,
         ]);
     }
 }

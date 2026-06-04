@@ -1,23 +1,7 @@
 import type { ComposerTranslation } from 'vue-i18n';
+import { parseMedicationDoseNumericCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
-
-export function parseMedicationDoseNumericCount(dose: string): number | null {
-    const trimmed = dose.trim();
-
-    if (trimmed.length < 1) {
-        return null;
-    }
-
-    const normalized = trimmed.replace(',', '.');
-    const n = Number.parseFloat(normalized);
-
-    if (!Number.isFinite(n)) {
-        return null;
-    }
-
-    return n;
-}
 
 export function medicationDoseUnitChipForAmount(
     t: ComposerTranslation,

@@ -2,7 +2,7 @@
 import { Images } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { patientAppointmentFormPrimaryPairButtonClass } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
 import { inventoryVacationShareStepPanelClass } from '@/lib/patient/inventory/inventoryVacationUiClasses';
 
 defineProps<{
@@ -45,7 +45,7 @@ const { t } = useI18n();
             type="button"
             variant="default"
             size="lg"
-            :class="[patientAppointmentFormPrimaryPairButtonClass, 'w-full']"
+            :class="patientFormWizardFooterPrimaryButtonClass"
             :aria-label="
                 t('patient.inventory.vacationShareStepButton', {
                     current: String(stepCurrent),

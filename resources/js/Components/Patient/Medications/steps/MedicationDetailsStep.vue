@@ -130,7 +130,7 @@ function defaultStrengthUnitForMedicationType(
 </script>
 
 <template>
-    <div class="space-y-6 md:space-y-5 lg:space-y-8">
+    <div class="space-y-4 max-md:space-y-3.5 md:space-y-5 lg:space-y-8">
         <div>
             <Label
                 :for="`${idPrefix}-name`"
@@ -178,7 +178,7 @@ function defaultStrengthUnitForMedicationType(
                 :id="`${idPrefix}-type`"
                 :class="
                     cn(
-                        'grid touch-manipulation grid-cols-3 gap-x-2 gap-y-3 md:gap-x-3 md:gap-y-3',
+                        'grid touch-manipulation grid-cols-2 gap-x-2 gap-y-2 max-md:gap-y-2 md:gap-x-3 md:gap-y-4',
                         form.errors.type_medication &&
                             form.type_medication === ''
                             ? 'ring-danger/25 rounded-2xl p-0.5 ring-2'
@@ -199,7 +199,7 @@ function defaultStrengthUnitForMedicationType(
                     :key="option.type"
                     class="flex w-full flex-col items-center gap-1 md:gap-2"
                 >
-                    <div class="relative mx-auto w-full max-w-24 md:max-w-28">
+                    <div class="relative mx-auto w-full max-w-20 md:max-w-28">
                         <div
                             class="pointer-events-none pb-[100%]"
                             aria-hidden="true"
@@ -229,7 +229,7 @@ function defaultStrengthUnitForMedicationType(
                             >
                                 <component
                                     :is="option.icon"
-                                    class="size-11 shrink-0 text-inherit md:size-14"
+                                    class="size-9 shrink-0 text-inherit md:size-14"
                                     aria-hidden="true"
                                 />
                             </span>
@@ -237,7 +237,7 @@ function defaultStrengthUnitForMedicationType(
                     </div>
                     <span
                         :id="`${idPrefix}-type-option-${option.type}-label`"
-                        class="font-body flex min-h-10 max-w-full cursor-pointer touch-manipulation items-center justify-center px-0.5 text-center text-sm leading-snug font-bold wrap-break-word hyphens-auto select-none md:max-w-27 md:text-base md:leading-snug"
+                        class="font-body flex min-h-8 max-md:min-h-8 cursor-pointer touch-manipulation items-center justify-center px-0.5 text-center text-xs leading-snug font-bold wrap-break-word hyphens-auto select-none md:min-h-10 md:max-w-27 md:text-base md:leading-snug"
                         :class="
                             form.type_medication === option.type
                                 ? 'text-text-heading'
@@ -271,6 +271,7 @@ function defaultStrengthUnitForMedicationType(
             :unit-error="form.errors.dose_unit"
             :amount-required="true"
             :unit-required="true"
+            amount-input-mode="decimal"
         />
 
         <MedicationFormAmountWithUnitField

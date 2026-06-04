@@ -10,8 +10,7 @@ import {
     listenForMedicationPushServiceWorkerUpdates,
     registerMedicationPushServiceWorker,
 } from '@/lib/medicationPushServiceWorker';
-import { route as ziggyRoute } from 'ziggy-js';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { route as ziggyRoute, ZiggyVue } from 'ziggy-js';
 
 if (globalThis.window !== undefined) {
     globalThis.route = ziggyRoute;

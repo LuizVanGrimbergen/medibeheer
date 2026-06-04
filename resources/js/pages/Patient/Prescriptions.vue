@@ -23,8 +23,6 @@ const {
     prescriptionFormDialogLayoutClass,
     addSuccessOpen,
     addSuccessTitle,
-    addSuccessMessage,
-    addSuccessDetails,
     addDialogOpen,
     selectedMedicationId,
     quantityClientError,
@@ -70,8 +68,6 @@ const emptyStateMessage = computed((): string => {
         <PatientActionSuccessScreen
             v-model:open="addSuccessOpen"
             :title="addSuccessTitle"
-            :message="addSuccessMessage"
-            :details="addSuccessDetails"
             :done-label="t('patient.actionSuccess.done')"
         />
 

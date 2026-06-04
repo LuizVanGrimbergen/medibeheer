@@ -3,6 +3,7 @@ import { useI18n } from 'vue-i18n';
 import PrescriptionFormDialogFooter from '@/Components/Patient/Prescriptions/form/PrescriptionFormDialogFooter.vue';
 import PrescriptionDetailsStep from '@/Components/Patient/Prescriptions/steps/PrescriptionDetailsStep.vue';
 import PrescriptionExpiryDatesStep from '@/Components/Patient/Prescriptions/steps/PrescriptionExpiryDatesStep.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     Dialog,
@@ -12,7 +13,16 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    patientShellDialogOverlayAboveAppChromeClass,
+    patientShellPageDescriptionClass,
+    patientShellPageHeaderClass,
+    patientShellPageTitleClass,
+    patientShellWizardCardClass,
+    patientShellWizardCardInnerClass,
+    patientShellWizardFormClass,
+    patientShellWizardStepPanelClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
@@ -65,17 +75,13 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
             :class="props.dialogContentClass"
             :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
         >
-            <DialogHeader
-                class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
-            >
-                <DialogTitle
-                    class="text-text-heading text-xl leading-tight font-bold md:text-2xl"
-                >
+            <DialogHeader :class="patientShellPageHeaderClass">
+                <DialogTitle :class="patientShellPageTitleClass">
                     {{ t('patient.prescriptions.dialogTitle') }}
                 </DialogTitle>
                 <DialogDescription
                     ref="progressLabelRef"
-                    class="text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed"
+                    :class="patientShellPageDescriptionClass"
                     aria-live="polite"
                 >
                     {{ progressLabel }}
@@ -84,21 +90,21 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
 
             <form
                 :id="props.formId"
-                class="flex min-h-0 flex-1 flex-col"
+                :class="patientShellWizardFormClass"
                 novalidate
                 @submit.prevent="emit('submit')"
             >
-                <div
-                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
+                <PatientShellWizardScrollBody
+                    :active="open"
+                    :step-key="props.currentStep"
                 >
-                    <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
-                        <Card
-                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
-                        >
+                    <div
+                        ref="wizardStepPanelRef"
+                        :class="patientShellWizardStepPanelClass"
+                    >
+                        <Card :class="patientShellWizardCardClass">
                             <CardContent class="p-0">
-                                <div
-                                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7"
-                                >
+                                <div :class="patientShellWizardCardInnerClass">
                                     <PrescriptionDetailsStep
                                         v-if="currentStep === 1"
                                         :id-prefix="props.idPrefix"
@@ -129,26 +135,16 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                             </CardContent>
                         </Card>
                     </div>
-                </div>
 
-                <div
-                    class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
-                >
-                    <Card
-                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] md:rounded-3xl"
-                    >
-                        <CardContent
-                            class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4"
-                        >
-                            <PrescriptionFormDialogFooter
-                                :current-step="currentStep"
-                                :processing="props.form.processing"
-                                @cancel="emit('cancel')"
-                                @back="emit('back')"
-                            />
-                        </CardContent>
-                    </Card>
-                </div>
+                    <template #footer>
+                        <PrescriptionFormDialogFooter
+                            :current-step="currentStep"
+                            :processing="props.form.processing"
+                            @cancel="emit('cancel')"
+                            @back="emit('back')"
+                        />
+                    </template>
+                </PatientShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

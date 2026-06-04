@@ -1,32 +1,16 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { Button } from '@/Components/ui/button';
+import PatientAppointmentScheduleNextSuccessScreen from '@/Components/Patient/Appointments/PatientAppointmentScheduleNextSuccessScreen.vue';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type { PatientAppointmentScheduleNextPageProps } from '@/lib/patient/appointments/screen/patientAppointmentScheduleNextPageProps';
-import {
-    patientAppointmentFormPrimaryPairButtonClass,
-    patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
-import { patientPageTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentScheduleNextPageProps>();
 
 const { t } = useI18n();
 
-function goToOverview(): void {
-    router.get(route('patient.appointments'));
-}
-
-function goToNewAppointment(): void {
-    router.get(route('patient.appointments', { open_create: 1 }));
-}
-
-const descriptionKey =
-    props.outcome === 'done'
-        ? 'patient.appointments.scheduleNext.descriptionDone'
-        : 'patient.appointments.scheduleNext.descriptionCancelled';
+const scheduleNextOpen = ref(true);
 </script>
 
 <template>
@@ -35,40 +19,9 @@ const descriptionKey =
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.appointments.scheduleNext.title')">
-            <div class="space-y-3">
-                <h1 :class="patientPageTitleClass">
-                    {{ t('patient.appointments.scheduleNext.title') }}
-                </h1>
-                <p
-                    class="text-text-muted max-w-prose text-base leading-relaxed"
-                >
-                    {{ t(descriptionKey) }}
-                </p>
-            </div>
-
-            <div
-                class="border-border/80 bg-surface flex w-full min-w-0 flex-col gap-3 rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
-            >
-                <Button
-                    type="button"
-                    variant="default"
-                    size="lg"
-                    :class="patientAppointmentFormPrimaryPairButtonClass"
-                    @click="goToNewAppointment"
-                >
-                    {{ t('patient.appointments.scheduleNext.yes') }}
-                </Button>
-                <Button
-                    type="button"
-                    variant="secondary"
-                    size="lg"
-                    :class="patientSoftDangerActionButtonClass"
-                    @click="goToOverview"
-                >
-                    {{ t('patient.appointments.scheduleNext.no') }}
-                </Button>
-            </div>
-        </PatientPageShell>
+        <PatientAppointmentScheduleNextSuccessScreen
+            v-model:open="scheduleNextOpen"
+            :outcome="props.outcome"
+        />
     </PatientLayout>
 </template>

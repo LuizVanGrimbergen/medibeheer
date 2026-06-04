@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { Stethoscope } from 'lucide-vue-next';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import PatientAppointmentScheduleNextSuccessScreen from '@/Components/Patient/Appointments/PatientAppointmentScheduleNextSuccessScreen.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -23,6 +25,8 @@ const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
 
 const fieldClass =
     'box-border min-h-34 w-full shrink-0 rounded-2xl border-2 border-border bg-surface px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus-visible:border-focus focus-visible:ring-2 focus-visible:ring-focus/25';
+
+const scheduleNextOpen = ref(props.show_schedule_next_prompt === true);
 
 const form = useForm({
     doctor_visit_summary: '',
@@ -46,6 +50,11 @@ function submit(): void {
     </Head>
 
     <PatientLayout>
+        <PatientAppointmentScheduleNextSuccessScreen
+            v-model:open="scheduleNextOpen"
+            outcome="done"
+        />
+
         <PatientPageShell :title="t('patient.appointments.doneDialog.title')">
             <div class="space-y-3">
                 <Link

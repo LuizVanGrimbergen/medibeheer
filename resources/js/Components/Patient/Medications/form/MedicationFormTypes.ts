@@ -30,6 +30,8 @@ export type MedicationCreateFormState = {
     strength_amount: string;
     strength_unit: MedicationStrengthUnitValue | '';
     current_stock: string;
+    /** Client-only: aantal doosjes/flesjes in de voorraadcalculator. */
+    stock_number_of_boxes: string;
     stock_pieces_per_package: string;
     note: string;
     schedule: MedicationScheduleFormSlice;
