@@ -156,10 +156,7 @@ const dailyCheckinEncouragementFlash = computed((): string | null => {
     </Head>
 
     <PatientLayout>
-        <PatientPageShell
-            :title="t('patient.dashboard.heading')"
-            show-visible-title
-        >
+        <PatientPageShell :title="t('patient.dashboard.heading')">
             <DailyCheckinSuccessScreen
                 :mood="dailyCheckinMoodFlash"
                 :message="dailyCheckinEncouragementFlash"

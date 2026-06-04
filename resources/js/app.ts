@@ -2,7 +2,6 @@ import '../css/app.css';
 import './bootstrap';
 
 import { createInertiaApp } from '@inertiajs/vue3';
-import { configureEcho } from '@laravel/echo-vue';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
@@ -13,9 +12,15 @@ import {
 } from '@/lib/medicationPushServiceWorker';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-configureEcho({
-    broadcaster: 'pusher',
-});
+function shouldRegisterMedicationPushServiceWorker(pageProps: unknown): boolean {
+    if (typeof pageProps !== 'object' || pageProps === null) {
+        return false;
+    }
+
+    const auth = (pageProps as { auth?: { user?: { role?: string } } }).auth;
+
+    return auth?.user?.role === 'patient';
+}
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pageComponents = import.meta.glob<DefineComponent>('./pages/**/*.vue');
@@ -41,6 +46,11 @@ const bootstrapApp = () => {
             vueApp.use(ZiggyVue);
             vueApp.use(i18n);
 
+            if (shouldRegisterMedicationPushServiceWorker(props.initialPage.props)) {
+                listenForMedicationPushServiceWorkerUpdates();
+                void registerMedicationPushServiceWorker();
+            }
+
             if (el !== null) {
                 vueApp.mount(el);
             }
@@ -52,7 +62,5 @@ const bootstrapApp = () => {
 };
 
 if (globalThis.window !== undefined) {
-    listenForMedicationPushServiceWorkerUpdates();
-    void registerMedicationPushServiceWorker();
     bootstrapApp();
 }

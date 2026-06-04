@@ -20,6 +20,12 @@ export type TodayMedicationIntakeDashboardGroups = {
     takenSlots: TodayMedicationIntakeSlot[];
 };
 
+export type TodayMedicationIntakePeriodSection = {
+    period: TodayMedicationIntakeDayPeriodValue;
+    pendingSlots: TodayMedicationIntakeSlot[];
+    takenSlots: TodayMedicationIntakeSlot[];
+};
+
 function minutesSinceMidnight(value: string): number {
     const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
 
@@ -87,6 +93,30 @@ export function groupTodayMedicationIntakesByDayPeriod(
         }
 
         return [{ period, slots: periodSlots }];
+    });
+}
+
+export function buildTodayMedicationIntakePeriodSections(
+    groups: TodayMedicationIntakeDashboardGroups,
+): TodayMedicationIntakePeriodSection[] {
+    const pendingByPeriod = new Map(
+        groups.periodGroups.map((group) => [group.period, group.slots]),
+    );
+    const takenByPeriod = new Map(
+        groupTodayMedicationIntakesByDayPeriod(groups.takenSlots).map(
+            (group) => [group.period, group.slots],
+        ),
+    );
+
+    return TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER.flatMap((period) => {
+        const pendingSlots = pendingByPeriod.get(period) ?? [];
+        const takenSlots = takenByPeriod.get(period) ?? [];
+
+        if (pendingSlots.length < 1 && takenSlots.length < 1) {
+            return [];
+        }
+
+        return [{ period, pendingSlots, takenSlots }];
     });
 }
 

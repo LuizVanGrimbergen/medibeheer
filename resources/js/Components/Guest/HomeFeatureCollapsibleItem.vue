@@ -20,7 +20,7 @@ const { t } = useI18n();
 
 const detailListClass = cn(
     'list-outside list-disc space-y-2.5 pl-5',
-    'text-text-muted text-base leading-relaxed',
+    'text-text text-base leading-relaxed',
 );
 </script>
 
@@ -56,16 +56,6 @@ const detailListClass = cn(
                     </div>
                 </div>
 
-                <PatientListCardDetailsToggle
-                    v-if="!open"
-                    mode="expand"
-                    :label="t('home.cardExpandHint')"
-                    :ariaLabel="
-                        t('home.showDetails', { title: props.title })
-                    "
-                    wrapper-class="mt-5 border-border/70 border-t pt-5"
-                />
-
                 <CollapsibleContent>
                     <div class="border-border/70 mt-5 space-y-3 border-t pt-5">
                         <Label
@@ -81,17 +71,27 @@ const detailListClass = cn(
                                 {{ point }}
                             </li>
                         </ul>
-
-                        <PatientListCardDetailsToggle
-                            mode="collapse"
-                            wrapper-class="border-0 pt-5"
-                            :label="t('home.cardCollapseHint')"
-                            :ariaLabel="
-                                t('home.hideDetails', { title: props.title })
-                            "
-                        />
                     </div>
                 </CollapsibleContent>
+
+                <PatientListCardDetailsToggle
+                    :mode="open ? 'collapse' : 'expand'"
+                    :label="
+                        t(
+                            open
+                                ? 'home.cardCollapseHint'
+                                : 'home.cardExpandHint',
+                        )
+                    "
+                    :ariaLabel="
+                        t(
+                            open
+                                ? 'home.hideDetails'
+                                : 'home.showDetails',
+                            { title: props.title },
+                        )
+                    "
+                />
             </Collapsible>
         </CardContent>
     </Card>

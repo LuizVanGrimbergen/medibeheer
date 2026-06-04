@@ -37,9 +37,11 @@ const homeHref = computed(() => {
 </script>
 
 <template>
-    <nav class="border-border bg-surface sticky top-0 z-100 border-b">
+    <nav
+        v-if="isDoctor"
+        class="border-border bg-surface sticky top-0 z-100 border-b"
+    >
         <div
-            v-if="isDoctor"
             class="mx-auto grid max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-4 py-4 sm:px-6 lg:px-8"
         >
             <Link
@@ -70,33 +72,36 @@ const homeHref = computed(() => {
                 </Button>
             </div>
         </div>
-
-        <div
-            v-else
-            class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
-        >
-            <Link :href="homeHref" class="transition hover:opacity-80">
-                <AppLogo />
-            </Link>
-
-            <div class="flex items-center gap-5">
-                <span
-                    class="text-text-muted hidden text-sm font-medium sm:inline"
-                >
-                    {{ props.userName }}
-                </span>
-
-                <Button
-                    as-child
-                    variant="ghost"
-                    size="icon"
-                    :aria-label="t('app.navigation.settings')"
-                >
-                    <Link :href="route('settings.edit')">
-                        <Settings :size="18" />
-                    </Link>
-                </Button>
-            </div>
-        </div>
     </nav>
+
+    <template v-else>
+        <nav
+            class="border-border bg-surface sticky top-0 z-100 hidden border-b md:block"
+        >
+            <div
+                class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
+            >
+                <Link :href="homeHref" class="transition hover:opacity-80">
+                    <AppLogo />
+                </Link>
+
+                <div class="flex items-center gap-5">
+                    <span class="text-text-muted text-sm font-medium">
+                        {{ props.userName }}
+                    </span>
+
+                    <Button
+                        as-child
+                        variant="ghost"
+                        size="icon"
+                        :aria-label="t('app.navigation.settings')"
+                    >
+                        <Link :href="route('settings.edit')">
+                            <Settings :size="18" />
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </nav>
+    </template>
 </template>

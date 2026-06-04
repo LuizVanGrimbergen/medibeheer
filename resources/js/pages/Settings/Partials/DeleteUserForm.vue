@@ -53,7 +53,7 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-text text-lg font-medium">
+            <h2 class="text-primary text-lg font-semibold">
                 {{ t('profile.delete.title') }}
             </h2>
 
@@ -62,7 +62,11 @@ const closeModal = () => {
             </p>
         </header>
 
-        <Button variant="destructive" @click="confirmUserDeletion">
+        <Button
+            variant="outline"
+            class="h-auto min-h-12 w-full touch-manipulation text-danger hover:bg-surface-hover hover:text-danger sm:min-h-14"
+            @click="confirmUserDeletion"
+        >
             {{ t('profile.delete.action') }}
         </Button>
 

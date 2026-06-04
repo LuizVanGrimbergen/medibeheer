@@ -3,12 +3,11 @@ export default {
     metaDescription:
         'Medibeheer: medicatie, voorschriften, innames, voorraad, afspraken, medicatieplannen en check-ins. Voor patiënten, familie en zorgverleners.',
     welcomeTitle: 'Welkom bij',
-    welcomeSubtitle:
-        'Rust in uw hoofd. Uw medicatie op één overzichtelijke plek.',
+    welcomeSubtitle: 'U vertrouwde gezondheidspartner.',
     featuresHeading: 'Wat doet Medibeheer?',
     featuresIntro: 'Tik op een kaart voor meer uitleg, net als in de app.',
-    cardExpandHint: 'Tik voor meer details',
-    cardCollapseHint: 'Tik om te sluiten',
+    cardExpandHint: 'Meer details bekijken',
+    cardCollapseHint: 'Details sluiten',
     showDetails: 'Details tonen over {title}',
     hideDetails: 'Details verbergen over {title}',
     featureDetailLabel: 'Zo werkt het',
