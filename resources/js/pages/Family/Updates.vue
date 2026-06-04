@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed, onMounted, ref } from 'vue';
-import { ensureLaravelEchoIsConfigured } from '@/lib/configureLaravelEcho';
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
-import FamilyUpdatesEchoListener from '@/Components/Family/Updates/FamilyUpdatesEchoListener.vue';
 import FamilyUpdatesMedicationDayGroup from '@/Components/Family/Updates/FamilyUpdatesMedicationDayGroup.vue';
 import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
 import { setUpdatesPeriodDaysFromToggle } from '@/composables/family/useFamilyUpdatesActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import { groupMedicationIntakesByDate } from '@/lib/family/medications/groupMedicationIntakesByDate';
+import { ensureLaravelEchoIsConfigured } from '@/lib/configureLaravelEcho';
 import type { FamilyUpdatesScreenProps } from '@/lib/family/updates/familyUpdatesScreenProps';
 import type { FamilyDashboardProps } from '@/lib/types';
+
+const FamilyUpdatesEchoListener = defineAsyncComponent(
+    () =>
+        import('@/Components/Family/Updates/FamilyUpdatesEchoListener.vue'),
+);
 
 const props = defineProps<
     FamilyUpdatesScreenProps & {

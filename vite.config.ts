@@ -101,14 +101,6 @@ export default defineConfig(({ mode }) => {
                         if (id.includes('node_modules/reka-ui')) {
                             return 'vendor-reka-ui';
                         }
-
-                        if (
-                            id.includes('node_modules/@laravel/echo-vue')
-                            || id.includes('node_modules/laravel-echo')
-                            || id.includes('node_modules/pusher-js')
-                        ) {
-                            return 'vendor-echo';
-                        }
                     },
                 },
             },
