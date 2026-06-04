@@ -1,4 +1,8 @@
 import appointmentsNl from '@/translations/nl/patient/appointments';
+import {
+    collectAppointmentAddressFieldErrors,
+    isAppointmentAddressValidationRequired,
+} from '../appointmentAddressValidation';
 import { parseLocalAppointmentDateTime } from '../validation/appointmentStartsAtLocalValidation';
 
 export type AppointmentFormStepId =
@@ -10,9 +14,9 @@ export type AppointmentFormStepId =
 
 export const APPOINTMENT_FORM_STEP_ORDER: AppointmentFormStepId[] = [
     'provider',
+    'transport',
     'address',
     'schedule',
-    'transport',
     'notes',
 ];
 
@@ -99,37 +103,18 @@ function fieldErrorsForProviderStep(
         out.doctor_type = appointmentsNl.stepValidation.doctorTypeRequired;
     }
 
-    if (values.provider_name.trim().length < 1) {
-        out.provider_name = appointmentsNl.stepValidation.providerNameRequired;
-    }
-
     return out;
 }
 
 function fieldErrorsForAddressStep(
     values: StepSnapshot,
 ): AppointmentFormInlineStepErrors {
-    const out: AppointmentFormInlineStepErrors = {};
+    const required = isAppointmentAddressValidationRequired(
+        values.needs_transport,
+        values,
+    );
 
-    if (values.street.trim().length < 1) {
-        out.street = appointmentsNl.stepValidation.streetRequired;
-    }
-
-    const postalTrimmed = values.postal_code.trim();
-
-    if (postalTrimmed.length < 1) {
-        out.postal_code = appointmentsNl.stepValidation.postalCodeRequired;
-    }
-
-    if (postalTrimmed.length > 0 && postalTrimmed.length < 4) {
-        out.postal_code = appointmentsNl.validation.postalCodeMinLength;
-    }
-
-    if (values.city.trim().length < 1) {
-        out.city = appointmentsNl.stepValidation.cityRequired;
-    }
-
-    return out;
+    return collectAppointmentAddressFieldErrors(values, { required });
 }
 
 function fieldErrorsForScheduleStep(

@@ -6,6 +6,11 @@ import {
     APPOINTMENT_STATUS_VALUES,
 } from '@/lib/types';
 import appointmentsNl from '@/translations/nl/patient/appointments';
+import {
+    collectAppointmentAddressFieldErrors,
+    isAppointmentAddressValidationRequired,
+    isBelgianPostalCodeValid,
+} from '../appointmentAddressValidation';
 import { parseLocalAppointmentDateTime } from '../validation/appointmentStartsAtLocalValidation';
 
 export const PATIENT_APPOINTMENT_DOCTOR_TYPE_OPTIONS: AppointmentDoctorType[] =
@@ -17,28 +22,11 @@ const appointmentStatusValueSchema = z.enum(APPOINTMENT_STATUS_VALUES);
 
 const patientAppointmentDialogFormFieldsSchema = z.object({
     doctor_type: z.union([z.literal(''), appointmentDoctorTypeValueSchema]),
-    provider_name: z
-        .string()
-        .trim()
-        .min(1, appointmentsNl.stepValidation.providerNameRequired)
-        .max(255),
-    street: z
-        .string()
-        .trim()
-        .min(1, appointmentsNl.stepValidation.streetRequired)
-        .max(500),
+    provider_name: z.string().trim().max(255),
+    street: z.string().trim().max(500),
     house_number: z.string().trim().max(32),
-    postal_code: z
-        .string()
-        .trim()
-        .min(1, appointmentsNl.stepValidation.postalCodeRequired)
-        .min(4, appointmentsNl.validation.postalCodeMinLength)
-        .max(32),
-    city: z
-        .string()
-        .trim()
-        .min(1, appointmentsNl.stepValidation.cityRequired)
-        .max(255),
+    postal_code: z.string().trim().max(32),
+    city: z.string().trim().max(255),
     starts_at_date: z
         .string()
         .trim()
@@ -76,6 +64,47 @@ function superRefinePatientAppointmentDialogForm(
                 message:
                     appointmentsNl.stepValidation.transportRecipientsRequired,
             });
+        }
+
+        if (
+            isAppointmentAddressValidationRequired(data.needs_transport, {
+                street: data.street,
+                postal_code: data.postal_code,
+                city: data.city,
+                house_number: data.house_number,
+            })
+        ) {
+            const addressErrors = collectAppointmentAddressFieldErrors({
+                street: data.street,
+                postal_code: data.postal_code,
+                city: data.city,
+            });
+
+            for (const [field, message] of Object.entries(addressErrors)) {
+                if (message === undefined || message.length < 1) {
+                    continue;
+                }
+
+                ctx.addIssue({
+                    code: 'custom',
+                    path: [field],
+                    message,
+                });
+            }
+        } else {
+            const postalTrimmed = data.postal_code.trim();
+
+            if (
+                postalTrimmed.length > 0 &&
+                !isBelgianPostalCodeValid(postalTrimmed)
+            ) {
+                ctx.addIssue({
+                    code: 'custom',
+                    path: ['postal_code'],
+                    message:
+                        appointmentsNl.validation.postalCodeBelgianInvalid,
+                });
+            }
         }
 
         const dateTrimmed = data.starts_at_date.trim();
