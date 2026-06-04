@@ -120,7 +120,9 @@ test('verified patients can visit the patient family page with doctors section',
         ->assertInertia(fn ($page) => $page
             ->component('Patient/Family')
             ->has('family_invitations')
-            ->has('doctor_invitations'));
+            ->has('doctor_invitations')
+            ->where('family_invitation_store_url', route('patient.family.invitations.store', absolute: false))
+            ->where('doctor_invitation_store_url', route('patient.doctors.invitations.store', absolute: false)));
 });
 
 test('patient doctors route redirects to family doctors section', function () {

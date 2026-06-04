@@ -1,5 +1,7 @@
 export default {
     title: 'Familie',
+    metaDescription:
+        'Nodig familie en uw arts uit en beheer medicatieplannen van familie in Medibeheer.',
     heading: 'Familie & zorg',
     pageIntro:
         'Op deze pagina nodigt u familie en uw arts uit. Zo kunnen zij u helpen met uw medicatie.',
@@ -18,7 +20,7 @@ export default {
     pendingMedicationPlansIntro:
         'Een familielid heeft een medicatieplan naar u gestuurd. U kunt het hier bekijken, accepteren of weigeren.',
     pendingMedicationPlansEmpty:
-        'Er zijn geen medicatieplannen om te beoordelen.',
+        'Er zijn geen medicatieplannen om te accepteren.',
     pendingMedicationPlansFrom: 'Van {name}',
     pendingMedicationPlansReview: 'Bekijken',
     pendingMedicationPlansAccept: 'Accepteren',
