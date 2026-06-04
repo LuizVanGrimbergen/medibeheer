@@ -6,6 +6,9 @@ export const patientFormLabelClass =
 export const patientFormFieldInputClass =
     'h-auto min-h-14 w-full rounded-2xl border-2 border-border bg-surface px-4 py-3.5 text-lg leading-normal text-text placeholder:text-text-muted focus-visible:border-focus focus-visible:ring-2 focus-visible:ring-focus/25';
 
+/** Host class for Google `gmp-place-autocomplete` (styled in patient-place-autocomplete.css). */
+export const patientFormPlaceAutocompleteClass = 'patient-place-autocomplete';
+
 export const patientFormNativeDateTimeInputClass = cn(
     patientFormFieldInputClass,
     'native-picker-input block min-h-16 py-4 text-xl pr-14 touch-manipulation',
