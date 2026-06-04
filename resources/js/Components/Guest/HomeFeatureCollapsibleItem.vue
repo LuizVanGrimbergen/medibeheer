@@ -20,7 +20,7 @@ const { t } = useI18n();
 
 const detailListClass = cn(
     'list-outside list-disc space-y-2.5 pl-5',
-    'text-text-muted text-base leading-relaxed',
+    'text-text text-base leading-relaxed',
 );
 </script>
 
