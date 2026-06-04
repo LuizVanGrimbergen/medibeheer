@@ -84,7 +84,9 @@ const expiryProgressAriaLabel = computed((): string => {
                     "
                     :tone="prescriptionUrgencyTone"
                     :show-type-label="false"
-                    :class="prescription.is_last_in_batch ? 'sm:pr-44' : null"
+                    :class="
+                        prescription.is_last_in_batch ? 'sm:pr-44' : null
+                    "
                 >
                     <template v-if="!isOpen" #subtitle>
                         <MedicationUrgencyProgressSection

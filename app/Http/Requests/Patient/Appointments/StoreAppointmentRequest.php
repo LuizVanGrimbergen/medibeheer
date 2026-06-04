@@ -26,16 +26,44 @@ class StoreAppointmentRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $raw = $this->input('house_number');
-        $normalized = '';
-        if (is_string($raw)) {
-            $normalized = trim($raw);
+        $rawHouseNumber = $this->input('house_number');
+        $houseNumber = '';
+        if (is_string($rawHouseNumber)) {
+            $houseNumber = trim($rawHouseNumber);
+        }
+
+        $rawProviderName = $this->input('provider_name');
+        $providerName = '';
+        if (is_string($rawProviderName)) {
+            $providerName = trim($rawProviderName);
         }
 
         $patient = $this->user()->patient;
 
+        $street = '';
+        $rawStreet = $this->input('street');
+        if (is_string($rawStreet)) {
+            $street = trim($rawStreet);
+        }
+
+        $postalCode = '';
+        $rawPostalCode = $this->input('postal_code');
+        if (is_string($rawPostalCode)) {
+            $postalCode = trim($rawPostalCode);
+        }
+
+        $city = '';
+        $rawCity = $this->input('city');
+        if (is_string($rawCity)) {
+            $city = trim($rawCity);
+        }
+
         $merge = [
-            'house_number' => $normalized,
+            'house_number' => $houseNumber,
+            'provider_name' => $providerName,
+            'street' => $street,
+            'postal_code' => $postalCode,
+            'city' => $city,
         ];
 
         if ($patient->families()->count() === 0) {
@@ -52,11 +80,23 @@ class StoreAppointmentRequest extends FormRequest
 
         return [
             'doctor_type' => ['required', Rule::enum(DoctorType::class)],
-            'provider_name' => ['required', 'string', 'max:255'],
-            'street' => ['required', 'string', 'max:500'],
+            'provider_name' => ['nullable', 'string', 'max:255'],
+            'street' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['required', 'string', 'max:500'],
+                ['nullable', 'string', 'max:500'],
+            ),
             'house_number' => ['string', 'max:32'],
-            'postal_code' => ['required', 'string', 'min:4', 'max:32'],
-            'city' => ['required', 'string', 'max:255'],
+            'postal_code' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['required', 'string', 'min:4', 'max:32'],
+                ['nullable', 'string', 'max:32'],
+            ),
+            'city' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['required', 'string', 'max:255'],
+                ['nullable', 'string', 'max:255'],
+            ),
             'starts_at' => ['required', 'date', new AppointmentStartsAtNotInPast],
             'needs_transport' => ['sometimes', 'boolean'],
             'transport_family_ids' => Rule::when(

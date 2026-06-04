@@ -44,6 +44,30 @@ class UpdateAppointmentRequest extends FormRequest
             $merge['house_number'] = $normalized;
         }
 
+        if ($this->has('provider_name')) {
+            $raw = $this->input('provider_name');
+            $normalized = '';
+            if (is_string($raw)) {
+                $normalized = trim($raw);
+            }
+
+            $merge['provider_name'] = $normalized;
+        }
+
+        foreach (['street', 'postal_code', 'city'] as $field) {
+            if (! $this->has($field)) {
+                continue;
+            }
+
+            $raw = $this->input($field);
+            $normalized = '';
+            if (is_string($raw)) {
+                $normalized = trim($raw);
+            }
+
+            $merge[$field] = $normalized;
+        }
+
         /** @var Appointment|null $appointment */
         $appointment = $this->route('appointment');
 
@@ -67,11 +91,23 @@ class UpdateAppointmentRequest extends FormRequest
 
         return [
             'doctor_type' => ['sometimes', 'required', Rule::enum(DoctorType::class)],
-            'provider_name' => ['sometimes', 'required', 'string', 'max:255'],
-            'street' => ['sometimes', 'required', 'string', 'max:500'],
+            'provider_name' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'street' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['sometimes', 'required', 'string', 'max:500'],
+                ['sometimes', 'nullable', 'string', 'max:500'],
+            ),
             'house_number' => ['sometimes', 'string', 'max:32'],
-            'postal_code' => ['sometimes', 'required', 'string', 'min:4', 'max:32'],
-            'city' => ['sometimes', 'required', 'string', 'max:255'],
+            'postal_code' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['sometimes', 'required', 'string', 'min:4', 'max:32'],
+                ['sometimes', 'nullable', 'string', 'max:32'],
+            ),
+            'city' => Rule::when(
+                $this->boolean('needs_transport'),
+                ['sometimes', 'required', 'string', 'max:255'],
+                ['sometimes', 'nullable', 'string', 'max:255'],
+            ),
             'starts_at' => [
                 'sometimes',
                 'required',

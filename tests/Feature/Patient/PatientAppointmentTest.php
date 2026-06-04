@@ -114,6 +114,84 @@ test('patients can create an appointment without a house number', function () {
     expect($appointment->house_number)->toBe('');
 });
 
+test('patients can create an appointment without an address when transport is not needed', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $startsAt = now()->addWeek();
+
+    $this->actingAs($user)->post(route('patient.appointments.store'), [
+        'doctor_type' => DoctorType::GENERAL_PRACTITIONER->value,
+        'provider_name' => '',
+        'street' => '',
+        'house_number' => '',
+        'postal_code' => '',
+        'city' => '',
+        'starts_at' => $startsAt->toDateTimeString(),
+        'needs_transport' => false,
+        'notes' => null,
+        'status' => AppointmentStatus::SCHEDULED->value,
+    ])->assertRedirect(route('patient.appointments'));
+
+    $appointment = Appointment::query()->where('patient_id', $patient->id)->first();
+    expect($appointment)->not->toBeNull();
+    expect($appointment->street)->toBe('');
+    expect($appointment->postal_code)->toBe('');
+    expect($appointment->city)->toBe('');
+});
+
+test('patients cannot create a transport appointment without an address', function () {
+    $patientUser = User::factory()->patient()->create();
+    $patient = $patientUser->patient;
+    expect($patient)->not->toBeNull();
+
+    $familyUser = User::factory()->familyMember()->create();
+    $family = $familyUser->family;
+    expect($family)->not->toBeNull();
+    $family->patients()->syncWithoutDetaching([$patient->id]);
+
+    $startsAt = now()->addWeek();
+
+    $this->actingAs($patientUser)->post(route('patient.appointments.store'), [
+        'doctor_type' => DoctorType::GENERAL_PRACTITIONER->value,
+        'provider_name' => 'City Clinic',
+        'street' => '',
+        'house_number' => '',
+        'postal_code' => '',
+        'city' => '',
+        'starts_at' => $startsAt->toDateTimeString(),
+        'needs_transport' => true,
+        'transport_family_ids' => [(int) $family->id],
+        'notes' => null,
+        'status' => AppointmentStatus::SCHEDULED->value,
+    ])->assertSessionHasErrors(['street', 'postal_code', 'city']);
+});
+
+test('patients can create an appointment without a provider name', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $startsAt = now()->addWeek();
+
+    $this->actingAs($user)->post(route('patient.appointments.store'), [
+        'doctor_type' => DoctorType::GENERAL_PRACTITIONER->value,
+        'provider_name' => '',
+        'street' => 'Main Street',
+        'house_number' => '1',
+        'postal_code' => '1234 AB',
+        'city' => 'Amsterdam',
+        'starts_at' => $startsAt->toDateTimeString(),
+        'notes' => null,
+        'status' => AppointmentStatus::SCHEDULED->value,
+    ])->assertRedirect(route('patient.appointments'));
+
+    $appointment = Appointment::query()->where('patient_id', $patient->id)->first();
+    expect($appointment)->not->toBeNull();
+    expect($appointment->provider_name)->toBe('');
+});
+
 test('patients can request transport when creating an appointment', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = $patientUser->patient;

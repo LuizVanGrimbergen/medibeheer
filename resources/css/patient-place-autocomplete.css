@@ -1,0 +1,115 @@
+/**
+ * Places API (New) — PlaceAutocompleteElement
+ * Matches patientFormFieldInputClass; see Google CSS properties + ::part() docs.
+ */
+
+.patient-place-autocomplete-host {
+    width: 100%;
+}
+
+.patient-place-autocomplete-host:focus-within
+    gmp-place-autocomplete.patient-place-autocomplete {
+    border-color: var(--color-input-border-focus);
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--color-focus) 25%, transparent);
+}
+
+gmp-place-autocomplete.patient-place-autocomplete {
+    display: block;
+    width: 100%;
+    min-height: 3.5rem;
+    box-sizing: border-box;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 2px solid var(--color-border);
+    border-radius: 1rem;
+    color-scheme: light;
+    font-family: var(--font-body);
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(focus-ring) {
+    display: none;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete
+    .patient-place-autocomplete-clear-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    pointer-events: none;
+}
+
+.patient-place-autocomplete-host .patient-place-autocomplete-leading-icon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    z-index: 1;
+    display: inline-flex;
+    transform: translateY(-50%);
+    color: var(--color-primary);
+    pointer-events: none;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(input) {
+    width: 100%;
+    min-height: 3.5rem;
+    box-sizing: border-box;
+    padding: 0.875rem 1rem;
+    padding-left: 2.75rem;
+    padding-right: 2.75rem;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(prediction-list) {
+    margin-top: 0.5rem;
+    border: 2px solid var(--color-border);
+    border-radius: 1rem;
+    background-color: var(--color-surface);
+    box-shadow:
+        0 4px 6px -1px rgb(31 51 74 / 0.08),
+        0 2px 4px -2px rgb(31 51 74 / 0.06);
+    overflow: hidden;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(prediction-item) {
+    padding: 0.75rem 1rem;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(
+        prediction-item-selected
+    ) {
+    background-color: var(--color-surface-hover);
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(
+        prediction-item-main-text
+    ) {
+    color: var(--color-text-heading);
+    font-weight: 600;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(
+        prediction-item-secondary-text
+    ) {
+    color: var(--color-text-muted);
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(
+        prediction-item-match
+    ) {
+    color: var(--color-primary);
+    font-weight: 700;
+}

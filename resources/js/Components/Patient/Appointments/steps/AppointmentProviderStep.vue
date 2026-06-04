@@ -37,9 +37,6 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
             <p class="daily-checkin-step-title">
                 {{ t('patient.appointments.steps.provider.title') }}
             </p>
-            <p class="daily-checkin-step-description">
-                {{ t('patient.appointments.steps.provider.description') }}
-            </p>
         </div>
 
         <div class="space-y-6">
@@ -98,13 +95,11 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     :class="patientFormLabelClass"
                 >
                     {{ t('patient.appointments.fields.providerName') }}
-                    <span class="text-danger">*</span>
                 </Label>
                 <Input
                     :id="`${idPrefix}-provider-name`"
                     v-model="form.provider_name"
                     type="text"
-                    aria-required="true"
                     autocomplete="organization"
                     :class="
                         cn(

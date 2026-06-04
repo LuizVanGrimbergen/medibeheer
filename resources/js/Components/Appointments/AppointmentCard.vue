@@ -1,31 +1,35 @@
 <script setup lang="ts">
 import {
-    Calendar,
+    ArrowUpRight,
     Car,
     CheckCircle2,
     CircleX,
-    Clock,
-    MapPin,
     Stethoscope,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import PatientAppointmentScheduleDetailRows from '@/Components/Patient/Appointments/PatientAppointmentScheduleDetailRows.vue';
 import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
+import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import { googleMapsSearchUrlForAppointmentAddress } from '@/lib/google-maps/googleMapsSearchUrlForAppointmentAddress';
 import {
+    patientPageCardDetailsButtonClass,
+    patientPageCardDetailsChevronClass,
+    patientPageCardDetailsExpandWrapperClass,
     patientPageCardHeaderSummaryClass,
     patientPageCardHeaderWithActionsClass,
 } from '@/lib/patient/patientPageTypography';
+import { cn } from '@/lib/utils';
 import type {
     AppointmentStatusValue,
     AppointmentTransportStatusValue,
 } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 type AppointmentCardAppointment = {
     id: number;
@@ -95,6 +99,14 @@ const showAppointmentDoneToggle = computed(
         props.appointment.status !== 'cancelled' &&
         props.completeFormHref !== undefined &&
         props.cancelFormHref !== undefined,
+);
+
+const formattedAppointmentAddress = computed(() =>
+    formatAppointmentAddress(props.appointment),
+);
+
+const googleMapsUrl = computed(() =>
+    googleMapsSearchUrlForAppointmentAddress(props.appointment),
 );
 </script>
 
@@ -169,6 +181,63 @@ const showAppointmentDoneToggle = computed(
                     @update:model-value="emit('update:done', $event)"
                 />
 
+                <div
+                    v-if="googleMapsUrl !== null"
+                    :class="
+                        cn(
+                            patientPageCardDetailsExpandWrapperClass,
+                            !showAppointmentDoneToggle && 'mt-5',
+                        )
+                    "
+                >
+                    <Button
+                        as-child
+                        variant="outline"
+                        :class="patientPageCardDetailsButtonClass"
+                    >
+                        <a
+                            :href="googleMapsUrl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            :aria-label="
+                                t(
+                                    'patient.appointments.labels.openInGoogleMapsAria',
+                                    {
+                                        address: formattedAppointmentAddress,
+                                    },
+                                )
+                            "
+                            @click.stop
+                        >
+                            <MapPin
+                                :class="
+                                    cn(
+                                        patientPageCardDetailsChevronClass,
+                                        'text-primary',
+                                    )
+                                "
+                                aria-hidden="true"
+                            />
+                            <span class="min-w-0">
+                                {{
+                                    t(
+                                        'patient.appointments.labels.openInGoogleMaps',
+                                    )
+                                }}
+                            </span>
+                            <ArrowUpRight
+                                :class="
+                                    cn(
+                                        patientPageCardDetailsChevronClass,
+                                        'text-primary',
+                                    )
+                                "
+                                aria-hidden="true"
+                            />
+                        </a>
+                    </Button>
+                </div>
+
                 <CollapsibleContent>
                     <div class="space-y-6 pt-4">
                         <div class="space-y-5">
@@ -221,87 +290,9 @@ const showAppointmentDoneToggle = computed(
                                     </p>
                                 </div>
                             </div>
-                            <div class="flex gap-4 sm:gap-5">
-                                <Calendar
-                                    class="text-primary mt-0.5 size-6 shrink-0"
-                                    :stroke-width="2"
-                                    aria-hidden="true"
-                                />
-                                <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p
-                                        class="text-text-heading text-base leading-tight font-semibold"
-                                    >
-                                        {{
-                                            t(
-                                                'patient.appointments.labels.when',
-                                            )
-                                        }}
-                                    </p>
-                                    <p
-                                        class="text-text text-lg leading-relaxed font-medium tracking-tight sm:text-xl sm:leading-snug"
-                                    >
-                                        {{
-                                            formatDateOnly(
-                                                appointment.starts_at,
-                                            )
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4 sm:gap-5">
-                                <Clock
-                                    class="text-primary mt-0.5 size-6 shrink-0"
-                                    :stroke-width="2"
-                                    aria-hidden="true"
-                                />
-                                <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p
-                                        class="text-text-heading text-base leading-tight font-semibold"
-                                    >
-                                        {{
-                                            t(
-                                                'patient.appointments.labels.time',
-                                            )
-                                        }}
-                                    </p>
-                                    <p
-                                        class="text-text text-lg leading-relaxed font-medium sm:text-xl sm:leading-snug"
-                                    >
-                                        {{
-                                            formatTimeOnly(
-                                                appointment.starts_at,
-                                            )
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="flex gap-4 sm:gap-5">
-                                <MapPin
-                                    class="text-primary mt-1 size-6 shrink-0 self-start"
-                                    :stroke-width="2"
-                                    aria-hidden="true"
-                                />
-                                <div class="min-w-0 flex-1 space-y-1.5">
-                                    <p
-                                        class="text-text-heading text-base leading-tight font-semibold"
-                                    >
-                                        {{
-                                            t(
-                                                'patient.appointments.labels.where',
-                                            )
-                                        }}
-                                    </p>
-                                    <p
-                                        class="text-text text-lg leading-relaxed font-medium text-pretty wrap-break-word sm:text-xl sm:leading-snug"
-                                    >
-                                        {{
-                                            formatAppointmentAddress(
-                                                appointment,
-                                            )
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
+                            <PatientAppointmentScheduleDetailRows
+                                :appointment="appointment"
+                            />
                             <div
                                 v-if="showTransportSection ?? true"
                                 class="flex gap-4 sm:gap-5"

@@ -41,21 +41,12 @@ const minStartsAtTimeHm = computed(() => {
             <p class="daily-checkin-step-title">
                 {{ t('patient.appointments.steps.schedule.title') }}
             </p>
-            <p class="daily-checkin-step-description">
-                {{ t('patient.appointments.steps.schedule.description') }}
-            </p>
         </div>
 
         <fieldset class="space-y-5 border-0 p-0">
             <legend class="sr-only">
                 {{ t('patient.appointments.fields.startsAtGroupLegend') }}
             </legend>
-            <p
-                :id="`${idPrefix}-starts-at-hint`"
-                class="text-text-muted text-lg leading-relaxed"
-            >
-                {{ t('patient.appointments.fields.startsAtHint') }}
-            </p>
             <div class="space-y-5">
                 <div>
                     <Label
@@ -83,8 +74,8 @@ const minStartsAtTimeHm = computed(() => {
                         :aria-invalid="Boolean(form.errors.starts_at)"
                         :aria-describedby="
                             form.errors.starts_at
-                                ? `${idPrefix}-starts-at-hint ${idPrefix}-starts-at-error`
-                                : `${idPrefix}-starts-at-hint`
+                                ? `${idPrefix}-starts-at-error`
+                                : undefined
                         "
                     />
                 </div>
@@ -115,8 +106,8 @@ const minStartsAtTimeHm = computed(() => {
                         :aria-invalid="Boolean(form.errors.starts_at)"
                         :aria-describedby="
                             form.errors.starts_at
-                                ? `${idPrefix}-starts-at-hint ${idPrefix}-starts-at-error`
-                                : `${idPrefix}-starts-at-hint`
+                                ? `${idPrefix}-starts-at-error`
+                                : undefined
                         "
                     />
                 </div>
