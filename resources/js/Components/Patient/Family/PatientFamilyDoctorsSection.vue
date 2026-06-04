@@ -146,9 +146,8 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
         <PatientFamilyCareTeamCollapsibleSection
             v-if="props.doctorInvitations.length > 0"
             v-model:open="pendingDoctorInvitationsOpen"
-            class="mt-8"
+            labels-namespace="patient.doctors"
             :heading="t('patient.doctors.pendingHeading')"
-            :toggle-label="t('patient.doctors.pendingToggle')"
             :count="props.doctorInvitations.length"
             :collapsed-one="t('patient.doctors.pendingCollapsedOne')"
             :collapsed-many="t('patient.doctors.pendingCollapsedMany')"
@@ -174,9 +173,8 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
         <PatientFamilyCareTeamCollapsibleSection
             v-if="props.linkedDoctors.length > 0"
             v-model:open="linkedDoctorsOpen"
-            class="mt-8"
+            labels-namespace="patient.doctors"
             :heading="t('patient.doctors.linkedHeading')"
-            :toggle-label="t('patient.doctors.linkedToggle')"
             :count="props.linkedDoctors.length"
             :collapsed-one="t('patient.doctors.linkedCollapsedOne')"
             :collapsed-many="t('patient.doctors.linkedCollapsedMany')"

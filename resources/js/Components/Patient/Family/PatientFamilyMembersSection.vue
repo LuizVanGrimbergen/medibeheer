@@ -137,9 +137,7 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
         <PatientFamilyCareTeamCollapsibleSection
             v-if="props.familyInvitations.length > 0"
             v-model:open="pendingFamilyInvitationsOpen"
-            class="mt-8"
             :heading="t('patient.family.pendingHeading')"
-            :toggle-label="t('patient.family.pendingToggle')"
             :count="props.familyInvitations.length"
             :collapsed-one="t('patient.family.pendingCollapsedOne')"
             :collapsed-many="t('patient.family.pendingCollapsedMany')"
@@ -165,9 +163,7 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
         <PatientFamilyCareTeamCollapsibleSection
             v-if="props.linkedFamilyMembers.length > 0"
             v-model:open="linkedFamilyMembersOpen"
-            class="mt-8"
             :heading="t('patient.family.linkedHeading')"
-            :toggle-label="t('patient.family.linkedToggle')"
             :count="props.linkedFamilyMembers.length"
             :collapsed-one="t('patient.family.linkedCollapsedOne')"
             :collapsed-many="t('patient.family.linkedCollapsedMany')"
