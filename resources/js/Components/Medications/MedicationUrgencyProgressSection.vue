@@ -18,9 +18,11 @@ const props = withDefaults(
         criticalAlertLabel: string;
         warningAlertLabel: string;
         showProgressBar?: boolean;
+        showInlineAlertIcon?: boolean;
     }>(),
     {
         showProgressBar: true,
+        showInlineAlertIcon: true,
     },
 );
 
@@ -54,10 +56,10 @@ const alertIconClass = computed((): string => {
         />
 
         <div
-            class="flex min-w-0 items-start gap-3 sm:items-center sm:gap-3"
+            class="flex min-w-0 items-start gap-3"
             :role="showAlertRow ? 'alert' : undefined"
         >
-            <template v-if="showAlertRow">
+            <template v-if="showAlertRow && showInlineAlertIcon">
                 <span class="sr-only">{{
                     tone === 'critical' ? criticalAlertLabel : warningAlertLabel
                 }}</span>
