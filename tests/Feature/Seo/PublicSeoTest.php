@@ -89,3 +89,12 @@ test('patient dashboard responses are not indexable', function () {
         ->get(route('patient.dashboard'))
         ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
 });
+
+test('patient family page responses are not indexable', function () {
+    /** @var TestCase $this */
+    $patient = User::factory()->patient()->create();
+
+    $this->actingAs($patient)
+        ->get(route('patient.family'))
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+});

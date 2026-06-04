@@ -18,14 +18,14 @@ import { validatePatientEmailField } from '@/lib/validation/validatePatientEmail
 
 const props = withDefaults(
     defineProps<{
-        linked_family_members?: LinkedCareTeamMember[];
-        family_invitations?: PendingCareTeamInvitation[];
-        family_invitation_store_url?: string;
+        linkedFamilyMembers?: LinkedCareTeamMember[];
+        familyInvitations?: PendingCareTeamInvitation[];
+        familyInvitationStoreUrl?: string;
     }>(),
     {
-        linked_family_members: () => [],
-        family_invitations: () => [],
-        family_invitation_store_url: '',
+        linkedFamilyMembers: () => [],
+        familyInvitations: () => [],
+        familyInvitationStoreUrl: '',
     },
 );
 
@@ -48,7 +48,7 @@ const inviteForm = useForm({
 });
 
 function submitInvite(): void {
-    if (props.family_invitation_store_url === '') {
+    if (props.familyInvitationStoreUrl === '') {
         return;
     }
 
@@ -63,7 +63,7 @@ function submitInvite(): void {
         return;
     }
 
-    inviteForm.post(props.family_invitation_store_url, {
+    inviteForm.post(props.familyInvitationStoreUrl, {
         preserveScroll: true,
         onSuccess: () => {
             inviteForm.reset();
@@ -127,7 +127,7 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
                 class="min-h-12 w-full touch-manipulation text-base font-semibold sm:w-auto md:min-h-14 md:text-lg"
                 :disabled="
                     inviteForm.processing ||
-                    props.family_invitation_store_url === ''
+                    props.familyInvitationStoreUrl === ''
                 "
             >
                 {{ t('patient.family.sendInvite') }}
@@ -135,17 +135,15 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
         </form>
 
         <PatientFamilyCareTeamCollapsibleSection
-            v-if="props.family_invitations.length > 0"
+            v-if="props.familyInvitations.length > 0"
             v-model:open="pendingFamilyInvitationsOpen"
-            class="mt-8"
             :heading="t('patient.family.pendingHeading')"
-            :toggle-label="t('patient.family.pendingToggle')"
-            :count="props.family_invitations.length"
+            :count="props.familyInvitations.length"
             :collapsed-one="t('patient.family.pendingCollapsedOne')"
             :collapsed-many="t('patient.family.pendingCollapsedMany')"
         >
             <PatientFamilyCareTeamRowItem
-                v-for="inv in props.family_invitations"
+                v-for="inv in props.familyInvitations"
                 :key="inv.public_id"
                 :title="t('patient.family.pendingOutgoingItemLabel')"
                 :subtitle="
@@ -163,17 +161,15 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
         </PatientFamilyCareTeamCollapsibleSection>
 
         <PatientFamilyCareTeamCollapsibleSection
-            v-if="props.linked_family_members.length > 0"
+            v-if="props.linkedFamilyMembers.length > 0"
             v-model:open="linkedFamilyMembersOpen"
-            class="mt-8"
             :heading="t('patient.family.linkedHeading')"
-            :toggle-label="t('patient.family.linkedToggle')"
-            :count="props.linked_family_members.length"
+            :count="props.linkedFamilyMembers.length"
             :collapsed-one="t('patient.family.linkedCollapsedOne')"
             :collapsed-many="t('patient.family.linkedCollapsedMany')"
         >
             <PatientFamilyCareTeamRowItem
-                v-for="member in props.linked_family_members"
+                v-for="member in props.linkedFamilyMembers"
                 :key="member.public_id"
                 :title="member.name"
                 :action-label="t('patient.family.unlink')"

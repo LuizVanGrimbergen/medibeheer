@@ -18,14 +18,14 @@ import { validatePatientEmailField } from '@/lib/validation/validatePatientEmail
 
 const props = withDefaults(
     defineProps<{
-        linked_doctors?: LinkedCareTeamMember[];
-        doctor_invitations?: PendingCareTeamInvitation[];
-        doctor_invitation_store_url?: string;
+        linkedDoctors?: LinkedCareTeamMember[];
+        doctorInvitations?: PendingCareTeamInvitation[];
+        doctorInvitationStoreUrl?: string;
     }>(),
     {
-        linked_doctors: () => [],
-        doctor_invitations: () => [],
-        doctor_invitation_store_url: '',
+        linkedDoctors: () => [],
+        doctorInvitations: () => [],
+        doctorInvitationStoreUrl: '',
     },
 );
 
@@ -50,7 +50,7 @@ const doctorInviteForm = useForm({
 });
 
 function submitDoctorInvite(): void {
-    if (props.doctor_invitation_store_url === '') {
+    if (props.doctorInvitationStoreUrl === '') {
         return;
     }
 
@@ -65,7 +65,7 @@ function submitDoctorInvite(): void {
         return;
     }
 
-    doctorInviteForm.post(props.doctor_invitation_store_url, {
+    doctorInviteForm.post(props.doctorInvitationStoreUrl, {
         preserveScroll: true,
         onSuccess: () => {
             doctorInviteForm.reset();
@@ -136,7 +136,7 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
                 class="min-h-12 w-full touch-manipulation text-base font-semibold sm:w-auto md:min-h-14 md:text-lg"
                 :disabled="
                     doctorInviteForm.processing ||
-                    props.doctor_invitation_store_url === ''
+                    props.doctorInvitationStoreUrl === ''
                 "
             >
                 {{ t('patient.doctors.sendInvite') }}
@@ -144,17 +144,16 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
         </form>
 
         <PatientFamilyCareTeamCollapsibleSection
-            v-if="props.doctor_invitations.length > 0"
+            v-if="props.doctorInvitations.length > 0"
             v-model:open="pendingDoctorInvitationsOpen"
-            class="mt-8"
+            labels-namespace="patient.doctors"
             :heading="t('patient.doctors.pendingHeading')"
-            :toggle-label="t('patient.doctors.pendingToggle')"
-            :count="props.doctor_invitations.length"
+            :count="props.doctorInvitations.length"
             :collapsed-one="t('patient.doctors.pendingCollapsedOne')"
             :collapsed-many="t('patient.doctors.pendingCollapsedMany')"
         >
             <PatientFamilyCareTeamRowItem
-                v-for="inv in props.doctor_invitations"
+                v-for="inv in props.doctorInvitations"
                 :key="inv.public_id"
                 :title="t('patient.doctors.pendingItemLabel')"
                 :subtitle="
@@ -172,17 +171,16 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
         </PatientFamilyCareTeamCollapsibleSection>
 
         <PatientFamilyCareTeamCollapsibleSection
-            v-if="props.linked_doctors.length > 0"
+            v-if="props.linkedDoctors.length > 0"
             v-model:open="linkedDoctorsOpen"
-            class="mt-8"
+            labels-namespace="patient.doctors"
             :heading="t('patient.doctors.linkedHeading')"
-            :toggle-label="t('patient.doctors.linkedToggle')"
-            :count="props.linked_doctors.length"
+            :count="props.linkedDoctors.length"
             :collapsed-one="t('patient.doctors.linkedCollapsedOne')"
             :collapsed-many="t('patient.doctors.linkedCollapsedMany')"
         >
             <PatientFamilyCareTeamRowItem
-                v-for="doctor in props.linked_doctors"
+                v-for="doctor in props.linkedDoctors"
                 :key="doctor.public_id"
                 :title="doctor.name"
                 :action-label="t('patient.doctors.unlink')"
