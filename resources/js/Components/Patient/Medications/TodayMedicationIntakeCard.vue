@@ -113,6 +113,20 @@ const markTakenAriaLabel = computed(() =>
     }),
 );
 
+const markTakenNowAriaLabel = computed(() =>
+    t('patient.dashboard.todayMedications.markTakenNowAria', {
+        name: props.intakeSlot.name,
+        time: props.intakeSlot.dose_time,
+    }),
+);
+
+const markTakenCustomAriaLabel = computed(() =>
+    t('patient.dashboard.todayMedications.markTakenCustomAria', {
+        name: props.intakeSlot.name,
+        time: props.intakeSlot.dose_time,
+    }),
+);
+
 const intakeFormError = computed(
     () => form.errors.taken_at ?? form.errors.dose_time,
 );
@@ -265,12 +279,11 @@ function confirmCustomTakenTime(): void {
                             type="button"
                             class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
                             :disabled="form.processing"
+                            :aria-label="markTakenNowAriaLabel"
                             @click="markTakenNow"
                         >
                             {{
-                                t(
-                                    'patient.dashboard.todayMedications.markTakenNow',
-                                )
+                                t('patient.dashboard.todayMedications.markTaken')
                             }}
                         </Button>
                         <Button
@@ -278,6 +291,7 @@ function confirmCustomTakenTime(): void {
                             class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
                             variant="outline"
                             :disabled="form.processing"
+                            :aria-label="markTakenCustomAriaLabel"
                             :aria-expanded="showCustomTimePanel"
                             @click="openCustomTimePanel"
                         >
