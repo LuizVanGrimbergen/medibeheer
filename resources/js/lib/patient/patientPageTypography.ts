@@ -1,3 +1,15 @@
+/** Centered hero title on {@link PatientActionSuccessScreen} and {@link PatientConfirmDialog}. */
+export const patientActionSuccessTitleClass =
+    'text-text-heading max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl';
+
+/** Same as {@link patientActionSuccessTitleClass} when an eyebrow line is shown above. */
+export const patientActionSuccessTitleAfterEyebrowClass =
+    'text-text-heading mt-4 max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl';
+
+/** Subtitle under the success / confirm hero title. */
+export const patientActionSuccessSubtitleClass =
+    'text-text-muted mt-4 max-w-sm text-base leading-relaxed sm:text-lg';
+
 /** Visible page title (h1) on patient screens with header actions. */
 export const patientPageTitleClass =
     'min-w-0 text-3xl font-bold leading-tight text-text-heading sm:text-4xl sm:leading-tight';

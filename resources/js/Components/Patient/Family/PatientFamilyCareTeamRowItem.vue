@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import PatientFamilyActionConfirmDialog from '@/Components/Patient/Family/PatientFamilyActionConfirmDialog.vue';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { patientSoftDangerActionButtonClass } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
 import { cn } from '@/lib/utils';
@@ -75,7 +75,7 @@ function handleConfirm(): void {
 <template>
     <div :class="rowClass">
         <div class="min-w-0">
-            <p :class="titleClass">
+            <p :class="[titleClass, 'break-all']">
                 {{ props.title }}
             </p>
             <p
@@ -95,7 +95,7 @@ function handleConfirm(): void {
             {{ props.actionLabel }}
         </Button>
 
-        <PatientFamilyActionConfirmDialog
+        <PatientConfirmDialog
             :open="confirmOpen"
             :title="props.confirmTitle"
             :description="props.confirmDescription"
