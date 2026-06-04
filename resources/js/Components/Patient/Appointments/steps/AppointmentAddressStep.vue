@@ -1,16 +1,16 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
+import { MapPin } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
-import { Input } from '@/Components/ui/input';
-import { InputError } from '@/Components/ui/input-error';
+import AppointmentAddressManualFields from '@/Components/Patient/Appointments/steps/AppointmentAddressManualFields.vue';
 import { Label } from '@/Components/ui/label';
-import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
-import { cn } from '@/lib/utils';
+import { useAppointmentAddressPlaceAutocomplete } from '@/composables/google-maps/useAppointmentAddressPlaceAutocomplete';
+import { useAppointmentAddressLiveValidation } from '@/composables/patient/useAppointmentAddressLiveValidation';
+import { isAppointmentAddressValidationRequired } from '@/lib/patient/appointments/appointmentAddressValidation';
+import { isAppointmentAddressComplete } from '@/lib/patient/appointments/isAppointmentAddressComplete';
+import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
 
 const { form, idPrefix } = defineProps<{
     form: AppointmentFormWithErrors;
@@ -18,6 +18,41 @@ const { form, idPrefix } = defineProps<{
 }>();
 
 const { t } = useI18n();
+const addressSearchHostRef = ref<HTMLElement | null>(null);
+
+const { isAvailable: isAddressSearchAvailable, placesVerifiedSnapshot } =
+    useAppointmentAddressPlaceAutocomplete({
+        form,
+        hostRef: addressSearchHostRef,
+        placeholder: t('patient.appointments.fields.addressSearchPlaceholder'),
+    });
+
+const showAddressFields = computed(
+    () =>
+        isAddressSearchAvailable.value &&
+        isAppointmentAddressComplete(form),
+);
+
+const showManualFieldsOnly = computed(() => !isAddressSearchAvailable.value);
+
+const isAddressRequired = computed(() =>
+    isAppointmentAddressValidationRequired(form.needs_transport, form),
+);
+
+const shouldValidateAddressFields = computed(
+    () =>
+        isAddressRequired.value &&
+        (showAddressFields.value || showManualFieldsOnly.value),
+);
+
+const { isVerifyingGeocode } = useAppointmentAddressLiveValidation({
+    form,
+    addressRequired: isAddressRequired,
+    enabled: shouldValidateAddressFields,
+    placesVerifiedSnapshot,
+});
+
+defineExpose({ isVerifyingGeocode });
 </script>
 
 <template>
@@ -26,9 +61,6 @@ const { t } = useI18n();
             <p class="daily-checkin-step-title">
                 {{ t('patient.appointments.steps.address.title') }}
             </p>
-            <p class="daily-checkin-step-description">
-                {{ t('patient.appointments.steps.address.description') }}
-            </p>
         </div>
 
         <fieldset class="space-y-5 border-0 p-0">
@@ -36,159 +68,64 @@ const { t } = useI18n();
                 {{ t('patient.appointments.fields.addressGroupLegend') }}
             </legend>
             <div class="space-y-5">
-                <div>
+                <div v-if="isAddressSearchAvailable">
                     <Label
-                        :for="`${idPrefix}-street`"
+                        :for="`${idPrefix}-address-search`"
                         :class="patientFormLabelClass"
                     >
-                        {{ t('patient.appointments.fields.street') }}
-                        <span class="text-danger">*</span>
+                        {{
+                            isAddressRequired
+                                ? t(
+                                      'patient.appointments.fields.addressSearch',
+                                  )
+                                : t(
+                                      'patient.appointments.fields.addressSearchOptional',
+                                  )
+                        }}
+                        <span v-if="isAddressRequired" class="text-danger"
+                            >*</span
+                        >
                     </Label>
-                    <Input
-                        :id="`${idPrefix}-street`"
-                        v-model="form.street"
-                        type="text"
-                        aria-required="true"
-                        autocomplete="address-line1"
-                        :class="
-                            cn(
-                                patientFormFieldInputClass,
-                                form.errors.street
-                                    ? patientFormFieldInvalidClass
-                                    : null,
-                            )
-                        "
-                        :placeholder="
-                            t('patient.appointments.fields.streetPlaceholder')
-                        "
-                        :aria-invalid="Boolean(form.errors.street)"
-                        :aria-describedby="
-                            form.errors.street
-                                ? `${idPrefix}-street-error`
-                                : undefined
-                        "
-                    />
-                    <InputError
-                        :id="`${idPrefix}-street-error`"
-                        :message="form.errors.street"
-                    />
+                    <div
+                        :id="`${idPrefix}-address-search`"
+                        class="patient-place-autocomplete-host relative w-full"
+                    >
+                        <MapPin
+                            :size="20"
+                            :stroke-width="2"
+                            class="patient-place-autocomplete-leading-icon"
+                            aria-hidden="true"
+                        />
+                        <div
+                            ref="addressSearchHostRef"
+                            class="w-full"
+                        />
+                    </div>
+
+                    <div v-if="showAddressFields" class="mt-5">
+                        <AppointmentAddressManualFields
+                            :form="form"
+                            :id-prefix="idPrefix"
+                            :required="isAddressRequired"
+                        />
+                    </div>
                 </div>
-                <div>
-                    <Label
-                        :for="`${idPrefix}-house-number`"
-                        :class="patientFormLabelClass"
+                <template v-else-if="showManualFieldsOnly">
+                    <p
+                        class="rounded-2xl border border-border/80 bg-surface px-4 py-3 text-sm text-text-muted"
                     >
-                        {{ t('patient.appointments.fields.houseNumber') }}
-                    </Label>
-                    <Input
-                        :id="`${idPrefix}-house-number`"
-                        v-model="form.house_number"
-                        type="text"
-                        autocomplete="off"
-                        :class="
-                            cn(
-                                patientFormFieldInputClass,
-                                form.errors.house_number
-                                    ? patientFormFieldInvalidClass
-                                    : null,
-                            )
-                        "
-                        :placeholder="
+                        {{
                             t(
-                                'patient.appointments.fields.houseNumberPlaceholder',
+                                'patient.appointments.fields.addressSearchUnavailable',
                             )
-                        "
-                        :aria-invalid="Boolean(form.errors.house_number)"
-                        :aria-describedby="
-                            form.errors.house_number
-                                ? `${idPrefix}-house-number-error`
-                                : undefined
-                        "
+                        }}
+                    </p>
+                    <AppointmentAddressManualFields
+                        :form="form"
+                        :id-prefix="idPrefix"
+                        :required="isAddressRequired"
                     />
-                    <InputError
-                        :id="`${idPrefix}-house-number-error`"
-                        :message="form.errors.house_number"
-                    />
-                </div>
-                <div class="grid gap-5 sm:grid-cols-2">
-                    <div>
-                        <Label
-                            :for="`${idPrefix}-postal-code`"
-                            :class="patientFormLabelClass"
-                        >
-                            {{ t('patient.appointments.fields.postalCode') }}
-                            <span class="text-danger">*</span>
-                        </Label>
-                        <Input
-                            :id="`${idPrefix}-postal-code`"
-                            v-model="form.postal_code"
-                            type="text"
-                            aria-required="true"
-                            maxlength="32"
-                            autocomplete="postal-code"
-                            :class="
-                                cn(
-                                    patientFormFieldInputClass,
-                                    form.errors.postal_code
-                                        ? patientFormFieldInvalidClass
-                                        : null,
-                                )
-                            "
-                            :placeholder="
-                                t(
-                                    'patient.appointments.fields.postalCodePlaceholder',
-                                )
-                            "
-                            :aria-invalid="Boolean(form.errors.postal_code)"
-                            :aria-describedby="
-                                form.errors.postal_code
-                                    ? `${idPrefix}-postal-code-error`
-                                    : undefined
-                            "
-                        />
-                        <InputError
-                            :id="`${idPrefix}-postal-code-error`"
-                            :message="form.errors.postal_code"
-                        />
-                    </div>
-                    <div>
-                        <Label
-                            :for="`${idPrefix}-city`"
-                            :class="patientFormLabelClass"
-                        >
-                            {{ t('patient.appointments.fields.city') }}
-                            <span class="text-danger">*</span>
-                        </Label>
-                        <Input
-                            :id="`${idPrefix}-city`"
-                            v-model="form.city"
-                            type="text"
-                            aria-required="true"
-                            autocomplete="address-level2"
-                            :class="
-                                cn(
-                                    patientFormFieldInputClass,
-                                    form.errors.city
-                                        ? patientFormFieldInvalidClass
-                                        : null,
-                                )
-                            "
-                            :placeholder="
-                                t('patient.appointments.fields.cityPlaceholder')
-                            "
-                            :aria-invalid="Boolean(form.errors.city)"
-                            :aria-describedby="
-                                form.errors.city
-                                    ? `${idPrefix}-city-error`
-                                    : undefined
-                            "
-                        />
-                        <InputError
-                            :id="`${idPrefix}-city-error`"
-                            :message="form.errors.city"
-                        />
-                    </div>
-                </div>
+                </template>
             </div>
         </fieldset>
     </div>

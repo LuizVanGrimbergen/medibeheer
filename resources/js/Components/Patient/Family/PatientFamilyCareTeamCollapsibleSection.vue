@@ -1,23 +1,32 @@
 <script setup lang="ts">
-import { ChevronDown } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import {
     Collapsible,
     CollapsibleContent,
-    CollapsibleTrigger,
 } from '@/Components/ui/collapsible';
+import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
 import { cn } from '@/lib/utils';
 
 const open = defineModel<boolean>('open', { required: true });
 
-const props = defineProps<{
-    heading: string;
-    toggleLabel: string;
-    count: number;
-    collapsedOne: string;
-    collapsedMany: string;
-    intro?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        heading: string;
+        count: number;
+        collapsedOne: string;
+        collapsedMany: string;
+        labelsNamespace?: 'patient.family' | 'patient.doctors';
+        intro?: string;
+        class?: string;
+    }>(),
+    {
+        labelsNamespace: 'patient.family',
+    },
+);
+
+const { t } = useI18n();
 
 const collapsedSummary = computed((): string => {
     if (props.count === 1) {
@@ -29,56 +38,60 @@ const collapsedSummary = computed((): string => {
 </script>
 
 <template>
-    <Collapsible
-        v-model:open="open"
-        class="border-border bg-surface rounded-2xl border-2 shadow-sm"
+    <div
+        :class="
+            cn(
+                'border-border bg-surface mt-8 rounded-2xl border-2 p-5 shadow-sm sm:p-6',
+                props.class,
+            )
+        "
     >
-        <CollapsibleTrigger as-child>
-            <button
-                type="button"
-                class="hover:bg-surface-2/80 flex w-full items-center gap-4 rounded-2xl px-5 py-5 text-left transition sm:px-6"
-                :aria-label="props.toggleLabel"
+        <Collapsible v-model:open="open" :unmount-on-hide="false">
+            <h3
+                class="text-text-heading text-lg leading-snug font-bold md:text-xl"
             >
-                <div class="min-w-0 flex-1">
-                    <h3
-                        class="text-text-heading text-lg leading-snug font-bold md:text-xl"
-                    >
-                        {{ props.heading }}
-                    </h3>
-                    <p
-                        v-if="!open"
-                        class="text-text-muted mt-1 text-base leading-relaxed"
-                    >
-                        {{ collapsedSummary }}
-                    </p>
-                </div>
-
-                <ChevronDown
-                    :size="24"
-                    :class="
-                        cn(
-                            'text-text-muted shrink-0 transition-transform duration-200',
-                            open && 'rotate-180',
-                        )
-                    "
-                    aria-hidden="true"
-                />
-            </button>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent
-            class="border-border border-t-2 px-5 pt-5 pb-5 sm:px-6 sm:pt-6 sm:pb-6"
-        >
+                {{ props.heading }}
+            </h3>
             <p
-                v-if="props.intro !== undefined && props.intro !== ''"
-                class="text-text-muted mb-5 text-base leading-relaxed"
+                v-if="!open"
+                :class="cn('mt-1', patientPageCardHeaderSummaryClass)"
             >
-                {{ props.intro }}
+                {{ collapsedSummary }}
             </p>
 
-            <div class="flex flex-col gap-4">
-                <slot />
-            </div>
-        </CollapsibleContent>
-    </Collapsible>
+            <CollapsibleContent>
+                <div
+                    class="mt-5 flex flex-col gap-4 border-t border-border/70 pt-5"
+                >
+                    <p
+                        v-if="props.intro !== undefined && props.intro !== ''"
+                        class="text-text-muted text-base leading-relaxed"
+                    >
+                        {{ props.intro }}
+                    </p>
+
+                    <slot />
+                </div>
+            </CollapsibleContent>
+
+            <PatientListCardDetailsToggle
+                :scroll-on-expand="false"
+                :mode="open ? 'collapse' : 'expand'"
+                :label="
+                    t(
+                        open
+                            ? `${props.labelsNamespace}.listCollapseHint`
+                            : `${props.labelsNamespace}.listExpandHint`,
+                    )
+                "
+                :aria-label="
+                    t(
+                        open
+                            ? `${props.labelsNamespace}.hideDetails`
+                            : `${props.labelsNamespace}.showDetails`,
+                    )
+                "
+            />
+        </Collapsible>
+    </div>
 </template>

@@ -21,16 +21,12 @@ export default {
         back: 'Terug',
         provider: {
             title: 'Zorgverlener',
-            description:
-                'Kies het type zorg en vul de naam van de praktijk of zorgverlener in.',
         },
         address: {
             title: 'Adres',
-            description: 'Waar vindt de afspraak plaats?',
         },
         schedule: {
             title: 'Datum en tijd',
-            description: 'Kies eerst de dag, daarna het uur.',
         },
         transport: {
             title: 'Transport',
@@ -49,6 +45,12 @@ export default {
         providerName: 'Naam (praktijk of zorgverlener)',
         providerNamePlaceholder: 'Bijv. Huisartsenpraktijk De Linde',
         addressGroupLegend: 'Adres',
+        addressSearch: 'Adres zoeken',
+        addressSearchOptional: 'Adres zoeken (optioneel)',
+        addressSearchPlaceholder: 'Typ straat, postcode of plaats…',
+        addressSearchUnavailable:
+            'Adreszoeken is niet beschikbaar. Vul de velden hieronder handmatig in.',
+        addressOverviewTitle: 'Gekozen adres',
         street: 'Straat',
         streetPlaceholder: 'Bijv. Joossenlei',
         houseNumber: 'Huisnummer (optioneel)',
@@ -60,7 +62,6 @@ export default {
         startsAtGroupLegend: 'Wanneer is de afspraak?',
         startsAtDate: 'Dag',
         startsAtTime: 'Uur',
-        startsAtHint: 'Eerst de dag, daarna het uur.',
         note: 'Notitie',
         notes: 'Notities (optioneel)',
         notesPlaceholder: 'Bijv. meenemen: verwijsbrief, ID',
@@ -93,6 +94,9 @@ export default {
         when: 'Wanneer',
         time: 'Tijd',
         where: 'Waar',
+        openInGoogleMaps: 'Adres op kaart bekijken',
+        openInGoogleMapsAria:
+            'Bekijk het adres {address} op de kaart. Opent in Google Maps in een nieuw venster.',
         transport: 'Transport',
         afterVisit: 'Na uw bezoek',
     },
@@ -121,8 +125,6 @@ export default {
     },
     doneDialog: {
         title: 'Afspraak afgerond',
-        description:
-            'Optioneel: wat de dokter heeft gezegd of wat u met de familie wilt delen. Later kunt u dit terugvinden.',
         visitSummaryLabel: 'Na het bezoek (optioneel)',
         visitSummaryPlaceholder:
             'Bijvoorbeeld: uitleg van de dokter, vervolgafspraak, of een korte boodschap voor thuis',
@@ -137,6 +139,14 @@ export default {
         startsAtMustNotBeInPast:
             'Kies een datum en tijd vanaf nu. Een afspraak kan niet in het verleden liggen.',
         postalCodeMinLength: 'De postcode moet minstens 4 tekens bevatten.',
+        postalCodeBelgianInvalid:
+            'Vul een geldige Belgische postcode in (4 cijfers).',
+        addressNotFound:
+            'Dit adres kon niet worden gevonden in België. Controleer straat, postcode en plaats.',
+        addressComponentMismatch:
+            'Dit komt niet overeen met een bestaand adres in België.',
+        addressVerificationUnavailable:
+            'Het adres kon niet worden gecontroleerd. Probeer het later opnieuw.',
     },
     stepValidation: {
         doctorTypeRequired: 'Kies een soort zorgverlener.',

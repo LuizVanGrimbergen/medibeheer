@@ -24,11 +24,15 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const periodSections = computed(() =>
-    buildTodayMedicationIntakePeriodSections(
-        partitionTodayMedicationIntakes(props.slots),
-    ),
+const intakeGroups = computed(() =>
+    partitionTodayMedicationIntakes(props.slots),
 );
+
+const periodSections = computed(() =>
+    buildTodayMedicationIntakePeriodSections(intakeGroups.value),
+);
+
+const allTakenSlots = computed(() => intakeGroups.value.takenSlots);
 
 function slotKey(slot: TodayMedicationIntakeSlot): string {
     return `${slot.medication_schedule_id}-${slot.dose_time}`;
@@ -42,38 +46,31 @@ function periodTitle(period: TodayMedicationIntakeDayPeriodValue): string {
 <template>
     <section
         v-if="props.slots.length > 0"
-        class="space-y-3 sm:space-y-4"
+        class="flex flex-col gap-6 sm:gap-8"
         :aria-label="t('patient.dashboard.todayMedications.title')"
     >
-        <div class="flex flex-col gap-6 sm:gap-8">
-            <section
-                v-for="section in periodSections"
-                :key="section.period"
-                class="space-y-3 sm:space-y-4"
-                :aria-label="periodTitle(section.period)"
-            >
-                <TodayMedicationIntakeDayPeriodHeading
-                    :period="section.period"
-                />
+        <section
+            v-for="section in periodSections"
+            :key="section.period"
+            class="space-y-3 sm:space-y-4"
+            :aria-label="periodTitle(section.period)"
+        >
+            <TodayMedicationIntakeDayPeriodHeading :period="section.period" />
 
-                <ul
-                    v-if="section.pendingSlots.length > 0"
-                    class="flex w-full min-w-0 flex-col gap-5"
+            <ul class="flex w-full min-w-0 flex-col gap-5">
+                <li
+                    v-for="slot in section.pendingSlots"
+                    :key="slotKey(slot)"
+                    class="min-w-0"
                 >
-                    <li
-                        v-for="slot in section.pendingSlots"
-                        :key="slotKey(slot)"
-                        class="min-w-0"
-                    >
-                        <TodayMedicationIntakeCard :intake-slot="slot" />
-                    </li>
-                </ul>
+                    <TodayMedicationIntakeCard :intake-slot="slot" />
+                </li>
+            </ul>
+        </section>
 
-                <TodayTakenMedicationIntakesSection
-                    v-if="section.takenSlots.length > 0"
-                    :taken-slots="section.takenSlots"
-                />
-            </section>
-        </div>
+        <TodayTakenMedicationIntakesSection
+            v-if="allTakenSlots.length > 0"
+            :taken-slots="allTakenSlots"
+        />
     </section>
 </template>

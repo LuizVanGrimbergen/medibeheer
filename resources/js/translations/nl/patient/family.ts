@@ -1,5 +1,7 @@
 export default {
     title: 'Familie',
+    metaDescription:
+        'Nodig familie en uw arts uit en beheer medicatieplannen van familie in Medibeheer.',
     heading: 'Familie & zorg',
     pageIntro:
         'Op deze pagina nodigt u familie en uw arts uit. Zo kunnen zij u helpen met uw medicatie.',
@@ -18,7 +20,7 @@ export default {
     pendingMedicationPlansIntro:
         'Een familielid heeft een medicatieplan naar u gestuurd. U kunt het hier bekijken, accepteren of weigeren.',
     pendingMedicationPlansEmpty:
-        'Er zijn geen medicatieplannen om te beoordelen.',
+        'Er zijn geen medicatieplannen om te accepteren.',
     pendingMedicationPlansFrom: 'Van {name}',
     pendingMedicationPlansReview: 'Bekijken',
     pendingMedicationPlansAccept: 'Accepteren',
@@ -37,11 +39,13 @@ export default {
     noPending: 'Geen openstaande uitnodigingen.',
     linkedHeading: 'Gekoppelde familieleden',
     linkedIntro: 'Deze familieleden kunnen meekijken met uw medicatie.',
-    linkedToggle: 'Gekoppelde familieleden openen of sluiten',
+    listExpandHint: 'Meer details bekijken',
+    listCollapseHint: 'Details sluiten',
+    showDetails: 'Details tonen',
+    hideDetails: 'Details verbergen',
     linkedCollapsedOne: '1 familielid gekoppeld',
     linkedCollapsedMany: '{count} familieleden gekoppeld',
     linkedMemberStatus: 'Gekoppeld als familielid',
-    pendingToggle: 'Openstaande uitnodigingen openen of sluiten',
     pendingCollapsedOne: '1 uitnodiging wacht op antwoord',
     pendingCollapsedMany: '{count} uitnodigingen wachten op antwoord',
     unlink: 'Loskoppelen',

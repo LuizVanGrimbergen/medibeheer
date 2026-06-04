@@ -23,7 +23,6 @@ export type TodayMedicationIntakeDashboardGroups = {
 export type TodayMedicationIntakePeriodSection = {
     period: TodayMedicationIntakeDayPeriodValue;
     pendingSlots: TodayMedicationIntakeSlot[];
-    takenSlots: TodayMedicationIntakeSlot[];
 };
 
 function minutesSinceMidnight(value: string): number {
@@ -99,24 +98,12 @@ export function groupTodayMedicationIntakesByDayPeriod(
 export function buildTodayMedicationIntakePeriodSections(
     groups: TodayMedicationIntakeDashboardGroups,
 ): TodayMedicationIntakePeriodSection[] {
-    const pendingByPeriod = new Map(
-        groups.periodGroups.map((group) => [group.period, group.slots]),
-    );
-    const takenByPeriod = new Map(
-        groupTodayMedicationIntakesByDayPeriod(groups.takenSlots).map(
-            (group) => [group.period, group.slots],
-        ),
-    );
-
-    return TODAY_MEDICATION_INTAKE_DAY_PERIOD_ORDER.flatMap((period) => {
-        const pendingSlots = pendingByPeriod.get(period) ?? [];
-        const takenSlots = takenByPeriod.get(period) ?? [];
-
-        if (pendingSlots.length < 1 && takenSlots.length < 1) {
+    return groups.periodGroups.flatMap((group) => {
+        if (group.slots.length < 1) {
             return [];
         }
 
-        return [{ period, pendingSlots, takenSlots }];
+        return [{ period: group.period, pendingSlots: group.slots }];
     });
 }
 

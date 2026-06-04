@@ -72,14 +72,14 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
 <template>
     <Head>
         <title>{{ t('patient.family.title') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.family.metaDescription')"
+        />
     </Head>
 
     <PatientLayout>
-        <PatientPageShell
-            :title="t('patient.family.heading')"
-            :intro="t('patient.family.pageIntro')"
-            show-visible-title
-        >
+        <PatientPageShell :title="t('patient.family.heading')">
             <section
                 v-if="props.pending_medication_plans.length > 0"
                 id="family-pending-plans"
