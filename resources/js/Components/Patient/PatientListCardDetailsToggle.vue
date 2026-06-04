@@ -12,17 +12,23 @@ import {
 } from '@/lib/patient/patientPageTypography';
 import { cn } from '@/lib/utils';
 
-const props = defineProps<{
-    mode: 'expand' | 'collapse';
-    label: string;
-    ariaLabel: string;
-    wrapperClass?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        mode: 'expand' | 'collapse';
+        label: string;
+        ariaLabel: string;
+        wrapperClass?: string;
+        scrollOnExpand?: boolean;
+    }>(),
+    {
+        scrollOnExpand: true,
+    },
+);
 
 const wrapperRef = useTemplateRef<HTMLElement>('wrapper');
 
 async function onExpandClick(): Promise<void> {
-    if (props.mode !== 'expand') {
+    if (props.mode !== 'expand' || !props.scrollOnExpand) {
         return;
     }
 

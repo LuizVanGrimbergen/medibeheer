@@ -19,6 +19,8 @@ test('homepage ships a minimal ziggy route payload', function () {
     $response->assertOk();
 
     $content = $response->getContent();
-    expect($content)->toBeString()->toContain('"home"');
-    expect($content)->not->toContain('patient.dashboard');
+    expect($content)->toBeString()
+        ->toContain('id="ziggy-routes-json"')
+        ->toContain('"home"')
+        ->not->toContain('patient.dashboard');
 });
