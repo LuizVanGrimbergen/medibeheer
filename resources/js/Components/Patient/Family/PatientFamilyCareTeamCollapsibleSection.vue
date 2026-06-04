@@ -84,7 +84,7 @@ const collapsedSummary = computed((): string => {
                             : `${props.labelsNamespace}.listExpandHint`,
                     )
                 "
-                :aria-label="
+                :ariaLabel="
                     t(
                         open
                             ? `${props.labelsNamespace}.hideDetails`
