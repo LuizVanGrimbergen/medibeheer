@@ -2,7 +2,6 @@ import { router, useForm } from '@inertiajs/vue3';
 import { nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
@@ -178,17 +177,6 @@ export function usePatientMedicationsPage(
     }
 
     function submitNewMedication(): void {
-        const savedName = createForm.name.trim();
-        const successDetails: PatientActionSuccessDetail[] =
-            savedName !== ''
-                ? [
-                      {
-                          label: t('patient.actionSuccess.summary.medication'),
-                          value: savedName,
-                      },
-                  ]
-                : [];
-
         createForm
             .transform((data) =>
                 medicationCreateFormStateToRequestPayload(data),
@@ -203,10 +191,6 @@ export function usePatientMedicationsPage(
                         title: t(
                             'patient.actionSuccess.medications.created.title',
                         ),
-                        message: t(
-                            'patient.actionSuccess.medications.created.message',
-                        ),
-                        details: successDetails,
                     });
                 },
             });
@@ -267,8 +251,6 @@ export function usePatientMedicationsPage(
         medicationFormDialogLayoutClass,
         createSuccessOpen: createSuccessScreen.open,
         createSuccessTitle: createSuccessScreen.title,
-        createSuccessMessage: createSuccessScreen.message,
-        createSuccessDetails: createSuccessScreen.details,
         createDialogOpen,
         createForm,
         resetCreateDialogToFreshDefaults,

@@ -23,6 +23,39 @@ export function trimmedRequiredMaxError(
     return undefined;
 }
 
+export function parseMedicationDoseNumericCount(dose: string): number | null {
+    const trimmed = dose.trim();
+
+    if (trimmed.length < 1) {
+        return null;
+    }
+
+    const normalized = trimmed.replace(',', '.');
+    const n = Number.parseFloat(normalized);
+
+    if (!Number.isFinite(n)) {
+        return null;
+    }
+
+    return n;
+}
+
+/** Keeps only digits and at most one decimal separator while the user types. */
+export function filterDecimalAmountInput(raw: string): string {
+    const cleaned = raw.replace(/[^\d.,]/g, '');
+    const separatorIndex = cleaned.search(/[.,]/);
+
+    if (separatorIndex === -1) {
+        return cleaned;
+    }
+
+    const separator = cleaned[separatorIndex] ?? '.';
+    const before = cleaned.slice(0, separatorIndex);
+    const after = cleaned.slice(separatorIndex + 1).replace(/[.,]/g, '');
+
+    return `${before}${separator}${after}`;
+}
+
 export function parseMedicationTimesPerDayCount(value: string): number | null {
     const trimmed = value.trim();
 

@@ -81,11 +81,35 @@ test('patient medications inertia page includes medications collection', functio
     assertInertiaRootComponent($response, 'Patient/Medications');
     $response->assertInertia(fn ($page) => $page
         ->component('Patient/Medications')
-        ->has('active_medications.data')
-        ->has('active_medications.meta')
+        ->missing('active_medications')
         ->missing('previously_used_medications')
         ->missing('active_medication_names')
-        ->where('can_create_medication', true));
+        ->where('can_create_medication', true)
+        ->loadDeferredProps(fn ($page) => $page
+            ->has('active_medications.data')
+            ->has('active_medications.meta')));
+});
+
+test('patient medications initial html omits deferred active medications payload', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    Medication::factory()->for($patient)->create(['name' => 'GeheimeMedicatie']);
+
+    $response = $this->actingAs($user)->get(route('patient.medications'));
+
+    $response->assertOk();
+
+    preg_match('/<div[^>]*id="app"[^>]*data-page="([^"]+)"/', $response->getContent(), $matches);
+
+    expect($matches)->not->toBeEmpty();
+
+    /** @var array<string, mixed> $page */
+    $page = json_decode(html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5), true);
+
+    expect($page['props']['active_medications'] ?? null)->toBeNull();
+    expect($response->getContent())->not->toContain('GeheimeMedicatie');
 });
 
 test('patient medications inertia payload omits redundant medication relation ids', function () {
@@ -105,15 +129,16 @@ test('patient medications inertia payload omits redundant medication relation id
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->has('active_medications.data', 1)
-        ->missing('active_medications.data.0.patient_id')
-        ->missing('active_medications.data.0.family_id')
-        ->missing('active_medications.data.0.schedules.0.id')
-        ->missing('active_medications.data.0.schedules.0.medication_id')
-        ->missing('active_medications.data.0.schedules.0.dose_quantity')
-        ->missing('active_medications.data.0.stocks.0.medication_id')
-        ->has('active_medications.data.0.stocks.0.id')
-        ->has('active_medications.data.0.stocks.0.current_stock'));
+        ->loadDeferredProps(fn ($page) => $page
+            ->has('active_medications.data', 1)
+            ->missing('active_medications.data.0.patient_id')
+            ->missing('active_medications.data.0.family_id')
+            ->missing('active_medications.data.0.schedules.0.id')
+            ->missing('active_medications.data.0.schedules.0.medication_id')
+            ->missing('active_medications.data.0.schedules.0.dose_quantity')
+            ->missing('active_medications.data.0.stocks.0.medication_id')
+            ->has('active_medications.data.0.stocks.0.id')
+            ->has('active_medications.data.0.stocks.0.current_stock')));
 });
 
 test('patient medications page splits active and previously used medications', function () {
@@ -143,9 +168,10 @@ test('patient medications page splits active and previously used medications', f
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->where('active_medications.meta.total', 1)
-        ->where('active_medications.data.0.name', 'Actief')
-        ->missing('previously_used_medications'));
+        ->loadDeferredProps(fn ($page) => $page
+            ->where('active_medications.meta.total', 1)
+            ->where('active_medications.data.0.name', 'Actief')
+            ->missing('previously_used_medications')));
 });
 
 test('patients can view active medications on the pharmacist overview page', function () {

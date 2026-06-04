@@ -22,11 +22,15 @@ export function resolveMedicationWizardMealTimingFocusSuffix(
 export function resolveMedicationWizardTimesPerDayFocusSuffix(
     timesPerDayTrimmed: string,
 ): string {
-    if (/^[1-4]$/.test(timesPerDayTrimmed)) {
-        return `schedule-times-per-day-option-${timesPerDayTrimmed}`;
+    if (timesPerDayTrimmed === '') {
+        return 'schedule-times-per-day-count-option-1';
     }
 
-    return 'schedule-times-per-day-custom';
+    if (/^[1-4]$/.test(timesPerDayTrimmed)) {
+        return `schedule-times-per-day-count-option-${timesPerDayTrimmed}`;
+    }
+
+    return 'schedule-times-per-day-count-custom-trigger';
 }
 
 export function resolveMedicationWizardIntakeFrequencyFocusSuffix(

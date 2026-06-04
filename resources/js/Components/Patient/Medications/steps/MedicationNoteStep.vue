@@ -45,16 +45,18 @@ const stockDisplayDoseUnit = computed(() =>
                 </legend>
                 <MedicationStockBoxCalculator
                     v-model="props.form.current_stock"
+                    v-model:number-of-boxes="props.form.stock_number_of_boxes"
                     v-model:pieces-per-package="
                         props.form.stock_pieces_per_package
                     "
                     :id-prefix="props.idPrefix"
                     :medication-type="props.form.type_medication"
                     :dose-unit="stockDisplayDoseUnit ?? ''"
-                    :error-message="
-                        props.form.errors.current_stock ||
-                        props.form.errors.stock_pieces_per_package
+                    :boxes-error="
+                        props.form.errors.stock_number_of_boxes ||
+                        props.form.errors.current_stock
                     "
+                    :pieces-error="props.form.errors.stock_pieces_per_package"
                     class="mt-3"
                 />
             </fieldset>

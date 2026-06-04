@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import MedicationDetailsEditDialog from '@/Components/Patient/Medications/form/MedicationDetailsEditDialog.vue';
@@ -18,12 +19,18 @@ const props = defineProps<PatientMedicationsScreenProps>();
 
 const { t } = useI18n();
 
+const isActiveMedicationsLoading = computed(
+    () => props.active_medications === undefined,
+);
+
+const hasActiveMedications = computed(
+    () => (props.active_medications?.meta.total ?? 0) > 0,
+);
+
 const {
     medicationFormDialogLayoutClass,
     createSuccessOpen,
     createSuccessTitle,
-    createSuccessMessage,
-    createSuccessDetails,
     createDialogOpen,
     createForm,
     submitNewMedication,
@@ -55,23 +62,53 @@ const {
         <PatientActionSuccessScreen
             v-model:open="createSuccessOpen"
             :title="createSuccessTitle"
-            :message="createSuccessMessage"
-            :details="createSuccessDetails"
             :done-label="t('patient.actionSuccess.done')"
         />
 
         <PatientPageShell :title="t('patient.medications.listHeading')">
             <MedicationPageIntro
                 :can-create-medication="canCreateMedication"
-                :has-active-medications="
-                    props.active_medications.meta.total > 0
-                "
+                :has-active-medications="hasActiveMedications"
                 @new-medication-click="createDialogOpen = true"
             />
 
-            <section class="space-y-5">
+            <section
+                class="space-y-5"
+                :aria-busy="isActiveMedicationsLoading"
+            >
                 <ul
-                    v-if="props.active_medications.data.length > 0"
+                    v-if="isActiveMedicationsLoading"
+                    class="flex w-full min-w-0 flex-col gap-5"
+                    aria-hidden="true"
+                >
+                    <li
+                        v-for="index in 3"
+                        :key="index"
+                        class="min-w-0"
+                    >
+                        <Card
+                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
+                        >
+                            <CardContent class="space-y-4 p-5 sm:p-6">
+                                <div
+                                    class="bg-surface-2 h-7 w-2/3 max-w-xs animate-pulse rounded-lg"
+                                />
+                                <div
+                                    class="bg-surface-2 h-5 w-1/2 max-w-48 animate-pulse rounded-lg"
+                                />
+                                <div
+                                    class="bg-surface-2 h-16 w-full animate-pulse rounded-xl"
+                                />
+                            </CardContent>
+                        </Card>
+                    </li>
+                </ul>
+
+                <ul
+                    v-else-if="
+                        props.active_medications !== undefined &&
+                        props.active_medications.data.length > 0
+                    "
                     class="flex w-full min-w-0 flex-col gap-5"
                 >
                     <li
@@ -89,6 +126,7 @@ const {
 
                 <NumberedPagination
                     v-if="
+                        props.active_medications !== undefined &&
                         props.active_medications.data.length > 0 &&
                         props.active_medications.meta.last_page > 1
                     "
@@ -97,7 +135,10 @@ const {
                 />
 
                 <Card
-                    v-if="props.active_medications.meta.total === 0"
+                    v-else-if="
+                        props.active_medications !== undefined &&
+                        props.active_medications.meta.total === 0
+                    "
                     class="border-border bg-surface-2/70 text-text rounded-2xl border-2 border-dashed shadow-none"
                 >
                     <CardContent

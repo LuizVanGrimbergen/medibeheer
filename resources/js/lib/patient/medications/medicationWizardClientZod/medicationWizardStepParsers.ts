@@ -139,7 +139,10 @@ export function tryMedicationWizardDurationStep(
 export function tryMedicationWizardNoteStockStep(
     data: Pick<
         MedicationCreateFormState,
-        'note' | 'current_stock' | 'stock_pieces_per_package'
+        | 'note'
+        | 'stock_number_of_boxes'
+        | 'stock_pieces_per_package'
+        | 'current_stock'
     >,
 ): MedicationWizardClientParseResult {
     const parsed = z
@@ -153,16 +156,22 @@ export function tryMedicationWizardNoteStockStep(
                     });
                 }
             }),
-            current_stock: trimmedNonEmptyMax(
-                500,
-                'stockCurrentRequired',
-                'stockCurrentMax',
+            stock_number_of_boxes: trimmedPositiveIntegerMax(
+                9999,
+                'stockBoxesRequired',
+                'stockBoxesInvalid',
+                'stockBoxesMax',
             ),
             stock_pieces_per_package: trimmedPositiveIntegerMax(
                 9999,
                 'stockPiecesPerPackageRequired',
                 'stockPiecesPerPackageInvalid',
                 'stockPiecesPerPackageMax',
+            ),
+            current_stock: trimmedNonEmptyMax(
+                500,
+                'stockCurrentRequired',
+                'stockCurrentMax',
             ),
         })
         .safeParse(data);

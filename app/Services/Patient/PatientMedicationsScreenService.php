@@ -19,8 +19,14 @@ final class PatientMedicationsScreenService
     public function buildProps(Patient $patient): array
     {
         return [
-            'active_medications' => $this->paginateActiveMedications($patient, self::MEDICATION_LIST_WITH),
+            'active_medications' => $this->paginatedActiveMedications($patient),
         ];
+    }
+
+    /** @return array{data: list<array<string, mixed>>, meta: array<string, mixed>} */
+    public function paginatedActiveMedications(Patient $patient): array
+    {
+        return $this->paginateActiveMedications($patient, self::MEDICATION_LIST_WITH);
     }
 
     public function buildInventoryProps(Patient $patient): array

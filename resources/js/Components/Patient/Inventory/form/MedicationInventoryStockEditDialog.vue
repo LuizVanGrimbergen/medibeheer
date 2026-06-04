@@ -3,6 +3,7 @@ import { router, useForm } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { buttonVariants } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -17,7 +18,10 @@ import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientA
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
-import { patientShellDialogOverlayAboveAppChromeClass } from '@/lib/patient/patientShellDialogLayout';
+import {
+    patientShellDialogOverlayAboveAppChromeClass,
+    patientShellWizardFormClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationStockListItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -247,13 +251,11 @@ function submitStock(): void {
 
             <form
                 :id="props.formId"
-                class="flex min-h-0 flex-1 flex-col"
+                :class="patientShellWizardFormClass"
                 novalidate
                 @submit.prevent="submitStock"
             >
-                <div
-                    class="min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-y-contain [-webkit-overflow-scrolling:touch]"
-                >
+                <PatientShellWizardScrollBody :active="props.open">
                     <div class="space-y-3 md:space-y-3">
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
@@ -284,58 +286,46 @@ function submitStock(): void {
                             </CardContent>
                         </Card>
                     </div>
-                </div>
 
-                <div
-                    class="pointer-events-auto relative z-10 shrink-0 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))]"
-                >
-                    <Card
-                        class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] md:rounded-3xl"
-                    >
-                        <CardContent
-                            class="px-4 py-3 md:px-5 md:py-3.5 lg:px-7 lg:py-4"
+                    <template #footer>
+                        <div
+                            class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
                         >
-                            <div
-                                class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
+                            <button
+                                type="submit"
+                                :disabled="form.processing"
+                                :class="
+                                    cn(
+                                        buttonVariants({
+                                            variant: 'default',
+                                            size: 'lg',
+                                        }),
+                                        footerPrimaryButtonClass,
+                                    )
+                                "
                             >
-                                <button
-                                    type="submit"
-                                    :disabled="form.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'default',
-                                                size: 'lg',
-                                            }),
-                                            footerPrimaryButtonClass,
-                                        )
-                                    "
-                                >
-                                    {{ t('patient.medications.actions.save') }}
-                                </button>
+                                {{ t('patient.medications.actions.save') }}
+                            </button>
 
-                                <button
-                                    type="button"
-                                    :disabled="form.processing"
-                                    :class="
-                                        cn(
-                                            buttonVariants({
-                                                variant: 'outline',
-                                                size: 'lg',
-                                            }),
-                                            footerCancelButtonClass,
-                                        )
-                                    "
-                                    @click.stop.prevent="closeDialog"
-                                >
-                                    {{
-                                        t('patient.medications.actions.cancel')
-                                    }}
-                                </button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                            <button
+                                type="button"
+                                :disabled="form.processing"
+                                :class="
+                                    cn(
+                                        buttonVariants({
+                                            variant: 'outline',
+                                            size: 'lg',
+                                        }),
+                                        footerCancelButtonClass,
+                                    )
+                                "
+                                @click.stop.prevent="closeDialog"
+                            >
+                                {{ t('patient.medications.actions.cancel') }}
+                            </button>
+                        </div>
+                    </template>
+                </PatientShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

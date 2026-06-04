@@ -400,7 +400,14 @@ test('patients who save a completed appointment from the outcome flow see the sc
             'status' => AppointmentStatus::DONE->value,
             'doctor_visit_summary' => null,
         ],
-    )->assertRedirect(route('patient.appointments.schedule-next', ['outcome' => 'done']));
+    )->assertRedirect(route('patient.appointments.complete', $appointment));
+
+    $this->actingAs($user)
+        ->get(route('patient.appointments.complete', $appointment))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments/Complete')
+            ->where('show_schedule_next_prompt', true));
 });
 
 test('patients who save a cancellation from the outcome flow see the schedule-next prompt', function () {
@@ -416,7 +423,14 @@ test('patients who save a cancellation from the outcome flow see the schedule-ne
             'status' => AppointmentStatus::CANCELLED->value,
             'cancellation_reason' => null,
         ],
-    )->assertRedirect(route('patient.appointments.schedule-next', ['outcome' => 'cancelled']));
+    )->assertRedirect(route('patient.appointments.cancel', $appointment));
+
+    $this->actingAs($user)
+        ->get(route('patient.appointments.cancel', $appointment))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments/Cancel')
+            ->where('show_schedule_next_prompt', true));
 });
 
 test('outcome follow-up query is ignored when it does not match the saved status', function () {

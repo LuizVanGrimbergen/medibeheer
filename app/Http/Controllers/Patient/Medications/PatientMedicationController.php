@@ -31,7 +31,9 @@ class PatientMedicationController extends Controller
         return Inertia::render(
             'Patient/Medications',
             [
-                ...$this->patientMedicationsScreenService->buildProps($patient),
+                'active_medications' => Inertia::defer(
+                    fn (): array => $this->patientMedicationsScreenService->paginatedActiveMedications($patient),
+                ),
                 'can_create_medication' => $request->user()?->can('create', Medication::class) ?? false,
             ],
         );

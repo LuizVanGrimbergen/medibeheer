@@ -239,7 +239,7 @@ const footerLabelClass = computed(() =>
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
                 <div
-                    class="relative mx-auto w-full max-w-7xl pt-4 pb-4 md:pt-6"
+                    class="relative mx-auto flex min-h-full w-full max-w-7xl flex-col pt-4 pb-4 md:pt-6"
                     :class="shellPaddingX"
                 >
                     <MobileShellSettingsLink />

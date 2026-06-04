@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { LucideIcon } from 'lucide-vue-next';
-import { Layers, Package, PillBottle } from 'lucide-vue-next';
+import { Layers } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
@@ -21,6 +20,9 @@ import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const model = defineModel<string>({ required: true });
+const numberOfBoxesModel = defineModel<string>('numberOfBoxes', {
+    default: '',
+});
 const piecesPerPackageModel = defineModel<string>('piecesPerPackage', {
     default: '',
 });
@@ -29,20 +31,11 @@ const props = defineProps<{
     idPrefix: string;
     doseUnit: string;
     medicationType?: string;
-    errorMessage?: string;
+    boxesError?: string;
+    piecesError?: string;
 }>();
 
 const isLiquidStock = computed(() => props.medicationType === 'liquid');
-
-const stockCalculatorHintIcon = computed(
-    (): LucideIcon => (isLiquidStock.value ? PillBottle : Package),
-);
-
-const stockCalculatorHint = computed(() =>
-    isLiquidStock.value
-        ? t('patient.medications.stockCalculator.liquid.hint')
-        : t('patient.medications.stockCalculator.hint'),
-);
 
 const stockCalculatorPrimaryLabel = computed(() =>
     isLiquidStock.value
@@ -70,11 +63,10 @@ const stockCalculatorSecondaryPlaceholder = computed(() =>
 
 const { t } = useI18n();
 
-const numberOfBoxes = ref<string>('');
 const piecesPerBox = ref<string>('');
 
 const calculatedTotal = computed((): number | null => {
-    const boxes = Number.parseInt(numberOfBoxes.value, 10);
+    const boxes = Number.parseInt(numberOfBoxesModel.value, 10);
     const pieces = Number.parseInt(piecesPerBox.value, 10);
 
     if (
@@ -92,7 +84,10 @@ const calculatedTotal = computed((): number | null => {
 watch(calculatedTotal, (newTotal) => {
     if (newTotal !== null && newTotal >= 0) {
         model.value = String(newTotal);
-    } else if (numberOfBoxes.value === '' && piecesPerBox.value === '') {
+    } else if (
+        numberOfBoxesModel.value === '' &&
+        piecesPerBox.value === ''
+    ) {
         model.value = '';
     }
 });
@@ -115,14 +110,14 @@ watch(
     model,
     (newValue) => {
         if (
-            numberOfBoxes.value === '' &&
+            numberOfBoxesModel.value === '' &&
             piecesPerBox.value === '' &&
             newValue !== ''
         ) {
             const parsed = Number.parseInt(newValue, 10);
 
             if (!Number.isNaN(parsed) && parsed > 0) {
-                numberOfBoxes.value = '1';
+                numberOfBoxesModel.value = '1';
                 piecesPerBox.value = String(parsed);
             }
         }
@@ -149,7 +144,7 @@ watch(
             return;
         }
 
-        numberOfBoxes.value = '';
+        numberOfBoxesModel.value = '';
         piecesPerBox.value = '';
         model.value = '';
     },
@@ -186,13 +181,16 @@ const doseUnitChip = computed((): string | null => {
 const boxFieldId = computed(() => `${props.idPrefix}-stock-boxes`);
 const piecesFieldId = computed(() => `${props.idPrefix}-stock-pieces-per-box`);
 
-const describedById = computed((): string | undefined => {
-    if (props.errorMessage !== undefined && props.errorMessage.length > 0) {
-        return `${props.idPrefix}-stock-error`;
+function fieldDescribedBy(
+    field: 'boxes' | 'pieces',
+    error: string | undefined,
+): string | undefined {
+    if (error === undefined || error.length < 1) {
+        return undefined;
     }
 
-    return undefined;
-});
+    return `${props.idPrefix}-stock-${field}-error`;
+}
 
 const totalStockPanelClass = computed((): string =>
     medicationStockCurrentStockPanelClass(null),
@@ -207,7 +205,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
     const cleaned = input.value.replace(/\D/g, '');
 
     if (target === 'boxes') {
-        numberOfBoxes.value = cleaned;
+        numberOfBoxesModel.value = cleaned;
     } else {
         piecesPerBox.value = cleaned;
     }
@@ -216,27 +214,6 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
 
 <template>
     <div class="space-y-4 md:space-y-5">
-        <div
-            class="border-border flex w-full min-w-0 items-start gap-3.5 rounded-2xl border-2 bg-white px-4 py-3.5 sm:gap-4 sm:px-5 sm:py-4"
-        >
-            <div
-                class="bg-primary/12 text-primary flex size-11 shrink-0 items-center justify-center rounded-xl sm:size-14 sm:rounded-2xl"
-            >
-                <component
-                    :is="stockCalculatorHintIcon"
-                    class="size-5 sm:size-6"
-                    aria-hidden="true"
-                />
-            </div>
-            <div class="flex min-w-0 flex-1 flex-col gap-1">
-                <span
-                    class="text-sm leading-snug font-semibold text-black sm:text-base"
-                >
-                    {{ stockCalculatorHint }}
-                </span>
-            </div>
-        </div>
-
         <div class="grid grid-cols-2 gap-3 md:gap-4">
             <div>
                 <Label
@@ -247,24 +224,34 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                 </Label>
                 <input
                     :id="boxFieldId"
-                    :value="numberOfBoxes"
+                    :value="numberOfBoxesModel"
                     type="text"
                     inputmode="numeric"
                     pattern="[0-9]*"
                     autocomplete="off"
                     maxlength="6"
+                    aria-required="true"
                     :placeholder="stockCalculatorPrimaryPlaceholder"
                     :class="
                         cn(
                             patientFormFieldInputClass,
                             patientFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            errorMessage ? patientFormFieldInvalidClass : null,
+                            props.boxesError
+                                ? patientFormFieldInvalidClass
+                                : null,
                         )
                     "
-                    :aria-invalid="Boolean(errorMessage)"
-                    :aria-describedby="describedById"
+                    :aria-invalid="Boolean(props.boxesError)"
+                    :aria-describedby="
+                        fieldDescribedBy('boxes', props.boxesError)
+                    "
                     @input="handleNumberInput($event, 'boxes')"
+                />
+                <InputError
+                    :id="`${props.idPrefix}-stock-boxes-error`"
+                    class="mt-2"
+                    :message="props.boxesError"
                 />
             </div>
 
@@ -283,18 +270,28 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     pattern="[0-9]*"
                     autocomplete="off"
                     maxlength="6"
+                    aria-required="true"
                     :placeholder="stockCalculatorSecondaryPlaceholder"
                     :class="
                         cn(
                             patientFormFieldInputClass,
                             patientFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            errorMessage ? patientFormFieldInvalidClass : null,
+                            props.piecesError
+                                ? patientFormFieldInvalidClass
+                                : null,
                         )
                     "
-                    :aria-invalid="Boolean(errorMessage)"
-                    :aria-describedby="describedById"
+                    :aria-invalid="Boolean(props.piecesError)"
+                    :aria-describedby="
+                        fieldDescribedBy('pieces', props.piecesError)
+                    "
                     @input="handleNumberInput($event, 'pieces')"
+                />
+                <InputError
+                    :id="`${props.idPrefix}-stock-pieces-error`"
+                    class="mt-2"
+                    :message="props.piecesError"
                 />
             </div>
         </div>
@@ -331,6 +328,5 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             </div>
         </output>
 
-        <InputError :id="`${idPrefix}-stock-error`" :message="errorMessage" />
     </div>
 </template>
