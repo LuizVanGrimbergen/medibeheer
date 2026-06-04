@@ -2,7 +2,6 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePrescriptionFormWizard } from '@/Components/Patient/Prescriptions/form/usePrescriptionFormWizard';
-import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
@@ -116,24 +115,6 @@ export function usePatientPrescriptionsPage(
             return;
         }
 
-        const medicationName =
-            medicationChoices()
-                .find((choice) => choice.id === medicationId)
-                ?.name?.trim() ?? '';
-        const successDetails: PatientActionSuccessDetail[] = [];
-
-        if (medicationName !== '') {
-            successDetails.push({
-                label: t('patient.actionSuccess.summary.medication'),
-                value: medicationName,
-            });
-        }
-
-        successDetails.push({
-            label: t('patient.actionSuccess.summary.quantity'),
-            value: String(parsedQuantity),
-        });
-
         form.post(
             route('patient.medications.prescriptions.store', {
                 medication: medicationId,
@@ -146,10 +127,6 @@ export function usePatientPrescriptionsPage(
                         title: t(
                             'patient.actionSuccess.prescriptions.created.title',
                         ),
-                        message: t(
-                            'patient.actionSuccess.prescriptions.created.message',
-                        ),
-                        details: successDetails,
                     });
                 },
                 onError: () => {
@@ -179,8 +156,6 @@ export function usePatientPrescriptionsPage(
         prescriptionFormDialogLayoutClass,
         addSuccessOpen: addSuccessScreen.open,
         addSuccessTitle: addSuccessScreen.title,
-        addSuccessMessage: addSuccessScreen.message,
-        addSuccessDetails: addSuccessScreen.details,
         addDialogOpen,
         selectedMedicationId,
         quantityClientError,

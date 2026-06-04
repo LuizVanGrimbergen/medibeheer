@@ -2,6 +2,11 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import {
+    patientFormWizardFooterCancelButtonClass,
+    patientFormWizardFooterPrimaryButtonClass,
+    patientFormWizardFooterRowClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
 
 const props = defineProps<{
@@ -15,12 +20,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-const primaryButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
-
-const cancelButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl border-2 border-danger/40 bg-danger/10 px-3 text-base font-semibold text-danger hover:border-danger hover:bg-danger/20 hover:text-danger md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
 
 const backButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
@@ -45,15 +44,13 @@ function handleSecondaryClick(): void {
 </script>
 
 <template>
-    <div
-        class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
-    >
+    <div :class="patientFormWizardFooterRowClass">
         <Button
             type="submit"
             variant="default"
             size="lg"
             :disabled="processing"
-            :class="primaryButtonClass"
+            :class="patientFormWizardFooterPrimaryButtonClass"
         >
             {{ primaryLabel }}
         </Button>
@@ -64,7 +61,7 @@ function handleSecondaryClick(): void {
             variant="secondary"
             size="lg"
             :disabled="processing"
-            :class="cancelButtonClass"
+            :class="patientFormWizardFooterCancelButtonClass"
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.cancel') }}
