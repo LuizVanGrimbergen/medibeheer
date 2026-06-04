@@ -67,15 +67,18 @@ export default {
             'Dit moet u vandaag innemen. Tik op de knop zodra u de dosis heeft genomen.',
         empty: 'Vandaag hoeft u geen medicatie in te nemen.',
         markTaken: 'Inemen',
-        markTakenNow: 'Nu inemen',
-        markTakenCustom: 'Aangepast',
+        markTakenCustom: 'Ander tijdstip',
+        markTakenNowAria:
+            'Registreer dat u {name} nu heeft ingenomen (gepland om {time})',
+        markTakenCustomAria:
+            'Geef aan wanneer u {name} heeft ingenomen (gepland om {time})',
         customTakenTimeLabel: 'Wanneer heeft u ingenomen?',
         confirmCustomTaken: 'Inname bevestigen',
         notYetTimeToTake: 'Nog niet tijd om in te nemen',
         taken: 'Ingenomen',
         takenSection: {
             title: 'Ingenomen',
-            cardLead: 'Uw innames van vandaag ({count})',
+            cardLead: 'Uw innames vandaag ({count})',
             rowAria: '{name}, ingenomen om {time}',
         },
         intakeCard: {
