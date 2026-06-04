@@ -17,6 +17,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { getGoogleMapsApiKey } from '@/lib/google-maps/loadGoogleMapsApi';
 import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
 import {
     APPOINTMENT_FORM_STEP_ORDER,
@@ -36,6 +37,12 @@ import {
     patientShellWizardFormClass,
 } from '@/lib/patient/patientShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
+import {
+    applyAppointmentAddressFieldErrors,
+    hasAppointmentAddressGeocodeFieldErrors,
+} from '@/lib/patient/appointments/applyAppointmentAddressFieldErrors';
+import { isAppointmentAddressValidationRequired } from '@/lib/patient/appointments/appointmentAddressValidation';
+import { verifyAppointmentAddressGeocode } from '@/lib/patient/appointments/verifyAppointmentAddressGeocode';
 
 const props = defineProps<{
     open: boolean;
@@ -103,6 +110,16 @@ const progressLabel = computed(() =>
 );
 
 const isNotesStep = computed(() => step.value === 'notes');
+const isVerifyingAddress = ref(false);
+const addressStepRef = ref<InstanceType<typeof AppointmentAddressStep> | null>(
+    null,
+);
+
+const isAddressStepBusy = computed(
+    () =>
+        isVerifyingAddress.value ||
+        (addressStepRef.value?.isVerifyingGeocode ?? false),
+);
 
 const permitPastStartsAtOptions =
     computed<PatientAppointmentFormPermitPastStartsAtOptions>(() => {
@@ -210,7 +227,7 @@ function goBack(): void {
     step.value = order[index - 1]!;
 }
 
-function tryAdvanceFromCurrentStep(): void {
+async function tryAdvanceFromCurrentStep(): Promise<void> {
     const activeStep = step.value;
 
     const fieldErrors = collectAppointmentFormStepValidationFieldErrors(
@@ -232,6 +249,58 @@ function tryAdvanceFromCurrentStep(): void {
     }
 
     clearClientFieldErrorsForStep(activeStep);
+
+    if (activeStep === 'address') {
+        if (
+            !isAppointmentAddressValidationRequired(
+                props.form.needs_transport,
+                props.form,
+            )
+        ) {
+            goNext();
+
+            return;
+        }
+
+        if (hasAppointmentAddressGeocodeFieldErrors(props.form)) {
+            scrollAppointmentFormFirstFieldErrorIntoView(activeStep, {
+                street: props.form.errors.street,
+                postal_code: props.form.errors.postal_code,
+                city: props.form.errors.city,
+            });
+
+            return;
+        }
+
+        if (getGoogleMapsApiKey() !== null) {
+            isVerifyingAddress.value = true;
+
+            try {
+                const result = await verifyAppointmentAddressGeocode({
+                    street: props.form.street,
+                    house_number: props.form.house_number,
+                    postal_code: props.form.postal_code,
+                    city: props.form.city,
+                });
+
+                if (!result.valid) {
+                    applyAppointmentAddressFieldErrors(
+                        props.form,
+                        result.fieldErrors,
+                    );
+                    scrollAppointmentFormFirstFieldErrorIntoView(
+                        activeStep,
+                        result.fieldErrors,
+                    );
+
+                    return;
+                }
+            } finally {
+                isVerifyingAddress.value = false;
+            }
+        }
+    }
+
     goNext();
 }
 
@@ -245,7 +314,7 @@ function handleCancelOrBack(): void {
     goBack();
 }
 
-function handlePrimaryAction(): void {
+async function handlePrimaryAction(): Promise<void> {
     if (step.value === 'notes') {
         if (props.form.processing) {
             return;
@@ -300,7 +369,7 @@ function handlePrimaryAction(): void {
         return;
     }
 
-    tryAdvanceFromCurrentStep();
+    await tryAdvanceFromCurrentStep();
 }
 
 watch(
@@ -341,6 +410,10 @@ watch(
         }
 
         await nextTick();
+
+        if (activeStep === 'address') {
+            return;
+        }
 
         const suffix = focusTargetIdByStep[activeStep];
         const el = document.getElementById(`${props.idPrefix}-${suffix}`);
@@ -405,6 +478,7 @@ watch(
                                     />
 
                                     <AppointmentAddressStep
+                                        ref="addressStepRef"
                                         v-if="step === 'address'"
                                         :form="props.form"
                                         :id-prefix="props.idPrefix"
@@ -448,6 +522,7 @@ watch(
                                 type="button"
                                 variant="default"
                                 size="lg"
+                                :disabled="isAddressStepBusy"
                                 :class="
                                     patientAppointmentFormPrimaryPairButtonClass
                                 "
