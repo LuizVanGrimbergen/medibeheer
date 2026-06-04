@@ -7,15 +7,22 @@ import InventoryVacationDateField from '@/Components/Patient/Inventory/Inventory
 import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
 import InventoryVacationPickupBoxCalculator from '@/Components/Patient/Inventory/InventoryVacationPickupBoxCalculator.vue';
 import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/InventoryVacationShareStepPanel.vue';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
+import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { useInventoryVacationShareToPhotos } from '@/composables/inventory/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
-    patientAppointmentFormPrimaryPairButtonClass,
-    patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+    patientFormWizardFooterCancelButtonClass,
+    patientFormWizardFooterPrimaryButtonClass,
+    patientFormWizardFooterRowClass,
+    patientShellPageFillClass,
+    patientShellWizardCardClass,
+    patientShellWizardCardInnerClass,
+    patientShellWizardFormClass,
+    patientShellWizardStepPanelClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
 import { buildInventoryVacationShareImagePayload } from '@/lib/patient/inventory/buildInventoryVacationShareImagePayload';
 import { formatInventoryVacationDateLabel } from '@/lib/patient/inventory/formatInventoryVacationDateLabel';
@@ -26,11 +33,7 @@ import {
 import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/patientInventoryVacationPageProps';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
-import {
-    patientPageIntroClass,
-    patientPageSectionTitleClass,
-    patientPageTitleClass,
-} from '@/lib/patient/patientPageTypography';
+import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 const props = defineProps<PatientInventoryVacationPageProps>();
@@ -45,6 +48,12 @@ const form = useForm({
 const minDateIso = computed(() => localCalendarDateIsoToday());
 
 const showResults = computed(() => props.result !== null);
+
+const pageIntro = computed(() =>
+    showResults.value
+        ? ''
+        : t('patient.inventory.vacationDialogDescription'),
+);
 
 const formattedStartsOn = computed(() =>
     formatInventoryVacationDateLabel(form.starts_on),
@@ -212,78 +221,103 @@ const {
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.inventory.vacationDialogTitle')">
-            <div class="space-y-3">
-                <h1 :class="patientPageTitleClass">
-                    {{ t('patient.inventory.vacationDialogTitle') }}
-                </h1>
-                <p
-                    v-if="!showResults"
-                    :class="[patientPageIntroClass, 'max-w-prose']"
-                >
-                    {{ t('patient.inventory.vacationDialogDescription') }}
-                </p>
-            </div>
-
+        <div :class="patientShellPageFillClass">
+            <PatientShellPageWizard
+                :title="t('patient.inventory.vacationDialogTitle')"
+                :description="pageIntro"
+            >
             <form
                 v-if="!showResults"
-                class="space-y-5"
+                :class="patientShellWizardFormClass"
                 novalidate
                 @submit.prevent="submit"
             >
-                <Card
-                    class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
-                >
-                    <CardContent class="space-y-6 p-5 sm:p-6 md:p-7">
-                        <InventoryVacationDateField
-                            id="patient-inventory-vacation-starts-on"
-                            v-model="form.starts_on"
-                            :label="
-                                t('patient.inventory.vacationStartsOnLabel')
-                            "
-                            :min="minDateIso"
-                            :error="form.errors.starts_on"
-                        />
-                        <InventoryVacationDateField
-                            id="patient-inventory-vacation-ends-on"
-                            v-model="form.ends_on"
-                            :label="t('patient.inventory.vacationEndsOnLabel')"
-                            :min="form.starts_on || minDateIso"
-                            :error="form.errors.ends_on"
-                        />
-                    </CardContent>
-                </Card>
+                <PatientShellWizardScrollBody :active="true">
+                    <div :class="patientShellWizardStepPanelClass">
+                        <Card :class="patientShellWizardCardClass">
+                            <CardContent class="p-0">
+                                <div
+                                    :class="[
+                                        patientShellWizardCardInnerClass,
+                                        'space-y-6',
+                                    ]"
+                                >
+                                    <InventoryVacationDateField
+                                        id="patient-inventory-vacation-starts-on"
+                                        v-model="form.starts_on"
+                                        :label="
+                                            t(
+                                                'patient.inventory.vacationStartsOnLabel',
+                                            )
+                                        "
+                                        :min="minDateIso"
+                                        :error="form.errors.starts_on"
+                                    />
+                                    <InventoryVacationDateField
+                                        id="patient-inventory-vacation-ends-on"
+                                        v-model="form.ends_on"
+                                        :label="
+                                            t(
+                                                'patient.inventory.vacationEndsOnLabel',
+                                            )
+                                        "
+                                        :min="form.starts_on || minDateIso"
+                                        :error="form.errors.ends_on"
+                                    />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
 
-                <div
-                    class="border-border/80 bg-surface flex w-full min-w-0 flex-col gap-3 rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:flex-row-reverse sm:gap-3 sm:p-6"
-                >
-                    <Button
-                        type="submit"
-                        variant="default"
-                        size="lg"
-                        :class="patientAppointmentFormPrimaryPairButtonClass"
-                        :disabled="form.processing"
-                    >
-                        {{
-                            form.processing
-                                ? t('patient.inventory.vacationLoading')
-                                : t('patient.inventory.vacationCalculate')
-                        }}
-                    </Button>
-                    <Button
-                        as-child
-                        variant="secondary"
-                        size="lg"
-                        :class="patientSoftDangerActionButtonClass"
-                    >
-                        <Link :href="route('patient.inventory')">
-                            {{ t('patient.medications.actions.cancel') }}
-                        </Link>
-                    </Button>
-                </div>
+                    <template #footer>
+                        <div :class="patientFormWizardFooterRowClass">
+                            <Button
+                                type="submit"
+                                variant="default"
+                                size="lg"
+                                :class="
+                                    patientFormWizardFooterPrimaryButtonClass
+                                "
+                                :disabled="form.processing"
+                            >
+                                {{
+                                    form.processing
+                                        ? t(
+                                              'patient.inventory.vacationLoading',
+                                          )
+                                        : t(
+                                              'patient.inventory.vacationCalculate',
+                                          )
+                                }}
+                            </Button>
+                            <Button
+                                as-child
+                                variant="secondary"
+                                size="lg"
+                                :class="
+                                    patientFormWizardFooterCancelButtonClass
+                                "
+                                :disabled="form.processing"
+                            >
+                                <Link :href="route('patient.inventory')">
+                                    {{
+                                        t(
+                                            'patient.inventory.vacationBackToInventory',
+                                        )
+                                    }}
+                                </Link>
+                            </Button>
+                        </div>
+                    </template>
+                </PatientShellWizardScrollBody>
             </form>
 
-            <div v-else-if="props.result !== null" class="space-y-5">
+            <div
+                v-else-if="props.result !== null"
+                :class="patientShellWizardFormClass"
+            >
+                <PatientShellWizardScrollBody :active="true">
+                    <div :class="patientShellWizardStepPanelClass">
                 <Card :class="inventoryVacationResultsCardClass">
                     <CardContent class="space-y-3 p-4 sm:p-5">
                         <div
@@ -352,10 +386,7 @@ const {
                         type="button"
                         variant="default"
                         size="lg"
-                        :class="[
-                            patientAppointmentFormPrimaryPairButtonClass,
-                            'w-full',
-                        ]"
+                        :class="patientFormWizardFooterPrimaryButtonClass"
                         :disabled="isSaving"
                         :aria-label="
                             t('patient.inventory.vacationSaveToPhotos')
@@ -477,21 +508,27 @@ const {
                     }}
                 </p>
 
-                <div
-                    class="border-border/80 bg-surface rounded-3xl border-2 p-5 shadow-sm shadow-black/[0.04] sm:p-6"
-                >
-                    <Button
-                        as-child
-                        variant="default"
-                        size="lg"
-                        :class="patientAppointmentFormPrimaryPairButtonClass"
-                    >
-                        <Link :href="route('patient.inventory')">
-                            {{ t('patient.inventory.vacationDone') }}
-                        </Link>
-                    </Button>
-                </div>
+                    </div>
+
+                    <template #footer>
+                        <div :class="patientFormWizardFooterRowClass">
+                            <Button
+                                as-child
+                                variant="default"
+                                size="lg"
+                                :class="
+                                    patientFormWizardFooterPrimaryButtonClass
+                                "
+                            >
+                                <Link :href="route('patient.inventory')">
+                                    {{ t('patient.inventory.vacationDone') }}
+                                </Link>
+                            </Button>
+                        </div>
+                    </template>
+                </PatientShellWizardScrollBody>
             </div>
-        </PatientPageShell>
+            </PatientShellPageWizard>
+        </div>
     </PatientLayout>
 </template>
