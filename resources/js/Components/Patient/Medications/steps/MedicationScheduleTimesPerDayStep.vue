@@ -13,23 +13,24 @@ const { form, idPrefix } = defineProps<{
 const { t } = useI18n();
 
 const timesPerDayCount = computed({
-    get(): number {
+    get(): number | null {
         const trimmed = form.schedule.times_per_day.trim();
 
         if (!/^\d+$/.test(trimmed)) {
-            return 1;
+            return null;
         }
 
         const parsed = Number(trimmed);
 
         if (!Number.isInteger(parsed) || parsed < 1 || parsed > 24) {
-            return 1;
+            return null;
         }
 
         return parsed;
     },
-    set(value: number): void {
-        form.schedule.times_per_day = String(value);
+    set(value: number | null): void {
+        form.schedule.times_per_day =
+            value === null ? '' : String(value);
     },
 });
 
