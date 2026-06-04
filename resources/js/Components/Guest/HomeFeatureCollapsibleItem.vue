@@ -75,6 +75,7 @@ const detailListClass = cn(
                 </CollapsibleContent>
 
                 <PatientListCardDetailsToggle
+                    :scroll-on-expand="false"
                     :mode="open ? 'collapse' : 'expand'"
                     :label="
                         t(

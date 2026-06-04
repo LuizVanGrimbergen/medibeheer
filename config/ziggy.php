@@ -4,6 +4,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Skip route() in @routes output
+    |--------------------------------------------------------------------------
+    |
+    | The route helper ships in the Vite bundle via ZiggyVue. JSON output in
+    | the layout avoids a large render-blocking inline script.
+    |
+    */
+
+    'skip-route-function' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Route groups
     |--------------------------------------------------------------------------
     |
