@@ -13,6 +13,7 @@ class DoctorInvitationResource extends JsonResource
     {
         return [
             'public_id' => $this->public_id,
+            'invited_email' => $this->invited_email,
             'expires_at' => $this->expires_at->toISOString(),
             'revoke_url' => route('patient.doctors.invitations.destroy', ['doctorInvitation' => $this->public_id], absolute: false),
         ];

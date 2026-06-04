@@ -183,6 +183,29 @@ test('patients cannot revoke another patients family invitation', function () {
     expect($invitation->fresh()->revoked_at)->toBeNull();
 });
 
+test('patient family page lists invited email on pending family invitations', function () {
+    Mail::fake();
+
+    $patientUser = User::factory()->patient()->create();
+    Patient::query()->firstOrCreate(
+        ['user_id' => $patientUser->id],
+    );
+
+    $invitedEmail = 'family-visible-'.uniqid('', true).'@example.com';
+
+    $this->actingAs($patientUser)->post(route('patient.family.invitations.store'), [
+        'email' => $invitedEmail,
+    ]);
+
+    $this->actingAs($patientUser)
+        ->get(route('patient.family'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Family')
+            ->has('family_invitations', 1)
+            ->where('family_invitations.0.invited_email', User::normalizeEmail($invitedEmail)));
+});
+
 test('patients can revoke a pending invitation', function () {
     Mail::fake();
 
