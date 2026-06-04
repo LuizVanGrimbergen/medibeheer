@@ -15,7 +15,7 @@ import {
 } from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
-const count = defineModel<number>({ required: true });
+const count = defineModel<number | null>({ required: true });
 
 const props = withDefaults(
     defineProps<{
@@ -39,16 +39,7 @@ const props = withDefaults(
 );
 
 const prefersCustomCount = ref(
-    isPatientFormCountCustomValue(
-        count.value,
-        props.customMin,
-        props.customMax,
-    ),
-);
-
-const showCustomCountSelect = computed(
-    () =>
-        prefersCustomCount.value ||
+    count.value !== null &&
         isPatientFormCountCustomValue(
             count.value,
             props.customMin,
@@ -56,12 +47,26 @@ const showCustomCountSelect = computed(
         ),
 );
 
+const showCustomCountSelect = computed(
+    () =>
+        prefersCustomCount.value ||
+        (count.value !== null &&
+            isPatientFormCountCustomValue(
+                count.value,
+                props.customMin,
+                props.customMax,
+            )),
+);
+
 const customCountOptions = computed(() =>
     patientFormCountCustomOptions(props.customMin, props.customMax),
 );
 
 const presetButtonClass = (preset: number): string => {
-    const selected = !showCustomCountSelect.value && count.value === preset;
+    const selected =
+        count.value !== null &&
+        !showCustomCountSelect.value &&
+        count.value === preset;
 
     return selected
         ? 'border-primary bg-primary/10 text-text-heading'
@@ -81,6 +86,7 @@ const fieldsetInvalidClass = computed((): string | null =>
 const customCountSelect = computed({
     get(): string {
         if (
+            count.value === null ||
             !isPatientFormCountCustomValue(
                 count.value,
                 props.customMin,
@@ -120,6 +126,7 @@ const selectCustom = (): void => {
     prefersCustomCount.value = true;
 
     if (
+        count.value === null ||
         !isPatientFormCountCustomValue(
             count.value,
             props.customMin,
@@ -131,6 +138,12 @@ const selectCustom = (): void => {
 };
 
 watch(count, (value) => {
+    if (value === null) {
+        prefersCustomCount.value = false;
+
+        return;
+    }
+
     if (prefersCustomCount.value) {
         return;
     }
