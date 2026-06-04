@@ -11,3 +11,14 @@ test('homepage shows the public landing page when not authenticated', function (
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page->component('Guest/Home'));
 });
+
+test('homepage ships a minimal ziggy route payload', function () {
+    /** @var TestCase $this */
+    $response = $this->get('/');
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+    expect($content)->toBeString()->toContain('"home"');
+    expect($content)->not->toContain('patient.dashboard');
+});

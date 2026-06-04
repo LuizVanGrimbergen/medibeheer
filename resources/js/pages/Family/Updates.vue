@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { ensureLaravelEchoIsConfigured } from '@/lib/configureLaravelEcho';
 import { useI18n } from 'vue-i18n';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyUpdatesEchoListener from '@/Components/Family/Updates/FamilyUpdatesEchoListener.vue';
@@ -20,6 +21,13 @@ const props = defineProps<
 >();
 
 const { t } = useI18n();
+
+const echoReady = ref(false);
+
+onMounted(async () => {
+    await ensureLaravelEchoIsConfigured();
+    echoReady.value = true;
+});
 
 const periodToggleValue = computed((): string =>
     String(props.updates_period_days),
@@ -55,7 +63,11 @@ function onPeriodToggleUpdate(next: string): void {
 
     <FamilyLayout>
         <FamilyUpdatesEchoListener
-            v-if="props.family.has_linked_patient && activePatientId !== null"
+            v-if="
+                echoReady
+                && props.family.has_linked_patient
+                && activePatientId !== null
+            "
             :key="activePatientId"
             :patient-id="activePatientId"
         />

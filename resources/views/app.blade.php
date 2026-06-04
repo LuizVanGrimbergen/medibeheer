@@ -15,13 +15,18 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="icon" href="/images/medibeheer-pwa.png" type="image/png" sizes="192x192">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="preload" href="/Atkinson_Hyperlegible/AtkinsonHyperlegible-Regular.ttf" as="font" type="font/ttf" crossorigin>
 
     @isset($structuredDataJson)
         <script type="application/ld+json">{!! $structuredDataJson !!}</script>
     @endisset
 
     <!-- Scripts -->
-    @routes
+    @if (request()->routeIs('home', 'login', 'register', 'legal.*', 'password.*', 'verification.*'))
+        @routes('public')
+    @else
+        @routes
+    @endif
     @vite('resources/js/app.ts')
     @inertiaHead
 </head>
