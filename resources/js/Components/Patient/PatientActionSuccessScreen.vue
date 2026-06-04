@@ -20,7 +20,7 @@ const props = withDefaults(
         message?: string | null;
         eyebrow?: string | null;
         subtitle?: string | null;
-        doneLabel: string;
+        doneLabel?: string;
         details?: PatientActionSuccessDetail[];
         teleport?: boolean;
     }>(),
@@ -28,10 +28,15 @@ const props = withDefaults(
         message: null,
         eyebrow: null,
         subtitle: null,
+        doneLabel: undefined,
         details: () => [],
         teleport: true,
     },
 );
+
+const slots = defineSlots<{
+    footer?: () => unknown;
+}>();
 
 const emit = defineEmits<{
     done: [];
@@ -182,7 +187,9 @@ function dismiss(): void {
             <div
                 class="border-border bg-surface shrink-0 border-t px-4 pt-4 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] sm:px-6"
             >
+                <slot v-if="slots.footer" name="footer" />
                 <Button
+                    v-else
                     type="button"
                     variant="default"
                     size="lg"
