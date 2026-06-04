@@ -3,6 +3,7 @@ import appointments from './appointments';
 import dashboard from './dashboard';
 import doctors from './doctors';
 import family from './family';
+import formWizard from './formWizard';
 import inventory from './inventory';
 import medicationPlans from './medicationPlans';
 import medicationReminders from './medicationReminders';
@@ -16,6 +17,7 @@ export default {
     dashboard,
     doctors,
     family,
+    formWizard,
     inventory,
     medicationPlans,
     medicationReminders,
