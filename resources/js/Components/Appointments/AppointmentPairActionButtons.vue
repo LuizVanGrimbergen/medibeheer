@@ -12,6 +12,7 @@ const props = withDefaults(
     defineProps<{
         disabled?: boolean;
         showSecondary?: boolean;
+        centered?: boolean;
         primaryClass?: string;
         secondaryClass?: string;
         primaryHref?: string;
@@ -20,6 +21,7 @@ const props = withDefaults(
     {
         disabled: false,
         showSecondary: true,
+        centered: false,
         primaryClass: '',
         secondaryClass: '',
         primaryHref: undefined,
@@ -32,22 +34,43 @@ defineEmits<{
     'secondary-click': [];
 }>();
 
-const primaryLayoutClass = computed(() =>
-    props.showSecondary
-        ? `${patientAppointmentFormPrimaryPairButtonClass} [&_svg]:size-6`
-        : 'min-h-14 w-full touch-manipulation gap-2.5 px-4 text-lg font-semibold sm:w-auto [&_svg]:size-6',
+const pairContainerClass = computed(() =>
+    cn(
+        'flex min-w-0 flex-col gap-3 sm:gap-3',
+        props.centered
+            ? 'w-full items-center justify-center sm:w-auto sm:flex-row-reverse sm:justify-center'
+            : 'w-full sm:flex-row-reverse',
+    ),
 );
 
-const secondaryLayoutClass = cn(
-    patientSoftDangerActionButtonClass,
-    'gap-2.5 [&_svg]:size-6',
+const centeredPairButtonClass =
+    'w-full max-w-xs sm:max-w-none sm:min-w-[10.5rem]';
+
+const primaryLayoutClass = computed(() => {
+    const base = props.showSecondary
+        ? `${patientAppointmentFormPrimaryPairButtonClass} [&_svg]:size-6`
+        : 'min-h-14 w-full touch-manipulation gap-2.5 px-4 text-lg font-semibold sm:w-auto [&_svg]:size-6';
+
+    if (props.centered && props.showSecondary) {
+        return cn(base, centeredPairButtonClass);
+    }
+
+    return base;
+});
+
+const secondaryLayoutClass = computed(() =>
+    cn(
+        patientSoftDangerActionButtonClass,
+        'gap-2.5 [&_svg]:size-6',
+        props.centered &&
+            props.showSecondary &&
+            centeredPairButtonClass,
+    ),
 );
 </script>
 
 <template>
-    <div
-        class="flex w-full min-w-0 flex-col gap-3 sm:flex-row-reverse sm:gap-3"
-    >
+    <div :class="pairContainerClass">
         <template v-if="primaryHref">
             <Button
                 v-if="disabled"
