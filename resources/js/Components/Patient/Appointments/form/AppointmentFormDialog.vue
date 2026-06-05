@@ -17,7 +17,13 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import { getGoogleMapsApiKey } from '@/lib/google-maps/loadGoogleMapsApi';
+import {
+    applyAppointmentAddressFieldErrors,
+    hasAppointmentAddressGeocodeFieldErrors,
+} from '@/lib/patient/appointments/applyAppointmentAddressFieldErrors';
+import { isAppointmentAddressValidationRequired } from '@/lib/patient/appointments/appointmentAddressValidation';
 import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
 import {
     APPOINTMENT_FORM_STEP_ORDER,
@@ -31,18 +37,12 @@ import {
     patientAppointmentFormPrimaryPairButtonClass,
     patientSoftDangerActionButtonClass,
 } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
-import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
+import { verifyAppointmentAddressGeocode } from '@/lib/patient/appointments/verifyAppointmentAddressGeocode';
 import {
     patientShellDialogOverlayAboveAppChromeClass,
     patientShellWizardFormClass,
 } from '@/lib/patient/patientShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
-import {
-    applyAppointmentAddressFieldErrors,
-    hasAppointmentAddressGeocodeFieldErrors,
-} from '@/lib/patient/appointments/applyAppointmentAddressFieldErrors';
-import { isAppointmentAddressValidationRequired } from '@/lib/patient/appointments/appointmentAddressValidation';
-import { verifyAppointmentAddressGeocode } from '@/lib/patient/appointments/verifyAppointmentAddressGeocode';
 
 const props = defineProps<{
     open: boolean;

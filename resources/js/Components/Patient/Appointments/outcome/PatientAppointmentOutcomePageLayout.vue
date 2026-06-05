@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import PatientAppointmentScheduleNextSuccessScreen from '@/Components/Patient/Appointments/PatientAppointmentScheduleNextSuccessScreen.vue';
 import PatientAppointmentOutcomeSummaryCard from '@/Components/Patient/Appointments/outcome/PatientAppointmentOutcomeSummaryCard.vue';
+import PatientAppointmentScheduleNextSuccessScreen from '@/Components/Patient/Appointments/PatientAppointmentScheduleNextSuccessScreen.vue';
 import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
 import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import PrescriptionFormDialogFooter from '@/Components/Patient/Prescriptions/form/PrescriptionFormDialogFooter.vue';
 import PrescriptionDetailsStep from '@/Components/Patient/Prescriptions/steps/PrescriptionDetailsStep.vue';
 import PrescriptionExpiryDatesStep from '@/Components/Patient/Prescriptions/steps/PrescriptionExpiryDatesStep.vue';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     Dialog,
@@ -26,7 +27,6 @@ import {
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
-import { computed, ref } from 'vue';
 
 const open = defineModel<boolean>('open', { required: true });
 const selectedMedicationId = defineModel<number | null>(

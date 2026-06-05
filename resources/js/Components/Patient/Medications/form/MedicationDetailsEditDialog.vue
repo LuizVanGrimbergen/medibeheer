@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { useMedicationEditDialog } from '@/Components/Patient/Medications/form/useMedicationEditDialog';
 import MedicationCreateSummaryStep from '@/Components/Patient/Medications/steps/MedicationCreateSummaryStep.vue';
@@ -9,7 +11,6 @@ import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/st
 import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
 import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
 import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
@@ -24,7 +25,6 @@ import {
     patientShellDialogOverlayAboveAppChromeClass,
     patientShellWizardFormClass,
 } from '@/lib/patient/patientShellDialogLayout';
-import { ref, toRef } from 'vue';
 
 const props = defineProps<{
     open: boolean;

@@ -3,6 +3,10 @@ import { computed, useId } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { Dialog, DialogContent } from '@/Components/ui/dialog';
 import {
+    patientActionSuccessSubtitleClass,
+    patientActionSuccessTitleClass,
+} from '@/lib/patient/patientPageTypography';
+import {
     patientConfirmDialogContentClass,
     patientConfirmDialogMessageClass,
     patientFormWizardFooterCancelButtonClass,
@@ -12,10 +16,6 @@ import {
     patientShellDialogOverlayAboveAppChromeClass,
     patientShellWizardFooterClass,
 } from '@/lib/patient/patientShellDialogLayout';
-import {
-    patientActionSuccessSubtitleClass,
-    patientActionSuccessTitleClass,
-} from '@/lib/patient/patientPageTypography';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
