@@ -2,7 +2,7 @@
 import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistoryMonthNavigation from '@/Components/History/HistoryMonthNavigation.vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Card, CardContent, CardHeader } from '@/Components/ui/card';
 import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { cn } from '@/lib/utils';
@@ -74,10 +74,19 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
 </script>
 
 <template>
-    <Card class="border-border min-w-0">
+    <Card
+        class="border-border bg-surface text-text w-full min-w-0 rounded-2xl border shadow-sm"
+    >
         <CardHeader
             v-if="props.showMonthNavigation || props.headerTitle !== undefined"
-            :class="props.density === 'compact' ? 'pt-4 pb-2' : 'pt-6 pb-4'"
+            :class="
+                cn(
+                    'gap-0 p-0',
+                    props.density === 'compact'
+                        ? 'px-4 pt-4 pb-2 sm:px-5'
+                        : 'px-4 pt-5 pb-3 sm:px-5 sm:pt-6 sm:pb-4',
+                )
+            "
         >
             <HistoryMonthNavigation
                 v-if="props.showMonthNavigation"
@@ -88,25 +97,27 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
                 :next-month-aria-label="props.nextMonthAriaLabel"
                 :density="props.density"
             />
-            <CardTitle
+            <h2
                 v-else
                 :class="
                     cn(
-                        'font-semibold',
-                        props.density === 'compact' ? 'text-sm' : 'text-base',
+                        'text-text-heading font-semibold leading-snug',
+                        props.density === 'compact'
+                            ? 'text-sm'
+                            : 'text-base md:text-lg',
                     )
                 "
             >
                 {{ props.headerTitle }}
-            </CardTitle>
+            </h2>
         </CardHeader>
         <CardContent
             :class="
                 cn(
-                    'pt-0',
+                    'p-0 pt-0',
                     props.density === 'compact'
-                        ? 'space-y-3 pb-4'
-                        : 'space-y-4 pb-6',
+                        ? 'space-y-3 px-4 pb-4 sm:px-5'
+                        : 'space-y-4 px-4 pb-5 sm:px-5 sm:pb-6',
                 )
             "
         >
@@ -195,10 +206,10 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
                 v-if="$slots.legend"
                 :class="
                     cn(
-                        'border-border text-text-muted flex flex-wrap items-center border-t',
+                        'text-text-muted flex flex-wrap items-center justify-center',
                         props.density === 'compact'
-                            ? 'text-2xs gap-x-3 gap-y-1.5 pt-3'
-                            : 'gap-x-4 gap-y-2 pt-4 text-xs',
+                            ? 'text-2xs gap-x-3 gap-y-1.5 pt-1'
+                            : 'gap-x-4 gap-y-2 pt-2 text-xs',
                     )
                 "
                 aria-hidden="true"
