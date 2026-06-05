@@ -3,7 +3,6 @@ import { router } from '@inertiajs/vue3';
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next';
 import { computed, toRef } from 'vue';
 import { Button } from '@/Components/ui/button';
-import { CardTitle } from '@/Components/ui/card';
 import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import { cn } from '@/lib/utils';
 
@@ -60,33 +59,41 @@ function visitMonth(delta: number): void {
     <div class="grid w-full grid-cols-[auto_1fr_auto] items-center gap-2">
         <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="icon-sm"
-            class="justify-self-start"
+            class="text-primary justify-self-start hover:bg-surface-hover"
             :aria-label="props.prevMonthAriaLabel"
             @click="visitMonth(-1)"
         >
-            <ChevronLeft class="size-4" aria-hidden="true" />
+            <ChevronLeft
+                class="size-5 shrink-0 stroke-[2.25]"
+                aria-hidden="true"
+            />
         </Button>
-        <CardTitle
+        <h2
             :class="
                 cn(
-                    'truncate text-center',
-                    props.density === 'compact' ? 'text-sm' : 'text-base',
+                    'text-text-heading truncate text-center font-semibold leading-snug',
+                    props.density === 'compact'
+                        ? 'text-sm'
+                        : 'text-base md:text-lg',
                 )
             "
         >
             {{ monthTitle }}
-        </CardTitle>
+        </h2>
         <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="icon-sm"
-            class="justify-self-end"
+            class="text-primary justify-self-end hover:bg-surface-hover"
             :aria-label="props.nextMonthAriaLabel"
             @click="visitMonth(1)"
         >
-            <ChevronRight class="size-4" aria-hidden="true" />
+            <ChevronRight
+                class="size-5 shrink-0 stroke-[2.25]"
+                aria-hidden="true"
+            />
         </Button>
     </div>
 </template>

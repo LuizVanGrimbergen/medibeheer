@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 const hasPatients = computed(() => props.patients.length > 0);
 
@@ -47,7 +47,7 @@ function openPatientMedications(patient: FamilyLowStockPatient): void {
         icon-wrapper-class="bg-danger/12 text-danger"
     >
         <template #icon>
-            <AlertTriangle class="size-5" />
+            <AlertTriangle :size="20" :stroke-width="1.75" />
         </template>
 
         <ul class="space-y-4 md:space-y-3">

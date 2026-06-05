@@ -90,4 +90,15 @@ class DailyCheckin extends Model
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toFamilyDashboardPayload(string $patientName): array
+    {
+        return [
+            ...$this->toDashboardPayload(),
+            'patient_name' => $patientName,
+        ];
+    }
 }

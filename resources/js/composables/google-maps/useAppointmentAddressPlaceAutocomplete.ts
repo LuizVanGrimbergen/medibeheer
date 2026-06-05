@@ -1,11 +1,12 @@
-import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch  } from 'vue';
+import type {Ref} from 'vue';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import { focusPlaceAutocompleteSearch } from '@/lib/google-maps/focusPlaceAutocompleteSearch';
 import {
     getGoogleMapsApiKey,
     importGoogleMapsPlacesLibrary,
 } from '@/lib/google-maps/loadGoogleMapsApi';
-import { focusPlaceAutocompleteSearch } from '@/lib/google-maps/focusPlaceAutocompleteSearch';
 import { mountPlaceAutocompleteLucideClearIcon } from '@/lib/google-maps/mountPlaceAutocompleteLucideClearIcon';
 import { parseGooglePlaceAddressComponents } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
 import { looseInertiaForm } from '@/lib/inertia/looseInertiaForm';
@@ -74,6 +75,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
     onMounted(() => {
         if (!isAvailable.value || options.hostRef.value === null) {
             options.onUnavailable?.();
+
             return;
         }
 

@@ -1,8 +1,8 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 import { useGsapActionConfirm } from '@/composables/motion/useGsapActionConfirm';
 import { resetActionConfirmVisibility } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onUnmounted, ref, watch } from 'vue';
 
 export function useGsapWizardProgressLabel(
     progressLabelRef: Ref<HTMLElement | ComponentPublicInstance | null>,

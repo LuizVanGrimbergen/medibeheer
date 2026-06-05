@@ -29,11 +29,8 @@ class ShowPublishFamilyMedicationPlanProposalController extends Controller
             ? $itemId
             : $medicationPlanProposal->items()->orderByDesc('sort_order')->value('id');
 
-        $firstItem = $medicationPlanProposal->items->sortByDesc('sort_order')->first();
-
         return Inertia::render('Family/MedicationPlans/Publish', [
             'proposal_id' => $medicationPlanProposal->id,
-            'medication_name' => $firstItem?->name,
             'cancel_url' => route('family.medication-plans.edit', [
                 'medication_plan_proposal' => $medicationPlanProposal,
                 'item' => $itemId,

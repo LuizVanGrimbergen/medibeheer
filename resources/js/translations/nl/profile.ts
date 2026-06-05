@@ -1,6 +1,8 @@
 export default {
     title: 'Profiel',
-    backToSettings: 'Terug naar instellingen',
+    backToHome: 'Terug naar home',
+    backToOverview: 'Terug naar overzicht',
+    backToDoctorHome: 'Terug naar data',
     information: {
         title: 'Profielinformatie',
         description:

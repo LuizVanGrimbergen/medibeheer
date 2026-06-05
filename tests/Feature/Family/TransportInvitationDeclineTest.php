@@ -25,8 +25,10 @@ test('linked family member can decline a transport invitation', function () {
     ]);
 
     $this->actingAs($familyUser)
+        ->from(route('family.overview'))
         ->post(route('family.transport-invitations.decline', $invitation))
-        ->assertRedirect(route('family.appointments'));
+        ->assertRedirect(route('family.overview'))
+        ->assertSessionHas('success', __('transport_invitation.flash.declined'));
 
     expect($appointment->fresh()->family_id)->toBeNull();
     expect($invitation->fresh()->declined_at)->not->toBeNull();

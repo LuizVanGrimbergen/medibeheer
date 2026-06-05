@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import MedicationFormDialogFooter from '@/Components/Patient/Medications/form/MedicationFormDialogFooter.vue';
+import { computed, ref } from 'vue';
+import FamilyMedicationPlanProposalSummaryFooter from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalSummaryFooter.vue';
+import MedicationFormDialog from '@/Components/Patient/Medications/form/MedicationFormDialog.vue';
 import type {
     MedicationCreateFormWithErrors,
     MedicationFormWizardStep,
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { useMedicationFormWizard } from '@/Components/Patient/Medications/form/useMedicationFormWizard';
-import MedicationCreateSummaryStep from '@/Components/Patient/Medications/steps/MedicationCreateSummaryStep.vue';
-import MedicationDetailsStep from '@/Components/Patient/Medications/steps/MedicationDetailsStep.vue';
-import MedicationNoteStep from '@/Components/Patient/Medications/steps/MedicationNoteStep.vue';
-import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/steps/MedicationScheduleDoseTimesStep.vue';
-import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
-import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
-import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
-import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
+import { usePatientShellDialogLayout } from '@/composables/patient/usePatientShellDialogLayout';
 
 const props = defineProps<{
     title: string;
@@ -22,134 +14,54 @@ const props = defineProps<{
     idPrefix: string;
     form: MedicationCreateFormWithErrors;
     startAtSummary?: boolean;
+    summaryHeading?: string;
+    publishUrl?: string;
+    canPublish?: boolean;
+    canAddAnother?: boolean;
 }>();
 
 const emit = defineEmits<{
     submit: [];
     cancel: [];
+    addAnother: [];
     currentStepChange: [step: MedicationFormWizardStep];
 }>();
 
-const {
-    currentStep,
-    medicationProgressLabel,
-    handleSubmit,
-    handleMedicationFormFooterBack,
-    goToMedicationWizardStepFromSummary,
-    resetWizardToInitialStep,
-} = useMedicationFormWizard({
-    open: () => true,
-    form: () => props.form,
-    idPrefix: () => props.idPrefix,
-    initialStep: () => (props.startAtSummary ? 7 : 1),
-    onSubmit: () => {
-        emit('submit');
-    },
-});
+const open = ref(true);
+const { dialogContentClass } = usePatientShellDialogLayout('md');
 
-const showWizardProgress = computed(
-    () => !props.startAtSummary || currentStep.value !== 7,
-);
-
-const isWizardOpen = ref(true);
-const progressLabelRef = ref<HTMLElement | null>(null);
-
-const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
-    currentStep,
-    isWizardOpen,
-    { progressLabelRef },
-);
-
-watch(
-    () => props.startAtSummary,
-    (shouldStartAtSummary) => {
-        if (!shouldStartAtSummary) {
-            return;
-        }
-
-        resetWizardToInitialStep();
-    },
-    { immediate: true },
-);
-
-watch(
-    currentStep,
-    (step) => {
-        emit('currentStepChange', step);
-    },
-    { immediate: true },
+const showSummaryActions = computed(
+    () =>
+        props.startAtSummary === true &&
+        props.publishUrl !== undefined &&
+        (props.canPublish === true || props.canAddAnother === true),
 );
 </script>
 
 <template>
-    <Card class="border-border bg-surface rounded-2xl shadow-sm">
-        <CardHeader class="border-border border-b px-5 py-4 sm:px-6">
-            <CardTitle class="text-text-heading text-xl font-bold">
-                {{ title }}
-            </CardTitle>
-        </CardHeader>
-        <CardContent class="px-5 py-6 sm:px-6">
-            <form
-                :id="formId"
-                class="flex min-w-0 flex-col gap-6"
-                novalidate
-                @submit.prevent="handleSubmit"
-            >
-                <p
-                    v-if="showWizardProgress"
-                    ref="progressLabelRef"
-                    class="text-text-muted text-sm"
-                >
-                    {{ medicationProgressLabel }}
-                </p>
-
-                <div ref="wizardStepPanelRef" class="flex min-w-0 flex-col gap-6">
-                    <MedicationDetailsStep
-                        v-if="currentStep === 1"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                    />
-                    <MedicationScheduleMealsAndFrequencyStep
-                        v-else-if="currentStep === 2"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                    />
-                    <MedicationScheduleTimesPerDayStep
-                        v-else-if="currentStep === 3"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                    />
-                    <MedicationScheduleDoseTimesStep
-                        v-else-if="currentStep === 4"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                    />
-                    <MedicationScheduleDurationStep
-                        v-else-if="currentStep === 5"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                    />
-                    <MedicationNoteStep
-                        v-else-if="currentStep === 6"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                        show-stock-fields
-                    />
-                    <MedicationCreateSummaryStep
-                        v-else-if="currentStep === 7"
-                        :form="form"
-                        :id-prefix="idPrefix"
-                        :go-to-wizard-step="goToMedicationWizardStepFromSummary"
-                    />
-                </div>
-
-                <MedicationFormDialogFooter
-                    :current-step="currentStep"
-                    :processing="form.processing"
-                    @cancel="emit('cancel')"
-                    @back="handleMedicationFormFooterBack"
-                />
-            </form>
-        </CardContent>
-    </Card>
+    <MedicationFormDialog
+        v-model:open="open"
+        :title="title"
+        :summary-heading="summaryHeading"
+        :form-id="formId"
+        :id-prefix="idPrefix"
+        :form="form"
+        :dialog-content-class="dialogContentClass"
+        :start-at-summary="startAtSummary"
+        show-stock-fields
+        @submit="$emit('submit')"
+        @cancel="$emit('cancel')"
+        @current-step-change="$emit('currentStepChange', $event)"
+    >
+        <template v-if="showSummaryActions" #summaryFooter>
+            <FamilyMedicationPlanProposalSummaryFooter
+                :publish-url="publishUrl"
+                :processing="form.processing"
+                :can-publish="canPublish ?? false"
+                :can-add-another="canAddAnother ?? false"
+                @cancel="$emit('cancel')"
+                @add-another="$emit('addAnother')"
+            />
+        </template>
+    </MedicationFormDialog>
 </template>

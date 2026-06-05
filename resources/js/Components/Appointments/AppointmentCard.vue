@@ -3,19 +3,25 @@ import {
     ArrowUpRight,
     Car,
     CheckCircle2,
+    ChevronDown,
     CircleX,
     Stethoscope,
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentDoneToggle from '@/Components/Appointments/AppointmentDoneToggle.vue';
+import AppointmentGoogleMapsIconLink from '@/Components/Appointments/AppointmentGoogleMapsIconLink.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import PatientAppointmentScheduleDetailRows from '@/Components/Patient/Appointments/PatientAppointmentScheduleDetailRows.vue';
 import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
-import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/Components/ui/collapsible';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import { googleMapsSearchUrlForAppointmentAddress } from '@/lib/google-maps/googleMapsSearchUrlForAppointmentAddress';
 import {
@@ -25,11 +31,11 @@ import {
     patientPageCardHeaderSummaryClass,
     patientPageCardHeaderWithActionsClass,
 } from '@/lib/patient/patientPageTypography';
-import { cn } from '@/lib/utils';
 import type {
     AppointmentStatusValue,
     AppointmentTransportStatusValue,
 } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 type AppointmentCardAppointment = {
     id: number;
@@ -62,9 +68,16 @@ const props = withDefaults(
         cancelFormHref?: string;
         anchorId?: string;
         defaultOpen?: boolean;
+        showProviderSubtitle?: boolean;
+        transportLabel?: string;
+        showCompactGoogleMapsLink?: boolean;
+        detailsToggleVariant?: 'footer-button' | 'header';
     }>(),
     {
         defaultOpen: false,
+        showProviderSubtitle: true,
+        showCompactGoogleMapsLink: false,
+        detailsToggleVariant: 'footer-button',
     },
 );
 
@@ -108,6 +121,18 @@ const formattedAppointmentAddress = computed(() =>
 const googleMapsUrl = computed(() =>
     googleMapsSearchUrlForAppointmentAddress(props.appointment),
 );
+
+const usesHeaderDetailsToggle = computed(
+    () => props.detailsToggleVariant === 'header',
+);
+
+const detailsToggleAriaLabel = computed(() =>
+    t(
+        isOpen.value
+            ? 'patient.appointments.hideDetails'
+            : 'patient.appointments.showDetails',
+    ),
+);
 </script>
 
 <template>
@@ -133,42 +158,164 @@ const googleMapsUrl = computed(() =>
                 />
 
                 <div
-                    class="flex min-w-0 items-start gap-4"
+                    class="flex min-w-0 gap-2 sm:gap-3"
                     :class="
-                        showActionsToolbar
-                            ? patientPageCardHeaderWithActionsClass
-                            : null
+                        cn(
+                            showCompactGoogleMapsLink || usesHeaderDetailsToggle
+                                ? 'items-center'
+                                : 'items-start',
+                            showActionsToolbar
+                                ? patientPageCardHeaderWithActionsClass
+                                : null,
+                        )
                     "
                 >
-                    <div
-                        class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"
-                        aria-hidden="true"
+                    <CollapsibleTrigger
+                        v-if="usesHeaderDetailsToggle"
+                        as-child
+                        class="min-w-0 flex-1"
                     >
-                        <Stethoscope class="text-primary size-6" />
-                    </div>
-                    <div class="min-w-0 flex-1 space-y-1.5">
-                        <p
-                            class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+                        <div
+                            class="hover:bg-surface-2 -mx-2 flex w-full min-w-0 cursor-pointer items-center gap-3 rounded-xl px-2 py-1 text-left transition sm:-mx-3 sm:gap-4 sm:px-3"
+                            :aria-label="detailsToggleAriaLabel"
                         >
-                            {{
-                                appointment.doctor_type
-                                    ? doctorTypeLabel(appointment.doctor_type)
-                                    : appointment.provider_name
-                            }}
-                        </p>
-                        <p
-                            v-if="appointment.doctor_type"
-                            class="text-text-heading text-base leading-snug font-medium sm:text-lg"
+                            <div
+                                class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"
+                                aria-hidden="true"
+                            >
+                                <Stethoscope class="text-primary size-6" />
+                            </div>
+                            <div class="min-w-0 flex-1 space-y-1.5">
+                                <p
+                                    class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+                                >
+                                    {{
+                                        appointment.doctor_type
+                                            ? doctorTypeLabel(
+                                                  appointment.doctor_type,
+                                              )
+                                            : appointment.provider_name
+                                    }}
+                                </p>
+                                <p
+                                    v-if="
+                                        showProviderSubtitle &&
+                                        appointment.doctor_type
+                                    "
+                                    class="text-text-heading text-base leading-snug font-medium sm:text-lg"
+                                >
+                                    {{ appointment.provider_name }}
+                                </p>
+                                <p
+                                    v-if="!isOpen"
+                                    :class="patientPageCardHeaderSummaryClass"
+                                >
+                                    {{ headerSummary }}
+                                </p>
+                            </div>
+                            <span
+                                v-if="
+                                    googleMapsUrl !== null &&
+                                    showCompactGoogleMapsLink
+                                "
+                                class="shrink-0"
+                                @click.stop
+                                @pointerdown.stop
+                            >
+                                <AppointmentGoogleMapsIconLink
+                                    :href="googleMapsUrl"
+                                    icon="map-pin"
+                                    stop-propagation
+                                    :title="
+                                        t(
+                                            'patient.appointments.labels.openInGoogleMaps',
+                                        )
+                                    "
+                                    :ariaLabel="
+                                        t(
+                                            'patient.appointments.labels.openInGoogleMapsAria',
+                                            {
+                                                address:
+                                                    formattedAppointmentAddress,
+                                            },
+                                        )
+                                    "
+                                />
+                            </span>
+                            <ChevronDown
+                                :size="20"
+                                :stroke-width="1.75"
+                                :class="
+                                    cn(
+                                        'text-text-muted shrink-0 transition-transform duration-200',
+                                        isOpen && 'rotate-180',
+                                    )
+                                "
+                                aria-hidden="true"
+                            />
+                        </div>
+                    </CollapsibleTrigger>
+
+                    <template v-else>
+                        <div
+                            class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"
+                            aria-hidden="true"
                         >
-                            {{ appointment.provider_name }}
-                        </p>
-                        <p
-                            v-if="!isOpen"
-                            :class="patientPageCardHeaderSummaryClass"
-                        >
-                            {{ headerSummary }}
-                        </p>
-                    </div>
+                            <Stethoscope class="text-primary size-6" />
+                        </div>
+                        <div class="min-w-0 flex-1 space-y-1.5">
+                            <p
+                                class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+                            >
+                                {{
+                                    appointment.doctor_type
+                                        ? doctorTypeLabel(
+                                              appointment.doctor_type,
+                                          )
+                                        : appointment.provider_name
+                                }}
+                            </p>
+                            <p
+                                v-if="
+                                    showProviderSubtitle &&
+                                    appointment.doctor_type
+                                "
+                                class="text-text-heading text-base leading-snug font-medium sm:text-lg"
+                            >
+                                {{ appointment.provider_name }}
+                            </p>
+                            <p
+                                v-if="!isOpen"
+                                :class="patientPageCardHeaderSummaryClass"
+                            >
+                                {{ headerSummary }}
+                            </p>
+                        </div>
+                    </template>
+
+                    <AppointmentGoogleMapsIconLink
+                        v-if="
+                            googleMapsUrl !== null &&
+                            showCompactGoogleMapsLink &&
+                            !usesHeaderDetailsToggle
+                        "
+                        :href="googleMapsUrl"
+                        icon="map-pin"
+                        stop-propagation
+                        :title="
+                            t(
+                                'patient.appointments.labels.openInGoogleMaps',
+                            )
+                        "
+                        :ariaLabel="
+                            t(
+                                'patient.appointments.labels.openInGoogleMapsAria',
+                                {
+                                    address: formattedAppointmentAddress,
+                                },
+                            )
+                        "
+                    />
                 </div>
 
                 <AppointmentDoneToggle
@@ -182,7 +329,10 @@ const googleMapsUrl = computed(() =>
                 />
 
                 <div
-                    v-if="googleMapsUrl !== null"
+                    v-if="
+                        googleMapsUrl !== null &&
+                        !showCompactGoogleMapsLink
+                    "
                     :class="
                         cn(
                             patientPageCardDetailsExpandWrapperClass,
@@ -307,6 +457,7 @@ const googleMapsUrl = computed(() =>
                                         class="text-text-heading text-base leading-tight font-semibold"
                                     >
                                         {{
+                                            props.transportLabel ??
                                             t(
                                                 'patient.appointments.labels.transport',
                                             )
@@ -418,6 +569,7 @@ const googleMapsUrl = computed(() =>
                 </CollapsibleContent>
 
                 <PatientListCardDetailsToggle
+                    v-if="!usesHeaderDetailsToggle"
                     :mode="isOpen ? 'collapse' : 'expand'"
                     :label="
                         t(
@@ -426,13 +578,7 @@ const googleMapsUrl = computed(() =>
                                 : 'patient.appointments.cardExpandHint',
                         )
                     "
-                    :ariaLabel="
-                        t(
-                            isOpen
-                                ? 'patient.appointments.hideDetails'
-                                : 'patient.appointments.showDetails',
-                        )
-                    "
+                    :ariaLabel="detailsToggleAriaLabel"
                 />
             </Collapsible>
         </CardContent>

@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 const hasInvitations = computed(() => props.invitations.length > 0);
 
@@ -43,16 +43,12 @@ function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
         :toggle-label="t('family.link.incomingInvitationsToggle')"
         :collapsed-summary="collapsedSummary"
         collapsed-summary-class="line-clamp-2"
-        icon-wrapper-class="bg-primary/12 text-primary"
+        icon-wrapper-class="bg-role-family/12 text-role-family"
         content-class="flex flex-col gap-4 border-t border-border px-4 pb-4 pt-4 md:gap-3 md:px-5 md:pb-5 md:pt-4"
     >
         <template #icon>
-            <UserPlus class="size-5" />
+            <UserPlus :size="20" :stroke-width="1.75" />
         </template>
-
-        <p class="text-text-muted text-sm leading-relaxed">
-            {{ t('family.link.incomingInvitationsIntro') }}
-        </p>
 
         <ul v-if="hasInvitations" class="flex flex-col gap-3">
             <li

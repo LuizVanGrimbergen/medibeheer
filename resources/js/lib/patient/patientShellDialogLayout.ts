@@ -54,6 +54,10 @@ export const patientFormWizardFooterPrimaryButtonClass =
 export const patientFormWizardFooterCancelButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl border-2 border-danger/40 bg-danger/10 px-3 text-base font-semibold text-danger hover:border-danger hover:bg-danger/20 hover:text-danger md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
 
+/** Secondary action in patient confirm dialogs (e.g. Annuleren). */
+export const patientFormWizardFooterOutlineButtonClass =
+    'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl border-2 border-border bg-surface px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
+
 const patientShellDialogMobileClassMaxSm = [
     'min-h-0 flex-col text-text',
     'max-sm:fixed max-sm:inset-0 max-sm:!z-[110] max-sm:!left-0 max-sm:!top-0',
@@ -110,3 +114,28 @@ export function patientShellDialogOverlayAboveAppChromeClass(
 ): string {
     return desktopFrom === 'sm' ? 'max-sm:!z-[108]' : 'max-md:!z-[108]';
 }
+
+/** Default shell layout for {@link PatientConfirmDialog} (matches prescription/medication dialogs). */
+export const patientConfirmDialogContentClass =
+    patientShellDialogContentClass('md');
+
+/** Centered copy block inside {@link PatientConfirmDialog} (matches success screens). */
+export const patientConfirmDialogMessageClass =
+    'flex min-h-0 flex-1 flex-col items-center justify-center px-6 py-10 text-center sm:px-10';
+
+/** Optional hero icon above confirm dialog copy (matches {@link ActionSuccessScreen}). */
+export const patientConfirmDialogIconWrapClass =
+    'mb-8 flex size-20 items-center justify-center rounded-2xl border-2 sm:size-24';
+
+export const patientConfirmDialogIconClass =
+    'size-12 shrink-0 sm:size-14';
+
+export const patientConfirmDialogIconWrapDangerClass =
+    'border-danger/40 bg-danger/10 text-danger';
+
+export const patientConfirmDialogIconWrapPrimaryClass =
+    'border-primary/40 bg-primary/10 text-primary';
+
+/** Centers a short wizard step in the scroll column (footer stays pinned via mt-auto). */
+export const patientShellWizardCenteredStepClass =
+    'flex min-h-0 w-full flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-10';

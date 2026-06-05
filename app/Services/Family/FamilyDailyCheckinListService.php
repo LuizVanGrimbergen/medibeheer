@@ -24,7 +24,7 @@ final class FamilyDailyCheckinListService
             ->orderByDesc('checkin_date')
             ->orderByDesc('id')
             ->get()
-            ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
+            ->map(fn (DailyCheckin $checkin): array => $this->familyDashboardPayload($checkin, $patient))
             ->values()
             ->all();
     }
@@ -42,8 +42,17 @@ final class FamilyDailyCheckinListService
         return InertiaPagination::payload(
             $paginator,
             $paginator->getCollection()
-                ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
+                ->map(fn (DailyCheckin $checkin): array => $this->familyDashboardPayload($checkin, $patient))
                 ->all(),
+        );
+    }
+
+    private function familyDashboardPayload(DailyCheckin $checkin, Patient $patient): array
+    {
+        $patient->loadMissing('user');
+
+        return $checkin->toFamilyDashboardPayload(
+            (string) ($patient->user?->name ?? ''),
         );
     }
 

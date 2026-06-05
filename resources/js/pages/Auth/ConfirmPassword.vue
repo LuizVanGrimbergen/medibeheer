@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Link, useForm } from '@inertiajs/vue3';
-import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';

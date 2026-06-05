@@ -1,11 +1,11 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, watch } from 'vue';
 import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateAttentionPulse,
     resetAttentionPulseVisibility,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onUnmounted, watch } from 'vue';
 
 export function useGsapAttentionPulse(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,

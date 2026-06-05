@@ -1,12 +1,13 @@
 import { router } from '@inertiajs/vue3';
+import { onUnmounted, ref } from 'vue';
 import {
     loadingScreenShowDelayMs,
     resolveLoadingScreenMessageKey,
-    shouldShowLoadingScreenForVisit,
-    type InertiaVisitOptions,
-    type LoadingScreenMessageKey,
+    shouldShowLoadingScreenForVisit
+    
+    
 } from '@/lib/navigation/inertiaLoadingScreenPolicy';
-import { onUnmounted, ref } from 'vue';
+import type {InertiaVisitOptions, LoadingScreenMessageKey} from '@/lib/navigation/inertiaLoadingScreenPolicy';
 
 export function useInertiaNavigationLoading() {
     const isLoading = ref(false);

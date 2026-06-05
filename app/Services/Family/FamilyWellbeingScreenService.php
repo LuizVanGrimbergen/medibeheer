@@ -19,6 +19,9 @@ final class FamilyWellbeingScreenService
         $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
         $monthEnd = $monthStart->endOfMonth();
 
+        $patient->loadMissing('user');
+        $patientName = (string) ($patient->user?->name ?? '');
+
         $calendarCheckinsPayload = DailyCheckin::query()
             ->whereBelongsTo($patient)
             ->whereBetween('checkin_date', [$monthStart->toDateString(), $monthEnd->toDateString()])
@@ -26,7 +29,7 @@ final class FamilyWellbeingScreenService
             ->orderBy('checkin_date')
             ->orderBy('id')
             ->get()
-            ->map(fn (DailyCheckin $checkin): array => $checkin->toDashboardPayload())
+            ->map(fn (DailyCheckin $checkin): array => $checkin->toFamilyDashboardPayload($patientName))
             ->values()
             ->all();
 

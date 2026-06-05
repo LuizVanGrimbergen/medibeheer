@@ -25,6 +25,7 @@ export type Auth = {
 
 export type PendingCareTeamInvitation = {
     public_id: string;
+    invited_email: string;
     expires_at: string;
     revoke_url: string;
 };
@@ -182,6 +183,7 @@ export type DailyCheckin = {
     symptoms: DailyCheckinSymptomValue[] | null;
     note: string | null;
     created_at: string;
+    patient_name?: string | null;
 };
 
 export type PaginationMeta = {

@@ -7,10 +7,17 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import {
+    patientConfirmDialogContentClass,
+    patientFormWizardFooterCancelButtonClass,
+    patientFormWizardFooterPrimaryButtonClass,
+    patientShellDialogOverlayAboveAppChromeClass,
+    patientShellWizardFooterClass,
+} from '@/lib/patient/patientShellDialogLayout';
+import { cn } from '@/lib/utils';
 import { PasswordConfirmField } from '@/Components/ui/password-confirm-field';
 
 const confirmingUserDeletion = ref(false);
@@ -63,8 +70,10 @@ const closeModal = () => {
         </header>
 
         <Button
-            variant="outline"
-            class="h-auto min-h-12 w-full touch-manipulation text-danger hover:bg-surface-hover hover:text-danger sm:min-h-14"
+            type="button"
+            variant="secondary"
+            size="lg"
+            :class="patientFormWizardFooterCancelButtonClass"
             @click="confirmUserDeletion"
         >
             {{ t('profile.delete.action') }}
@@ -74,13 +83,20 @@ const closeModal = () => {
             :open="confirmingUserDeletion"
             @update:open="(open) => !open && closeModal()"
         >
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>
+            <DialogContent
+                :class="
+                    cn(patientConfirmDialogContentClass, 'flex min-h-0 flex-col')
+                "
+                :overlay-class="
+                    patientShellDialogOverlayAboveAppChromeClass('md')
+                "
+            >
+                <DialogHeader class="shrink-0 text-left">
+                    <DialogTitle class="text-text-heading text-xl font-bold md:text-2xl">
                         {{ t('profile.delete.modalTitle') }}
                     </DialogTitle>
 
-                    <DialogDescription>
+                    <DialogDescription class="text-text-muted text-base leading-relaxed">
                         {{ t('profile.delete.modalDescription') }}
                     </DialogDescription>
                 </DialogHeader>
@@ -94,21 +110,35 @@ const closeModal = () => {
                     @enter="deleteUser"
                 />
 
-                <DialogFooter
-                    class="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end"
+                <div
+                    :class="[
+                        'flex w-full min-w-0 flex-col gap-2 md:flex-row md:gap-3',
+                        patientShellWizardFooterClass,
+                        'mt-auto shrink-0',
+                    ]"
                 >
-                    <Button variant="outline" @click="closeModal">
+                    <Button
+                        type="button"
+                        variant="default"
+                        size="lg"
+                        :class="patientFormWizardFooterPrimaryButtonClass"
+                        :disabled="form.processing"
+                        @click="closeModal"
+                    >
                         {{ t('profile.delete.cancel') }}
                     </Button>
 
                     <Button
-                        variant="destructive"
+                        type="button"
+                        variant="secondary"
+                        size="lg"
+                        :class="patientFormWizardFooterCancelButtonClass"
                         :disabled="form.processing"
                         @click="deleteUser"
                     >
                         {{ t('profile.delete.confirmDelete') }}
                     </Button>
-                </DialogFooter>
+                </div>
             </DialogContent>
         </Dialog>
     </section>

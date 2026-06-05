@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { Car } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
 import FamilyTransportAppointmentCard from '@/Components/Family/Overview/FamilyTransportAppointmentCard.vue';
+import {
+    acceptTransport,
+    declineTransport,
+} from '@/composables/family/useFamilyAppointmentsActions';
 import type { FamilyPendingTransportAppointment } from '@/lib/family/overview/familyPendingTransportAppointments';
 
 const props = defineProps<{
@@ -13,7 +16,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 const hasAppointments = computed(() => props.appointments.length > 0);
 
@@ -28,21 +31,6 @@ const collapsedSummary = computed(() => {
         count: String(count),
     });
 });
-
-function openPatientAppointments(
-    appointment: FamilyPendingTransportAppointment,
-): void {
-    router.post(
-        appointment.switch_url,
-        {},
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.visit(appointment.appointments_url);
-            },
-        },
-    );
-}
 </script>
 
 <template>
@@ -55,7 +43,7 @@ function openPatientAppointments(
         icon-wrapper-class="bg-stock-near/15 text-stock-near dark:bg-stock-near-dark/20 dark:text-stock-near-dark"
     >
         <template #icon>
-            <Car class="size-5" />
+            <Car :size="20" :stroke-width="1.75" />
         </template>
 
         <ul class="space-y-4 md:space-y-3">
@@ -66,7 +54,12 @@ function openPatientAppointments(
                 <FamilyTransportAppointmentCard
                     :appointment="appointment"
                     variant="pending"
-                    @click="openPatientAppointments(appointment)"
+                    :accept-url="appointment.accept_url"
+                    :decline-url="appointment.decline_url"
+                    @accept-transport="acceptTransport(appointment.accept_url)"
+                    @decline-transport="
+                        declineTransport(appointment.decline_url)
+                    "
                 />
             </li>
         </ul>

@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Support\Medications\MedicationIntakeClock;
 use Carbon\CarbonImmutable;
 
-test('linked family members see daily check-ins on updates', function () {
+test('linked family members see daily check-ins on overview updates', function () {
     $patientUser = User::factory()->patient()->create();
     $patient = $patientUser->patient;
     expect($patient)->not->toBeNull();
@@ -26,16 +26,15 @@ test('linked family members see daily check-ins on updates', function () {
 
     $familyUser = createLinkedFamilyMemberForPatient($patient);
 
-    $this->actingAs($familyUser)->get(route('family.updates'))
+    $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Updates')
-            ->where('updates_period_days', 3)
+            ->component('Family/Overview')
             ->has('updates_checkins', 1)
             ->where('updates_checkins.0.mood_score', DailyMoodScore::BAD->value));
 });
 
-test('family updates only includes check-ins within the selected period', function () {
+test('family overview updates only includes check-ins from today', function () {
     $this->travelTo(CarbonImmutable::parse('2026-05-19'));
 
     $patientUser = User::factory()->patient()->create();
@@ -58,7 +57,7 @@ test('family updates only includes check-ins within the selected period', functi
 
     $familyUser = createLinkedFamilyMemberForPatient($patient);
 
-    $this->actingAs($familyUser)->get(route('family.updates', ['period_days' => 1]))
+    $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('updates_checkins', 1)
@@ -79,7 +78,7 @@ test('linked family members may subscribe to patient family updates channel', fu
         ->assertOk();
 });
 
-test('linked family members see taken medication intakes on updates', function () {
+test('linked family members see taken medication intakes on overview updates', function () {
     CarbonImmutable::setTestNow(
         CarbonImmutable::parse('2026-05-19 10:00:00', MedicationIntakeClock::TIMEZONE),
     );
@@ -113,10 +112,10 @@ test('linked family members see taken medication intakes on updates', function (
 
     $familyUser = createLinkedFamilyMemberForPatient($patient);
 
-    $this->actingAs($familyUser)->get(route('family.updates'))
+    $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Updates')
+            ->component('Family/Overview')
             ->has('updates_medication_intakes', 1)
             ->where('updates_medication_intakes.0.name', 'Paracetamol')
             ->where('updates_medication_intakes.0.intake_date', '2026-05-19'));
@@ -124,7 +123,7 @@ test('linked family members see taken medication intakes on updates', function (
     CarbonImmutable::setTestNow();
 });
 
-test('family updates only includes medication intakes within the selected period', function () {
+test('family overview updates only includes medication intakes from today', function () {
     CarbonImmutable::setTestNow(
         CarbonImmutable::parse('2026-05-19 10:00:00', MedicationIntakeClock::TIMEZONE),
     );
@@ -167,7 +166,7 @@ test('family updates only includes medication intakes within the selected period
 
     $familyUser = createLinkedFamilyMemberForPatient($patient);
 
-    $this->actingAs($familyUser)->get(route('family.updates', ['period_days' => 1]))
+    $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->has('updates_medication_intakes', 1)

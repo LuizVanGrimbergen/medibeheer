@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';

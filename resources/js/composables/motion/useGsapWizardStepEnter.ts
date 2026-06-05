@@ -1,11 +1,11 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 import type { GsapTween, WizardStepDirection } from '@/lib/motion/gsapMotion';
 import {
     animateWizardStepEnter,
     resetWizardStepEnterVisibility,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onUnmounted, ref, watch } from 'vue';
 
 export function useGsapWizardStepEnter(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,
