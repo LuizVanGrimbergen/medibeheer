@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
@@ -128,8 +129,13 @@ const updatePassword = () => {
                 />
             </div>
 
-            <div class="flex items-center gap-4">
-                <Button type="submit" :disabled="form.processing">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                <Button
+                    type="submit"
+                    size="lg"
+                    :class="patientFormWizardFooterPrimaryButtonClass"
+                    :disabled="form.processing"
+                >
                     {{ t('profile.password.save') }}
                 </Button>
 
