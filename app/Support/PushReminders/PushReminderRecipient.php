@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Medications\PushReminders;
+namespace App\Support\PushReminders;
 
 use App\Models\User;
 
