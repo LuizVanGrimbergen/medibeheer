@@ -216,6 +216,8 @@ export default {
             title: 'Inname per dag',
             prevMonth: 'Vorige maand',
             nextMonth: 'Volgende maand',
+            prevDay: 'Vorige dag',
+            nextDay: 'Volgende dag',
             gridAria: 'Inname per dag in {month}',
             dayNoSchedule: '{date}, geen geplande innames',
             dayNoIntake: '{date}, geen inname',
@@ -230,7 +232,8 @@ export default {
         },
         slot: {
             taken: 'Genomen',
-            notTaken: 'Niet genomen',
+            late: 'Te laat',
+            not_taken: 'Niet genomen',
         },
     },
 };
