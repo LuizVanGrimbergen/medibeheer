@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import DoctorPatientContextHeader from '@/Components/Doctor/Patients/DoctorPatientContextHeader.vue';
 import DoctorPatientOverviewSection from '@/Components/Doctor/Patients/DoctorPatientOverviewSection.vue';
 import DoctorPatientSearch from '@/Components/Doctor/Patients/DoctorPatientSearch.vue';
 import DoctorLayout from '@/Layouts/DoctorLayout.vue';
@@ -21,6 +22,14 @@ const props = withDefaults(
 const { t } = useI18n();
 
 const hasPatientOverview = computed(() => props.patient_overview !== null);
+const patientSearchExpanded = ref(false);
+
+watch(
+    () => props.patient_overview?.selected_patient.public_id,
+    () => {
+        patientSearchExpanded.value = false;
+    },
+);
 </script>
 
 <template>
@@ -32,23 +41,29 @@ const hasPatientOverview = computed(() => props.patient_overview !== null);
         <div
             :class="
                 cn(
-                    'mx-auto flex w-full flex-col gap-6 md:gap-5',
-                    hasPatientOverview ? 'max-w-5xl' : 'max-w-2xl',
+                    'mx-auto flex w-full flex-col gap-5 md:gap-4',
+                    hasPatientOverview ? 'max-w-7xl' : 'max-w-2xl',
                 )
             "
         >
             <DoctorPatientSearch
+                v-if="!hasPatientOverview || patientSearchExpanded"
+                v-model:expanded="patientSearchExpanded"
                 :patients="props.patients"
                 :selected-patient-public-id="
                     props.patient_overview?.selected_patient.public_id ?? null
                 "
-                :autofocus="!hasPatientOverview"
+                :autofocus="!hasPatientOverview || patientSearchExpanded"
             />
 
-            <DoctorPatientOverviewSection
-                v-if="props.patient_overview !== null"
-                v-bind="props.patient_overview"
-            />
+            <template v-if="props.patient_overview !== null">
+                <DoctorPatientContextHeader
+                    :patient-name="props.patient_overview.selected_patient.name"
+                    @switch-patient="patientSearchExpanded = true"
+                />
+
+                <DoctorPatientOverviewSection v-bind="props.patient_overview" />
+            </template>
         </div>
     </DoctorLayout>
 </template>
