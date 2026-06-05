@@ -3,8 +3,8 @@ import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { LogOut } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Button } from '@/Components/ui/button';
 import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
+import { Button } from '@/Components/ui/button';
 import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {
@@ -75,7 +75,17 @@ const settingsOverviewBackLabelKey = computed(() => {
 });
 const showSettingsBackButton = computed(() => true);
 const showMedicationRemindersSettings = computed(
-    () => isPatient.value && page.props.webpush !== undefined,
+    () =>
+        (isPatient.value || isFamilyMember.value) &&
+        page.props.webpush !== undefined,
+);
+const medicationRemindersRole = computed((): 'patient' | 'family_member' =>
+    isFamilyMember.value ? 'family_member' : 'patient',
+);
+const medicationRemindersTranslationPrefix = computed(() =>
+    isFamilyMember.value
+        ? 'family.medicationReminders'
+        : 'patient.medicationReminders',
 );
 const selectedSection = computed<SettingsSection | null>(() => {
     const [, search = ''] = page.url.split('?');
@@ -204,14 +214,14 @@ function confirmLogout(): void {
                             <p class="text-primary text-lg font-semibold">
                                 {{
                                     t(
-                                        'patient.medicationReminders.settingsTitle',
+                                        `${medicationRemindersTranslationPrefix}.settingsTitle`,
                                     )
                                 }}
                             </p>
                             <p class="text-text-muted mt-1 text-sm">
                                 {{
                                     t(
-                                        'patient.medicationReminders.settingsLinkDescription',
+                                        `${medicationRemindersTranslationPrefix}.settingsLinkDescription`,
                                     )
                                 }}
                             </p>
@@ -273,6 +283,7 @@ function confirmLogout(): void {
                                         'medication-reminders' &&
                                     showMedicationRemindersSettings
                                 "
+                                :role="medicationRemindersRole"
                             />
 
                             <SecurityActivityLog
@@ -296,7 +307,9 @@ function confirmLogout(): void {
                                 as-child
                                 variant="default"
                                 size="lg"
-                                :class="patientFormWizardFooterPrimaryButtonClass"
+                                :class="
+                                    patientFormWizardFooterPrimaryButtonClass
+                                "
                             >
                                 <Link :href="settingsBackHref">
                                     {{ t(settingsOverviewBackLabelKey) }}
@@ -306,7 +319,9 @@ function confirmLogout(): void {
                                 type="button"
                                 variant="secondary"
                                 size="lg"
-                                :class="patientFormWizardFooterCancelButtonClass"
+                                :class="
+                                    patientFormWizardFooterCancelButtonClass
+                                "
                                 @click="openLogoutConfirm"
                             >
                                 {{ t('app.navigation.logout') }}
@@ -318,7 +333,9 @@ function confirmLogout(): void {
                         :open="confirmingLogout"
                         :title="t('app.navigation.logoutConfirm.title')"
                         :description="t('app.navigation.logoutConfirm.message')"
-                        :confirm-label="t('app.navigation.logoutConfirm.confirm')"
+                        :confirm-label="
+                            t('app.navigation.logoutConfirm.confirm')
+                        "
                         :cancel-label="t('app.navigation.logoutConfirm.cancel')"
                         :processing="logoutProcessing"
                         :icon="LogOut"
