@@ -13,6 +13,12 @@ export default {
             title: 'Voorschrift toegevoegd',
             message: 'Het voorschrift staat in uw overzicht.',
         },
+        pickedUp: {
+            title: 'Opgehaald bij de apotheek',
+            lastPrescriptionSubtitle:
+                'Let op: dit was uw laatste voorschrift.',
+            scheduleAppointment: 'Nieuwe afspraak maken',
+        },
     },
     appointments: {
         created: {

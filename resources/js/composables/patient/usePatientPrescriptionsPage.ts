@@ -41,6 +41,8 @@ export function usePatientPrescriptionsPage(
 ) {
     const { t } = useI18n();
     const addSuccessScreen = usePatientActionSuccessScreen();
+    const pickupSuccessScreen = usePatientActionSuccessScreen();
+    const pickupSuccessIsLastPrescription = ref(false);
     const addDialogOpen = ref(false);
     const selectedMedicationId = ref<number | null>(null);
     const quantityClientError = ref('');
@@ -48,8 +50,8 @@ export function usePatientPrescriptionsPage(
     const expiryDatesClientError = ref('');
 
     const form: PatientPrescriptionForm = useForm({
-        quantity: PRESCRIPTION_QUANTITY_MIN,
-        prescription_expiry_dates: [''],
+        quantity: null,
+        prescription_expiry_dates: [],
     });
 
     const canAddPrescription = computed(() => medicationChoices().length > 0);
@@ -57,6 +59,12 @@ export function usePatientPrescriptionsPage(
     watch(
         () => form.quantity,
         (rawQuantity) => {
+            if (rawQuantity === null) {
+                form.prescription_expiry_dates = [];
+
+                return;
+            }
+
             const count = clampPrescriptionQuantity(rawQuantity);
 
             if (count !== rawQuantity) {
@@ -80,16 +88,13 @@ export function usePatientPrescriptionsPage(
     });
 
     function openAddPrescriptionDialog(): void {
-        const choices = medicationChoices();
-        const firstMedicationId = choices[0]?.id ?? null;
-
-        selectedMedicationId.value = firstMedicationId;
+        selectedMedicationId.value = null;
         quantityClientError.value = '';
         medicationClientError.value = '';
         expiryDatesClientError.value = '';
         form.defaults({
-            quantity: PRESCRIPTION_QUANTITY_MIN,
-            prescription_expiry_dates: [''],
+            quantity: null,
+            prescription_expiry_dates: [],
         });
         form.reset();
         form.clearErrors();
@@ -101,6 +106,10 @@ export function usePatientPrescriptionsPage(
     }
 
     function submitAddPrescription(): void {
+        if (form.quantity === null) {
+            return;
+        }
+
         const parsedQuantity = clampPrescriptionQuantity(form.quantity);
 
         form.quantity = parsedQuantity;
@@ -152,10 +161,20 @@ export function usePatientPrescriptionsPage(
         onCancel: closeAddPrescriptionDialog,
     });
 
+    function showPrescriptionPickedUpSuccess(isLastInBatch: boolean): void {
+        pickupSuccessIsLastPrescription.value = isLastInBatch;
+        pickupSuccessScreen.show({
+            title: t('patient.actionSuccess.prescriptions.pickedUp.title'),
+        });
+    }
+
     return {
         prescriptionFormDialogLayoutClass,
         addSuccessOpen: addSuccessScreen.open,
         addSuccessTitle: addSuccessScreen.title,
+        pickupSuccessOpen: pickupSuccessScreen.open,
+        pickupSuccessIsLastPrescription,
+        showPrescriptionPickedUpSuccess,
         addDialogOpen,
         selectedMedicationId,
         quantityClientError,

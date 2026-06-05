@@ -32,12 +32,14 @@ function expiryDateFieldError(index: number): string | undefined {
     return props.form.errors[`prescription_expiry_dates.${index}`];
 }
 
+const prescriptionQuantity = computed(() => props.form.quantity ?? 0);
+
 function isLastPrescriptionField(index: number): boolean {
-    return index === props.form.quantity;
+    return index === prescriptionQuantity.value;
 }
 
 function expiryDateFieldLabel(index: number): string {
-    if (isLastPrescriptionField(index) && props.form.quantity > 1) {
+    if (isLastPrescriptionField(index) && prescriptionQuantity.value > 1) {
         return t('patient.prescriptions.expiryDateLastPrescriptionLabel', {
             number: String(index),
         });
@@ -52,7 +54,7 @@ function expiryDateFieldLabel(index: number): string {
 <template>
     <div class="space-y-5">
         <div
-            v-for="index in form.quantity"
+            v-for="index in prescriptionQuantity"
             :key="index"
             class="min-w-0 space-y-2"
         >
