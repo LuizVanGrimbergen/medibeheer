@@ -15,6 +15,8 @@ use App\Http\Controllers\Family\MedicationPlans\FamilyMedicationPlanProposalCont
 use App\Http\Controllers\Family\MedicationPlans\PublishFamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\RevokeFamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\ShowPublishFamilyMedicationPlanProposalController;
+use App\Http\Controllers\Family\PushSubscriptions\DestroyFamilyPushSubscriptionController;
+use App\Http\Controllers\Family\PushSubscriptions\StoreFamilyPushSubscriptionController;
 use App\Http\Middleware\EnsureFamilyMember;
 use App\Http\Middleware\RedirectIfEmailUnverified;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -93,4 +95,11 @@ Route::middleware([
         Route::post('patients/{patient}/switch', SwitchActivePatientController::class)
             ->middleware('throttle:family-active-patient-switch')
             ->name('patients.switch');
+
+        /* Push subscriptions */
+        Route::post('push-subscriptions', StoreFamilyPushSubscriptionController::class)
+            ->name('push-subscriptions.store');
+
+        Route::delete('push-subscriptions', DestroyFamilyPushSubscriptionController::class)
+            ->name('push-subscriptions.destroy');
     });
