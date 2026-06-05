@@ -1,11 +1,11 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateSuccessFlashOverlay,
     resetSuccessFlashOverlay,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapSuccessFlash(
     overlayRef: Ref<HTMLElement | ComponentPublicInstance | null>,

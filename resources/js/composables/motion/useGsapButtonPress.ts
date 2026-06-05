@@ -1,11 +1,11 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import type { GsapTween } from '@/lib/motion/gsapMotion';
 import {
     animateButtonPress,
     resetButtonPressScale,
 } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapButtonPress(
     targetRef: Ref<HTMLElement | ComponentPublicInstance | null>,

@@ -1,3 +1,5 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 import type {
     FooterNavIndicatorMetrics,
     GsapTween,
@@ -6,8 +8,6 @@ import { animateFooterNavIndicator } from '@/lib/motion/gsapMotion';
 import { loadGsap } from '@/lib/motion/loadGsap';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
 import type { PatientFooterNavRouteName } from '@/lib/patient/navigation/patientFooterNavClasses';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export type FooterNavLinkRefs = Partial<
     Record<PatientFooterNavRouteName, HTMLElement>

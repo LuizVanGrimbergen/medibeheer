@@ -1,8 +1,8 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { ref } from 'vue';
 import { useGsapWizardProgressLabel } from '@/composables/motion/useGsapWizardProgressLabel';
 import { useGsapWizardStepEnter } from '@/composables/motion/useGsapWizardStepEnter';
 import { useWizardStepDirection } from '@/composables/motion/useWizardStepDirection';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { ref } from 'vue';
 
 type UsePatientFormWizardStepMotionOptions = {
     progressLabelRef?: Ref<HTMLElement | ComponentPublicInstance | null>;
