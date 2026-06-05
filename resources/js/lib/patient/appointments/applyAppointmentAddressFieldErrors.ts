@@ -1,14 +1,13 @@
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { looseInertiaForm } from '@/lib/inertia/looseInertiaForm';
-import type { AppointmentAddressFieldErrors } from '@/lib/patient/appointments/appointmentAddressValidation';
-import type { AppointmentAddressFieldErrorKey } from '@/lib/patient/appointments/appointmentAddressValidation';
+import type {
+    AppointmentAddressFieldErrorKey,
+    AppointmentAddressFieldErrors,
+} from '@/lib/patient/appointments/appointmentAddressValidation';
 import { isAppointmentAddressGeocodeErrorMessage } from '@/lib/patient/appointments/verifyAppointmentAddressGeocode';
 
-export const APPOINTMENT_ADDRESS_FIELD_KEYS: AppointmentAddressFieldErrorKey[] = [
-    'street',
-    'postal_code',
-    'city',
-];
+export const APPOINTMENT_ADDRESS_FIELD_KEYS: AppointmentAddressFieldErrorKey[] =
+    ['street', 'postal_code', 'city'];
 
 export function applyAppointmentAddressFieldErrors(
     form: AppointmentFormWithErrors,

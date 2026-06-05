@@ -47,7 +47,7 @@ const inventoryVisualToneClasses = computed(() =>
                     :medication="medication"
                     :update-route-name="props.updateRouteName"
                     :id-prefix="`patient-inventory-stock-${medication.id}`"
-                    :show-urgency-summary="false"
+                    :show-progress-bar="false"
                 />
             </div>
         </CardContent>

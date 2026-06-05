@@ -1,5 +1,4 @@
 <script setup lang="ts">
- 
 import { MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -28,9 +27,7 @@ const { isAvailable: isAddressSearchAvailable, placesVerifiedSnapshot } =
     });
 
 const showAddressFields = computed(
-    () =>
-        isAddressSearchAvailable.value &&
-        isAppointmentAddressComplete(form),
+    () => isAddressSearchAvailable.value && isAppointmentAddressComplete(form),
 );
 
 const showManualFieldsOnly = computed(() => !isAddressSearchAvailable.value);
@@ -75,9 +72,7 @@ defineExpose({ isVerifyingGeocode });
                     >
                         {{
                             isAddressRequired
-                                ? t(
-                                      'patient.appointments.fields.addressSearch',
-                                  )
+                                ? t('patient.appointments.fields.addressSearch')
                                 : t(
                                       'patient.appointments.fields.addressSearchOptional',
                                   )
@@ -96,10 +91,7 @@ defineExpose({ isVerifyingGeocode });
                             class="patient-place-autocomplete-leading-icon"
                             aria-hidden="true"
                         />
-                        <div
-                            ref="addressSearchHostRef"
-                            class="w-full"
-                        />
+                        <div ref="addressSearchHostRef" class="w-full" />
                     </div>
 
                     <div v-if="showAddressFields" class="mt-5">
@@ -112,7 +104,7 @@ defineExpose({ isVerifyingGeocode });
                 </div>
                 <template v-else-if="showManualFieldsOnly">
                     <p
-                        class="rounded-2xl border border-border/80 bg-surface px-4 py-3 text-sm text-text-muted"
+                        class="border-border/80 bg-surface text-text-muted rounded-2xl border px-4 py-3 text-sm"
                     >
                         {{
                             t(

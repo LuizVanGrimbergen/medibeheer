@@ -2,30 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Patient;
+namespace App\Console\Commands\Medications\PushReminders\Intake;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Services\Medications\PatientMedicationDueRemindersService;
 use App\Services\Medications\PatientScheduledIntakesQuery;
+use App\Services\Medications\PushReminders\Intake\RemindersService;
 use App\Support\Medications\DoseTime;
 use App\Support\Medications\MedicationIntakeClock;
-use App\Support\Medications\MedicationIntakeReminderTiming;
+use App\Support\Medications\PushReminders\Intake\ReminderCache;
+use App\Support\Medications\PushReminders\Intake\ReminderTiming;
 use Carbon\CarbonInterface;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 
-final class DiagnosePatientMedicationPushRemindersCommand extends Command
+final class DiagnosePushRemindersCommand extends Command
 {
     protected $signature = 'patient:diagnose-medication-push-reminders {user? : Patient user id}';
 
     protected $description = 'Explain why medication push reminders may not arrive (schedules, exact time, queue, VAPID).';
 
+    public function __construct(
+        private readonly ReminderCache $reminderCache,
+    ) {
+        parent::__construct();
+    }
+
     public function handle(
         PatientScheduledIntakesQuery $scheduledIntakes,
-        PatientMedicationDueRemindersService $reminders,
+        RemindersService $reminders,
     ): int {
         $now = MedicationIntakeClock::now();
         $todayKey = MedicationIntakeClock::today()->toDateString();
@@ -85,10 +92,14 @@ final class DiagnosePatientMedicationPushRemindersCommand extends Command
         foreach ($slots as $slot) {
             $scheduleId = (int) $slot['medication_schedule_id'];
             $doseTime = (string) $slot['dose_time'];
-            $cacheKey = 'patient-medication-due-reminder:'
-                .$patient->id.":{$scheduleId}:{$doseTime}:{$todayKey}";
+            $cacheKey = $this->reminderCache->dueCacheKey(
+                (int) $patient->id,
+                $scheduleId,
+                $doseTime,
+                $todayKey,
+            );
             $alreadySent = Cache::has($cacheKey);
-            $exact = MedicationIntakeReminderTiming::isExactDoseTimeMinute($doseTime);
+            $exact = ReminderTiming::isExactDoseTimeMinute($doseTime);
             $taken = $slot['taken_at'] !== null;
 
             $status = match (true) {
@@ -115,7 +126,7 @@ final class DiagnosePatientMedicationPushRemindersCommand extends Command
         }
 
         if ($subscriptionCount > 0) {
-            $this->warnIfTodaysDoseTimesAlreadyPassed($slots, $patient->id, $todayKey, $now);
+            $this->warnIfTodaysDoseTimesAlreadyPassed($slots, (int) $patient->id, $todayKey, $now);
         }
 
         return self::SUCCESS;
@@ -145,8 +156,12 @@ final class DiagnosePatientMedicationPushRemindersCommand extends Command
             }
 
             $scheduleId = (int) ($slot['medication_schedule_id'] ?? 0);
-            $cacheKey = 'patient-medication-due-reminder:'
-                .$patientId.":{$scheduleId}:{$doseTime}:{$todayKey}";
+            $cacheKey = $this->reminderCache->dueCacheKey(
+                $patientId,
+                $scheduleId,
+                $doseTime,
+                $todayKey,
+            );
 
             if (! Cache::has($cacheKey)) {
                 $passedWithoutPush[] = (string) ($slot['name'] ?? '').' at '.$doseTime;

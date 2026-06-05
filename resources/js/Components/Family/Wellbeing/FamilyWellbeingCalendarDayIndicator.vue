@@ -42,11 +42,7 @@ const mood = computed((): DailyMoodScoreValue | null => {
 </script>
 
 <template>
-    <MoodIcon
-        v-if="mood !== null"
-        :mood="mood"
-        size="calendar-day"
-    />
+    <MoodIcon v-if="mood !== null" :mood="mood" size="calendar-day" />
     <span
         v-else
         class="bg-border size-1.5 rounded-full sm:size-2"

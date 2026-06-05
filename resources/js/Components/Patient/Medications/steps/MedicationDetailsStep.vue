@@ -237,7 +237,7 @@ function defaultStrengthUnitForMedicationType(
                     </div>
                     <span
                         :id="`${idPrefix}-type-option-${option.type}-label`"
-                        class="font-body flex min-h-8 max-md:min-h-8 cursor-pointer touch-manipulation items-center justify-center px-0.5 text-center text-xs leading-snug font-bold wrap-break-word hyphens-auto select-none md:min-h-10 md:max-w-27 md:text-base md:leading-snug"
+                        class="font-body flex min-h-8 cursor-pointer touch-manipulation items-center justify-center px-0.5 text-center text-xs leading-snug font-bold wrap-break-word hyphens-auto select-none max-md:min-h-8 md:min-h-10 md:max-w-27 md:text-base md:leading-snug"
                         :class="
                             form.type_medication === option.type
                                 ? 'text-text-heading'

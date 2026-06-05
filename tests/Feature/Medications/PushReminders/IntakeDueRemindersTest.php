@@ -5,8 +5,8 @@ use App\Enums\MedicationType;
 use App\Models\Medication;
 use App\Models\MedicationSchedule;
 use App\Models\User;
-use App\Notifications\Patient\MedicationIntakeDueNotification;
-use App\Notifications\Patient\MedicationIntakeMissedNotification;
+use App\Notifications\Medications\PushReminders\Intake\DueNotification;
+use App\Notifications\Medications\PushReminders\Intake\MissedNotification;
 use App\Support\Medications\MedicationIntakeClock;
 use App\Support\Medications\PatientMedicationReminderTranslations;
 use Carbon\CarbonImmutable;
@@ -53,7 +53,7 @@ test('medication due reminder command notifies patients with due intakes', funct
 
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentTo($user, MedicationIntakeDueNotification::class, function (MedicationIntakeDueNotification $notification): bool {
+    Notification::assertSentTo($user, DueNotification::class, function (DueNotification $notification): bool {
         return $notification->slot['name'] === 'Paracetamol'
             && $notification->slot['dose_time'] === '09:00';
     });
@@ -68,8 +68,8 @@ test('medication due notification uses elderly friendly dutch copy', function ()
 
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentTo($user, MedicationIntakeDueNotification::class, function (
-        MedicationIntakeDueNotification $notification,
+    Notification::assertSentTo($user, DueNotification::class, function (
+        DueNotification $notification,
     ) use ($user): bool {
         $message = $notification->toWebPush($user, $notification)->toArray();
 
@@ -153,7 +153,7 @@ test('test push notification command sends immediately to subscribed patient', f
 
     Artisan::call('patient:send-test-push-notification', ['user' => $user->id]);
 
-    Notification::assertSentTo($user, MedicationIntakeDueNotification::class);
+    Notification::assertSentTo($user, DueNotification::class);
 
     CarbonImmutable::setTestNow();
 });
@@ -211,8 +211,8 @@ test('medication missed reminder is sent at the exact snooze end minute when int
 
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentTo($user, MedicationIntakeMissedNotification::class, function (
-        MedicationIntakeMissedNotification $notification,
+    Notification::assertSentTo($user, MissedNotification::class, function (
+        MissedNotification $notification,
     ) use ($user): bool {
         $message = $notification->toWebPush($user, $notification)->toArray();
 
@@ -223,7 +223,7 @@ test('medication missed reminder is sent at the exact snooze end minute when int
             && ($message['data']['markTakenUrl'] ?? null) === null;
     });
 
-    Notification::assertNotSentTo($user, MedicationIntakeDueNotification::class);
+    Notification::assertNotSentTo($user, DueNotification::class);
 
     CarbonImmutable::setTestNow();
 });
@@ -283,7 +283,7 @@ test('medication missed reminder is sent only once per intake per day', function
     Artisan::call('patient:send-medication-due-reminders');
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentToTimes($user, MedicationIntakeMissedNotification::class, 1);
+    Notification::assertSentToTimes($user, MissedNotification::class, 1);
 
     CarbonImmutable::setTestNow();
 });
@@ -299,8 +299,8 @@ test('due and missed reminders can both be sent on the same day', function () {
 
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentToTimes($user, MedicationIntakeDueNotification::class, 1);
-    Notification::assertNotSentTo($user, MedicationIntakeMissedNotification::class);
+    Notification::assertSentToTimes($user, DueNotification::class, 1);
+    Notification::assertNotSentTo($user, MissedNotification::class);
 
     CarbonImmutable::setTestNow(
         CarbonImmutable::parse('2026-05-19 09:30:00', MedicationIntakeClock::TIMEZONE),
@@ -308,8 +308,8 @@ test('due and missed reminders can both be sent on the same day', function () {
 
     Artisan::call('patient:send-medication-due-reminders');
 
-    Notification::assertSentToTimes($user, MedicationIntakeDueNotification::class, 1);
-    Notification::assertSentToTimes($user, MedicationIntakeMissedNotification::class, 1);
+    Notification::assertSentToTimes($user, DueNotification::class, 1);
+    Notification::assertSentToTimes($user, MissedNotification::class, 1);
 
     CarbonImmutable::setTestNow();
 });

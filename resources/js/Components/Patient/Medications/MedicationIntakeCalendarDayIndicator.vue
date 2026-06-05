@@ -3,8 +3,8 @@ import { computed } from 'vue';
 import { MedicationIntakeDayIcon } from '@/Components/ui/medication-intake-day-icon';
 import { todayIsoDateKey } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
-import { isMedicationIntakeDayIconStatus } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import { isMedicationIntakeDayIconStatus } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeDayStatusValue,
@@ -50,10 +50,7 @@ const iconStatus = computed(() => {
         return null;
     }
 
-    if (
-        props.statusFilter !== null &&
-        status !== props.statusFilter
-    ) {
+    if (props.statusFilter !== null && status !== props.statusFilter) {
         return null;
     }
 

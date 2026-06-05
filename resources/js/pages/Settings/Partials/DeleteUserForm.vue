@@ -10,6 +10,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { PasswordConfirmField } from '@/Components/ui/password-confirm-field';
 import {
     patientConfirmDialogContentClass,
     patientFormWizardFooterCancelButtonClass,
@@ -18,7 +19,6 @@ import {
     patientShellWizardFooterClass,
 } from '@/lib/patient/patientShellDialogLayout';
 import { cn } from '@/lib/utils';
-import { PasswordConfirmField } from '@/Components/ui/password-confirm-field';
 
 const confirmingUserDeletion = ref(false);
 const { t } = useI18n();
@@ -85,18 +85,25 @@ const closeModal = () => {
         >
             <DialogContent
                 :class="
-                    cn(patientConfirmDialogContentClass, 'flex min-h-0 flex-col')
+                    cn(
+                        patientConfirmDialogContentClass,
+                        'flex min-h-0 flex-col',
+                    )
                 "
                 :overlay-class="
                     patientShellDialogOverlayAboveAppChromeClass('md')
                 "
             >
                 <DialogHeader class="shrink-0 text-left">
-                    <DialogTitle class="text-text-heading text-xl font-bold md:text-2xl">
+                    <DialogTitle
+                        class="text-text-heading text-xl font-bold md:text-2xl"
+                    >
                         {{ t('profile.delete.modalTitle') }}
                     </DialogTitle>
 
-                    <DialogDescription class="text-text-muted text-base leading-relaxed">
+                    <DialogDescription
+                        class="text-text-muted text-base leading-relaxed"
+                    >
                         {{ t('profile.delete.modalDescription') }}
                     </DialogDescription>
                 </DialogHeader>

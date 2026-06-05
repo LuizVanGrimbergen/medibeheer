@@ -50,10 +50,7 @@ const collapsedSummary = computed((): string => {
         </p>
 
         <ul v-if="props.proposals.length > 0" class="flex flex-col gap-3">
-            <li
-                v-for="proposal in props.proposals"
-                :key="proposal.id"
-            >
+            <li v-for="proposal in props.proposals" :key="proposal.id">
                 <FamilyMedicationPlanProposalCard :proposal="proposal" />
             </li>
         </ul>

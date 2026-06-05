@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import type {
-    DailyCheckin,
-    DailyCheckinSymptomValue,
-} from '@/lib/types';
+import type { DailyCheckin, DailyCheckinSymptomValue } from '@/lib/types';
 
 const props = defineProps<{
     checkin: DailyCheckin;
@@ -30,10 +27,7 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
 
 <template>
     <div class="space-y-4">
-        <section
-            v-if="hasSymptoms"
-            class="space-y-2.5"
-        >
+        <section v-if="hasSymptoms" class="space-y-2.5">
             <h3 class="text-text-heading text-sm font-semibold">
                 {{ t('family.wellbeing.detailsSymptomsLabel') }}
             </h3>
@@ -48,10 +42,7 @@ function symptomLabel(symptom: DailyCheckinSymptomValue): string {
             </div>
         </section>
 
-        <section
-            v-if="hasNote"
-            class="space-y-2.5"
-        >
+        <section v-if="hasNote" class="space-y-2.5">
             <h3 class="text-text-heading text-sm font-semibold">
                 {{ t('family.wellbeing.noteLabel') }}
             </h3>

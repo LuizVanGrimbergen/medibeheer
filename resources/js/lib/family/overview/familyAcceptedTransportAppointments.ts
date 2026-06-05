@@ -13,10 +13,10 @@ export type FamilyAcceptedTransportAppointment = {
     starts_at: string;
 };
 
-import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import type { FamilyExpiringPrescriptionPatient } from '@/lib/family/overview/familyExpiringPrescriptionPatients';
 import type { FamilyLowStockPatient } from '@/lib/family/overview/familyLowStockPatients';
 import type { FamilyPendingTransportAppointment } from '@/lib/family/overview/familyPendingTransportAppointments';
+import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import type { DailyCheckin } from '@/lib/types';
 
 export type FamilyOverviewScreenProps = {

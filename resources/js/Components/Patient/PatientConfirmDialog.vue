@@ -126,7 +126,10 @@ function confirm(): void {
                 <h1 :id="titleId" :class="patientActionSuccessTitleClass">
                     {{ title }}
                 </h1>
-                <p :id="descriptionId" :class="patientActionSuccessSubtitleClass">
+                <p
+                    :id="descriptionId"
+                    :class="patientActionSuccessSubtitleClass"
+                >
                     {{ description }}
                 </p>
             </div>

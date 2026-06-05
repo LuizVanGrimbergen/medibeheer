@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Medications;
+namespace App\Services\Medications\PushReminders\Intake;
 
 use App\Enums\UserRole;
 use App\Models\Medication;
@@ -10,18 +10,19 @@ use App\Models\MedicationIntake;
 use App\Models\MedicationSchedule;
 use App\Models\Patient;
 use App\Models\User;
+use App\Services\Medications\PatientScheduledIntakeSlotBuilder;
 use App\Support\Medications\MedicationDoseTimeBlindIndex;
 use App\Support\Medications\MedicationIntakeClock;
-use App\Support\Medications\MedicationIntakeReminderTiming;
 use App\Support\Medications\MedicationScheduleDoseTimes;
 use App\Support\Medications\MedicationScheduleOccursOnDate;
+use App\Support\Medications\PushReminders\Intake\ReminderTiming;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
-final class PatientMedicationDueReminderCandidatesQuery
+final class CandidatesQuery
 {
     public function __construct(
         private readonly MedicationScheduleOccursOnDate $scheduleOccursOnDate,
@@ -32,7 +33,7 @@ final class PatientMedicationDueReminderCandidatesQuery
     {
         $this->eachReminderNow(
             $onDue,
-            static fn (string $doseTime, MedicationSchedule $schedule, CarbonInterface $now): bool => MedicationIntakeReminderTiming::isExactDoseTimeMinute($doseTime, $now),
+            static fn (string $doseTime, MedicationSchedule $schedule, CarbonInterface $now): bool => ReminderTiming::isExactDoseTimeMinute($doseTime, $now),
             $now,
         );
     }
@@ -48,7 +49,7 @@ final class PatientMedicationDueReminderCandidatesQuery
                     $schedule->snooze_time,
                 );
 
-                return MedicationIntakeReminderTiming::isExactSnoozeEndMinute($doseTime, $snoozeMinutes, $now);
+                return ReminderTiming::isExactSnoozeEndMinute($doseTime, $snoozeMinutes, $now);
             },
             $now,
         );
@@ -94,7 +95,7 @@ final class PatientMedicationDueReminderCandidatesQuery
 
                 $pending[] = [$medication, $schedule, $doseTime];
             },
-            static fn (string $doseTime, MedicationSchedule $schedule, CarbonInterface $now): bool => MedicationIntakeReminderTiming::isExactDoseTimeMinute($doseTime, $now),
+            static fn (string $doseTime, MedicationSchedule $schedule, CarbonInterface $now): bool => ReminderTiming::isExactDoseTimeMinute($doseTime, $now),
         );
 
         if ($pending === []) {

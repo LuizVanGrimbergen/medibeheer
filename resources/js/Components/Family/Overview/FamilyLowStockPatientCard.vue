@@ -3,6 +3,7 @@ import { Clock, Pill } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/Components/ui/card';
 import type { FamilyLowStockPatient } from '@/lib/family/overview/familyLowStockPatients';
+import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import { cn } from '@/lib/utils';
 
@@ -17,28 +18,10 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-function supplyEstimateLine(days: number): string {
-    if (days < 1) {
-        return t('patient.inventory.supplyEstimateApproxLessThanDay');
-    }
-
-    if (days === 1) {
-        return t('patient.inventory.supplyEstimateApproxOneDay');
-    }
-
-    return t('patient.inventory.supplyEstimateApproxDays', {
-        days: String(days),
-    });
-}
 </script>
 
 <template>
-    <button
-        type="button"
-        class="block w-full text-left"
-        @click="emit('click')"
-    >
+    <button type="button" class="block w-full text-left" @click="emit('click')">
         <Card
             :class="
                 cn(
@@ -87,9 +70,11 @@ function supplyEstimateLine(days: number): string {
                                 />
                                 <span class="font-semibold">
                                     {{
-                                        supplyEstimateLine(
-                                            medication.supply_estimate_days,
-                                        )
+                                        medicationSupplyEstimateLine(t, {
+                                            supply_estimate_days:
+                                                medication.supply_estimate_days,
+                                            supply_estimate_quality: 'approx',
+                                        })
                                     }}
                                 </span>
                             </span>

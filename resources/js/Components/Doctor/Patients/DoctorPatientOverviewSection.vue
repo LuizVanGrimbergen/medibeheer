@@ -5,8 +5,8 @@ import DoctorPatientMedicationSection from '@/Components/Doctor/Patients/DoctorP
 import DoctorPatientSnapshotCards from '@/Components/Doctor/Patients/DoctorPatientSnapshotCards.vue';
 import DoctorPatientUrgentPrescriptionsPanel from '@/Components/Doctor/Patients/DoctorPatientUrgentPrescriptionsPanel.vue';
 import DoctorPatientWellbeingSection from '@/Components/Doctor/Patients/DoctorPatientWellbeingSection.vue';
-import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
 import { buildDoctorPatientOverviewSnapshot } from '@/lib/doctor/patients/buildDoctorPatientOverviewSnapshot';
+import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
 import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { DailyMoodScoreValue } from '@/lib/types';
 

@@ -66,7 +66,7 @@ class HandleInertiaRequests extends Middleware
             $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
         }
 
-        if ($user instanceof User && $user->isPatient()) {
+        if ($user instanceof User && ($user->isPatient() || $user->isFamilyMember())) {
             $publicKey = config('webpush.vapid.public_key');
 
             $shared['webpush'] = [
@@ -75,7 +75,9 @@ class HandleInertiaRequests extends Middleware
                     ->where('endpoint', 'not like', '%push.example.test%')
                     ->exists(),
             ];
+        }
 
+        if ($user instanceof User && $user->isPatient()) {
             $shared['patient_navigation'] = fn (): array => PatientNavigationState::inertiaPayload($request);
         }
 

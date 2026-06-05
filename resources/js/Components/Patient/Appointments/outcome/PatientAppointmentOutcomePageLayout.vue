@@ -89,9 +89,7 @@ const { t } = useI18n();
                                     "
                                 >
                                     {{
-                                        t(
-                                            'patient.appointments.actions.cancel',
-                                        )
+                                        t('patient.appointments.actions.cancel')
                                     }}
                                 </Button>
                             </div>

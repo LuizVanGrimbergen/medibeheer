@@ -28,7 +28,10 @@ export function usePatientShellWizardScrollReset(
 
             const openedDialog = isActive && !wasActive;
             const advancedStep =
-                wasActive && isActive && previousKey !== undefined && previousKey !== key;
+                wasActive &&
+                isActive &&
+                previousKey !== undefined &&
+                previousKey !== key;
 
             if (!openedDialog && !advancedStep) {
                 return;

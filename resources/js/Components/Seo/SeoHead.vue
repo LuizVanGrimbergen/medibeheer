@@ -87,7 +87,11 @@ const ogLocale = computed(() => seo.value.locale ?? 'nl_BE');
             name="twitter:card"
             content="summary_large_image"
         />
-        <meta head-key="twitter:title" name="twitter:title" :content="fullTitle" />
+        <meta
+            head-key="twitter:title"
+            name="twitter:title"
+            :content="fullTitle"
+        />
         <meta
             v-if="description !== ''"
             head-key="twitter:description"

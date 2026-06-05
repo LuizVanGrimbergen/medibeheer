@@ -61,7 +61,7 @@ function visitMonth(delta: number): void {
             type="button"
             variant="ghost"
             size="icon-sm"
-            class="text-primary justify-self-start hover:bg-surface-hover"
+            class="text-primary hover:bg-surface-hover justify-self-start"
             :aria-label="props.prevMonthAriaLabel"
             @click="visitMonth(-1)"
         >
@@ -73,7 +73,7 @@ function visitMonth(delta: number): void {
         <h2
             :class="
                 cn(
-                    'text-text-heading truncate text-center font-semibold leading-snug',
+                    'text-text-heading truncate text-center leading-snug font-semibold',
                     props.density === 'compact'
                         ? 'text-sm'
                         : 'text-base md:text-lg',
@@ -86,7 +86,7 @@ function visitMonth(delta: number): void {
             type="button"
             variant="ghost"
             size="icon-sm"
-            class="text-primary justify-self-end hover:bg-surface-hover"
+            class="text-primary hover:bg-surface-hover justify-self-end"
             :aria-label="props.nextMonthAriaLabel"
             @click="visitMonth(1)"
         >

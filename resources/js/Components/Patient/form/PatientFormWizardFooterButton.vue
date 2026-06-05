@@ -70,10 +70,7 @@ const buttonVariant = computed(() => {
         type="submit"
         :disabled="props.disabled"
         :class="
-            cn(
-                buttonVariants({ variant: 'default', size: 'lg' }),
-                buttonClass,
-            )
+            cn(buttonVariants({ variant: 'default', size: 'lg' }), buttonClass)
         "
     >
         <slot />

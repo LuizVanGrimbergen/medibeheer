@@ -113,7 +113,10 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                     :active="props.open"
                     :step-key="editingStep"
                 >
-                    <div ref="wizardStepPanelRef" class="space-y-3 md:space-y-3">
+                    <div
+                        ref="wizardStepPanelRef"
+                        class="space-y-3 md:space-y-3"
+                    >
                         <MedicationScheduleMealsAndFrequencyStep
                             v-if="editingStep === 2"
                             :form="props.form"

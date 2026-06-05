@@ -3,14 +3,14 @@ import { Pill } from 'lucide-vue-next';
 import { computed, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
-import MedicationIntakeSlotStatusCard from '@/Components/Medications/MedicationIntakeSlotStatusCard.vue';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
+import MedicationIntakeSlotStatusCard from '@/Components/Medications/MedicationIntakeSlotStatusCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
 import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import { filterDoctorPatientMedicationSlots } from '@/lib/doctor/patients/filterDoctorPatientMedicationSlots';
-import { medicationIntakeDayPresentation } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import { medicationIntakeDayPresentation } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
@@ -200,24 +200,17 @@ function onMedicationStatusFilterSelect(
                     v-if="!selectedDayHasSchedule"
                     class="text-text-muted text-sm leading-relaxed"
                 >
-                    {{
-                        t('patient.medications.history.selectedDayNoSchedule')
-                    }}
+                    {{ t('patient.medications.history.selectedDayNoSchedule') }}
                 </p>
 
                 <p
                     v-else-if="selectedDaySlots.length === 0"
                     class="text-text-muted text-sm leading-relaxed"
                 >
-                    {{
-                        t('patient.medications.history.selectedDayNoIntakes')
-                    }}
+                    {{ t('patient.medications.history.selectedDayNoIntakes') }}
                 </p>
 
-                <div
-                    v-else
-                    class="space-y-4"
-                >
+                <div v-else class="space-y-4">
                     <MedicationIntakeSlotStatusCard
                         v-for="slot in selectedDaySlots"
                         :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
@@ -234,10 +227,7 @@ function onMedicationStatusFilterSelect(
                     {{ t('doctor.patients.medicationListEmpty') }}
                 </p>
 
-                <div
-                    v-else
-                    class="space-y-4"
-                >
+                <div v-else class="space-y-4">
                     <h2
                         class="text-text-heading text-lg font-semibold md:text-base"
                     >

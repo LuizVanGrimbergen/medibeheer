@@ -119,9 +119,7 @@ export function isMedicationIntakeTakenWithinWindow(
 
     const windowEndMinutes = doseStartMinutes + slot.snooze_minutes;
 
-    return (
-        takenMinutes >= doseStartMinutes && takenMinutes <= windowEndMinutes
-    );
+    return takenMinutes >= doseStartMinutes && takenMinutes <= windowEndMinutes;
 }
 
 export function resolveMedicationIntakeSlotStatus(

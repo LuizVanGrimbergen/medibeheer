@@ -3,8 +3,10 @@ import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAd
 import { ensureGoogleMapsConfigured } from '@/lib/google-maps/loadGoogleMapsApi';
 import { mapGeocoderAddressComponents } from '@/lib/google-maps/mapGeocoderAddressComponents';
 import { parseGooglePlaceAddressComponents } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
-import type { AppointmentAddressFieldErrors } from '@/lib/patient/appointments/appointmentAddressValidation';
-import type { AppointmentAddressFieldValues } from '@/lib/patient/appointments/appointmentAddressValidation';
+import type {
+    AppointmentAddressFieldErrors,
+    AppointmentAddressFieldValues,
+} from '@/lib/patient/appointments/appointmentAddressValidation';
 import { collectAppointmentAddressGeocodeFieldErrors } from '@/lib/patient/appointments/matchAppointmentAddressToGeocode';
 
 export type AppointmentAddressGeocodeValues = AppointmentAddressFieldValues & {
@@ -14,9 +16,14 @@ export type AppointmentAddressGeocodeValues = AppointmentAddressFieldValues & {
 export type GeocodeAppointmentAddressResult =
     | { valid: true }
     | { valid: false; reason: 'not_found' }
-    | { valid: false; reason: 'mismatch'; fieldErrors: AppointmentAddressFieldErrors };
+    | {
+          valid: false;
+          reason: 'mismatch';
+          fieldErrors: AppointmentAddressFieldErrors;
+      };
 
-let geocodingLibraryPromise: Promise<google.maps.GeocodingLibrary> | null = null;
+let geocodingLibraryPromise: Promise<google.maps.GeocodingLibrary> | null =
+    null;
 
 async function importGoogleMapsGeocodingLibrary(): Promise<google.maps.GeocodingLibrary> {
     ensureGoogleMapsConfigured();
@@ -60,7 +67,9 @@ export async function geocodeAppointmentAddress(
                 }
 
                 const parsed = parseGooglePlaceAddressComponents(
-                    mapGeocoderAddressComponents(results[0]!.address_components),
+                    mapGeocoderAddressComponents(
+                        results[0]!.address_components,
+                    ),
                 );
 
                 const fieldErrors = collectAppointmentAddressGeocodeFieldErrors(

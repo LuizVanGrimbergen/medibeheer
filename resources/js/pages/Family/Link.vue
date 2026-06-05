@@ -7,7 +7,11 @@ import FamilyIncomingPatientInvitationsSection from '@/Components/Family/Link/Fa
 import FamilyMedicationPlansOverviewSection from '@/Components/Family/Overview/FamilyMedicationPlansOverviewSection.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyMedicationPlanProposalSummary } from '@/lib/family/medicationPlans/familyMedicationPlanProposalSummary';
-import type { FamilyDashboardProps, IncomingFamilyInvitation, PageProps } from '@/lib/types';
+import type {
+    FamilyDashboardProps,
+    IncomingFamilyInvitation,
+    PageProps,
+} from '@/lib/types';
 
 type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
 

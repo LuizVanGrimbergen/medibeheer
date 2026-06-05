@@ -48,7 +48,8 @@ const groupHasError = computed(
 );
 
 const useTouchUnitButtons = computed(
-    (): boolean => props.unitOptions.length > 0 && props.unitOptions.length <= 4,
+    (): boolean =>
+        props.unitOptions.length > 0 && props.unitOptions.length <= 4,
 );
 
 const amountDescribedBy = computed((): string | undefined => {

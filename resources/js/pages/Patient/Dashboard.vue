@@ -194,7 +194,7 @@ const dailyCheckinEncouragementFlash = computed((): string | null => {
                         </div>
 
                         <div
-                            class="mx-auto grid w-full max-w-xl grid-cols-3 gap-2.5 sm:gap-3 md:max-w-none md:flex md:w-auto md:items-center md:justify-center md:gap-12"
+                            class="mx-auto grid w-full max-w-xl grid-cols-3 gap-2.5 sm:gap-3 md:flex md:w-auto md:max-w-none md:items-center md:justify-center md:gap-12"
                             aria-hidden="true"
                         >
                             <div

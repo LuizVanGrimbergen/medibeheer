@@ -64,7 +64,7 @@ const { t } = useI18n();
                 aria-live="polite"
             >
                 <div
-                    class="flex w-full flex-col items-center bg-linear-to-t from-surface from-40% via-surface/95 to-transparent px-4 pt-6 pb-2"
+                    class="from-surface via-surface/95 flex w-full flex-col items-center bg-linear-to-t from-40% to-transparent px-4 pt-6 pb-2"
                 >
                     <p
                         class="text-primary flex items-center gap-2 text-center text-base leading-snug font-bold md:text-lg"

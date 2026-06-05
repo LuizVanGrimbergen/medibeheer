@@ -46,8 +46,7 @@ watch(
 );
 
 function onSelectCalendarDate(dateKey: string): void {
-    const next =
-        selectedCalendarDate.value === dateKey ? null : dateKey;
+    const next = selectedCalendarDate.value === dateKey ? null : dateKey;
 
     selectedCalendarDate.value = next;
 

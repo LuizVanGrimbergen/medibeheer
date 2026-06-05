@@ -101,8 +101,7 @@ function superRefinePatientAppointmentDialogForm(
                 ctx.addIssue({
                     code: 'custom',
                     path: ['postal_code'],
-                    message:
-                        appointmentsNl.validation.postalCodeBelgianInvalid,
+                    message: appointmentsNl.validation.postalCodeBelgianInvalid,
                 });
             }
         }

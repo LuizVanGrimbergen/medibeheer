@@ -2,9 +2,7 @@
 import { Calendar, FileText, Pill } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import {
-    medicationUrgencyToneFromDaysRemaining,
-} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
+import { medicationUrgencyToneFromDaysRemaining } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { cn } from '@/lib/utils';
@@ -73,11 +71,12 @@ const expiryLabel = computed((): string =>
                     v-if="prescription.is_last_in_batch"
                     class="text-danger mt-2 inline-flex items-center gap-1.5 text-sm font-semibold"
                 >
-                    <FileText
-                        class="size-3.5 shrink-0"
-                        aria-hidden="true"
-                    />
-                    {{ t('patient.prescriptions.lastPrescriptionAppointmentTag') }}
+                    <FileText class="size-3.5 shrink-0" aria-hidden="true" />
+                    {{
+                        t(
+                            'patient.prescriptions.lastPrescriptionAppointmentTag',
+                        )
+                    }}
                 </p>
             </div>
         </div>

@@ -20,8 +20,7 @@ export const patientShellWizardFooterClass =
  * Stretch a full-page wizard to the patient layout scroll column (above footer nav).
  * Pair with {@link patientShellPageRootClass} on the wizard root.
  */
-export const patientShellPageFillClass =
-    'flex min-h-0 flex-1 flex-col';
+export const patientShellPageFillClass = 'flex min-h-0 flex-1 flex-col';
 
 /** Full-page wizard routes: same width as {@link patientShellDialogContentClass} desktop panel. */
 export const patientShellPageRootClass =
@@ -127,8 +126,7 @@ export const patientConfirmDialogMessageClass =
 export const patientConfirmDialogIconWrapClass =
     'mb-8 flex size-20 items-center justify-center rounded-2xl border-2 sm:size-24';
 
-export const patientConfirmDialogIconClass =
-    'size-12 shrink-0 sm:size-14';
+export const patientConfirmDialogIconClass = 'size-12 shrink-0 sm:size-14';
 
 export const patientConfirmDialogIconWrapDangerClass =
     'border-danger/40 bg-danger/10 text-danger';

@@ -53,9 +53,7 @@ const hasNote = computed((): boolean => {
     return note !== undefined && note.length > 0;
 });
 
-const hasDetails = computed(
-    (): boolean => hasSymptoms.value || hasNote.value,
-);
+const hasDetails = computed((): boolean => hasSymptoms.value || hasNote.value);
 
 const useCollapsible = computed(
     (): boolean => props.density === 'default' && hasDetails.value,
@@ -71,8 +69,8 @@ const patientName = computed((): string | null => {
     return name;
 });
 
-const cardHeading = computed((): string =>
-    patientName.value ?? formattedDate.value,
+const cardHeading = computed(
+    (): string => patientName.value ?? formattedDate.value,
 );
 
 const collapsedSummary = computed((): string => {
@@ -123,9 +121,7 @@ const collapsedSummary = computed((): string => {
         <div class="flex items-start gap-3 px-4 py-4 md:px-5 md:py-3.5">
             <MoodIconBadge :mood="checkin.mood_score" />
             <div class="min-w-0 flex-1 space-y-4">
-                <p
-                    class="text-text-heading text-lg font-semibold md:text-base"
-                >
+                <p class="text-text-heading text-lg font-semibold md:text-base">
                     {{ cardHeading }}
                 </p>
                 <p

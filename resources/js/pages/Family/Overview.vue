@@ -2,6 +2,7 @@
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, defineAsyncComponent, nextTick, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import FamilyMedicationReminderPrompt from '@/Components/Family/FamilyMedicationReminderPrompt.vue';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyAcceptedTransportAppointmentsSection from '@/Components/Family/Overview/FamilyAcceptedTransportAppointmentsSection.vue';
 import FamilyExpiringPrescriptionPatientsSection from '@/Components/Family/Overview/FamilyExpiringPrescriptionPatientsSection.vue';
@@ -18,8 +19,7 @@ import {
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
 const FamilyUpdatesEchoListener = defineAsyncComponent(
-    () =>
-        import('@/Components/Family/Updates/FamilyUpdatesEchoListener.vue'),
+    () => import('@/Components/Family/Updates/FamilyUpdatesEchoListener.vue'),
 );
 
 type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
@@ -54,9 +54,7 @@ function revealUpdatesFromDeepLink(): void {
 
         const query = url.searchParams.toString();
         const nextUrl =
-            query.length > 0
-                ? `${url.pathname}?${query}`
-                : url.pathname;
+            query.length > 0 ? `${url.pathname}?${query}` : url.pathname;
 
         globalThis.history.replaceState({}, '', nextUrl);
     });
@@ -81,18 +79,17 @@ const activePatientId = computed(
     <FamilyLayout>
         <FamilyUpdatesEchoListener
             v-if="
-                echoReady
-                && family?.has_linked_patient
-                && activePatientId !== null
+                echoReady &&
+                family?.has_linked_patient &&
+                activePatientId !== null
             "
             :key="activePatientId"
             :patient-id="activePatientId"
         />
 
-        <FamilyPageShell
-            :title="t('family.overview.heading')"
-            :family="family"
-        >
+        <FamilyPageShell :title="t('family.overview.heading')" :family="family">
+            <FamilyMedicationReminderPrompt />
+
             <FamilyLowStockPatientsSection
                 :patients="props.low_stock_patients"
             />

@@ -1,8 +1,9 @@
 import {
     doctorPatientAdherenceProgressPercent,
-    resolveDoctorPatientAdherenceTone,
-    type DoctorPatientAdherenceTone,
+    resolveDoctorPatientAdherenceTone
+    
 } from '@/lib/doctor/patients/doctorPatientAdherenceTone';
+import type {DoctorPatientAdherenceTone} from '@/lib/doctor/patients/doctorPatientAdherenceTone';
 import { isNotableDailyMood } from '@/lib/mood/isNotableDailyMood';
 import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';

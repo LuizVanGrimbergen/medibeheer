@@ -3,9 +3,10 @@ import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
 import {
     medicationIntakeDayFaceClass,
-    medicationIntakeDayIcon,
-    type MedicationIntakeDayIconStatusValue,
+    medicationIntakeDayIcon
+    
 } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import type {MedicationIntakeDayIconStatusValue} from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import { cn } from '@/lib/utils';
 
 export type MedicationIntakeDayIconSize = 'legend' | 'calendar-day' | 'card';

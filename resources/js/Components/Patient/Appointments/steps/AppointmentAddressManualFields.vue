@@ -12,7 +12,11 @@ import {
 } from '@/lib/patient/patientFormFieldClasses';
 import { cn } from '@/lib/utils';
 
-const { form, idPrefix, required = true } = defineProps<{
+const {
+    form,
+    idPrefix,
+    required = true,
+} = defineProps<{
     form: AppointmentFormWithErrors;
     idPrefix: string;
     required?: boolean;
@@ -24,10 +28,7 @@ const { t } = useI18n();
 <template>
     <div class="space-y-5">
         <div>
-            <Label
-                :for="`${idPrefix}-street`"
-                :class="patientFormLabelClass"
-            >
+            <Label :for="`${idPrefix}-street`" :class="patientFormLabelClass">
                 {{ t('patient.appointments.fields.street') }}
                 <span v-if="required" class="text-danger">*</span>
             </Label>
@@ -50,9 +51,7 @@ const { t } = useI18n();
                 "
                 :aria-invalid="Boolean(form.errors.street)"
                 :aria-describedby="
-                    form.errors.street
-                        ? `${idPrefix}-street-error`
-                        : undefined
+                    form.errors.street ? `${idPrefix}-street-error` : undefined
                 "
             />
             <InputError
@@ -136,10 +135,7 @@ const { t } = useI18n();
                 />
             </div>
             <div>
-                <Label
-                    :for="`${idPrefix}-city`"
-                    :class="patientFormLabelClass"
-                >
+                <Label :for="`${idPrefix}-city`" :class="patientFormLabelClass">
                     {{ t('patient.appointments.fields.city') }}
                     <span v-if="required" class="text-danger">*</span>
                 </Label>
@@ -162,9 +158,7 @@ const { t } = useI18n();
                     "
                     :aria-invalid="Boolean(form.errors.city)"
                     :aria-describedby="
-                        form.errors.city
-                            ? `${idPrefix}-city-error`
-                            : undefined
+                        form.errors.city ? `${idPrefix}-city-error` : undefined
                     "
                 />
                 <InputError

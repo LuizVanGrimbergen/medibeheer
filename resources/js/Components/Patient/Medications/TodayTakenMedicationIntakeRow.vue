@@ -3,11 +3,12 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
-import {
-    medicationIntakeDoseLine,
-} from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
+import { medicationIntakeDoseLine } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
-import type { MedicationTypeValue, TodayMedicationIntakeSlot } from '@/lib/types';
+import type {
+    MedicationTypeValue,
+    TodayMedicationIntakeSlot,
+} from '@/lib/types';
 
 const props = defineProps<{
     intakeSlot: TodayMedicationIntakeSlot;

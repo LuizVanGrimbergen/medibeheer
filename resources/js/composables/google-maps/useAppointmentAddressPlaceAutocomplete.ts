@@ -1,5 +1,5 @@
-import { onBeforeUnmount, onMounted, ref, watch  } from 'vue';
-import type {Ref} from 'vue';
+import type { Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import { focusPlaceAutocompleteSearch } from '@/lib/google-maps/focusPlaceAutocompleteSearch';
@@ -162,10 +162,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
     });
 
     onBeforeUnmount(() => {
-        if (
-            autocompleteElement !== null &&
-            selectListener !== null
-        ) {
+        if (autocompleteElement !== null && selectListener !== null) {
             autocompleteElement.removeEventListener(
                 'gmp-select',
                 selectListener,
