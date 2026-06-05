@@ -1,14 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { buildDoctorPatientAttentionItems } from '@/lib/doctor/patients/buildDoctorPatientAttentionItems';
-import {
-    buildDoctorPatientOverviewSnapshot,
-} from '@/lib/doctor/patients/buildDoctorPatientOverviewSnapshot';
-import { filterDoctorPatientMedicationSlots } from '@/lib/doctor/patients/filterDoctorPatientMedicationSlots';
-import { filterDoctorPatientWellbeingCheckins } from '@/lib/doctor/patients/filterDoctorPatientWellbeingCheckins';
+import { buildDoctorPatientOverviewSnapshot } from '@/lib/doctor/patients/buildDoctorPatientOverviewSnapshot';
 import {
     doctorPatientAdherenceProgressPercent,
     resolveDoctorPatientAdherenceTone,
 } from '@/lib/doctor/patients/doctorPatientAdherenceTone';
+import { filterDoctorPatientMedicationSlots } from '@/lib/doctor/patients/filterDoctorPatientMedicationSlots';
+import { filterDoctorPatientWellbeingCheckins } from '@/lib/doctor/patients/filterDoctorPatientWellbeingCheckins';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
@@ -68,34 +66,38 @@ describe('buildDoctorPatientOverviewSnapshot', () => {
             },
         ];
 
-        expect(buildDoctorPatientOverviewSnapshot(medicationDays, wellbeingCheckins))
-            .toEqual({
-                medication: {
-                    scheduledDays: 2,
-                    completeDays: 1,
-                    missedDays: 1,
-                    statusCounts: {
-                        complete: 1,
-                        partial: 1,
-                        none_taken: 0,
-                    },
-                    adherenceTone: 'warning',
-                    progressPercent: 50,
+        expect(
+            buildDoctorPatientOverviewSnapshot(
+                medicationDays,
+                wellbeingCheckins,
+            ),
+        ).toEqual({
+            medication: {
+                scheduledDays: 2,
+                completeDays: 1,
+                missedDays: 1,
+                statusCounts: {
+                    complete: 1,
+                    partial: 1,
+                    none_taken: 0,
                 },
-                wellbeing: {
-                    checkinCount: 2,
-                    notableDayCount: 1,
-                    moodCounts: {
-                        bad: 1,
-                        ok: 0,
-                        good: 1,
-                    },
-                    lastCheckin: {
-                        date: '2026-05-02',
-                        mood: 'bad',
-                    },
+                adherenceTone: 'warning',
+                progressPercent: 50,
+            },
+            wellbeing: {
+                checkinCount: 2,
+                notableDayCount: 1,
+                moodCounts: {
+                    bad: 1,
+                    ok: 0,
+                    good: 1,
                 },
-            });
+                lastCheckin: {
+                    date: '2026-05-02',
+                    mood: 'bad',
+                },
+            },
+        });
     });
 });
 

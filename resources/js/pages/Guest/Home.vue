@@ -18,12 +18,8 @@ import HomeFeatureCollapsibleItem from '@/Components/Guest/HomeFeatureCollapsibl
 import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
-import {
-    homeFeatureKeys,
-    homeFeaturePoints
-    
-} from '@/lib/guest/homeFeatures';
-import type {HomeFeatureKey} from '@/lib/guest/homeFeatures';
+import type { HomeFeatureKey } from '@/lib/guest/homeFeatures';
+import { homeFeatureKeys, homeFeaturePoints } from '@/lib/guest/homeFeatures';
 
 const { t } = useI18n();
 
@@ -46,9 +42,10 @@ const features = homeFeatureKeys.map((key) => ({
 }));
 
 const openByKey = ref<Record<HomeFeatureKey, boolean>>(
-    Object.fromEntries(
-        homeFeatureKeys.map((key) => [key, false]),
-    ) as Record<HomeFeatureKey, boolean>,
+    Object.fromEntries(homeFeatureKeys.map((key) => [key, false])) as Record<
+        HomeFeatureKey,
+        boolean
+    >,
 );
 </script>
 

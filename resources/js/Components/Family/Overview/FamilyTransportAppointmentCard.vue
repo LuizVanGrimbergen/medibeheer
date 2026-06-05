@@ -120,7 +120,7 @@ const routeUrl = computed(() =>
                                 aria-hidden="true"
                             />
                             <span
-                                class="min-w-0 font-semibold leading-snug text-pretty wrap-break-word"
+                                class="min-w-0 leading-snug font-semibold text-pretty wrap-break-word"
                             >
                                 {{ formattedAddress }}
                             </span>
@@ -143,7 +143,7 @@ const routeUrl = computed(() =>
 
             <div
                 v-if="showTransportActions"
-                class="border-border border-t px-4 pb-4 pt-3 md:px-5 md:pb-5"
+                class="border-border border-t px-4 pt-3 pb-4 md:px-5 md:pb-5"
             >
                 <AppointmentPairActionButtons
                     centered

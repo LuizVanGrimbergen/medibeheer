@@ -62,9 +62,7 @@ const secondaryLayoutClass = computed(() =>
     cn(
         patientSoftDangerActionButtonClass,
         'gap-2.5 [&_svg]:size-6',
-        props.centered &&
-            props.showSecondary &&
-            centeredPairButtonClass,
+        props.centered && props.showSecondary && centeredPairButtonClass,
     ),
 );
 </script>

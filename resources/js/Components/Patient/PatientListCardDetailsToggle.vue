@@ -21,7 +21,7 @@ const props = withDefaults(
         scrollOnExpand?: boolean;
     }>(),
     {
-        scrollOnExpand: true,
+        scrollOnExpand: false,
     },
 );
 

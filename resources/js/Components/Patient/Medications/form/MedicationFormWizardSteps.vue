@@ -24,12 +24,12 @@ defineProps<{
     ) => void;
 }>();
 
-function noopGoToWizardStep(
-    _step: MedicationFormWizardStep,
-    _focusElementIdSuffix?: string,
-): void {
+const noopGoToWizardStep: (
+    step: MedicationFormWizardStep,
+    focusElementIdSuffix?: string,
+) => void = () => {
     // Summary edit navigation is only wired in dialog flows.
-}
+};
 </script>
 
 <template>
@@ -43,9 +43,7 @@ function noopGoToWizardStep(
             v-else-if="currentStep === 7"
             :form="form"
             :id-prefix="idPrefix"
-            :go-to-wizard-step="
-                goToWizardStepFromSummary ?? noopGoToWizardStep
-            "
+            :go-to-wizard-step="goToWizardStepFromSummary ?? noopGoToWizardStep"
         />
         <PatientShellWizardCard v-else>
             <MedicationDetailsStep

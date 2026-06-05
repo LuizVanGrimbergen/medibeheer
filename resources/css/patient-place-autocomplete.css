@@ -107,9 +107,7 @@ gmp-place-autocomplete.patient-place-autocomplete::part(
     color: var(--color-text-muted);
 }
 
-gmp-place-autocomplete.patient-place-autocomplete::part(
-        prediction-item-match
-    ) {
+gmp-place-autocomplete.patient-place-autocomplete::part(prediction-item-match) {
     color: var(--color-primary);
     font-weight: 700;
 }

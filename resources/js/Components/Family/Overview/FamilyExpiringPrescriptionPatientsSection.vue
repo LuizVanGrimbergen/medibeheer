@@ -23,7 +23,9 @@ const collapsedSummary = computed(() =>
     }),
 );
 
-function openPatientMedications(patient: FamilyExpiringPrescriptionPatient): void {
+function openPatientMedications(
+    patient: FamilyExpiringPrescriptionPatient,
+): void {
     router.post(
         patient.switch_url,
         {},
@@ -51,10 +53,7 @@ function openPatientMedications(patient: FamilyExpiringPrescriptionPatient): voi
         </template>
 
         <ul class="space-y-4 md:space-y-3">
-            <li
-                v-for="patient in props.patients"
-                :key="patient.patient_id"
-            >
+            <li v-for="patient in props.patients" :key="patient.patient_id">
                 <FamilyExpiringPrescriptionPatientCard
                     :patient="patient"
                     @click="openPatientMedications(patient)"

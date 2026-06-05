@@ -63,11 +63,7 @@ function onCancel(): void {
                         for="medication-plan-patient-email"
                         :class="patientFormLabelClass"
                     >
-                        {{
-                            t(
-                                'family.medicationPlans.publishPage.emailLabel',
-                            )
-                        }}
+                        {{ t('family.medicationPlans.publishPage.emailLabel') }}
                     </Label>
                     <Input
                         id="medication-plan-patient-email"

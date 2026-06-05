@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MedicationPrescriptionPickupStatus;
 use App\Models\Concerns\LogsPatientDataChanges;
+use App\Support\Medications\PushReminders\PrescriptionExpiry\ReminderCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -68,5 +69,20 @@ class MedicationPrescription extends Model
     public function medication(): BelongsTo
     {
         return $this->belongsTo(Medication::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(function (self $prescription): void {
+            if (! $prescription->wasChanged(['prescription_expiry_date', 'completed_at'])) {
+                return;
+            }
+
+            app(ReminderCache::class)->clearIfNoLongerCritical($prescription);
+        });
+
+        static::deleted(function (self $prescription): void {
+            app(ReminderCache::class)->forgetAllTiersForPrescriptionRecipients($prescription);
+        });
     }
 }

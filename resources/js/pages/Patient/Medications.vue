@@ -72,20 +72,13 @@ const {
                 @new-medication-click="createDialogOpen = true"
             />
 
-            <section
-                class="space-y-5"
-                :aria-busy="isActiveMedicationsLoading"
-            >
+            <section class="space-y-5" :aria-busy="isActiveMedicationsLoading">
                 <ul
                     v-if="isActiveMedicationsLoading"
                     class="flex w-full min-w-0 flex-col gap-5"
                     aria-hidden="true"
                 >
-                    <li
-                        v-for="index in 3"
-                        :key="index"
-                        class="min-w-0"
-                    >
+                    <li v-for="index in 3" :key="index" class="min-w-0">
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                         >

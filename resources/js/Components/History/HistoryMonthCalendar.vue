@@ -101,7 +101,7 @@ function dayButtonAriaLabel(cell: HistoryMonthCalendarCell): string {
                 v-else
                 :class="
                     cn(
-                        'text-text-heading font-semibold leading-snug',
+                        'text-text-heading leading-snug font-semibold',
                         props.density === 'compact'
                             ? 'text-sm'
                             : 'text-base md:text-lg',

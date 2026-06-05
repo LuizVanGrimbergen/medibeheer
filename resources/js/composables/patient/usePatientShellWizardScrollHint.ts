@@ -35,11 +35,7 @@ export function usePatientShellWizardScrollHint(
         const scrollElement = scrollRef.value;
         const footerElement = footerRef.value;
 
-        if (
-            !active.value ||
-            scrollElement === null ||
-            footerElement === null
-        ) {
+        if (!active.value || scrollElement === null || footerElement === null) {
             showScrollHint.value = false;
 
             return;
@@ -58,8 +54,7 @@ export function usePatientShellWizardScrollHint(
         const scrollRect = scrollElement.getBoundingClientRect();
         const footerRect = footerElement.getBoundingClientRect();
         const footerIsVisible =
-            footerRect.top <
-                scrollRect.bottom - FOOTER_VISIBILITY_INSET_PX &&
+            footerRect.top < scrollRect.bottom - FOOTER_VISIBILITY_INSET_PX &&
             footerRect.bottom > scrollRect.top + FOOTER_VISIBILITY_INSET_PX;
 
         showScrollHint.value = !footerIsVisible;

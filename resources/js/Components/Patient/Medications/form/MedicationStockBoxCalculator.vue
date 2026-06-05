@@ -84,10 +84,7 @@ const calculatedTotal = computed((): number | null => {
 watch(calculatedTotal, (newTotal) => {
     if (newTotal !== null && newTotal >= 0) {
         model.value = String(newTotal);
-    } else if (
-        numberOfBoxesModel.value === '' &&
-        piecesPerBox.value === ''
-    ) {
+    } else if (numberOfBoxesModel.value === '' && piecesPerBox.value === '') {
         model.value = '';
     }
 });
@@ -327,6 +324,5 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                 </div>
             </div>
         </output>
-
     </div>
 </template>

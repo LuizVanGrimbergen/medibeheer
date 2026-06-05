@@ -16,14 +16,18 @@ if (globalThis.window !== undefined) {
     globalThis.route = ziggyRoute;
 }
 
-function shouldRegisterMedicationPushServiceWorker(pageProps: unknown): boolean {
+function shouldRegisterMedicationPushServiceWorker(
+    pageProps: unknown,
+): boolean {
     if (typeof pageProps !== 'object' || pageProps === null) {
         return false;
     }
 
     const auth = (pageProps as { auth?: { user?: { role?: string } } }).auth;
 
-    return auth?.user?.role === 'patient';
+    const role = auth?.user?.role;
+
+    return role === 'patient' || role === 'family_member';
 }
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -50,7 +54,11 @@ const bootstrapApp = () => {
             vueApp.use(ZiggyVue);
             vueApp.use(i18n);
 
-            if (shouldRegisterMedicationPushServiceWorker(props.initialPage.props)) {
+            if (
+                shouldRegisterMedicationPushServiceWorker(
+                    props.initialPage.props,
+                )
+            ) {
                 listenForMedicationPushServiceWorkerUpdates();
                 void registerMedicationPushServiceWorker();
             }

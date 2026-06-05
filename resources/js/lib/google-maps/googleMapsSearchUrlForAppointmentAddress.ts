@@ -1,8 +1,5 @@
-import {
-    formatAppointmentAddress
-    
-} from '@/lib/appointments/formatAppointmentAddress';
-import type {AppointmentAddressFields} from '@/lib/appointments/formatAppointmentAddress';
+import type { AppointmentAddressFields } from '@/lib/appointments/formatAppointmentAddress';
+import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 
 function appointmentAddressQuery(
     appointment: AppointmentAddressFields,

@@ -40,11 +40,7 @@ function slotKey(slot: TodayMedicationIntakeSlot): string {
     >
         <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5">
             <h3 class="text-text-heading text-lg font-bold sm:text-xl">
-                {{
-                    t(
-                        'patient.dashboard.todayMedications.takenSection.title',
-                    )
-                }}
+                {{ t('patient.dashboard.todayMedications.takenSection.title') }}
             </h3>
             <span
                 class="text-text-muted text-base font-semibold tabular-nums sm:text-lg"

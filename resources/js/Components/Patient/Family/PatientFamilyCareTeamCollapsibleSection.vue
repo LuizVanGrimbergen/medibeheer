@@ -2,10 +2,7 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
-import {
-    Collapsible,
-    CollapsibleContent,
-} from '@/Components/ui/collapsible';
+import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
 import { cn } from '@/lib/utils';
 
@@ -61,7 +58,7 @@ const collapsedSummary = computed((): string => {
 
             <CollapsibleContent>
                 <div
-                    class="mt-5 flex flex-col gap-4 border-t border-border/70 pt-5"
+                    class="border-border/70 mt-5 flex flex-col gap-4 border-t pt-5"
                 >
                     <p
                         v-if="props.intro !== undefined && props.intro !== ''"

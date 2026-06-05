@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\LogsPatientDataChanges;
 use App\Services\Audit\ActivityLogName;
+use App\Support\Medications\PushReminders\LowStock\ReminderCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -69,6 +70,8 @@ class MedicationStock extends Model
             if (! $stock->wasChanged('current_stock')) {
                 return;
             }
+
+            app(ReminderCache::class)->clearIfSupplyRecovered($stock);
 
             $causer = Auth::user();
 

@@ -3,9 +3,7 @@ import {
     patientShellDialogOverlayAboveAppChromeClass,
 } from '@/lib/patient/patientShellDialogLayout';
 
-export function usePatientShellDialogLayout(
-    desktopFrom: 'sm' | 'md' = 'md',
-): {
+export function usePatientShellDialogLayout(desktopFrom: 'sm' | 'md' = 'md'): {
     dialogContentClass: string;
     overlayClass: string;
 } {

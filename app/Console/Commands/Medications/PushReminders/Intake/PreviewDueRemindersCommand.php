@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Patient;
+namespace App\Console\Commands\Medications\PushReminders\Intake;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Services\Medications\PatientMedicationDueRemindersService;
+use App\Services\Medications\PushReminders\Intake\RemindersService;
 use Illuminate\Console\Command;
 
-final class PreviewPatientMedicationDueRemindersCommand extends Command
+final class PreviewDueRemindersCommand extends Command
 {
     protected $signature = 'patient:preview-medication-due-reminders {user? : Patient user id (default: all patients with push)}';
 
     protected $description = 'List medication intake slots that would receive a push reminder right now (exact dose_time minute, from medication_schedules).';
 
-    public function handle(PatientMedicationDueRemindersService $reminders): int
+    public function handle(RemindersService $reminders): int
     {
         $userId = $this->argument('user');
 

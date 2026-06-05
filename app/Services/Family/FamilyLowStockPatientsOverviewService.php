@@ -8,11 +8,10 @@ use App\Models\Family;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Services\Medications\MedicationSupplyEstimateService;
+use App\Support\Medications\MedicationUrgencyToneResolver;
 
 final class FamilyLowStockPatientsOverviewService
 {
-    private const int CRITICAL_MAX_SUPPLY_DAYS = 7;
-
     public function __construct(
         private readonly MedicationSupplyEstimateService $supplyEstimateService,
     ) {}
@@ -95,7 +94,7 @@ final class FamilyLowStockPatientsOverviewService
             return null;
         }
 
-        if ($estimate['days'] > self::CRITICAL_MAX_SUPPLY_DAYS) {
+        if ($estimate['days'] > MedicationUrgencyToneResolver::CRITICAL_MAX_DAYS) {
             return null;
         }
 

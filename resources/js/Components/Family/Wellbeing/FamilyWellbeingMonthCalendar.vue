@@ -111,10 +111,7 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
 <template>
     <div
         :class="
-            cn(
-                'flex min-w-0 flex-col',
-                hasSelectableLegend ? 'gap-2' : 'gap-0',
-            )
+            cn('flex min-w-0 flex-col', hasSelectableLegend ? 'gap-2' : 'gap-0')
         "
     >
         <HistoryMonthCalendar

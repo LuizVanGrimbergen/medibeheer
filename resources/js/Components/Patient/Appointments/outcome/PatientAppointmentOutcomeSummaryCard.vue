@@ -19,9 +19,7 @@ const { doctorTypeLabel } = useAppointmentDisplay();
 <template>
     <Card :class="patientShellWizardCardClass">
         <CardContent class="p-0">
-            <div
-                :class="[patientShellWizardCardInnerClass, 'space-y-5']"
-            >
+            <div :class="[patientShellWizardCardInnerClass, 'space-y-5']">
                 <div class="flex items-start gap-4">
                     <div
                         class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"

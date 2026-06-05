@@ -4,9 +4,10 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
 import {
-    buildDoctorPatientAttentionItems,
-    type DoctorPatientAttentionItem,
+    buildDoctorPatientAttentionItems
+    
 } from '@/lib/doctor/patients/buildDoctorPatientAttentionItems';
+import type {DoctorPatientAttentionItem} from '@/lib/doctor/patients/buildDoctorPatientAttentionItems';
 import { formatDoctorPatientShortDate } from '@/lib/doctor/patients/formatDoctorPatientShortDate';
 import { dailyMoodPresentation } from '@/lib/mood/dailyMoodPresentation';
 import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';

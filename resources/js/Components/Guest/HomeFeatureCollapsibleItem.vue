@@ -85,12 +85,9 @@ const detailListClass = cn(
                         )
                     "
                     :ariaLabel="
-                        t(
-                            open
-                                ? 'home.hideDetails'
-                                : 'home.showDetails',
-                            { title: props.title },
-                        )
+                        t(open ? 'home.hideDetails' : 'home.showDetails', {
+                            title: props.title,
+                        })
                     "
                 />
             </Collapsible>
