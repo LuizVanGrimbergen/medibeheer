@@ -18,9 +18,11 @@ const props = withDefaults(
         typeMedication: MedicationTypeValue;
         tone: MedicationUrgencyTone | null;
         showTypeLabel?: boolean;
+        alignTitleWithIcon?: boolean;
     }>(),
     {
         showTypeLabel: true,
+        alignTitleWithIcon: false,
     },
 );
 
@@ -36,7 +38,14 @@ const visualToneClasses = computed(() =>
 </script>
 
 <template>
-    <div :class="patientMedicationListCardLeadRowClass">
+    <div
+        :class="
+            cn(
+                patientMedicationListCardLeadRowClass,
+                alignTitleWithIcon && 'items-center',
+            )
+        "
+    >
         <div
             :class="
                 cn(
@@ -55,6 +64,7 @@ const visualToneClasses = computed(() =>
             <p :class="patientMedicationListCardLeadTitleClass">
                 {{ name }}
             </p>
+            <slot v-if="$slots['title-after']" name="title-after" />
             <slot v-if="$slots.subtitle" name="subtitle" />
             <p
                 v-else-if="showTypeLabel"
