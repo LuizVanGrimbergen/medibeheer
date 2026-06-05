@@ -25,6 +25,8 @@ class DeclineAppointmentTransportInvitationController extends Controller
 
         $this->appointmentTransportInvitationService->decline($transportInvitation, $family);
 
-        return redirect()->route('family.appointments');
+        return redirect()
+            ->back(fallback: route('family.overview'))
+            ->with('success', __('transport_invitation.flash.declined'));
     }
 }
