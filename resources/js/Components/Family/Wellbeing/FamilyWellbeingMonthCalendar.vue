@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Frown, Meh, Smile } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import FamilyWellbeingCalendarDayIndicator from '@/Components/Family/Wellbeing/FamilyWellbeingCalendarDayIndicator.vue';
 import HistoryMonthCalendar from '@/Components/History/HistoryMonthCalendar.vue';
+import { MoodLegend } from '@/Components/ui/mood-icon';
 import { formatHistoryCalendarLongDate } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import type { DailyMoodScoreValue } from '@/lib/types';
@@ -86,33 +86,7 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         </template>
 
         <template #legend>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <Frown
-                    class="text-danger size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('family.wellbeing.mood.bad') }}
-            </span>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <Meh
-                    class="text-warning size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('family.wellbeing.mood.ok') }}
-            </span>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <Smile
-                    class="text-success size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('family.wellbeing.mood.good') }}
-            </span>
+            <MoodLegend />
         </template>
     </HistoryMonthCalendar>
 </template>
