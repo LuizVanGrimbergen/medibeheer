@@ -16,11 +16,11 @@ export default {
         },
         purpose: {
             title: '3. Waarvoor gebruiken we deze gegevens?',
-            body: 'Uw gegevens worden gebruikt om de dienst te leveren en te beveiligen: medicatie- en voorschriftenbeheer, innames en voorraad (inclusief vakantieberekening), afspraken en vervoer, medicatieplannen tussen familie en patiënt, dagelijkse check-ins, samenwerking met uitgenodigde familie of zorgverleners, push-herinneringen indien u die inschakelt, accountbeheer, e-mail voor verificatie en wachtwoordreset, export op verzoek, en preventie van misbruik.',
+            body: 'Uw gegevens worden gebruikt om de dienst te leveren en te beveiligen: medicatie- en voorschriftenbeheer, innames en voorraad (inclusief vakantieberekening), afspraken en vervoer, medicatieplannen tussen familie en patiënt, dagelijkse check-ins, samenwerking met uitgenodigde familie of zorgverleners, pushmeldingen indien u die inschakelt (medicatie-inname, lage voorraad, bijna verlopen recepten, en afspraken twee dagen en twee uur van tevoren), accountbeheer, e-mail voor verificatie en wachtwoordreset, export op verzoek, en preventie van misbruik.',
         },
         legalBasis: {
             title: '4. Op welke rechtsgrond (AVG)?',
-            body: 'Voor gezondheidsgegevens (bijzondere categorie, art. 9 AVG) vragen we uitdrukkelijke toestemming bij registratie. U kunt die later intrekken door uw account te verwijderen. Voor uw account, uitvoering van de overeenkomst, beveiliging en fraudepreventie baseren we ons op uitvoering van de overeenkomst en gerechtvaardigd belang. Waar push-herinneringen actief zijn, baseren we die op uw keuze om meldingen in te schakelen.',
+            body: 'Voor gezondheidsgegevens (bijzondere categorie, art. 9 AVG) vragen we uitdrukkelijke toestemming bij registratie. U kunt die later intrekken door uw account te verwijderen. Voor uw account, uitvoering van de overeenkomst, beveiliging en fraudepreventie baseren we ons op uitvoering van de overeenkomst en gerechtvaardigd belang. Waar pushmeldingen actief zijn, baseren we die op uw keuze om meldingen in te schakelen onder Instellingen.',
         },
         sharing: {
             title: '5. Wie krijgt toegang tot uw gegevens?',
@@ -66,7 +66,7 @@ export default {
             },
             push: {
                 title: '3. Pushmeldingen',
-                body: 'Als u medicatieherinneringen inschakelt, slaat uw browser een push-abonnement op en verwerken wij endpoint-gegevens om meldingen te sturen. U kunt dit uitschakelen in de app. Het abonnement wordt dan verwijderd.',
+                body: 'Als u meldingen inschakelt onder Instellingen, slaat uw browser een push-abonnement op en verwerken wij endpoint-gegevens om meldingen te sturen (medicatie-inname, lage voorraad, bijna verlopen recepten, en afspraken twee dagen en twee uur van tevoren). Meldingen kunnen beperkte gezondheidsgegevens bevatten, zoals medicatienaam of afspraakdatum en -tijd. U kunt meldingen uitschakelen in de app; het abonnement wordt dan verwijderd.',
             },
             publicSite: {
                 title: '4. Publieke pagina’s',
@@ -86,7 +86,7 @@ export default {
         privacySuffixEnd: '.',
         cookiesLink: 'cookiebeleid',
         healthDataLabel:
-            'Ik geef uitdrukkelijke toestemming voor het verwerken van mijn gezondheidsgegevens (art. 9 AVG) in Medibeheer, zoals beschreven in het privacybeleid, waaronder medicatie, voorschriften, innames, voorraad, afspraken, medicatieplannen en check-ins, inclusief optionele push-herinneringen indien ik die inschakel.',
+            'Ik geef uitdrukkelijke toestemming voor het verwerken van mijn gezondheidsgegevens (art. 9 AVG) in Medibeheer, zoals beschreven in het privacybeleid, waaronder medicatie, voorschriften, innames, voorraad, afspraken, medicatieplannen en check-ins, inclusief optionele pushmeldingen (medicatie, voorraad, recepten en afspraken) indien ik die inschakel.',
     },
     settings: {
         title: 'Privacy en gegevens',
