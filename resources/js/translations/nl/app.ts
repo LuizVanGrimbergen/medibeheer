@@ -1,5 +1,8 @@
 export default {
     name: 'Medibeheer',
+    actionSuccess: {
+        done: 'Gereed',
+    },
     loading: {
         ariaLabel: 'Pagina wordt geladen',
         default: {
