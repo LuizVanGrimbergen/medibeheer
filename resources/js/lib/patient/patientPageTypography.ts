@@ -1,4 +1,4 @@
-/** Centered hero title on {@link PatientActionSuccessScreen} and {@link PatientConfirmDialog}. */
+/** Centered hero title on {@link ActionSuccessScreen} and {@link PatientConfirmDialog}. */
 export const patientActionSuccessTitleClass =
     'text-text-heading max-w-full text-3xl leading-tight font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl';
 
