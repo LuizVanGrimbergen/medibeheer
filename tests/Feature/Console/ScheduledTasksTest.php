@@ -3,11 +3,11 @@
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\Facades\Schedule;
 
-test('production registers exactly two scheduled artisan commands', function () {
+test('production registers all scheduled artisan commands', function () {
     $commandEvents = collect(Schedule::events())
         ->filter(fn (Event $event): bool => $event->command !== null);
 
-    expect($commandEvents)->toHaveCount(2);
+    expect($commandEvents)->toHaveCount(4);
 });
 
 test('medication due reminder command is scheduled every minute without overlapping', function () {
