@@ -6,22 +6,33 @@ import MedicationUrgencyProgressSection from '@/Components/Medications/Medicatio
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import MedicationPrescriptionListItemSection from '@/Components/Patient/Prescriptions/MedicationPrescriptionListItem.vue';
 import PrescriptionLastAppointmentTag from '@/Components/Patient/Prescriptions/PrescriptionLastAppointmentTag.vue';
+import PrescriptionPickupControl from '@/Components/Patient/Prescriptions/PrescriptionPickupControl.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
+import { usePatientPrescriptionCompleteActions } from '@/composables/patient/usePatientPrescriptionCompleteActions';
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
+import {
+    prescriptionShowsCollapsedPickupAction,
+    prescriptionShowsExpandedPickupControl,
+} from '@/lib/patient/prescriptions/prescriptionCollapsedPickupVisibility';
 import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { prescriptionExpiryUrgencyContext } from '@/lib/patient/prescriptions/prescriptionExpiryUrgency';
 import type {
     MedicationPrescriptionListItem,
+    MedicationPrescriptionPickupStatusValue,
     MedicationTypeValue,
 } from '@/lib/types';
 
 const props = defineProps<{
     prescription: MedicationPrescriptionListItem;
+    onPickedUp?: (isLastInBatch: boolean) => void;
 }>();
 
 const { t } = useI18n();
+
+const { isPrescriptionUpdateInFlight, updatePrescriptionPickupStatus } =
+    usePatientPrescriptionCompleteActions();
 
 const isOpen = ref(false);
 
@@ -60,6 +71,33 @@ const expiryProgressAriaLabel = computed((): string => {
         days: String(context.days_remaining),
     });
 });
+
+const showCollapsedPickupAction = computed(() =>
+    prescriptionShowsCollapsedPickupAction(isOpen.value),
+);
+
+const showExpandedPickupControl = computed(() =>
+    prescriptionShowsExpandedPickupControl(isOpen.value),
+);
+
+const isPickupUpdateDisabled = computed(() =>
+    isPrescriptionUpdateInFlight(props.prescription.id),
+);
+
+function onPickupStatusUpdate(
+    pickupStatus: MedicationPrescriptionPickupStatusValue,
+): void {
+    const pickedUpHandler =
+        pickupStatus === 'picked_up' && props.onPickedUp
+            ? () => props.onPickedUp?.(props.prescription.is_last_in_batch)
+            : null;
+
+    updatePrescriptionPickupStatus(
+        props.prescription.id,
+        pickupStatus,
+        pickedUpHandler,
+    );
+}
 </script>
 
 <template>
@@ -68,27 +106,26 @@ const expiryProgressAriaLabel = computed((): string => {
         :class="prescriptionVisualToneClasses.border"
     >
         <CardContent class="relative p-6 sm:p-7">
-            <div
-                v-if="prescription.is_last_in_batch"
-                class="mb-4 flex w-full min-w-0 sm:absolute sm:top-6 sm:right-6 sm:z-10 sm:mb-0 sm:w-auto sm:justify-end"
-            >
-                <PrescriptionLastAppointmentTag />
-            </div>
+            <Collapsible v-model:open="isOpen" class="flex flex-col gap-5">
+                <div class="space-y-3.5">
+                    <MedicationListCardLead
+                        :name="prescription.medication.name"
+                        :type-medication="
+                            prescription.medication
+                                .type_medication as MedicationTypeValue
+                        "
+                        :tone="prescriptionUrgencyTone"
+                        :show-type-label="false"
+                    >
+                        <template
+                            v-if="prescription.is_last_in_batch"
+                            #title-after
+                        >
+                            <PrescriptionLastAppointmentTag />
+                        </template>
+                    </MedicationListCardLead>
 
-            <Collapsible v-model:open="isOpen">
-                <MedicationListCardLead
-                    :name="prescription.medication.name"
-                    :type-medication="
-                        prescription.medication
-                            .type_medication as MedicationTypeValue
-                    "
-                    :tone="prescriptionUrgencyTone"
-                    :show-type-label="false"
-                    :class="
-                        prescription.is_last_in_batch ? 'sm:pr-44' : null
-                    "
-                >
-                    <template v-if="!isOpen" #subtitle>
+                    <template v-if="!isOpen">
                         <MedicationUrgencyProgressSection
                             v-if="urgencyContext !== null"
                             :tone="urgencyContext.tone"
@@ -113,18 +150,28 @@ const expiryProgressAriaLabel = computed((): string => {
                             {{ expiryStatusLine }}
                         </p>
                     </template>
-                </MedicationListCardLead>
+                </div>
 
                 <CollapsibleContent>
                     <MedicationPrescriptionListItemSection
                         :prescription="prescription"
-                        class="border-border/70 mt-5 border-t pt-5"
+                        :show-pickup-control="showExpandedPickupControl"
+                        :is-pickup-update-disabled="isPickupUpdateDisabled"
+                        class="border-border/70 border-t pt-5"
+                        @update:pickup-status="onPickupStatusUpdate"
                     />
                 </CollapsibleContent>
 
+                <PrescriptionPickupControl
+                    v-if="showCollapsedPickupAction"
+                    :pickup-status="prescription.pickup_status"
+                    :disabled="isPickupUpdateDisabled"
+                    @update:pickup-status="onPickupStatusUpdate"
+                />
+
                 <PatientListCardDetailsToggle
                     :mode="isOpen ? 'collapse' : 'expand'"
-                    wrapper-class="mt-5 border-t-0 pt-0"
+                    wrapper-class="mt-0 border-t-0 pt-0"
                     :label="
                         t(
                             isOpen

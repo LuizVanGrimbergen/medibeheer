@@ -6,6 +6,7 @@ import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSucces
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import AddPrescriptionDialog from '@/Components/Patient/Prescriptions/AddPrescriptionDialog.vue';
 import MedicationPrescriptionCard from '@/Components/Patient/Prescriptions/MedicationPrescriptionCard.vue';
+import PrescriptionPickedUpSuccessScreen from '@/Components/Patient/Prescriptions/PrescriptionPickedUpSuccessScreen.vue';
 import PrescriptionsPageIntro from '@/Components/Patient/Prescriptions/PrescriptionsPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
@@ -23,6 +24,9 @@ const {
     prescriptionFormDialogLayoutClass,
     addSuccessOpen,
     addSuccessTitle,
+    pickupSuccessOpen,
+    pickupSuccessIsLastPrescription,
+    showPrescriptionPickedUpSuccess,
     addDialogOpen,
     selectedMedicationId,
     quantityClientError,
@@ -71,6 +75,11 @@ const emptyStateMessage = computed((): string => {
             :done-label="t('patient.actionSuccess.done')"
         />
 
+        <PrescriptionPickedUpSuccessScreen
+            v-model:open="pickupSuccessOpen"
+            :is-last-prescription="pickupSuccessIsLastPrescription"
+        />
+
         <PatientPageShell :title="t('patient.prescriptions.listHeading')">
             <PrescriptionsPageIntro
                 :can-add-prescription="canAddPrescription"
@@ -89,6 +98,7 @@ const emptyStateMessage = computed((): string => {
                     >
                         <MedicationPrescriptionCard
                             :prescription="prescription"
+                            :on-picked-up="showPrescriptionPickedUpSuccess"
                         />
                     </li>
                 </ul>

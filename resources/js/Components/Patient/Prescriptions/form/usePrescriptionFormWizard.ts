@@ -70,10 +70,19 @@ export function usePrescriptionFormWizard(options: {
         options.quantityClientError.value = '';
         options.medicationClientError.value = '';
 
-        const parsedQuantity = clampPrescriptionQuantity(options.form.quantity);
+        const rawQuantity = options.form.quantity;
+
+        if (rawQuantity === null) {
+            options.quantityClientError.value =
+                'patient.prescriptions.quantityInvalid';
+
+            return false;
+        }
+
+        const parsedQuantity = clampPrescriptionQuantity(rawQuantity);
 
         if (
-            !Number.isFinite(options.form.quantity) ||
+            !Number.isFinite(rawQuantity) ||
             parsedQuantity < PRESCRIPTION_QUANTITY_MIN ||
             parsedQuantity > PRESCRIPTION_QUANTITY_MAX
         ) {

@@ -80,7 +80,7 @@ function prescriptionQuantityOptionLabel(value: number): string {
             </Label>
             <select
                 :id="`${idPrefix}-medication`"
-                v-model.number="selectedMedicationId"
+                v-model="selectedMedicationId"
                 :class="
                     cn(
                         patientFormSelectBaseClass,
@@ -90,6 +90,9 @@ function prescriptionQuantityOptionLabel(value: number): string {
                 :style="patientFormSelectChevronStyle"
                 required
             >
+                <option :value="null" disabled>
+                    {{ t('patient.prescriptions.medicationPlaceholder') }}
+                </option>
                 <option
                     v-for="choice in medicationChoices"
                     :key="choice.id"

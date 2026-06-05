@@ -39,13 +39,15 @@ const inventoryVisualToneClasses = computed(() =>
                         medication.type_medication as MedicationTypeValue
                     "
                     :tone="stockProgressTone"
+                    :show-type-label="false"
+                    align-title-with-icon
                 />
 
                 <MedicationStockControls
                     :medication="medication"
                     :update-route-name="props.updateRouteName"
                     :id-prefix="`patient-inventory-stock-${medication.id}`"
-                    class="border-border/70 border-t pt-5"
+                    :show-urgency-summary="false"
                 />
             </div>
         </CardContent>
