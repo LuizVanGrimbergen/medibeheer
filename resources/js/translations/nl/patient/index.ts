@@ -2,6 +2,7 @@ import actionSuccess from './actionSuccess';
 import appointments from './appointments';
 import dashboard from './dashboard';
 import doctors from './doctors';
+import duration from './duration';
 import family from './family';
 import formWizard from './formWizard';
 import inventory from './inventory';
@@ -16,6 +17,7 @@ export default {
     appointments,
     dashboard,
     doctors,
+    duration,
     family,
     formWizard,
     inventory,
