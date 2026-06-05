@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\Console\Commands\Patient;
+namespace App\Console\Commands\Medications\PushReminders\Intake;
 
-use App\Services\Medications\PatientMedicationDueRemindersService;
+use App\Services\Medications\PushReminders\Intake\RemindersService;
 use Illuminate\Console\Command;
 
-final class SendPatientMedicationDueReminderNotificationsCommand extends Command
+final class SendDueRemindersCommand extends Command
 {
     protected $signature = 'patient:send-medication-due-reminders';
 
     protected $description = 'Send web push reminders to patients when a medication intake is due.';
 
-    public function handle(PatientMedicationDueRemindersService $reminders): int
+    public function handle(RemindersService $reminders): int
     {
         $dueCount = $reminders->sendDueReminders();
         $missedCount = $reminders->sendMissedReminders();

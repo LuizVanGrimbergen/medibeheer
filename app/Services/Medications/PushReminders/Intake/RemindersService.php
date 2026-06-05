@@ -2,24 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Medications;
+namespace App\Services\Medications\PushReminders\Intake;
 
 use App\Models\Patient;
 use App\Models\User;
-use App\Notifications\Patient\MedicationIntakeDueNotification;
-use App\Notifications\Patient\MedicationIntakeMissedNotification;
+use App\Notifications\Medications\PushReminders\Intake\DueNotification;
+use App\Notifications\Medications\PushReminders\Intake\MissedNotification;
 use App\Support\Medications\MedicationIntakeClock;
+use App\Support\Medications\PushReminders\Intake\ReminderCache;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 
-final class PatientMedicationDueRemindersService
+final class RemindersService
 {
-    private const string DUE_CACHE_KEY_PREFIX = 'patient-medication-due-reminder';
-
-    private const string MISSED_CACHE_KEY_PREFIX = 'patient-medication-missed-reminder';
-
     public function __construct(
-        private readonly PatientMedicationDueReminderCandidatesQuery $dueCandidates,
+        private readonly CandidatesQuery $dueCandidates,
+        private readonly ReminderCache $reminderCache,
     ) {}
 
     public function dueReminderSlotsForPatient(Patient $patient): array
@@ -30,9 +28,14 @@ final class PatientMedicationDueRemindersService
     public function sendDueReminders(): int
     {
         return $this->sendReminders(
-            self::DUE_CACHE_KEY_PREFIX,
+            fn (int $patientId, int $scheduleId, string $doseTime, string $dateKey): string => $this->reminderCache->dueCacheKey(
+                $patientId,
+                $scheduleId,
+                $doseTime,
+                $dateKey,
+            ),
             function (User $user, array $slot): void {
-                Notification::send($user, new MedicationIntakeDueNotification($slot));
+                Notification::send($user, new DueNotification($slot));
             },
             $this->dueCandidates->eachDueNow(...),
         );
@@ -41,16 +44,21 @@ final class PatientMedicationDueRemindersService
     public function sendMissedReminders(): int
     {
         return $this->sendReminders(
-            self::MISSED_CACHE_KEY_PREFIX,
+            fn (int $patientId, int $scheduleId, string $doseTime, string $dateKey): string => $this->reminderCache->missedCacheKey(
+                $patientId,
+                $scheduleId,
+                $doseTime,
+                $dateKey,
+            ),
             function (User $user, array $slot): void {
-                Notification::send($user, new MedicationIntakeMissedNotification($slot));
+                Notification::send($user, new MissedNotification($slot));
             },
             $this->dueCandidates->eachMissedNow(...),
         );
     }
 
     private function sendReminders(
-        string $cacheKeyPrefix,
+        callable $cacheKeyFor,
         callable $notify,
         callable $eachCandidate,
     ): int {
@@ -61,16 +69,15 @@ final class PatientMedicationDueRemindersService
             User $user,
             Patient $patient,
             array $slot,
-        ) use (&$sentCount, $todayKey, $cacheKeyPrefix, $notify): void {
-            $cacheKey = $this->reminderCacheKey(
-                $cacheKeyPrefix,
-                $patient->id,
+        ) use (&$sentCount, $todayKey, $cacheKeyFor, $notify): void {
+            $cacheKey = $cacheKeyFor(
+                (int) $patient->id,
                 (int) $slot['medication_schedule_id'],
                 (string) $slot['dose_time'],
                 $todayKey,
             );
 
-            if (! Cache::add($cacheKey, true, MedicationIntakeClock::today()->endOfDay())) {
+            if (! Cache::add($cacheKey, true, $this->reminderCache->ttlUntilEndOfDay())) {
                 return;
             }
 
@@ -79,15 +86,5 @@ final class PatientMedicationDueRemindersService
         });
 
         return $sentCount;
-    }
-
-    private function reminderCacheKey(
-        string $prefix,
-        int $patientId,
-        int $scheduleId,
-        string $doseTime,
-        string $dateKey,
-    ): string {
-        return "{$prefix}:{$patientId}:{$scheduleId}:{$doseTime}:{$dateKey}";
     }
 }

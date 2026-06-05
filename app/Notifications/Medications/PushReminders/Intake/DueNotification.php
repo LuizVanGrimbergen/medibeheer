@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Notifications\Patient;
+namespace App\Notifications\Medications\PushReminders\Intake;
 
 use App\Support\Medications\MedicationIntakePushMarkUrl;
 use App\Support\Medications\PatientMedicationReminderTranslations;
@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\WebPush\WebPushChannel;
 use NotificationChannels\WebPush\WebPushMessage;
 
-final class MedicationIntakeDueNotification extends Notification
+final class DueNotification extends Notification
 {
     public function __construct(
         public readonly array $slot,

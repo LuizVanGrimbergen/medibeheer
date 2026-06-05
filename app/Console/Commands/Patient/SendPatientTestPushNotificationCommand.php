@@ -6,10 +6,11 @@ namespace App\Console\Commands\Patient;
 
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Notifications\Patient\MedicationIntakeDueNotification;
-use App\Notifications\Patient\MedicationIntakeMissedNotification;
+use App\Notifications\Medications\PushReminders\Intake\DueNotification;
+use App\Notifications\Medications\PushReminders\Intake\MissedNotification;
 use App\Services\Medications\PatientScheduledIntakesQuery;
 use App\Support\Medications\MedicationIntakeClock;
+use App\Support\Medications\PushReminders\Intake\ReminderCache;
 use Database\Seeders\PatientWebPushDemoSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
@@ -71,18 +72,19 @@ final class SendPatientTestPushNotificationCommand extends Command
         $scheduleId = (int) $slot['medication_schedule_id'];
         $doseTime = (string) $slot['dose_time'];
         $isMissed = (bool) $this->option('missed');
-        $cachePrefix = $isMissed
-            ? 'patient-medication-missed-reminder'
-            : 'patient-medication-due-reminder';
+        $reminderCache = app(ReminderCache::class);
+        $cacheKey = $isMissed
+            ? $reminderCache->missedCacheKey((int) $patient->id, $scheduleId, $doseTime, $todayKey)
+            : $reminderCache->dueCacheKey((int) $patient->id, $scheduleId, $doseTime, $todayKey);
 
-        Cache::forget("{$cachePrefix}:{$patient->id}:{$scheduleId}:{$doseTime}:{$todayKey}");
+        Cache::forget($cacheKey);
 
         if ($isMissed) {
-            Notification::sendNow($user, new MedicationIntakeMissedNotification($slot));
+            Notification::sendNow($user, new MissedNotification($slot));
         }
 
         if (! $isMissed) {
-            Notification::sendNow($user, new MedicationIntakeDueNotification($slot));
+            Notification::sendNow($user, new DueNotification($slot));
         }
 
         $kind = $isMissed ? 'missed (dashboard)' : 'due (mark intake)';

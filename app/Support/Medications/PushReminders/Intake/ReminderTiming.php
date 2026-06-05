@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Medications;
+namespace App\Support\Medications\PushReminders\Intake;
 
+use App\Support\Medications\DoseTime;
+use App\Support\Medications\MedicationIntakeClock;
 use Carbon\CarbonInterface;
 
-final class MedicationIntakeReminderTiming
+final class ReminderTiming
 {
     public static function isExactDoseTimeMinute(string $doseTime, ?CarbonInterface $now = null): bool
     {
