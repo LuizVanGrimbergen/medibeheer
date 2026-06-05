@@ -4,15 +4,22 @@ import { MedicationIntakeDayIcon } from '@/Components/ui/medication-intake-day-i
 import { todayIsoDateKey } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { isMedicationIntakeDayIconStatus } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeDayStatusValue,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 
-const props = defineProps<{
-    cell: HistoryMonthCalendarCell;
-    daysByDate: Record<string, MedicationIntakeCalendarDay>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        cell: HistoryMonthCalendarCell;
+        daysByDate: Record<string, MedicationIntakeCalendarDay>;
+        statusFilter?: MedicationIntakeDayIconStatusValue | null;
+    }>(),
+    {
+        statusFilter: null,
+    },
+);
 
 const calendarDay = computed((): MedicationIntakeCalendarDay | undefined => {
     if (props.cell.dateKey === null) {
@@ -40,6 +47,13 @@ const iconStatus = computed(() => {
     const status = indicatorStatus.value;
 
     if (status === null || !isMedicationIntakeDayIconStatus(status)) {
+        return null;
+    }
+
+    if (
+        props.statusFilter !== null &&
+        status !== props.statusFilter
+    ) {
         return null;
     }
 

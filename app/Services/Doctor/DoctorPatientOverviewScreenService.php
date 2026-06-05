@@ -6,6 +6,7 @@ namespace App\Services\Doctor;
 
 use App\Models\Patient;
 use App\Services\Family\FamilyWellbeingScreenService;
+use App\Services\Medications\PatientCriticalPrescriptionsQuery;
 use App\Services\Medications\PatientScheduledIntakesQuery;
 
 final class DoctorPatientOverviewScreenService
@@ -13,6 +14,7 @@ final class DoctorPatientOverviewScreenService
     public function __construct(
         private readonly PatientScheduledIntakesQuery $scheduledIntakesQuery,
         private readonly FamilyWellbeingScreenService $wellbeingScreenService,
+        private readonly PatientCriticalPrescriptionsQuery $criticalPrescriptionsQuery,
     ) {}
 
     /** @return array<string, mixed> */
@@ -33,6 +35,8 @@ final class DoctorPatientOverviewScreenService
             'medication_calendar_slots' => $medicationCalendar['slots'],
             'wellbeing_calendar_month' => $wellbeing['wellbeing_calendar_month'],
             'wellbeing_calendar_checkins' => $wellbeing['wellbeing_calendar_checkins'],
+            'wellbeing_checkins' => $wellbeing['wellbeing_checkins'],
+            'urgent_prescriptions' => $this->criticalPrescriptionsQuery->forPatient($patient),
         ];
     }
 }

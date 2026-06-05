@@ -8,7 +8,7 @@ import {
 } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import { cn } from '@/lib/utils';
 
-export type MedicationIntakeDayIconSize = 'legend' | 'calendar-day';
+export type MedicationIntakeDayIconSize = 'legend' | 'calendar-day' | 'card';
 
 const MEDICATION_INTAKE_DAY_ICON_SIZE_CLASS: Record<
     MedicationIntakeDayIconSize,
@@ -16,6 +16,7 @@ const MEDICATION_INTAKE_DAY_ICON_SIZE_CLASS: Record<
 > = {
     legend: 'size-4 shrink-0 stroke-2',
     'calendar-day': 'size-[1.05rem] shrink-0 stroke-[2.25] sm:size-5',
+    card: 'size-6 shrink-0 stroke-[1.75] sm:size-7',
 };
 
 const props = withDefaults(

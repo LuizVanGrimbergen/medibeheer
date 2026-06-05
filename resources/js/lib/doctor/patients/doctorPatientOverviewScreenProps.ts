@@ -2,7 +2,8 @@ import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import type { DailyCheckin } from '@/lib/types';
+import type { DoctorPatientUrgentPrescription } from '@/lib/doctor/patients/doctorPatientUrgentPrescription';
+import type { DailyCheckin, Paginated } from '@/lib/types';
 
 export type DoctorPatientOverviewScreenProps = {
     selected_patient: {
@@ -14,4 +15,6 @@ export type DoctorPatientOverviewScreenProps = {
     medication_calendar_slots: MedicationIntakeHistorySlot[];
     wellbeing_calendar_month: string;
     wellbeing_calendar_checkins: DailyCheckin[];
+    wellbeing_checkins: Paginated<DailyCheckin>;
+    urgent_prescriptions: DoctorPatientUrgentPrescription[];
 };
