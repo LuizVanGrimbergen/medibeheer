@@ -40,7 +40,6 @@ export default {
                 'role-family': withOpacity('--color-role-family'),
                 success: withOpacity('--color-success'),
                 warning: withOpacity('--color-warning'),
-                'warning-text': withOpacity('--color-warning-text'),
                 danger: withOpacity('--color-danger'),
                 focus: withOpacity('--color-focus'),
                 border: withOpacity('--color-border'),
