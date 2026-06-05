@@ -95,6 +95,29 @@ test('publish rejects an invalid patient email', function () {
     expect($proposal->fresh()->status)->toBe(MedicationPlanProposalStatus::DRAFT);
 });
 
+test('family link page exposes patient email on published proposals', function () {
+    $familyUser = User::factory()->familyMember()->create();
+    $family = $familyUser->familyOrCreate();
+    $patientEmail = 'plan-link-'.uniqid('', true).'@example.com';
+
+    MedicationPlanProposal::factory()
+        ->forFamily($family)
+        ->withMedicationItem()
+        ->published()
+        ->create([
+            'invited_patient_email' => $patientEmail,
+            'invited_patient_email_hash' => User::hashEmail($patientEmail),
+        ]);
+
+    $this->actingAs($familyUser)
+        ->get(route('family.link'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Family/Link')
+            ->has('proposals', 1)
+            ->where('proposals.0.patient_email', $patientEmail));
+});
+
 test('family members can view the publish page', function () {
     $familyUser = User::factory()->familyMember()->create();
     $family = $familyUser->familyOrCreate();

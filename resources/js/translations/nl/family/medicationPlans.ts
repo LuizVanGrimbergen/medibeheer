@@ -11,8 +11,7 @@ export default {
     unnamed: 'Medicatieplan',
     publishPage: {
         title: 'Plan naar patiënt sturen',
-        description:
-            'Voer het e-mailadres van de patiënt in. De patiënt ontvangt een e-mail om het plan op de Familie-pagina te bekijken, accepteren of weigeren.',
+        hint: 'De patiënt ontvangt een e-mail met een link om het plan op de Familie-pagina te bekijken en te accepteren of te weigeren.',
         emailLabel: 'E-mailadres patiënt',
         emailPlaceholder: "patiënt{'@'}voorbeeld.nl",
         emailRequired: 'Vul het e-mailadres van de patiënt in.',
