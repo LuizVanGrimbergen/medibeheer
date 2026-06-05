@@ -20,9 +20,10 @@ import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
 import {
     homeFeatureKeys,
-    homeFeaturePoints,
-    type HomeFeatureKey,
+    homeFeaturePoints
+    
 } from '@/lib/guest/homeFeatures';
+import type {HomeFeatureKey} from '@/lib/guest/homeFeatures';
 
 const { t } = useI18n();
 

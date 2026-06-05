@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Link, useForm } from '@inertiajs/vue3';
-import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
+import { SessionActionSuccessScreen } from '@/Components/ui/action-success-screen';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { Button } from '@/Components/ui/button';
-import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 
 const props = defineProps<{
     status?: string;
@@ -38,10 +38,7 @@ const verificationLinkSentMessage = computed(() =>
         title-key="auth.verifyEmail.title"
         subtitle-key="auth.verifyEmail.intro"
     >
-        <FlashSuccessBanner
-            class="mb-4"
-            :message="verificationLinkSentMessage"
-        />
+        <SessionActionSuccessScreen :message="verificationLinkSentMessage" />
 
         <form class="space-y-3" @submit.prevent="submit">
             <Link
