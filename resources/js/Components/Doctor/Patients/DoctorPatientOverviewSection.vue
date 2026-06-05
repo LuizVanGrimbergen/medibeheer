@@ -1,189 +1,118 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyWellbeingCheckinCard from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinCard.vue';
-import FamilyWellbeingMonthCalendar from '@/Components/Family/Wellbeing/FamilyWellbeingMonthCalendar.vue';
-import HistoryMonthNavigation from '@/Components/History/HistoryMonthNavigation.vue';
-import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
-import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
-import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
-import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
+import DoctorPatientMedicationSection from '@/Components/Doctor/Patients/DoctorPatientMedicationSection.vue';
+import DoctorPatientSnapshotCards from '@/Components/Doctor/Patients/DoctorPatientSnapshotCards.vue';
+import DoctorPatientUrgentPrescriptionsPanel from '@/Components/Doctor/Patients/DoctorPatientUrgentPrescriptionsPanel.vue';
+import DoctorPatientWellbeingSection from '@/Components/Doctor/Patients/DoctorPatientWellbeingSection.vue';
 import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
-import { indexWellbeingCalendarCheckins } from '@/lib/family/wellbeing/indexWellbeingCalendarCheckins';
-import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import { compareTodayMedicationIntakeSlots } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
+import { buildDoctorPatientOverviewSnapshot } from '@/lib/doctor/patients/buildDoctorPatientOverviewSnapshot';
+import type { MedicationIntakeDayIconStatusValue } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import type { DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<DoctorPatientOverviewScreenProps>();
 
 const { t } = useI18n();
 
-const { selectedCalendarDate, selectedDaySectionRef, onSelectCalendarDate } =
-    useHistorySelectedDay(() => props.medication_calendar_month);
+const medicationSectionOpen = ref(false);
+const medicationStatusFilter = ref<MedicationIntakeDayIconStatusValue | null>(
+    null,
+);
+const medicationSectionRef = ref<InstanceType<
+    typeof DoctorPatientMedicationSection
+> | null>(null);
+const wellbeingSectionOpen = ref(false);
+const wellbeingMoodFilter = ref<DailyMoodScoreValue | null>(null);
+const wellbeingSectionRef = ref<InstanceType<
+    typeof DoctorPatientWellbeingSection
+> | null>(null);
 
-const wellbeingCalendarIndex = computed(() =>
-    indexWellbeingCalendarCheckins(props.wellbeing_calendar_checkins),
+const medicationStatusCounts = computed(
+    () =>
+        buildDoctorPatientOverviewSnapshot(
+            props.medication_calendar_days,
+            props.wellbeing_calendar_checkins,
+        ).medication.statusCounts,
 );
 
-const slotsByDate = computed((): Map<string, MedicationIntakeHistorySlot[]> => {
-    const map = new Map<string, MedicationIntakeHistorySlot[]>();
+function onSnapshotMedicationStatusSelect(
+    status: MedicationIntakeDayIconStatusValue,
+): void {
+    medicationStatusFilter.value = status;
+    medicationSectionOpen.value = true;
 
-    for (const slot of props.medication_calendar_slots) {
-        const existing = map.get(slot.intake_date) ?? [];
+    nextTick(() => {
+        medicationSectionRef.value?.scrollIntoView();
+    });
+}
 
-        existing.push(slot);
-        map.set(slot.intake_date, existing);
-    }
+function onSnapshotMoodSelect(mood: DailyMoodScoreValue): void {
+    wellbeingMoodFilter.value = mood;
+    wellbeingSectionOpen.value = true;
 
-    for (const [date, slots] of map.entries()) {
-        map.set(date, [...slots].sort(compareTodayMedicationIntakeSlots));
-    }
+    nextTick(() => {
+        wellbeingSectionRef.value?.scrollIntoView();
+    });
+}
 
-    return map;
-});
-
-const selectedDaySlots = computed((): MedicationIntakeHistorySlot[] => {
-    const date = selectedCalendarDate.value;
-
-    if (date === null) {
-        return [];
-    }
-
-    return slotsByDate.value.get(date) ?? [];
-});
-
-const selectedDayHasSchedule = computed((): boolean => {
-    const date = selectedCalendarDate.value;
-
-    if (date === null) {
-        return false;
-    }
-
-    return props.medication_calendar_days.some(
-        (day) => day.date === date && day.status !== 'no_schedule',
-    );
-});
-
-const selectedDayCheckin = computed(() => {
-    const date = selectedCalendarDate.value;
-
-    if (date === null) {
-        return undefined;
-    }
-
-    return wellbeingCalendarIndex.value.checkinsByDate.get(date);
-});
+watch(
+    () =>
+        [
+            props.selected_patient.public_id,
+            props.medication_calendar_month,
+            props.wellbeing_calendar_month,
+        ] as const,
+    () => {
+        medicationStatusFilter.value = null;
+        medicationSectionOpen.value = false;
+        wellbeingMoodFilter.value = null;
+        wellbeingSectionOpen.value = false;
+    },
+);
 </script>
 
 <template>
     <section
-        class="min-w-0 space-y-3"
+        class="min-w-0 space-y-5"
         :aria-label="
             t('doctor.patients.overviewHeading', {
                 name: props.selected_patient.name,
             })
         "
     >
-        <HistoryMonthNavigation
+        <DoctorPatientSnapshotCards
             :calendar-month="props.medication_calendar_month"
-            navigate-route-name="doctor.dashboard"
-            navigate-query-key="calendar_month"
-            :prev-month-aria-label="
-                t('patient.medications.history.calendar.prevMonth')
-            "
-            :next-month-aria-label="
-                t('patient.medications.history.calendar.nextMonth')
-            "
-            density="compact"
+            :medication-calendar-days="props.medication_calendar_days"
+            :wellbeing-calendar-checkins="props.wellbeing_calendar_checkins"
+            :selected-medication-status-filter="medicationStatusFilter"
+            :selected-mood-filter="wellbeingMoodFilter"
+            @select-medication-status="onSnapshotMedicationStatusSelect"
+            @select-mood="onSnapshotMoodSelect"
         />
 
-        <div
-            class="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2 md:items-start md:gap-5"
-        >
-            <div class="flex min-w-0 flex-col gap-4">
-                <MedicationIntakeMonthCalendar
-                    :calendar-month="props.medication_calendar_month"
-                    :calendar-days="props.medication_calendar_days"
-                    :selected-date="selectedCalendarDate"
-                    navigate-route-name="doctor.dashboard"
-                    navigate-query-key="calendar_month"
-                    density="compact"
-                    :show-month-navigation="false"
-                    :header-title="
-                        t('patient.medications.history.calendar.title')
-                    "
-                    @select-date="onSelectCalendarDate"
-                />
+        <DoctorPatientUrgentPrescriptionsPanel
+            :prescriptions="props.urgent_prescriptions"
+        />
 
-                <HistorySelectedDaySection
-                    ref="selectedDaySectionRef"
-                    :selected-date="selectedCalendarDate"
-                    :heading="
-                        t('patient.medications.history.selectedDayHeading')
-                    "
-                    density="compact"
-                    :show-heading="false"
-                >
-                    <p
-                        v-if="!selectedDayHasSchedule"
-                        class="text-text-muted text-sm leading-relaxed"
-                    >
-                        {{
-                            t(
-                                'patient.medications.history.selectedDayNoSchedule',
-                            )
-                        }}
-                    </p>
+        <div class="grid min-w-0 gap-5 lg:grid-cols-2 lg:items-start">
+            <DoctorPatientMedicationSection
+                ref="medicationSectionRef"
+                v-model:open="medicationSectionOpen"
+                v-model:status-filter="medicationStatusFilter"
+                :medication_calendar_month="props.medication_calendar_month"
+                :medication_calendar_days="props.medication_calendar_days"
+                :medication_calendar_slots="props.medication_calendar_slots"
+                :status-counts="medicationStatusCounts"
+            />
 
-                    <p
-                        v-else-if="selectedDaySlots.length === 0"
-                        class="text-text-muted text-sm leading-relaxed"
-                    >
-                        {{
-                            t(
-                                'patient.medications.history.selectedDayNoIntakes',
-                            )
-                        }}
-                    </p>
-
-                    <div v-else class="flex flex-col gap-3">
-                        <MedicationIntakeHistorySlotCard
-                            v-for="slot in selectedDaySlots"
-                            :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
-                            :intake-slot="slot"
-                            density="compact"
-                        />
-                    </div>
-                </HistorySelectedDaySection>
-            </div>
-
-            <div class="flex min-w-0 flex-col gap-4">
-                <FamilyWellbeingMonthCalendar
-                    :calendar-month="props.wellbeing_calendar_month"
-                    :moods-by-date="wellbeingCalendarIndex.moodsByDate"
-                    :selected-date="selectedCalendarDate"
-                    navigate-route-name="doctor.dashboard"
-                    density="compact"
-                    :show-month-navigation="false"
-                    :header-title="t('family.wellbeing.calendar.title')"
-                    @select-date="onSelectCalendarDate"
-                />
-
-                <HistorySelectedDaySection
-                    :selected-date="selectedCalendarDate"
-                    :heading="t('family.wellbeing.selectedDayHeading')"
-                    density="compact"
-                    :show-heading="false"
-                >
-                    <FamilyWellbeingCheckinCard
-                        v-if="selectedDayCheckin !== undefined"
-                        :checkin="selectedDayCheckin"
-                        density="compact"
-                    />
-                    <p v-else class="text-text-muted text-sm leading-relaxed">
-                        {{ t('family.wellbeing.selectedDayNoCheckin') }}
-                    </p>
-                </HistorySelectedDaySection>
-            </div>
+            <DoctorPatientWellbeingSection
+                ref="wellbeingSectionRef"
+                v-model:open="wellbeingSectionOpen"
+                v-model:mood-filter="wellbeingMoodFilter"
+                :wellbeing_calendar_month="props.wellbeing_calendar_month"
+                :wellbeing_calendar_checkins="props.wellbeing_calendar_checkins"
+                :wellbeing_checkins="props.wellbeing_checkins"
+            />
         </div>
     </section>
 </template>

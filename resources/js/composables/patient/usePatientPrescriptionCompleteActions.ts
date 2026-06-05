@@ -3,7 +3,13 @@ import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import type { MedicationPrescriptionPickupStatusValue } from '@/lib/types';
 
-export function usePatientPrescriptionCompleteActions() {
+type PatientPrescriptionCompleteActionsOptions = {
+    onPickedUp?: () => void;
+};
+
+export function usePatientPrescriptionCompleteActions(
+    options: PatientPrescriptionCompleteActionsOptions = {},
+) {
     const prescriptionIdsAwaitingResponse = ref<number[]>([]);
 
     function isPrescriptionUpdateInFlight(prescriptionId: number): boolean {
@@ -13,6 +19,7 @@ export function usePatientPrescriptionCompleteActions() {
     function patchPrescription(
         prescriptionId: number,
         payload: RequestPayload,
+        callbacks: { onSuccess?: () => void } = {},
     ): void {
         if (isPrescriptionUpdateInFlight(prescriptionId)) {
             return;
@@ -29,6 +36,7 @@ export function usePatientPrescriptionCompleteActions() {
                         prescriptionId,
                     ];
                 },
+                onSuccess: callbacks.onSuccess,
                 onFinish: () => {
                     prescriptionIdsAwaitingResponse.value =
                         prescriptionIdsAwaitingResponse.value.filter(
@@ -42,8 +50,21 @@ export function usePatientPrescriptionCompleteActions() {
     function updatePrescriptionPickupStatus(
         prescriptionId: number,
         pickupStatus: MedicationPrescriptionPickupStatusValue,
+        onPickedUp: (() => void) | null = null,
     ): void {
-        patchPrescription(prescriptionId, { pickup_status: pickupStatus });
+        const pickedUpHandler = onPickedUp ?? options.onPickedUp;
+
+        patchPrescription(
+            prescriptionId,
+            { pickup_status: pickupStatus },
+            {
+                onSuccess: () => {
+                    if (pickupStatus === 'picked_up') {
+                        pickedUpHandler?.();
+                    }
+                },
+            },
+        );
     }
 
     return {

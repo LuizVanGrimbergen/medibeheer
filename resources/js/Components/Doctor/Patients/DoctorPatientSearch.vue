@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Users } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
 import { SearchField } from '@/Components/ui/search-field';
@@ -24,7 +24,17 @@ const props = withDefaults(
 
 const { t } = useI18n();
 const searchQuery = ref('');
-const isOpen = ref(props.selectedPatientPublicId === null);
+const expanded = defineModel<boolean>('expanded', { default: false });
+
+watch(
+    () => props.selectedPatientPublicId,
+    (selectedPatientPublicId) => {
+        if (selectedPatientPublicId === null) {
+            expanded.value = true;
+        }
+    },
+    { immediate: true },
+);
 
 const normalizedSearchQuery = computed(() =>
     normalizeDoctorPatientSearchQuery(searchQuery.value),
@@ -82,7 +92,7 @@ const collapsedSummary = computed((): string => {
 
 <template>
     <DoctorCollapsibleSection
-        v-model:open="isOpen"
+        v-model:open="expanded"
         :heading="t('doctor.patients.searchHeading')"
         :toggle-label="t('doctor.patients.searchToggle')"
         :collapsed-summary="collapsedSummary"
@@ -95,7 +105,7 @@ const collapsedSummary = computed((): string => {
             id="doctor-patient-search"
             v-model="searchQuery"
             name="doctor-patient-search"
-            :autofocus="props.autofocus && isOpen"
+            :autofocus="props.autofocus && expanded"
             :placeholder="t('doctor.patients.searchPlaceholder')"
             :clear-label="t('doctor.patients.searchClear')"
         />

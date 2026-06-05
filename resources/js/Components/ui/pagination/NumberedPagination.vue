@@ -7,11 +7,17 @@ import { Button } from '@/Components/ui/button';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import type { PaginationMeta } from '@/lib/types';
 
-const props = defineProps<{
-    routeName: string;
-    meta: PaginationMeta;
-    query?: Record<string, string | number | undefined | null>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        routeName: string;
+        meta: PaginationMeta;
+        query?: Record<string, string | number | undefined | null>;
+        density?: 'default' | 'compact';
+    }>(),
+    {
+        density: 'default',
+    },
+);
 
 const { t } = useI18n();
 const { smAndUp } = useTailwindBreakpoints();
@@ -82,12 +88,14 @@ const pageItems = computed((): (number | 'ellipsis')[] => {
         return [];
     }
 
-    if (smAndUp.value) {
+    if (props.density !== 'compact' && smAndUp.value) {
         return desktopPageItems(last, current);
     }
 
     return mobilePageItems(last, current);
 });
+
+const isCompact = computed((): boolean => props.density === 'compact');
 
 function visitPage(page: number): void {
     router.get(
@@ -100,10 +108,18 @@ function visitPage(page: number): void {
 
 <template>
     <nav
-        class="flex flex-col gap-4 border-t border-border/70 pt-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4"
+        class="flex flex-col gap-3 border-t border-border/70 pt-4"
+        :class="
+            isCompact
+                ? 'items-stretch'
+                : 'gap-4 pt-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4'
+        "
         :aria-label="t('app.pagination.navLabel')"
     >
-        <p class="text-center text-sm text-text-muted sm:text-left">
+        <p
+            class="text-sm text-text-muted"
+            :class="isCompact ? 'text-center' : 'text-center sm:text-left'"
+        >
             {{
                 t('app.pagination.page', {
                     current: meta.current_page,
@@ -115,24 +131,36 @@ function visitPage(page: number): void {
             </span>
         </p>
 
-        <div class="flex min-w-0 items-center gap-1 sm:gap-2">
+        <div
+            class="flex min-w-0 items-center justify-center gap-1"
+            :class="isCompact ? 'flex-wrap' : 'sm:gap-2'"
+        >
             <Button
                 type="button"
                 variant="outline"
-                size="lg"
-                class="shrink-0 touch-manipulation gap-1.5 px-2.5 text-sm font-semibold sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6"
+                :size="isCompact ? 'default' : 'lg'"
+                class="shrink-0 touch-manipulation font-semibold"
+                :class="
+                    isCompact
+                        ? 'min-h-9 gap-1 px-2.5 text-xs [&_svg]:size-4'
+                        : 'gap-1.5 px-2.5 text-sm sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6'
+                "
                 :disabled="meta.current_page <= 1"
+                :aria-label="t('app.pagination.previous')"
                 @click="visitPage(meta.current_page - 1)"
             >
                 <ChevronLeft
                     class="shrink-0"
                     aria-hidden="true"
                 />
-                {{ t('app.pagination.previous') }}
+                <span :class="isCompact ? 'sr-only' : undefined">
+                    {{ t('app.pagination.previous') }}
+                </span>
             </Button>
 
             <ul
-                class="flex min-w-0 flex-1 list-none flex-nowrap items-center justify-center gap-1 p-0 sm:gap-2"
+                class="flex min-w-0 list-none flex-nowrap items-center justify-center gap-1 p-0"
+                :class="isCompact ? 'flex-none' : 'flex-1 sm:gap-2'"
             >
                 <template
                     v-for="(item, index) in pageItems"
@@ -152,8 +180,13 @@ function visitPage(page: number): void {
                         <Button
                             type="button"
                             :variant="item === meta.current_page ? 'default' : 'outline'"
-                            size="lg"
-                            class="min-h-9 min-w-9 touch-manipulation px-0 text-xs font-semibold sm:min-h-12 sm:min-w-12 sm:text-base"
+                            :size="isCompact ? 'default' : 'lg'"
+                            class="touch-manipulation px-0 font-semibold"
+                            :class="
+                                isCompact
+                                    ? 'min-h-9 min-w-9 text-xs'
+                                    : 'min-h-9 min-w-9 text-xs sm:min-h-12 sm:min-w-12 sm:text-base'
+                            "
                             :aria-label="t('app.pagination.goToPage', { page: item })"
                             :aria-current="item === meta.current_page ? 'page' : undefined"
                             @click="visitPage(item)"
@@ -167,12 +200,20 @@ function visitPage(page: number): void {
             <Button
                 type="button"
                 variant="outline"
-                size="lg"
-                class="shrink-0 touch-manipulation gap-1.5 px-2.5 text-sm font-semibold sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6"
+                :size="isCompact ? 'default' : 'lg'"
+                class="shrink-0 touch-manipulation font-semibold"
+                :class="
+                    isCompact
+                        ? 'min-h-9 gap-1 px-2.5 text-xs [&_svg]:size-4'
+                        : 'gap-1.5 px-2.5 text-sm sm:gap-2 sm:px-5 sm:text-base [&_svg]:size-4.5 sm:[&_svg]:size-6'
+                "
                 :disabled="meta.current_page >= meta.last_page"
+                :aria-label="t('app.pagination.next')"
                 @click="visitPage(meta.current_page + 1)"
             >
-                {{ t('app.pagination.next') }}
+                <span :class="isCompact ? 'sr-only' : undefined">
+                    {{ t('app.pagination.next') }}
+                </span>
                 <ChevronRight
                     class="shrink-0"
                     aria-hidden="true"

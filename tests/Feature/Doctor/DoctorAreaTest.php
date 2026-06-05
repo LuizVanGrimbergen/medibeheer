@@ -1,7 +1,20 @@
 <?php
 
+use App\Enums\DailyMoodScore;
+use App\Models\DailyCheckin;
+use App\Models\Medication;
+use App\Models\MedicationPrescription;
 use App\Models\Patient;
 use App\Models\User;
+use Carbon\CarbonImmutable;
+
+beforeEach(function () {
+    CarbonImmutable::setTestNow('2026-05-14 12:00:00');
+});
+
+afterEach(function () {
+    CarbonImmutable::setTestNow();
+});
 
 test('verified doctors can visit the doctor dashboard', function () {
     $user = User::factory()->doctor()->create();
@@ -106,7 +119,98 @@ test('doctors can view a linked patient overview with calendar data on the dashb
             ->has('medication_calendar_slots')
             ->has('wellbeing_calendar_month')
             ->has('wellbeing_calendar_checkins')
+            ->has('wellbeing_checkins.data')
+            ->has('wellbeing_checkins.meta')
+            ->has('urgent_prescriptions')
         )
+    );
+});
+
+test('doctor patient overview lists critical expiring prescriptions', function () {
+    $doctorUser = User::factory()->doctor()->create();
+    $doctor = $doctorUser->doctor;
+    $linkedPatient = Patient::factory()->create();
+    $doctor->patients()->attach($linkedPatient);
+
+    $medication = Medication::factory()->for($linkedPatient)->create([
+        'name' => 'Magnesiumcitraat',
+    ]);
+
+    MedicationPrescription::factory()
+        ->forMedication($medication)
+        ->create([
+            'prescription_expiry_date' => '2026-05-19',
+        ]);
+
+    $response = $this->actingAs($doctorUser)->get(route('doctor.dashboard', [
+        'patient' => $linkedPatient->user->public_id,
+    ]));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->has('patient_overview.urgent_prescriptions', 1)
+        ->where(
+            'patient_overview.urgent_prescriptions.0.medication_name',
+            'Magnesiumcitraat',
+        )
+        ->where('patient_overview.urgent_prescriptions.0.days_remaining', 5)
+        ->where('patient_overview.urgent_prescriptions.0.is_last_in_batch', false)
+    );
+});
+
+test('doctor patient overview omits prescriptions that are only a warning', function () {
+    $doctorUser = User::factory()->doctor()->create();
+    $doctor = $doctorUser->doctor;
+    $linkedPatient = Patient::factory()->create();
+    $doctor->patients()->attach($linkedPatient);
+
+    $medication = Medication::factory()->for($linkedPatient)->create();
+
+    MedicationPrescription::factory()
+        ->forMedication($medication)
+        ->create([
+            'prescription_expiry_date' => '2026-05-28',
+        ]);
+
+    $response = $this->actingAs($doctorUser)->get(route('doctor.dashboard', [
+        'patient' => $linkedPatient->user->public_id,
+    ]));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->has('patient_overview.urgent_prescriptions', 0)
+    );
+});
+
+test('doctor patient overview exposes the same wellbeing check-in list as family', function () {
+    $doctorUser = User::factory()->doctor()->create();
+    $doctor = $doctorUser->doctor;
+    $linkedPatient = Patient::factory()->create();
+    $doctor->patients()->attach($linkedPatient);
+
+    DailyCheckin::query()->create([
+        'patient_id' => $linkedPatient->id,
+        'checkin_date' => now()->toDateString(),
+        'mood_score' => DailyMoodScore::GOOD->value,
+        'note' => null,
+    ]);
+
+    DailyCheckin::query()->create([
+        'patient_id' => $linkedPatient->id,
+        'checkin_date' => now()->subDay()->toDateString(),
+        'mood_score' => DailyMoodScore::BAD->value,
+        'note' => 'Kortademig.',
+    ]);
+
+    $response = $this->actingAs($doctorUser)->get(route('doctor.dashboard', [
+        'patient' => $linkedPatient->user->public_id,
+    ]));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->has('patient_overview.wellbeing_checkins.data', 2)
+        ->where('patient_overview.wellbeing_checkins.data.0.mood_score', DailyMoodScore::GOOD->value)
+        ->where('patient_overview.wellbeing_checkins.data.1.mood_score', DailyMoodScore::BAD->value)
     );
 });
 

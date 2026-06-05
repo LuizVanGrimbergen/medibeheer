@@ -22,11 +22,13 @@ const props = withDefaults(
         idPrefix?: string;
         canAdjustStock?: boolean;
         showSummary?: boolean;
+        showUrgencySummary?: boolean;
     }>(),
     {
         updateRouteName: 'patient.medications.stocks.update',
         canAdjustStock: true,
         showSummary: true,
+        showUrgencySummary: true,
     },
 );
 
@@ -91,24 +93,28 @@ const stockDisplayDoseUnit = computed(() => {
     <div class="space-y-3.5">
         <template v-if="primaryStock !== undefined">
             <template v-if="props.showSummary">
-                <MedicationUrgencyProgressSection
-                    v-if="stockProgressPercent !== null"
-                    :tone="stockProgressTone"
-                    :progress-percent="stockProgressPercent"
-                    :status-line="supplyEstimateLine"
-                    :progress-aria-label="stockProgressAriaLabel"
-                    :critical-alert-label="t('patient.inventory.lowStockBadge')"
-                    :warning-alert-label="
-                        t('patient.inventory.warningStockIconAria')
-                    "
-                />
+                <template v-if="props.showUrgencySummary">
+                    <MedicationUrgencyProgressSection
+                        v-if="stockProgressPercent !== null"
+                        :tone="stockProgressTone"
+                        :progress-percent="stockProgressPercent"
+                        :status-line="supplyEstimateLine"
+                        :progress-aria-label="stockProgressAriaLabel"
+                        :critical-alert-label="
+                            t('patient.inventory.lowStockBadge')
+                        "
+                        :warning-alert-label="
+                            t('patient.inventory.warningStockIconAria')
+                        "
+                    />
 
-                <p
-                    v-else
-                    class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
-                >
-                    {{ supplyEstimateLine }}
-                </p>
+                    <p
+                        v-else
+                        class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
+                    >
+                        {{ supplyEstimateLine }}
+                    </p>
+                </template>
 
                 <MedicationCurrentStockPanel :medication="medication" />
             </template>

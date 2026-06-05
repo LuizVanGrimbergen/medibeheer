@@ -19,6 +19,7 @@ const props = withDefaults(
 
 <template>
     <FamilyOverviewCollapsibleSection
+        class="scroll-mt-20"
         v-model:open="open"
         :heading="props.heading"
         :toggle-label="props.toggleLabel"

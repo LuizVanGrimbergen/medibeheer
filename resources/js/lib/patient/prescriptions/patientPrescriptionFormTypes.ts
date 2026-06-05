@@ -1,7 +1,7 @@
 import type { InertiaForm } from '@inertiajs/vue3';
 
 export type PatientPrescriptionFormData = {
-    quantity: number;
+    quantity: number | null;
     prescription_expiry_dates: string[];
 };
 
