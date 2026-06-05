@@ -26,12 +26,12 @@ test('family medication plans index redirects to link page', function () {
         ->assertRedirect(route('family.link'));
 });
 
-test('verified family members can visit family updates', function () {
+test('family updates route redirects to overview', function () {
     $user = User::factory()->familyMember()->create();
 
-    $response = $this->actingAs($user)->get(route('family.updates'));
-
-    $response->assertOk();
+    $this->actingAs($user)
+        ->get(route('family.updates'))
+        ->assertRedirect(route('family.overview', ['updates' => 'open']));
 });
 
 test('verified family members can visit family wellbeing', function () {
