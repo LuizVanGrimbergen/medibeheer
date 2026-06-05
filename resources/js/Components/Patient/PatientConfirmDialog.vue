@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Component } from 'vue';
 import { computed, useId } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { Dialog, DialogContent } from '@/Components/ui/dialog';
@@ -8,6 +9,10 @@ import {
 } from '@/lib/patient/patientPageTypography';
 import {
     patientConfirmDialogContentClass,
+    patientConfirmDialogIconClass,
+    patientConfirmDialogIconWrapClass,
+    patientConfirmDialogIconWrapDangerClass,
+    patientConfirmDialogIconWrapPrimaryClass,
     patientConfirmDialogMessageClass,
     patientFormWizardFooterCancelButtonClass,
     patientFormWizardFooterOutlineButtonClass,
@@ -28,10 +33,20 @@ const props = withDefaults(
         processing?: boolean;
         /** Danger for revoke/delete; primary for neutral confirmations. */
         confirmTone?: 'danger' | 'primary';
+        /** Styles the optional Lucide icon wrapper. */
+        iconTone?: 'danger' | 'primary';
+        /** Lucide icon component (e.g. LogOut from lucide-vue-next). */
+        icon?: Component;
+        /** Render cancel above confirm and use primary styling for cancel. */
+        cancelFirst?: boolean;
+        cancelTone?: 'outline' | 'primary';
     }>(),
     {
         processing: false,
         confirmTone: 'danger',
+        iconTone: 'danger',
+        cancelFirst: false,
+        cancelTone: 'outline',
     },
 );
 
@@ -43,6 +58,12 @@ const emit = defineEmits<{
 const titleId = useId();
 const descriptionId = useId();
 
+const iconWrapClass = computed(() =>
+    props.iconTone === 'primary'
+        ? patientConfirmDialogIconWrapPrimaryClass
+        : patientConfirmDialogIconWrapDangerClass,
+);
+
 const confirmButtonClass = computed(() =>
     props.confirmTone === 'primary'
         ? patientFormWizardFooterPrimaryButtonClass
@@ -51,6 +72,22 @@ const confirmButtonClass = computed(() =>
 
 const confirmButtonVariant = computed(() =>
     props.confirmTone === 'primary' ? 'default' : 'secondary',
+);
+
+const footerRowClass = computed(() =>
+    props.cancelFirst
+        ? 'flex w-full min-w-0 flex-col gap-2 md:flex-row md:gap-3'
+        : patientFormWizardFooterRowClass,
+);
+
+const cancelButtonClass = computed(() =>
+    props.cancelTone === 'primary'
+        ? patientFormWizardFooterPrimaryButtonClass
+        : patientFormWizardFooterOutlineButtonClass,
+);
+
+const cancelButtonVariant = computed(() =>
+    props.cancelTone === 'primary' ? 'default' : 'outline',
 );
 
 function close(): void {
@@ -73,6 +110,19 @@ function confirm(): void {
             :aria-labelledby="titleId"
         >
             <div :class="patientConfirmDialogMessageClass">
+                <div
+                    v-if="props.icon !== undefined"
+                    :class="
+                        cn(patientConfirmDialogIconWrapClass, iconWrapClass)
+                    "
+                >
+                    <component
+                        :is="props.icon"
+                        :class="patientConfirmDialogIconClass"
+                        aria-hidden="true"
+                        :stroke-width="2"
+                    />
+                </div>
                 <h1 :id="titleId" :class="patientActionSuccessTitleClass">
                     {{ title }}
                 </h1>
@@ -83,11 +133,22 @@ function confirm(): void {
 
             <div
                 :class="[
-                    patientFormWizardFooterRowClass,
+                    footerRowClass,
                     patientShellWizardFooterClass,
                     'mt-auto shrink-0',
                 ]"
             >
+                <Button
+                    v-if="cancelFirst"
+                    type="button"
+                    :variant="cancelButtonVariant"
+                    size="lg"
+                    :class="cancelButtonClass"
+                    :disabled="processing"
+                    @click="close"
+                >
+                    {{ cancelLabel }}
+                </Button>
                 <Button
                     type="button"
                     :variant="confirmButtonVariant"
@@ -99,10 +160,11 @@ function confirm(): void {
                     {{ confirmLabel }}
                 </Button>
                 <Button
+                    v-if="!cancelFirst"
                     type="button"
-                    variant="outline"
+                    :variant="cancelButtonVariant"
                     size="lg"
-                    :class="patientFormWizardFooterOutlineButtonClass"
+                    :class="cancelButtonClass"
                     :disabled="processing"
                     @click="close"
                 >
