@@ -1,11 +1,11 @@
 import { importLibrary } from '@googlemaps/js-api-loader';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
+import { ensureGoogleMapsConfigured } from '@/lib/google-maps/loadGoogleMapsApi';
 import { mapGeocoderAddressComponents } from '@/lib/google-maps/mapGeocoderAddressComponents';
 import { parseGooglePlaceAddressComponents } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
 import type { AppointmentAddressFieldErrors } from '@/lib/patient/appointments/appointmentAddressValidation';
 import type { AppointmentAddressFieldValues } from '@/lib/patient/appointments/appointmentAddressValidation';
 import { collectAppointmentAddressGeocodeFieldErrors } from '@/lib/patient/appointments/matchAppointmentAddressToGeocode';
-import { ensureGoogleMapsConfigured } from '@/lib/google-maps/loadGoogleMapsApi';
 
 export type AppointmentAddressGeocodeValues = AppointmentAddressFieldValues & {
     house_number?: string;
