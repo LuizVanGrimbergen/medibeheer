@@ -2,8 +2,8 @@
 import { Images } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
 import { inventoryVacationShareStepPanelClass } from '@/lib/patient/inventory/inventoryVacationUiClasses';
+import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
 
 defineProps<{
     stepCurrent: number;
