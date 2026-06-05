@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import AppNavbar from '@/Components/AppNavbar.vue';
-import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
-import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
-import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
-import { useInertiaNavigationLoading } from '@/composables/useInertiaNavigationLoading';
-import type { PageProps } from '@/lib/types';
 import { usePage } from '@inertiajs/vue3';
 import { computed, defineAsyncComponent } from 'vue';
+import AppNavbar from '@/Components/AppNavbar.vue';
+import PwaIosInstallBanner from '@/Components/PwaIosInstallBanner.vue';
+import { SessionActionSuccessScreen } from '@/Components/ui/action-success-screen';
+import { FlashErrorBanner } from '@/Components/ui/flash-error-banner';
+import { useInertiaNavigationLoading } from '@/composables/useInertiaNavigationLoading';
+import type { PageProps } from '@/lib/types';
 
 const AppLoadingScreen = defineAsyncComponent(
     () => import('@/Components/ui/loading-screen/AppLoadingScreen.vue'),
@@ -18,7 +18,6 @@ const { isLoading: isNavigationLoading, loadingMessageKey } =
 const page = usePage<PageProps>();
 const authenticatedUserName = computed(() => page.props.auth.user?.name ?? '');
 const flashError = computed(() => page.props.flash?.error ?? null);
-const flashSuccess = computed(() => page.props.flash?.success ?? null);
 const flashRateLimitSeconds = computed(
     () => page.props.flash?.rateLimitSeconds ?? null,
 );
@@ -54,12 +53,7 @@ const flashRateLimitSeconds = computed(
                     :rate-limit-seconds="flashRateLimitSeconds"
                 />
             </div>
-            <div
-                v-if="flashSuccess"
-                class="mx-auto mt-6 max-w-7xl shrink-0 px-4 sm:px-6 lg:px-8"
-            >
-                <FlashSuccessBanner :message="flashSuccess" />
-            </div>
+            <SessionActionSuccessScreen />
             <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
                 <slot />
             </div>
