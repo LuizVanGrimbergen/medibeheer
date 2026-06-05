@@ -303,9 +303,7 @@ const detailsToggleAriaLabel = computed(() =>
                         icon="map-pin"
                         stop-propagation
                         :title="
-                            t(
-                                'patient.appointments.labels.openInGoogleMaps',
-                            )
+                            t('patient.appointments.labels.openInGoogleMaps')
                         "
                         :ariaLabel="
                             t(
@@ -329,10 +327,7 @@ const detailsToggleAriaLabel = computed(() =>
                 />
 
                 <div
-                    v-if="
-                        googleMapsUrl !== null &&
-                        !showCompactGoogleMapsLink
-                    "
+                    v-if="googleMapsUrl !== null && !showCompactGoogleMapsLink"
                     :class="
                         cn(
                             patientPageCardDetailsExpandWrapperClass,

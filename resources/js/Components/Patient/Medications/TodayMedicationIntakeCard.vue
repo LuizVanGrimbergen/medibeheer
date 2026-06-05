@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { AlertTriangle, Check } from 'lucide-vue-next';
-import { computed, ref, watch  } from 'vue';
-import type {ComponentPublicInstance} from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
@@ -61,7 +61,9 @@ const showBeforeWindowState = computed(
 const showCustomTimePanel = ref(false);
 const customTakenTime = ref(currentMedicationIntakeTimeHHmm());
 const isOpen = ref(false);
-const criticalAlertRef = ref<HTMLElement | ComponentPublicInstance | null>(null);
+const criticalAlertRef = ref<HTMLElement | ComponentPublicInstance | null>(
+    null,
+);
 const shouldFlashSuccess = useSuccessFlashTrigger(isTaken);
 
 watch(showPastSnoozeActions, (visible) => {
@@ -240,7 +242,10 @@ function confirmCustomTakenTime(): void {
                     </template>
                 </MedicationListCardLead>
 
-                <div v-if="showBeforeWindowState" class="mt-5 flex flex-col gap-3">
+                <div
+                    v-if="showBeforeWindowState"
+                    class="mt-5 flex flex-col gap-3"
+                >
                     <Button
                         type="button"
                         class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
@@ -284,7 +289,9 @@ function confirmCustomTakenTime(): void {
                             @click="markTakenNow"
                         >
                             {{
-                                t('patient.dashboard.todayMedications.markTaken')
+                                t(
+                                    'patient.dashboard.todayMedications.markTaken',
+                                )
                             }}
                         </Button>
                         <Button

@@ -60,10 +60,7 @@ const sectionParams = (key: (typeof sectionKeys)[number]) => {
             <p class="text-text-muted mt-2">
                 {{ t(`privacy.sections.${key}.body`, sectionParams(key)) }}
             </p>
-            <p
-                v-if="key === 'controller'"
-                class="text-text-muted mt-2"
-            >
+            <p v-if="key === 'controller'" class="text-text-muted mt-2">
                 {{ t('privacy.cookiesReferencePrefix') }}
                 <Link
                     :href="route('legal.cookies')"

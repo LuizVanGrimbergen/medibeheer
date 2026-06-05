@@ -15,8 +15,7 @@ export default {
         },
         pickedUp: {
             title: 'Opgehaald bij de apotheek',
-            lastPrescriptionSubtitle:
-                'Let op: dit was uw laatste voorschrift.',
+            lastPrescriptionSubtitle: 'Let op: dit was uw laatste voorschrift.',
             scheduleAppointment: 'Nieuwe afspraak maken',
         },
     },

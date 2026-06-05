@@ -9,26 +9,21 @@ import {
     Pill,
     UserRound,
 } from 'lucide-vue-next';
-import { computed, ref  } from 'vue';
-import type { ComputedRef } from 'vue';
-import type {ComponentPublicInstance} from 'vue';
+import type { ComponentPublicInstance, ComputedRef } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MobileShellSettingsLink from '@/Components/MobileShellSettingsLink.vue';
-import {
-    
-    useGsapFooterNavIndicator
-} from '@/composables/motion/useGsapFooterNavIndicator';
-import type {FooterNavLinkRefs} from '@/composables/motion/useGsapFooterNavIndicator';
+import type { FooterNavLinkRefs } from '@/composables/motion/useGsapFooterNavIndicator';
+import { useGsapFooterNavIndicator } from '@/composables/motion/useGsapFooterNavIndicator';
 import { usePatientNavigationAlerts } from '@/composables/patient/usePatientNavigationAlerts';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
+import type { PatientFooterNavRouteName } from '@/lib/patient/navigation/patientFooterNavClasses';
 import {
     patientFooterNavAlertAccentClass,
-    patientFooterNavAlertTone
-    
+    patientFooterNavAlertTone,
 } from '@/lib/patient/navigation/patientFooterNavClasses';
-import type {PatientFooterNavRouteName} from '@/lib/patient/navigation/patientFooterNavClasses';
 import type { PageProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -283,7 +278,9 @@ const footerLabelClass = computed(() =>
                             :class="footerNavIconClass(item.routeName)"
                             aria-hidden="true"
                         />
-                        <span :class="footerNavLabelClassForItem(item.routeName)">
+                        <span
+                            :class="footerNavLabelClassForItem(item.routeName)"
+                        >
                             {{ t(item.labelKey) }}
                         </span>
                     </Link>

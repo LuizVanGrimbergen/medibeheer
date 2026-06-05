@@ -61,7 +61,7 @@ defineExpose({
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                class="text-primary justify-self-start hover:bg-surface-hover"
+                class="text-primary hover:bg-surface-hover justify-self-start"
                 :aria-label="props.prevDayAriaLabel"
                 @click="emit('previous-day')"
             >
@@ -74,7 +74,7 @@ defineExpose({
                 <h2
                     :class="
                         cn(
-                            'text-text-heading truncate font-semibold leading-snug',
+                            'text-text-heading truncate leading-snug font-semibold',
                             props.density === 'compact'
                                 ? 'text-sm'
                                 : 'text-base md:text-lg',
@@ -94,7 +94,7 @@ defineExpose({
                 type="button"
                 variant="ghost"
                 size="icon-sm"
-                class="text-primary justify-self-end hover:bg-surface-hover"
+                class="text-primary hover:bg-surface-hover justify-self-end"
                 :aria-label="props.nextDayAriaLabel"
                 @click="emit('next-day')"
             >

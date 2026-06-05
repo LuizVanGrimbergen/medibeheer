@@ -9,11 +9,7 @@ import { cn } from '@/lib/utils';
 const props = defineProps<{
     intakeSlot: Pick<
         MedicationIntakeHistorySlot,
-        | 'name'
-        | 'type_medication'
-        | 'dose_time'
-        | 'snooze_minutes'
-        | 'taken_at'
+        'name' | 'type_medication' | 'dose_time' | 'snooze_minutes' | 'taken_at'
     >;
 }>();
 

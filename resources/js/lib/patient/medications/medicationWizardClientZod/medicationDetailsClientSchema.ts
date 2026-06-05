@@ -23,8 +23,7 @@ export const medicationWizardDetailsSchema = z
                 if (amount === null || amount <= 0) {
                     ctx.addIssue({
                         code: 'custom',
-                        message:
-                            medicationWizardStepValidation('doseInvalid'),
+                        message: medicationWizardStepValidation('doseInvalid'),
                     });
                 }
             },

@@ -29,8 +29,7 @@ const timesPerDayCount = computed({
         return parsed;
     },
     set(value: number | null): void {
-        form.schedule.times_per_day =
-            value === null ? '' : String(value);
+        form.schedule.times_per_day = value === null ? '' : String(value);
     },
 });
 

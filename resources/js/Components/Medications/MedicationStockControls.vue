@@ -7,8 +7,8 @@ import MedicationUrgencyProgressSection from '@/Components/Medications/Medicatio
 import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
-import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
+import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
 import { medicationUrgencyOutlineButtonClass } from '@/lib/patient/medications/urgency/medicationUrgencyPanelClasses';
@@ -23,12 +23,14 @@ const props = withDefaults(
         canAdjustStock?: boolean;
         showSummary?: boolean;
         showUrgencySummary?: boolean;
+        showProgressBar?: boolean;
     }>(),
     {
         updateRouteName: 'patient.medications.stocks.update',
         canAdjustStock: true,
         showSummary: true,
         showUrgencySummary: true,
+        showProgressBar: true,
     },
 );
 
@@ -106,6 +108,7 @@ const stockDisplayDoseUnit = computed(() => {
                         :warning-alert-label="
                             t('patient.inventory.warningStockIconAria')
                         "
+                        :show-progress-bar="props.showProgressBar"
                     />
 
                     <p

@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
-import {
-    CalendarDays,
-    LayoutGrid,
-    Link2,
-    Pill,
-    Smile,
-} from 'lucide-vue-next';
+import { CalendarDays, LayoutGrid, Link2, Pill, Smile } from 'lucide-vue-next';
 import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';

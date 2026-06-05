@@ -30,10 +30,7 @@ const showOnHomePage = computed(() => {
 </script>
 
 <template>
-    <div
-        v-if="showOnHomePage"
-        class="flex justify-end pb-1 md:hidden"
-    >
+    <div v-if="showOnHomePage" class="flex justify-end pb-1 md:hidden">
         <Button
             as-child
             variant="ghost"

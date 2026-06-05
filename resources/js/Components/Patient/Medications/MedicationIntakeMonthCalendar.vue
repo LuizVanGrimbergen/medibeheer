@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistoryMonthCalendar from '@/Components/History/HistoryMonthCalendar.vue';
-import { MedicationIntakeDayLegend } from '@/Components/ui/medication-intake-day-icon';
 import MedicationIntakeCalendarDayIndicator from '@/Components/Patient/Medications/MedicationIntakeCalendarDayIndicator.vue';
+import { MedicationIntakeDayLegend } from '@/Components/ui/medication-intake-day-icon';
 import {
     formatHistoryCalendarLongDate,
     todayIsoDateKey,
@@ -11,9 +11,10 @@ import {
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { indexMedicationIntakeCalendarDays } from '@/lib/patient/medications/history/indexMedicationIntakeCalendarDays';
 import {
-    isMedicationIntakeDayIconStatus,
-    type MedicationIntakeDayIconStatusValue,
+    isMedicationIntakeDayIconStatus
+    
 } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import type {MedicationIntakeDayIconStatusValue} from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import { cn } from '@/lib/utils';
 
@@ -89,7 +90,7 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         });
     }
 
-    let displayedStatus = day.status;
+    const displayedStatus = day.status;
 
     if (
         props.statusFilter !== null &&
@@ -111,10 +112,7 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
 <template>
     <div
         :class="
-            cn(
-                'flex min-w-0 flex-col',
-                hasSelectableLegend ? 'gap-2' : 'gap-0',
-            )
+            cn('flex min-w-0 flex-col', hasSelectableLegend ? 'gap-2' : 'gap-0')
         "
     >
         <HistoryMonthCalendar

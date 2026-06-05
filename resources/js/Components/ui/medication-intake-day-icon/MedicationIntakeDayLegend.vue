@@ -3,9 +3,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationIntakeDayIcon from '@/Components/ui/medication-intake-day-icon/MedicationIntakeDayIcon.vue';
 import {
-    MEDICATION_INTAKE_DAY_LEGEND_OPTIONS,
-    type MedicationIntakeDayIconStatusValue,
+    MEDICATION_INTAKE_DAY_LEGEND_OPTIONS
+    
 } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
+import type {MedicationIntakeDayIconStatusValue} from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import { cn } from '@/lib/utils';
 
 export type MedicationIntakeDayLegendPresentation = 'legend' | 'filter';
