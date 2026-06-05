@@ -41,6 +41,12 @@ export default {
         profile: 'Profiel',
         settings: 'Instellingen',
         logout: 'Uitloggen',
+        logoutConfirm: {
+            title: 'Uitloggen?',
+            message: 'Ben u zeker dat u wilt uitloggen?',
+            confirm: 'Ja, uitloggen',
+            cancel: 'Annuleren',
+        },
         welcomeBack: 'Welkom terug,',
     },
     pwa: {

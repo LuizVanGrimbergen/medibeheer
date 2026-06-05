@@ -123,6 +123,19 @@ export const patientConfirmDialogContentClass =
 export const patientConfirmDialogMessageClass =
     'flex min-h-0 flex-1 flex-col items-center justify-center px-6 py-10 text-center sm:px-10';
 
+/** Optional hero icon above confirm dialog copy (matches {@link ActionSuccessScreen}). */
+export const patientConfirmDialogIconWrapClass =
+    'mb-8 flex size-20 items-center justify-center rounded-2xl border-2 sm:size-24';
+
+export const patientConfirmDialogIconClass =
+    'size-12 shrink-0 sm:size-14';
+
+export const patientConfirmDialogIconWrapDangerClass =
+    'border-danger/40 bg-danger/10 text-danger';
+
+export const patientConfirmDialogIconWrapPrimaryClass =
+    'border-primary/40 bg-primary/10 text-primary';
+
 /** Centers a short wizard step in the scroll column (footer stays pinned via mt-auto). */
 export const patientShellWizardCenteredStepClass =
     'flex min-h-0 w-full flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-10';

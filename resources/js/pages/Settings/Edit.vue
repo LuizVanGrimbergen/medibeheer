@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ArrowLeft } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { LogOut } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {
+    patientFormWizardFooterCancelButtonClass,
+    patientFormWizardFooterPrimaryButtonClass,
+    patientFormWizardFooterRowClass,
+    patientShellWizardFooterClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { PageProps, SecurityActivityPaginator } from '@/lib/types';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import PatientMedicationRemindersForm from './Partials/PatientMedicationRemindersForm.vue';
@@ -55,17 +62,18 @@ const settingsBackHref = computed(() => {
     return route('home');
 });
 
-const settingsBackLabelKey = computed(() => {
+const settingsOverviewBackLabelKey = computed(() => {
     if (isPatient.value) {
-        return 'patient.navigation.home';
+        return 'profile.backToHome';
     }
 
     if (isFamilyMember.value) {
-        return 'family.navigation.overview';
+        return 'profile.backToOverview';
     }
 
-    return 'doctor.navigation.home';
+    return 'profile.backToDoctorHome';
 });
+const showSettingsBackButton = computed(() => true);
 const showMedicationRemindersSettings = computed(
     () => isPatient.value && page.props.webpush !== undefined,
 );
@@ -92,6 +100,32 @@ const props = defineProps<{
     status?: string;
     securityActivities: SecurityActivityPaginator | null;
 }>();
+
+const confirmingLogout = ref(false);
+const logoutProcessing = ref(false);
+
+function openLogoutConfirm(): void {
+    confirmingLogout.value = true;
+}
+
+function closeLogoutConfirm(): void {
+    confirmingLogout.value = false;
+}
+
+function confirmLogout(): void {
+    logoutProcessing.value = true;
+
+    router.post(
+        route('logout'),
+        {},
+        {
+            onFinish: () => {
+                logoutProcessing.value = false;
+                closeLogoutConfirm();
+            },
+        },
+    );
+}
 </script>
 
 <template>
@@ -100,23 +134,17 @@ const props = defineProps<{
     </Head>
 
     <AuthenticatedLayout>
-        <div
-            class="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
-        >
-            <div class="py-12">
+        <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            <div
+                class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+            >
                 <div
-                    class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-7xl flex-col px-4 sm:px-6 lg:px-8"
+                    class="mx-auto flex min-h-full w-full max-w-7xl flex-col px-4 py-4 sm:px-6 md:py-6 lg:px-8"
                 >
-                    <Link
-                        v-if="isPatient || isFamilyMember"
-                        :href="settingsBackHref"
-                        class="text-primary mb-4 inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition hover:opacity-80 md:hidden"
+                    <div
+                        v-if="selectedSection === null"
+                        class="min-h-0 flex-1 space-y-4"
                     >
-                        <ArrowLeft :size="18" />
-                        <span>{{ t(settingsBackLabelKey) }}</span>
-                    </Link>
-
-                    <div v-if="selectedSection === null" class="space-y-4">
                         <SettingsWidgetLink
                             :href="
                                 route('settings.edit', {
@@ -218,15 +246,10 @@ const props = defineProps<{
                         </SettingsWidgetLink>
                     </div>
 
-                    <div v-if="selectedSection !== null" class="space-y-4">
-                        <Link
-                            :href="route('settings.edit')"
-                            class="text-primary inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold transition hover:opacity-80"
-                        >
-                            <ArrowLeft :size="18" />
-                            <span>{{ t('profile.backToSettings') }}</span>
-                        </Link>
-
+                    <div
+                        v-if="selectedSection !== null"
+                        class="min-h-0 flex-1 space-y-4"
+                    >
                         <div
                             class="border-border bg-surface rounded-2xl border p-4 shadow-sm sm:p-6"
                         >
@@ -266,21 +289,49 @@ const props = defineProps<{
                         </div>
                     </div>
 
-                    <div class="mt-auto pt-8">
-                        <Button
-                            as-child
-                            variant="outline"
-                            class="h-auto min-h-12 w-full touch-manipulation text-danger hover:bg-surface-hover hover:text-danger sm:min-h-14"
-                        >
-                            <Link
-                                :href="route('logout')"
-                                method="post"
-                                as="button"
+                    <div :class="patientShellWizardFooterClass">
+                        <div :class="patientFormWizardFooterRowClass">
+                            <Button
+                                v-if="showSettingsBackButton"
+                                as-child
+                                variant="default"
+                                size="lg"
+                                :class="patientFormWizardFooterPrimaryButtonClass"
+                            >
+                                <Link :href="settingsBackHref">
+                                    {{ t(settingsOverviewBackLabelKey) }}
+                                </Link>
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                size="lg"
+                                :class="patientFormWizardFooterCancelButtonClass"
+                                @click="openLogoutConfirm"
                             >
                                 {{ t('app.navigation.logout') }}
-                            </Link>
-                        </Button>
+                            </Button>
+                        </div>
                     </div>
+
+                    <PatientConfirmDialog
+                        :open="confirmingLogout"
+                        :title="t('app.navigation.logoutConfirm.title')"
+                        :description="t('app.navigation.logoutConfirm.message')"
+                        :confirm-label="t('app.navigation.logoutConfirm.confirm')"
+                        :cancel-label="t('app.navigation.logoutConfirm.cancel')"
+                        :processing="logoutProcessing"
+                        :icon="LogOut"
+                        icon-tone="danger"
+                        cancel-first
+                        cancel-tone="primary"
+                        @update:open="
+                            (open) => {
+                                confirmingLogout = open;
+                            }
+                        "
+                        @confirm="confirmLogout"
+                    />
                 </div>
             </div>
         </div>
