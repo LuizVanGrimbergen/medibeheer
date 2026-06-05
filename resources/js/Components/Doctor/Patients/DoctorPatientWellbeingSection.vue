@@ -84,26 +84,32 @@ const wellbeingCalendarIndex = computed(() =>
     indexWellbeingCalendarCheckins(props.wellbeing_calendar_checkins),
 );
 
-const wellbeingMoodCounts = computed((): Record<DailyMoodScoreValue, number> => {
-    const counts: Record<DailyMoodScoreValue, number> = {
-        bad: 0,
-        ok: 0,
-        good: 0,
-    };
+const wellbeingMoodCounts = computed(
+    (): Record<DailyMoodScoreValue, number> => {
+        const counts: Record<DailyMoodScoreValue, number> = {
+            bad: 0,
+            ok: 0,
+            good: 0,
+        };
 
-    for (const checkin of props.wellbeing_calendar_checkins) {
-        counts[checkin.mood_score] += 1;
-    }
+        for (const checkin of props.wellbeing_calendar_checkins) {
+            counts[checkin.mood_score] += 1;
+        }
 
-    return counts;
-});
+        return counts;
+    },
+);
 
 function onMoodFilterSelect(mood: DailyMoodScoreValue): void {
     moodFilter.value = mood;
 }
 
-const { selectedCalendarDate, selectedDaySectionRef, onSelectCalendarDate, selectCalendarDate } =
-    useHistorySelectedDay(() => props.wellbeing_calendar_month);
+const {
+    selectedCalendarDate,
+    selectedDaySectionRef,
+    onSelectCalendarDate,
+    selectCalendarDate,
+} = useHistorySelectedDay(() => props.wellbeing_calendar_month);
 
 watch(moodFilter, () => {
     selectCalendarDate(null, false);

@@ -34,10 +34,11 @@ function buildMedicationAttentionItems(
 ): DoctorPatientMedicationAttentionItem[] {
     return medicationDays
         .filter(
-            (day): day is MedicationIntakeCalendarDay & {
+            (
+                day,
+            ): day is MedicationIntakeCalendarDay & {
                 status: 'partial' | 'none_taken';
-            } =>
-                day.status === 'partial' || day.status === 'none_taken',
+            } => day.status === 'partial' || day.status === 'none_taken',
         )
         .map((day) => ({
             kind: 'medication' as const,

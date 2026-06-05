@@ -1,8 +1,8 @@
+import type { DoctorPatientUrgentPrescription } from '@/lib/doctor/patients/doctorPatientUrgentPrescription';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import type { DoctorPatientUrgentPrescription } from '@/lib/doctor/patients/doctorPatientUrgentPrescription';
 import type { DailyCheckin, Paginated } from '@/lib/types';
 
 export type DoctorPatientOverviewScreenProps = {
