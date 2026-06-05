@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useForm } from '@inertiajs/vue3';
+import { AlertTriangle, Check } from 'lucide-vue-next';
+import { computed, ref, watch  } from 'vue';
+import type {ComponentPublicInstance} from 'vue';
+import { useI18n } from 'vue-i18n';
 import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
@@ -6,6 +11,8 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
+import { useGsapAttentionPulse } from '@/composables/motion/useGsapAttentionPulse';
+import { useSuccessFlashTrigger } from '@/composables/motion/useSuccessFlashTrigger';
 import { medicationVisualToneFromContext } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
 import {
@@ -28,12 +35,6 @@ import type {
     TodayMedicationIntakeSlot,
 } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { useForm } from '@inertiajs/vue3';
-import { AlertTriangle, Check } from 'lucide-vue-next';
-import { computed, ref, watch, type ComponentPublicInstance } from 'vue';
-import { useGsapAttentionPulse } from '@/composables/motion/useGsapAttentionPulse';
-import { useSuccessFlashTrigger } from '@/composables/motion/useSuccessFlashTrigger';
-import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
     intakeSlot: TodayMedicationIntakeSlot;

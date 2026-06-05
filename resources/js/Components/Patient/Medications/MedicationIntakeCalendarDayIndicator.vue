@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import type { LucideIcon } from 'lucide-vue-next';
-import { AlertCircle, Check, Minus } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { MedicationIntakeDayIcon } from '@/Components/ui/medication-intake-day-icon';
 import { todayIsoDateKey } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
+import { isMedicationIntakeDayIconStatus } from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeDayStatusValue,
 } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
-import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     cell: HistoryMonthCalendarCell;
@@ -37,47 +36,22 @@ const indicatorStatus = computed((): MedicationIntakeDayStatusValue | null => {
     return day.status;
 });
 
-const glyph = computed((): LucideIcon | null => {
-    if (indicatorStatus.value === 'complete') {
-        return Check;
+const iconStatus = computed(() => {
+    const status = indicatorStatus.value;
+
+    if (status === null || !isMedicationIntakeDayIconStatus(status)) {
+        return null;
     }
 
-    if (indicatorStatus.value === 'partial') {
-        return Minus;
-    }
-
-    if (indicatorStatus.value === 'none_taken') {
-        return AlertCircle;
-    }
-
-    return null;
-});
-
-const iconClass = computed((): string => {
-    if (indicatorStatus.value === 'complete') {
-        return 'text-success';
-    }
-
-    if (indicatorStatus.value === 'partial') {
-        return 'text-warning';
-    }
-
-    if (indicatorStatus.value === 'none_taken') {
-        return 'text-danger';
-    }
-
-    return 'text-border';
+    return status;
 });
 </script>
 
 <template>
-    <component
-        v-if="glyph !== null"
-        :is="glyph"
-        :class="
-            cn('size-[1.05rem] shrink-0 stroke-[2.25] sm:size-5', iconClass)
-        "
-        aria-hidden="true"
+    <MedicationIntakeDayIcon
+        v-if="iconStatus !== null"
+        :status="iconStatus"
+        size="calendar-day"
     />
     <span
         v-else

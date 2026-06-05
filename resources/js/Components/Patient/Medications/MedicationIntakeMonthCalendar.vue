@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { AlertCircle, Check, Minus } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistoryMonthCalendar from '@/Components/History/HistoryMonthCalendar.vue';
+import { MedicationIntakeDayLegend } from '@/Components/ui/medication-intake-day-icon';
 import MedicationIntakeCalendarDayIndicator from '@/Components/Patient/Medications/MedicationIntakeCalendarDayIndicator.vue';
 import {
     formatHistoryCalendarLongDate,
@@ -110,33 +110,7 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         </template>
 
         <template #legend>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <Check
-                    class="text-success size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('patient.medications.history.status.complete') }}
-            </span>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <Minus
-                    class="text-warning size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('patient.medications.history.status.partial') }}
-            </span>
-            <span
-                class="text-text-heading inline-flex items-center gap-1.5 font-medium"
-            >
-                <AlertCircle
-                    class="text-danger size-4 shrink-0 stroke-2"
-                    aria-hidden="true"
-                />
-                {{ t('patient.medications.history.status.none_taken') }}
-            </span>
+            <MedicationIntakeDayLegend />
         </template>
     </HistoryMonthCalendar>
 </template>

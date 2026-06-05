@@ -85,7 +85,7 @@ const typeLabel = computed(() =>
                     {{
                         isTaken
                             ? t('patient.medications.history.slot.taken')
-                            : t('patient.medications.history.slot.notTaken')
+                            : t('patient.medications.history.slot.not_taken')
                     }}
                 </span>
             </div>
