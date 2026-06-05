@@ -8,8 +8,10 @@ import {
 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationCurrentStockPanel from '@/Components/Medications/MedicationCurrentStockPanel.vue';
 import MedicationStockControls from '@/Components/Medications/MedicationStockControls.vue';
 import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
 import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
 import PatientListCardDetailsGroup from '@/Components/Patient/PatientListCardDetailsGroup.vue';
 import PatientListCardDetailsGroupItem from '@/Components/Patient/PatientListCardDetailsGroupItem.vue';
@@ -18,6 +20,12 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
+import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
+import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
+import {
+    medicationUrgencyShowsAlertRow,
+    medicationUrgencyStatusTextClass,
+} from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import {
     medicationCardHeaderSummary,
     medicationIntakeDoseLine,
@@ -30,12 +38,16 @@ import {
     patientPageCardHeaderWithActionsClass,
 } from '@/lib/patient/patientPageTypography';
 import type { MedicationListItem } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
         medication: MedicationListItem;
         showActions?: boolean;
         showStock?: boolean;
+        showStockSummary?: boolean;
+        stockControlsFirst?: boolean;
+        contentOnly?: boolean;
         stockUpdateRouteName?: string;
         listStatusEndedLabelKey?: string;
         listStatusRemovedLabelKey?: string;
@@ -44,6 +56,9 @@ const props = withDefaults(
     {
         showActions: true,
         showStock: false,
+        showStockSummary: true,
+        stockControlsFirst: false,
+        contentOnly: false,
         stockUpdateRouteName: 'patient.medications.stocks.update',
         listStatusEndedLabelKey: 'patient.medications.listStatus.ended',
         listStatusRemovedLabelKey: 'patient.medications.listStatus.removed',
@@ -294,10 +309,151 @@ const medicationPillIconClass = computed(
 const notePreview = computed(() =>
     medicationIntakeNotePreview(props.medication),
 );
+
+const primaryStock = computed(() => props.medication.stocks[0]);
+
+const supplyEstimateLine = computed((): string =>
+    medicationSupplyEstimateLine(t, props.medication),
+);
+
+const stockProgressPercent = computed((): number | null => {
+    if (primaryStock.value === undefined) {
+        return null;
+    }
+
+    return medicationStockProgressPercent(
+        props.medication.supply_estimate_days,
+        props.medication.supply_estimate_quality,
+    );
+});
+
+const showCollapsedUrgencyAlert = computed(
+    (): boolean =>
+        props.showStock &&
+        primaryStock.value !== undefined &&
+        medicationUrgencyShowsAlertRow(stockProgressTone.value),
+);
+
+const showCollapsedSupplyDaysSummary = computed(
+    (): boolean =>
+        props.showStock &&
+        primaryStock.value !== undefined &&
+        !isInactiveListItem.value,
+);
+
+const collapsedHeaderLine = computed((): string =>
+    showCollapsedSupplyDaysSummary.value
+        ? supplyEstimateLine.value
+        : headerSummary.value,
+);
+
+const stockProgressAriaLabel = computed((): string =>
+    t('patient.inventory.stockProgressAria', {
+        days: String(props.medication.supply_estimate_days ?? 0),
+    }),
+);
 </script>
 
 <template>
+    <div v-if="props.contentOnly" class="space-y-6">
+        <MedicationStockControls
+            v-if="props.showStock && props.stockControlsFirst"
+            :medication="medication"
+            :update-route-name="props.stockUpdateRouteName"
+            :id-prefix="`medication-card-stock-${medication.id}`"
+            :can-adjust-stock="medication.list_status === 'active'"
+            :show-summary="props.showStockSummary"
+        />
+
+        <PatientListCardDetailsGroup v-if="hasMedicationDetailsGroup">
+            <PatientListCardDetailsGroupItem
+                v-if="doseLine !== null"
+                :label="t('patient.medications.overview.amountPerIntake')"
+            >
+                <template #icon>
+                    <Package :stroke-width="2" aria-hidden="true" />
+                </template>
+                {{ doseLine }}
+            </PatientListCardDetailsGroupItem>
+
+            <PatientListCardDetailsGroupItem
+                v-if="strengthLine !== null"
+                :label="t('patient.medications.fields.strength')"
+            >
+                <template #icon>
+                    <Scale :stroke-width="2" aria-hidden="true" />
+                </template>
+                {{ strengthLine }}
+            </PatientListCardDetailsGroupItem>
+
+            <PatientListCardDetailsGroupItem
+                v-if="sortedDoseTimes.length > 0"
+                :label="t('patient.medications.fields.doseTime')"
+            >
+                <template #icon>
+                    <Clock :stroke-width="2" aria-hidden="true" />
+                </template>
+                {{ doseTimesDisplay }}
+            </PatientListCardDetailsGroupItem>
+
+            <PatientListCardDetailsGroupItem
+                v-if="scheduleDateRow !== null"
+                :label="t('patient.medications.fields.intakePeriod')"
+                raw-value
+            >
+                <template #icon>
+                    <Calendar :stroke-width="2" aria-hidden="true" />
+                </template>
+                <p
+                    :class="patientPageCardDetailValueClass"
+                    :aria-label="scheduleDateRow.ariaLabel"
+                >
+                    {{ scheduleDateRow.rangeDisplay }}
+                </p>
+            </PatientListCardDetailsGroupItem>
+
+            <PatientListCardDetailsGroupItem
+                v-if="prescriptionExpiryDateRow !== null"
+                :label="
+                    t('patient.medications.fields.prescriptionExpiryDateShort')
+                "
+                raw-value
+            >
+                <template #icon>
+                    <CalendarClock :stroke-width="2" aria-hidden="true" />
+                </template>
+                <p :class="patientPageCardDetailValueClass">
+                    <time :datetime="prescriptionExpiryDateRow.iso">
+                        {{ prescriptionExpiryDateRow.display }}
+                    </time>
+                </p>
+            </PatientListCardDetailsGroupItem>
+        </PatientListCardDetailsGroup>
+
+        <p
+            v-if="notePreview !== null"
+            class="border-primary text-text border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed italic sm:text-lg"
+        >
+            {{ notePreview }}
+        </p>
+
+        <MedicationStockControls
+            v-if="props.showStock && !props.stockControlsFirst"
+            :medication="medication"
+            :update-route-name="props.stockUpdateRouteName"
+            :id-prefix="`medication-card-stock-${medication.id}`"
+            :can-adjust-stock="medication.list_status === 'active'"
+            :show-summary="props.showStockSummary"
+            :class="
+                props.showStockSummary
+                    ? 'border-border/70 border-t pt-5'
+                    : undefined
+            "
+        />
+    </div>
+
     <Card
+        v-else
         class="bg-surface text-text w-full min-w-0 rounded-3xl border shadow-md shadow-black/[0.04]"
         :class="[
             medicationVisualToneClasses.border,
@@ -343,10 +499,18 @@ const notePreview = computed(() =>
                             {{ medication.name }}
                         </p>
                         <p
-                            v-if="!isOpen"
-                            :class="patientPageCardHeaderSummaryClass"
+                            v-if="!isOpen && !showCollapsedUrgencyAlert"
+                            :class="
+                                cn(
+                                    patientPageCardHeaderSummaryClass,
+                                    showCollapsedSupplyDaysSummary &&
+                                        medicationUrgencyStatusTextClass(
+                                            stockProgressTone,
+                                        ),
+                                )
+                            "
                         >
-                            {{ headerSummary }}
+                            {{ collapsedHeaderLine }}
                         </p>
                         <p
                             v-if="listStatusLabel !== null"
@@ -355,6 +519,26 @@ const notePreview = computed(() =>
                             {{ listStatusLabel }}
                         </p>
                     </div>
+                </div>
+
+                <div
+                    v-if="!isOpen && showCollapsedUrgencyAlert"
+                    class="mt-3.5 space-y-3.5"
+                >
+                    <MedicationUrgencyProgressSection
+                        :tone="stockProgressTone"
+                        :progress-percent="stockProgressPercent"
+                        :status-line="supplyEstimateLine"
+                        :progress-aria-label="stockProgressAriaLabel"
+                        :critical-alert-label="
+                            t('patient.inventory.lowStockBadge')
+                        "
+                        :warning-alert-label="
+                            t('patient.inventory.warningStockIconAria')
+                        "
+                        :show-progress-bar="false"
+                    />
+                    <MedicationCurrentStockPanel :medication="medication" />
                 </div>
 
                 <CollapsibleContent>
@@ -472,7 +656,12 @@ const notePreview = computed(() =>
                             :can-adjust-stock="
                                 medication.list_status === 'active'
                             "
-                            class="border-border/70 border-t pt-5"
+                            :show-summary="props.showStockSummary"
+                            :class="
+                                props.showStockSummary
+                                    ? 'border-border/70 border-t pt-5'
+                                    : undefined
+                            "
                         />
                     </div>
                 </CollapsibleContent>

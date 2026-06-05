@@ -1,8 +1,8 @@
+import type { ComponentPublicInstance, Ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 import type { GsapTween } from '@/lib/motion/gsapMotion';
 import { animateProgressWidth } from '@/lib/motion/gsapMotion';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
-import type { ComponentPublicInstance, Ref } from 'vue';
-import { nextTick, onMounted, onUnmounted, watch } from 'vue';
 
 export function useGsapProgressIndicator(
     indicatorRef: Ref<HTMLElement | ComponentPublicInstance | null>,

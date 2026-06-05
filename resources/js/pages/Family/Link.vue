@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyIncomingPatientInvitationsSection from '@/Components/Family/Link/FamilyIncomingPatientInvitationsSection.vue';
-import FamilyPatientsLinkSection from '@/Components/Family/Link/FamilyPatientsLinkSection.vue';
 import FamilyMedicationPlansOverviewSection from '@/Components/Family/Overview/FamilyMedicationPlansOverviewSection.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyMedicationPlanProposalSummary } from '@/lib/family/medicationPlans/familyMedicationPlanProposalSummary';
-import type { IncomingFamilyInvitation } from '@/lib/types';
+import type { FamilyDashboardProps, IncomingFamilyInvitation, PageProps } from '@/lib/types';
+
+type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
 
 withDefaults(
     defineProps<{
@@ -20,6 +22,9 @@ withDefaults(
 );
 
 const { t } = useI18n();
+const page = usePage<PageWithFamily>();
+
+const family = computed(() => page.props.family);
 </script>
 
 <template>
@@ -28,9 +33,12 @@ const { t } = useI18n();
     </Head>
 
     <FamilyLayout>
-        <FamilyPageShell :title="t('family.link.heading')">
-            <FamilyPatientsLinkSection />
-
+        <FamilyPageShell
+            :title="t('family.link.heading')"
+            :family="family"
+            linked-patients-heading-key="family.link.patientsHeading"
+            linked-patients-toggle-key="family.link.patientsToggle"
+        >
             <FamilyIncomingPatientInvitationsSection
                 :invitations="incoming_invitations"
             />

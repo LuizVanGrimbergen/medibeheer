@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { Head, router, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
-import FamilyMedicationPlanProposalActionsPanel from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalActionsPanel.vue';
 import FamilyMedicationPlanProposalFormCard from '@/Components/Family/MedicationPlans/FamilyMedicationPlanProposalFormCard.vue';
-import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { useFamilyMedicationPlanProposalFormPage } from '@/composables/family/useFamilyMedicationPlanProposalFormPage';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { MedicationPlanProposalFormInitial } from '@/lib/family/medicationPlans/medicationPlanProposalInitialToFormState';
-import type { FamilyDashboardProps, PageProps } from '@/lib/types';
-
-type FamilyMedicationPlansPageProps = PageProps & {
-    family?: FamilyDashboardProps;
-};
 
 const props = defineProps<{
     proposal_id: number;
@@ -23,17 +15,10 @@ const props = defineProps<{
 }>();
 
 const { t } = useI18n();
-const page = usePage<FamilyMedicationPlansPageProps>();
-
-const wizardCurrentStep = ref<MedicationFormWizardStep>(
-    props.initial !== null || (props.show_summary ?? false) ? 7 : 1,
-);
 
 const startAtSummary = computed(
     () => props.initial !== null || (props.show_summary ?? false),
 );
-
-const showExternalActions = computed(() => wizardCurrentStep.value === 7);
 
 const publishUrl = route('family.medication-plans.publish', props.proposal_id);
 
@@ -59,34 +44,23 @@ function saveAndAddAnother(): void {
     </Head>
 
     <FamilyLayout>
-        <FamilyPageShell
+        <FamilyMedicationPlanProposalFormCard
             :title="t('family.medicationPlans.editTitle')"
-            :family="page.props.family"
-            :show-active-patient="
-                page.props.family?.has_linked_patient ?? false
+            :summary-heading="
+                startAtSummary
+                    ? t('family.medicationPlans.actionsTitle')
+                    : undefined
             "
-        >
-            <FamilyMedicationPlanProposalFormCard
-                v-if="!showExternalActions"
-                :title="t('family.medicationPlans.editTitle')"
-                form-id="family-medication-plan-edit"
-                id-prefix="family-medication-plan-edit"
-                :form="form"
-                :start-at-summary="startAtSummary"
-                @submit="submit()"
-                @cancel="cancel"
-                @current-step-change="wizardCurrentStep = $event"
-            />
-
-            <FamilyMedicationPlanProposalActionsPanel
-                v-if="showExternalActions"
-                :publish-url="publishUrl"
-                :processing="form.processing"
-                :can-publish="true"
-                :can-add-another="true"
-                @cancel="cancel"
-                @add-another="saveAndAddAnother"
-            />
-        </FamilyPageShell>
+            form-id="family-medication-plan-edit"
+            id-prefix="family-medication-plan-edit"
+            :form="form"
+            :start-at-summary="startAtSummary"
+            :publish-url="startAtSummary ? publishUrl : undefined"
+            :can-publish="startAtSummary"
+            :can-add-another="startAtSummary"
+            @submit="submit()"
+            @cancel="cancel"
+            @add-another="saveAndAddAnother"
+        />
     </FamilyLayout>
 </template>

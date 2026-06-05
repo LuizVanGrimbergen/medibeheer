@@ -1,5 +1,5 @@
 <script setup lang="ts">
-/* eslint-disable vue/no-mutating-props */
+ 
 import { MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

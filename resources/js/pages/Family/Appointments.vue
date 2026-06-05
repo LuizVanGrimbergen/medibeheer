@@ -127,6 +127,10 @@ watch(
                 >
                     <AppointmentCard
                         :anchor-id="`family-appointment-${appointment.id}`"
+                        details-toggle-variant="header"
+                        :show-provider-subtitle="false"
+                        :show-compact-google-maps-link="true"
+                        :transport-label="t('family.appointments.transportLabel')"
                         :appointment="{
                             id: appointment.id,
                             doctor_type: appointment.doctor_type,
@@ -161,9 +165,10 @@ watch(
                                         ?.accept_url &&
                                     appointment.status === 'scheduled'
                                 "
-                                class="pt-1"
+                                class="flex justify-center pt-1"
                             >
                                 <AppointmentPairActionButtons
+                                    centered
                                     :show-secondary="
                                         Boolean(
                                             appointment.transport_invitation

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
-    parseGooglePlaceAddressComponents,
-    type GooglePlaceAddressComponent,
+    parseGooglePlaceAddressComponents
+    
 } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
+import type {GooglePlaceAddressComponent} from '@/lib/google-maps/parseGooglePlaceAddressComponents';
 
 function component(
     type: string,

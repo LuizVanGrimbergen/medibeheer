@@ -3,26 +3,16 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import { Images, Loader2, Package, PillBottle } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
+import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import InventoryVacationDateField from '@/Components/Patient/Inventory/InventoryVacationDateField.vue';
 import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
 import InventoryVacationPickupBoxCalculator from '@/Components/Patient/Inventory/InventoryVacationPickupBoxCalculator.vue';
 import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/InventoryVacationShareStepPanel.vue';
-import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import { useInventoryVacationShareToPhotos } from '@/composables/inventory/useInventoryVacationShareToPhotos';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-    patientShellPageFillClass,
-    patientShellWizardCardClass,
-    patientShellWizardCardInnerClass,
-    patientShellWizardFormClass,
-    patientShellWizardStepPanelClass,
-} from '@/lib/patient/patientShellDialogLayout';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
 import { buildInventoryVacationShareImagePayload } from '@/lib/patient/inventory/buildInventoryVacationShareImagePayload';
 import { formatInventoryVacationDateLabel } from '@/lib/patient/inventory/formatInventoryVacationDateLabel';
@@ -34,6 +24,16 @@ import type { PatientInventoryVacationPageProps } from '@/lib/patient/inventory/
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
+import {
+    patientFormWizardFooterCancelButtonClass,
+    patientFormWizardFooterPrimaryButtonClass,
+    patientFormWizardFooterRowClass,
+    patientShellPageFillClass,
+    patientShellWizardCardClass,
+    patientShellWizardCardInnerClass,
+    patientShellWizardFormClass,
+    patientShellWizardStepPanelClass,
+} from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 const props = defineProps<PatientInventoryVacationPageProps>();

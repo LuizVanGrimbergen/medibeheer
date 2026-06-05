@@ -2,7 +2,6 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 import {
-    Bell,
     CalendarDays,
     LayoutGrid,
     Link2,
@@ -50,15 +49,13 @@ type FamilyNavItem = {
         | 'family.appointments'
         | 'family.medications'
         | 'family.link'
-        | 'family.wellbeing'
-        | 'family.updates';
+        | 'family.wellbeing';
     labelKey:
         | 'family.navigation.overview'
         | 'family.navigation.appointments'
         | 'family.navigation.medications'
         | 'family.navigation.link'
-        | 'family.navigation.wellbeing'
-        | 'family.navigation.updates';
+        | 'family.navigation.wellbeing';
     icon: LucideIcon;
     requiresLinkedPatient?: boolean;
 };
@@ -102,12 +99,6 @@ const allFamilyNavItems: readonly FamilyNavItem[] = [
         routeName: 'family.wellbeing',
         labelKey: 'family.navigation.wellbeing',
         icon: Smile,
-        requiresLinkedPatient: true,
-    },
-    {
-        routeName: 'family.updates',
-        labelKey: 'family.navigation.updates',
-        icon: Bell,
         requiresLinkedPatient: true,
     },
 ];

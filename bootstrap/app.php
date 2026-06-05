@@ -12,7 +12,6 @@ use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,7 +36,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             ShareSeoViewData::class,
             HandleInertiaRequests::class,
-            AddLinkHeadersForPreloadedAssets::class,
             AuthenticateSession::class,
             ApplySearchEngineIndexing::class,
         ]);

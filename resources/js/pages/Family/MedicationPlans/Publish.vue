@@ -1,44 +1,20 @@
 <script setup lang="ts">
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
-import { buttonVariants } from '@/Components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
-import { Input } from '@/Components/ui/input';
-import { InputError } from '@/Components/ui/input-error';
-import { Label } from '@/Components/ui/label';
+import FamilyMedicationPlanPublishDialog from '@/Components/Family/MedicationPlans/FamilyMedicationPlanPublishDialog.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
-import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
-import type { FamilyDashboardProps, PageProps } from '@/lib/types';
-import { cn } from '@/lib/utils';
 import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
-
-type FamilyMedicationPlansPageProps = PageProps & {
-    family?: FamilyDashboardProps;
-};
 
 const props = defineProps<{
     proposal_id: number;
-    medication_name: string | null;
     cancel_url: string;
 }>();
 
 const { t } = useI18n();
-const page = usePage<FamilyMedicationPlansPageProps>();
 
 const form = useForm({
     patient_email: '',
 });
-
-const footerPrimaryButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
-
-const footerOutlineButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
 
 function submit(): void {
     form.clearErrors('patient_email');
@@ -74,122 +50,14 @@ function submit(): void {
     </Head>
 
     <FamilyLayout>
-        <FamilyPageShell
-            :title="t('family.medicationPlans.publishPage.title')"
-            :family="page.props.family"
-            :show-active-patient="
-                page.props.family?.has_linked_patient ?? false
-            "
-        >
-            <Card class="border-border bg-surface rounded-2xl shadow-sm">
-                <CardHeader
-                    class="border-border space-y-1.5 border-b px-5 py-4 sm:px-6"
-                >
-                    <CardTitle class="text-text-heading text-xl font-bold">
-                        {{ t('family.medicationPlans.publishPage.title') }}
-                    </CardTitle>
-                    <p
-                        v-if="props.medication_name !== null"
-                        class="text-text-heading text-base font-semibold"
-                    >
-                        {{ props.medication_name }}
-                    </p>
-                    <p class="text-text-muted text-sm leading-relaxed">
-                        {{
-                            t('family.medicationPlans.publishPage.description')
-                        }}
-                    </p>
-                </CardHeader>
-                <CardContent class="px-5 py-6 sm:px-6">
-                    <form
-                        class="flex min-w-0 flex-col gap-6"
-                        novalidate
-                        @submit.prevent="submit"
-                    >
-                        <div class="flex flex-col gap-2">
-                            <Label
-                                for="medication-plan-patient-email"
-                                :class="patientFormLabelClass"
-                            >
-                                {{
-                                    t(
-                                        'family.medicationPlans.publishPage.emailLabel',
-                                    )
-                                }}
-                            </Label>
-                            <Input
-                                id="medication-plan-patient-email"
-                                v-model="form.patient_email"
-                                type="email"
-                                autocomplete="email"
-                                inputmode="email"
-                                :class="
-                                    cn(
-                                        patientFormFieldInputClass,
-                                        form.errors.patient_email
-                                            ? patientFormFieldInvalidClass
-                                            : null,
-                                    )
-                                "
-                                :placeholder="
-                                    t(
-                                        'family.medicationPlans.publishPage.emailPlaceholder',
-                                    )
-                                "
-                                :aria-invalid="
-                                    Boolean(form.errors.patient_email)
-                                "
-                            />
-                            <InputError
-                                class="mt-1"
-                                :message="form.errors.patient_email"
-                            />
-                        </div>
-
-                        <div
-                            class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
-                        >
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                :class="
-                                    cn(
-                                        buttonVariants({
-                                            variant: 'default',
-                                            size: 'lg',
-                                        }),
-                                        footerPrimaryButtonClass,
-                                    )
-                                "
-                            >
-                                {{
-                                    t(
-                                        'family.medicationPlans.publishPage.submit',
-                                    )
-                                }}
-                            </button>
-                            <Link
-                                :href="props.cancel_url"
-                                :class="
-                                    cn(
-                                        buttonVariants({
-                                            variant: 'outline',
-                                            size: 'lg',
-                                        }),
-                                        footerOutlineButtonClass,
-                                    )
-                                "
-                            >
-                                {{
-                                    t(
-                                        'family.medicationPlans.publishPage.cancel',
-                                    )
-                                }}
-                            </Link>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
-        </FamilyPageShell>
+        <FamilyMedicationPlanPublishDialog
+            form-id="family-medication-plan-publish"
+            :cancel-url="props.cancel_url"
+            :patient-email="form.patient_email"
+            :email-error="form.errors.patient_email"
+            :processing="form.processing"
+            @update:patient-email="form.patient_email = $event"
+            @submit="submit"
+        />
     </FamilyLayout>
 </template>

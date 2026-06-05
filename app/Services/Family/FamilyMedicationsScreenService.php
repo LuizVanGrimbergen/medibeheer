@@ -8,6 +8,7 @@ use App\Models\Medication;
 use App\Models\Patient;
 use App\Services\Medications\PatientScheduledIntakesQuery;
 use App\Services\Patient\PatientMedicationsScreenService;
+use App\Support\Family\FamilyMedicationIntakeCalendarSlotPayload;
 use App\Support\InertiaPagination;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,7 @@ final class FamilyMedicationsScreenService
             ...$this->patientMedicationsScreenService->buildFamilyMedicationsProps($patient, $page),
             'medication_calendar_month' => $calendarMonth,
             'medication_calendar_days' => $calendar['days'],
-            'medication_calendar_slots' => $calendar['slots'],
+            'medication_calendar_slots' => FamilyMedicationIntakeCalendarSlotPayload::collect($calendar['slots']),
         ];
     }
 

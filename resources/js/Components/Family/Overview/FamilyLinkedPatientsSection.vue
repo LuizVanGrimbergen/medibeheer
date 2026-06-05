@@ -1,102 +1,102 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { Check, Users } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
-import { Badge } from '@/Components/ui/badge';
+import { useFamilyActivePatientSwitch } from '@/composables/family/useFamilyActivePatientSwitch';
 import type { FamilyDashboardProps } from '@/lib/types';
+import { cn } from '@/lib/utils';
 
-const props = defineProps<{
-    family: FamilyDashboardProps;
-    lowStockPatientIds?: number[];
-}>();
+const props = withDefaults(
+    defineProps<{
+        family: FamilyDashboardProps;
+        headingKey?: string;
+        toggleKey?: string;
+    }>(),
+    {
+        headingKey: 'family.overview.linkedPatientsHeading',
+        toggleKey: 'family.overview.linkedPatientsToggle',
+    },
+);
 
 const { t } = useI18n();
+const { switchToPatient } = useFamilyActivePatientSwitch();
 
 const patients = computed(() => props.family.patients);
 
 const hasPatients = computed(() => patients.value.length > 0);
 
-const hasMultiplePatients = computed(() => patients.value.length > 1);
+const isOpen = ref(false);
+const isSwitching = ref(false);
 
-const isOpen = ref(hasMultiplePatients.value);
+const COLLAPSE_ANIMATION_MS = 300;
 
-const activePatient = computed(
-    () => patients.value.find((patient) => patient.is_active) ?? null,
-);
-
-const lowStockPatientIdSet = computed(
-    () => new Set(props.lowStockPatientIds ?? []),
-);
-
-const collapsedSummary = computed((): string => {
-    if (!hasMultiplePatients.value) {
-        return activePatient.value?.name ?? '';
+function collapseAnimationMs(): number {
+    if (
+        typeof globalThis.window !== 'undefined' &&
+        globalThis.window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+        return 0;
     }
 
-    if (activePatient.value === null) {
-        return t('family.overview.linkedPatientsCollapsedCount', {
-            count: String(patients.value.length),
+    return COLLAPSE_ANIMATION_MS;
+}
+
+const activePatient = computed(() =>
+    patients.value.find((patient) => patient.is_active),
+);
+
+const collapsedSummary = computed(() => {
+    if (activePatient.value !== undefined) {
+        return t('family.overview.linkedPatientsCollapsedActive', {
+            name: activePatient.value.name,
         });
     }
 
-    return t('family.overview.linkedPatientsCollapsedActive', {
-        count: String(patients.value.length),
-        name: activePatient.value.name,
-    });
+    return t('family.overview.linkedPatientsCollapsedCount');
 });
 
-function patientInitial(name: string): string {
-    const trimmed = name.trim();
-
-    if (trimmed === '') {
-        return '?';
-    }
-
-    return trimmed.charAt(0).toUpperCase();
-}
-
-function switchPatient(switchUrl: string, isActive: boolean): void {
-    if (isActive) {
+function selectPatient(switchUrl: string, isActive: boolean): void {
+    if (isActive || isSwitching.value) {
         return;
     }
 
-    router.post(switchUrl, {}, { preserveScroll: true });
-}
+    isSwitching.value = true;
+    isOpen.value = false;
 
-function patientHasLowStock(patientId: number): boolean {
-    return lowStockPatientIdSet.value.has(patientId);
+    globalThis.setTimeout(() => {
+        switchToPatient(switchUrl, isActive);
+        isSwitching.value = false;
+    }, collapseAnimationMs());
 }
 </script>
 
 <template>
     <FamilyOverviewCollapsibleSection
-        v-if="hasPatients && hasMultiplePatients"
+        v-if="hasPatients"
         v-model:open="isOpen"
-        :heading="t('family.overview.linkedPatientsHeading')"
-        :toggle-label="t('family.overview.linkedPatientsToggle')"
+        :heading="t(props.headingKey)"
+        :toggle-label="t(props.toggleKey)"
         :collapsed-summary="collapsedSummary"
         icon-wrapper-class="bg-role-family/12 text-role-family"
-        content-class="border-t border-border px-4 pb-4 pt-4 md:px-5 md:pb-5 md:pt-4"
     >
         <template #icon>
-            <Users class="size-5" />
+            <Users :size="20" :stroke-width="1.75" />
         </template>
 
-        <ul
-            class="flex flex-col gap-2 md:grid md:grid-cols-2 md:gap-3 xl:grid-cols-3"
-        >
+        <ul class="flex flex-col gap-1">
             <li v-for="patient in patients" :key="patient.id">
                 <button
                     type="button"
-                    class="flex h-full w-full items-center gap-3 rounded-2xl border px-4 py-3 text-left transition md:px-4 md:py-3"
+                    class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition"
                     :class="
-                        patient.is_active
-                            ? 'border-primary/50 bg-primary/6 shadow-sm'
-                            : 'border-border bg-surface-2/50 hover:border-primary/30 hover:bg-surface-2'
+                        cn(
+                            patient.is_active
+                                ? 'bg-primary/6 text-primary font-semibold'
+                                : 'text-text-heading hover:bg-surface-2',
+                        )
                     "
-                    :disabled="patient.is_active"
+                    :disabled="patient.is_active || isSwitching"
                     :aria-label="
                         patient.is_active
                             ? t('family.overview.linkedPatientActiveAria', {
@@ -106,87 +106,18 @@ function patientHasLowStock(patientId: number): boolean {
                                   name: patient.name,
                               })
                     "
-                    @click="
-                        switchPatient(patient.switch_url, patient.is_active)
-                    "
+                    @click="selectPatient(patient.switch_url, patient.is_active)"
                 >
-                    <div
-                        class="flex size-11 shrink-0 items-center justify-center rounded-full text-base font-bold md:size-10"
-                        :class="
-                            patient.is_active
-                                ? 'bg-primary text-white'
-                                : 'bg-role-family/12 text-role-family'
-                        "
-                        aria-hidden="true"
-                    >
-                        {{ patientInitial(patient.name) }}
-                    </div>
-
-                    <div class="min-w-0 flex-1">
-                        <p
-                            class="text-text-heading truncate text-base font-semibold md:text-base"
-                        >
-                            {{ patient.name }}
-                        </p>
-                        <div class="mt-1 flex flex-wrap items-center gap-2">
-                            <Badge
-                                v-if="patient.is_active"
-                                variant="secondary"
-                                class="border-primary/20 bg-primary/10 text-primary"
-                            >
-                                {{ t('family.overview.activePatientBadge') }}
-                            </Badge>
-                            <Badge
-                                v-if="patientHasLowStock(patient.id)"
-                                variant="secondary"
-                                class="border-danger/25 bg-danger/10 text-danger"
-                            >
-                                {{ t('patient.inventory.lowStockBadge') }}
-                            </Badge>
-                        </div>
-                    </div>
-
+                    <span class="min-w-0 flex-1 truncate text-base">
+                        {{ patient.name }}
+                    </span>
                     <Check
                         v-if="patient.is_active"
-                        class="text-primary size-5 shrink-0 md:size-5"
+                        class="size-4 shrink-0 stroke-[2.25]"
                         aria-hidden="true"
                     />
                 </button>
             </li>
         </ul>
     </FamilyOverviewCollapsibleSection>
-
-    <div
-        v-else-if="hasPatients && activePatient !== null"
-        class="border-primary/50 bg-primary/6 flex items-center gap-3 rounded-2xl border px-4 py-4 shadow-sm md:px-5 md:py-4"
-    >
-        <div
-            class="bg-primary flex size-11 shrink-0 items-center justify-center rounded-full text-base font-bold text-white md:size-10"
-            aria-hidden="true"
-        >
-            {{ patientInitial(activePatient.name) }}
-        </div>
-
-        <div class="min-w-0 flex-1">
-            <p
-                class="text-text-muted text-xs font-semibold tracking-wide uppercase"
-            >
-                {{ t('family.overview.linkedPatientsHeading') }}
-            </p>
-            <p
-                class="text-text-heading mt-1 truncate text-lg font-semibold md:text-base"
-            >
-                {{ activePatient.name }}
-            </p>
-            <Badge
-                v-if="patientHasLowStock(activePatient.id)"
-                variant="secondary"
-                class="border-danger/25 bg-danger/10 text-danger mt-2"
-            >
-                {{ t('patient.inventory.lowStockBadge') }}
-            </Badge>
-        </div>
-
-        <Check class="text-primary size-5 shrink-0" aria-hidden="true" />
-    </div>
 </template>

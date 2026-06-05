@@ -1,9 +1,9 @@
+import type { PatientNavigationSharedProps } from '@/lib/patient/navigation/patientFooterNavClasses';
 import {
     moreUrgentNavAlert,
     worstInventoryNavAlertFromMedications,
     worstPrescriptionNavAlertFromPrescriptions,
 } from '@/lib/patient/navigation/patientNavigationAlertTone';
-import type { PatientNavigationSharedProps } from '@/lib/patient/navigation/patientFooterNavClasses';
 import type {
     MedicationListItem,
     MedicationPrescriptionListItem,

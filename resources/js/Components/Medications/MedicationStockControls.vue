@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { Layers, PackagePlus } from 'lucide-vue-next';
+import { PackagePlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MedicationCurrentStockPanel from '@/Components/Medications/MedicationCurrentStockPanel.vue';
 import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
 import MedicationInventoryStockEditDialog from '@/Components/Patient/Inventory/form/MedicationInventoryStockEditDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
+import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
 import { medicationStockProgressPercent } from '@/lib/patient/inventory/medicationStockProgressPercent';
-import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
-import {
-    medicationUrgencyOutlineButtonClass,
-    medicationUrgencyPanelClass,
-    medicationUrgencyPanelIconWrapClass,
-} from '@/lib/patient/medications/urgency/medicationUrgencyPanelClasses';
+import { medicationUrgencyOutlineButtonClass } from '@/lib/patient/medications/urgency/medicationUrgencyPanelClasses';
 import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
 import type { MedicationListItem } from '@/lib/types';
 
@@ -24,10 +21,12 @@ const props = withDefaults(
         updateRouteName?: string;
         idPrefix?: string;
         canAdjustStock?: boolean;
+        showSummary?: boolean;
     }>(),
     {
         updateRouteName: 'patient.medications.stocks.update',
         canAdjustStock: true,
+        showSummary: true,
     },
 );
 
@@ -66,43 +65,14 @@ const adjustStockButtonClass = computed((): string =>
     medicationUrgencyOutlineButtonClass(stockProgressTone.value),
 );
 
-const currentStockPanelClass = computed((): string =>
-    medicationUrgencyPanelClass(stockProgressTone.value),
+const supplyEstimateLine = computed((): string =>
+    medicationSupplyEstimateLine(t, props.medication),
 );
-
-const currentStockIconWrapClass = computed((): string =>
-    medicationUrgencyPanelIconWrapClass(stockProgressTone.value),
-);
-
-const supplyEstimateLine = computed((): string => {
-    const days = props.medication.supply_estimate_days;
-    const quality = props.medication.supply_estimate_quality;
-
-    if (quality === 'approx' && days !== null) {
-        if (days < 1) {
-            return t('patient.inventory.supplyEstimateApproxLessThanDay');
-        }
-
-        if (days === 1) {
-            return t('patient.inventory.supplyEstimateApproxOneDay');
-        }
-
-        return t('patient.inventory.supplyEstimateApproxDays', {
-            days: String(days),
-        });
-    }
-
-    return t('patient.inventory.supplyEstimateUnknown');
-});
 
 const stockProgressAriaLabel = computed((): string =>
     t('patient.inventory.stockProgressAria', {
         days: String(props.medication.supply_estimate_days ?? 0),
     }),
-);
-
-const primaryStockAmountTrimmed = computed(
-    (): string => primaryStock.value?.current_stock.trim() ?? '',
 );
 
 const stockDisplayDoseUnit = computed(() => {
@@ -115,57 +85,33 @@ const stockDisplayDoseUnit = computed(() => {
         parsedStrength.strength_unit,
     );
 });
-
-const currentStockDisplayLine = computed((): string =>
-    formatMedicationStockDisplayAmount(
-        t,
-        primaryStockAmountTrimmed.value,
-        stockDisplayDoseUnit.value,
-    ),
-);
 </script>
 
 <template>
     <div class="space-y-3.5">
         <template v-if="primaryStock !== undefined">
-            <MedicationUrgencyProgressSection
-                v-if="stockProgressPercent !== null"
-                :tone="stockProgressTone"
-                :progress-percent="stockProgressPercent"
-                :status-line="supplyEstimateLine"
-                :progress-aria-label="stockProgressAriaLabel"
-                :critical-alert-label="t('patient.inventory.lowStockBadge')"
-                :warning-alert-label="
-                    t('patient.inventory.warningStockIconAria')
-                "
-            />
+            <template v-if="props.showSummary">
+                <MedicationUrgencyProgressSection
+                    v-if="stockProgressPercent !== null"
+                    :tone="stockProgressTone"
+                    :progress-percent="stockProgressPercent"
+                    :status-line="supplyEstimateLine"
+                    :progress-aria-label="stockProgressAriaLabel"
+                    :critical-alert-label="t('patient.inventory.lowStockBadge')"
+                    :warning-alert-label="
+                        t('patient.inventory.warningStockIconAria')
+                    "
+                />
 
-            <p
-                v-else
-                class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
-            >
-                {{ supplyEstimateLine }}
-            </p>
+                <p
+                    v-else
+                    class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
+                >
+                    {{ supplyEstimateLine }}
+                </p>
 
-            <div class="flex w-full min-w-0 justify-start">
-                <div class="min-w-0 flex-1" :class="currentStockPanelClass">
-                    <div :class="currentStockIconWrapClass">
-                        <Layers class="size-5 sm:size-6" aria-hidden="true" />
-                    </div>
-                    <div class="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span
-                            class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
-                        >
-                            {{ t('patient.medications.fields.currentStock') }}
-                        </span>
-                        <span
-                            class="text-text-heading text-2xl leading-none font-bold tracking-tight wrap-break-word whitespace-pre-wrap tabular-nums sm:text-3xl"
-                        >
-                            {{ currentStockDisplayLine }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+                <MedicationCurrentStockPanel :medication="medication" />
+            </template>
 
             <div
                 v-if="props.canAdjustStock"

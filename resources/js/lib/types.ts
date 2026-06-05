@@ -183,6 +183,7 @@ export type DailyCheckin = {
     symptoms: DailyCheckinSymptomValue[] | null;
     note: string | null;
     created_at: string;
+    patient_name?: string | null;
 };
 
 export type PaginationMeta = {

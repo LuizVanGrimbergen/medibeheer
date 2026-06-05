@@ -79,31 +79,34 @@ const selectedDayCheckin = computed(() => {
                 </p>
             </HistorySelectedDaySection>
 
-            <template v-if="props.wellbeing_checkins.meta.total === 0">
-                <p class="text-text-muted text-sm leading-relaxed">
+            <template v-if="selectedCalendarDate === null">
+                <p
+                    v-if="props.wellbeing_checkins.meta.total === 0"
+                    class="text-text-muted text-sm leading-relaxed"
+                >
                     {{ t('family.wellbeing.empty') }}
                 </p>
+
+                <div v-else class="space-y-4">
+                    <h2
+                        class="text-text-heading text-lg font-semibold md:text-base"
+                    >
+                        {{ t('family.wellbeing.listHeading') }}
+                    </h2>
+                    <FamilyWellbeingCheckinCard
+                        v-for="checkin in props.wellbeing_checkins.data"
+                        :key="checkin.id"
+                        :checkin="checkin"
+                    />
+
+                    <NumberedPagination
+                        v-if="props.wellbeing_checkins.meta.last_page > 1"
+                        route-name="family.wellbeing"
+                        :meta="props.wellbeing_checkins.meta"
+                        :query="listPaginationQuery"
+                    />
+                </div>
             </template>
-
-            <div v-else class="space-y-4">
-                <h2
-                    class="text-text-heading text-lg font-semibold md:text-base"
-                >
-                    {{ t('family.wellbeing.listHeading') }}
-                </h2>
-                <FamilyWellbeingCheckinCard
-                    v-for="checkin in props.wellbeing_checkins.data"
-                    :key="checkin.id"
-                    :checkin="checkin"
-                />
-
-                <NumberedPagination
-                    v-if="props.wellbeing_checkins.meta.last_page > 1"
-                    route-name="family.wellbeing"
-                    :meta="props.wellbeing_checkins.meta"
-                    :query="listPaginationQuery"
-                />
-            </div>
         </div>
     </FamilyPageShell>
 </template>

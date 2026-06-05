@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import SeoHead from '@/Components/Seo/SeoHead.vue';
 import { Eye, EyeOff } from 'lucide-vue-next';
 import { computed, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import SeoHead from '@/Components/Seo/SeoHead.vue';
+import { SessionActionSuccessScreen } from '@/Components/ui/action-success-screen';
 import { AuthPageContainer } from '@/Components/ui/auth-page';
 import { AuthRoleSelectorWidget } from '@/Components/ui/auth-role-selector';
 import { Button } from '@/Components/ui/button';
-import { FlashSuccessBanner } from '@/Components/ui/flash-success-banner';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
@@ -196,7 +196,7 @@ const submit = () => {
                 {{ loginRoleHighlightLine }}
             </div>
 
-            <FlashSuccessBanner class="mb-4" :message="props.status ?? null" />
+            <SessionActionSuccessScreen :message="props.status ?? null" />
 
             <form class="space-y-5" novalidate @submit.prevent="submit">
                 <div>

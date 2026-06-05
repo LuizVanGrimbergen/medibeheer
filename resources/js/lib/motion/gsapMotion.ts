@@ -1,5 +1,5 @@
-import { getGsapSync, loadGsap } from '@/lib/motion/loadGsap';
 import type gsap from 'gsap';
+import { getGsapSync, loadGsap } from '@/lib/motion/loadGsap';
 
 export interface GsapKillable {
     kill(): void;

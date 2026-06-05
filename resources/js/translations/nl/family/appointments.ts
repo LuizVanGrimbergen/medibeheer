@@ -9,6 +9,7 @@ export default {
     emptyPlanned: 'Er zijn geen geplande afspraken.',
     emptyCompleted: 'Er zijn nog geen voltooide afspraken.',
     doneSummaryLabel: 'Opmerkingen',
-    acceptTransport: 'Accepteer transport',
+    transportLabel: 'Vervoer',
+    acceptTransport: 'Accepteer vervoer',
     declineTransport: 'Afwijzen',
 };

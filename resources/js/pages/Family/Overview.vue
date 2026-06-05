@@ -1,26 +1,75 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed, defineAsyncComponent, nextTick, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyAcceptedTransportAppointmentsSection from '@/Components/Family/Overview/FamilyAcceptedTransportAppointmentsSection.vue';
-import FamilyLinkedPatientsSection from '@/Components/Family/Overview/FamilyLinkedPatientsSection.vue';
+import FamilyExpiringPrescriptionPatientsSection from '@/Components/Family/Overview/FamilyExpiringPrescriptionPatientsSection.vue';
 import FamilyLowStockPatientsSection from '@/Components/Family/Overview/FamilyLowStockPatientsSection.vue';
+import FamilyOverviewUpdatesSection from '@/Components/Family/Overview/FamilyOverviewUpdatesSection.vue';
 import FamilyPendingTransportAppointmentsSection from '@/Components/Family/Overview/FamilyPendingTransportAppointmentsSection.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
+import { ensureLaravelEchoIsConfigured } from '@/lib/configureLaravelEcho';
 import type { FamilyOverviewScreenProps } from '@/lib/family/overview/familyAcceptedTransportAppointments';
-import type { FamilyDashboardProps } from '@/lib/types';
+import {
+    familyOverviewUpdatesOpenQuery,
+    readFamilyScreenQueryFlag,
+} from '@/lib/family/readFamilyScreenQueryParam';
+import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
-const props = defineProps<
-    FamilyOverviewScreenProps & {
-        family: FamilyDashboardProps;
-    }
->();
+const FamilyUpdatesEchoListener = defineAsyncComponent(
+    () =>
+        import('@/Components/Family/Updates/FamilyUpdatesEchoListener.vue'),
+);
+
+type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
+
+const props = defineProps<FamilyOverviewScreenProps>();
 
 const { t } = useI18n();
+const page = usePage<PageWithFamily>();
 
-const lowStockPatientIds = computed(() =>
-    props.low_stock_patients.map((patient) => patient.patient_id),
+const family = computed(() => page.props.family);
+
+const echoReady = ref(false);
+
+const openUpdatesFromDeepLink = readFamilyScreenQueryFlag(
+    familyOverviewUpdatesOpenQuery.name,
+    familyOverviewUpdatesOpenQuery.value,
+    page.url,
+);
+
+function revealUpdatesFromDeepLink(): void {
+    if (!openUpdatesFromDeepLink) {
+        return;
+    }
+
+    nextTick(() => {
+        document
+            .getElementById('family-overview-updates')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        const url = new URL(globalThis.location.href);
+        url.searchParams.delete(familyOverviewUpdatesOpenQuery.name);
+
+        const query = url.searchParams.toString();
+        const nextUrl =
+            query.length > 0
+                ? `${url.pathname}?${query}`
+                : url.pathname;
+
+        globalThis.history.replaceState({}, '', nextUrl);
+    });
+}
+
+onMounted(async () => {
+    revealUpdatesFromDeepLink();
+    await ensureLaravelEchoIsConfigured();
+    echoReady.value = true;
+});
+
+const activePatientId = computed(
+    (): number | null => family.value?.active_patient_id ?? null,
 );
 </script>
 
@@ -30,14 +79,26 @@ const lowStockPatientIds = computed(() =>
     </Head>
 
     <FamilyLayout>
-        <FamilyPageShell :title="t('family.overview.heading')">
-            <FamilyLinkedPatientsSection
-                :family="props.family"
-                :low-stock-patient-ids="lowStockPatientIds"
-            />
+        <FamilyUpdatesEchoListener
+            v-if="
+                echoReady
+                && family?.has_linked_patient
+                && activePatientId !== null
+            "
+            :key="activePatientId"
+            :patient-id="activePatientId"
+        />
 
+        <FamilyPageShell
+            :title="t('family.overview.heading')"
+            :family="family"
+        >
             <FamilyLowStockPatientsSection
                 :patients="props.low_stock_patients"
+            />
+
+            <FamilyExpiringPrescriptionPatientsSection
+                :patients="props.expiring_prescription_patients"
             />
 
             <FamilyPendingTransportAppointmentsSection
@@ -46,6 +107,13 @@ const lowStockPatientIds = computed(() =>
 
             <FamilyAcceptedTransportAppointmentsSection
                 :appointments="props.accepted_transport_appointments"
+            />
+
+            <FamilyOverviewUpdatesSection
+                v-if="family?.has_linked_patient"
+                :checkins="props.updates_checkins"
+                :medication-intakes="props.updates_medication_intakes"
+                :default-open="openUpdatesFromDeepLink"
             />
         </FamilyPageShell>
     </FamilyLayout>

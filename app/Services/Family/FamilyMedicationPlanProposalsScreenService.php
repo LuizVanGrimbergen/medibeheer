@@ -63,20 +63,21 @@ final class FamilyMedicationPlanProposalsScreenService
     {
         $firstItem = $proposal->items->first();
         $patientName = $proposal->patient?->user?->name;
+        $patientEmail = $proposal->invited_patient_email
+            ?? $proposal->patient?->user?->email;
 
         return [
             'id' => $proposal->id,
             'status' => $proposal->status->value,
+            'patient_email' => $patientEmail !== null ? (string) $patientEmail : null,
             'patient_name' => $patientName !== null ? (string) $patientName : null,
             'medication_name' => $firstItem?->name,
             'updated_at' => $proposal->updated_at?->toISOString(),
             'can_edit' => $proposal->status === MedicationPlanProposalStatus::DRAFT,
             'can_duplicate' => $proposal->status === MedicationPlanProposalStatus::ACCEPTED,
-            'can_publish' => $proposal->status === MedicationPlanProposalStatus::DRAFT,
             'can_revoke' => $proposal->isRedeemable(),
             'edit_url' => route('family.medication-plans.edit', $proposal, absolute: false),
             'duplicate_url' => route('family.medication-plans.duplicate', $proposal, absolute: false),
-            'publish_url' => route('family.medication-plans.publish', $proposal, absolute: false),
             'revoke_url' => route('family.medication-plans.revoke', $proposal, absolute: false),
         ];
     }

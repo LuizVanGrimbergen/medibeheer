@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { Button } from '@/Components/ui/button';
-import { cn } from '@/lib/utils';
+import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizardFooter.vue';
+import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 
 const props = defineProps<{
     publishUrl?: string;
     processing: boolean;
     canPublish: boolean;
     canAddAnother: boolean;
-    standalone?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -18,53 +16,34 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-const actionButtonClass = 'min-h-12 w-full touch-manipulation sm:w-auto';
 </script>
 
 <template>
-    <div
-        :class="
-            cn(
-                'flex min-w-0 flex-col gap-3',
-                !props.standalone && 'border-border border-t pt-4',
-            )
-        "
-    >
-        <div class="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <Button
-                v-if="canAddAnother"
-                type="button"
-                variant="outline"
-                size="lg"
-                :class="actionButtonClass"
-                :disabled="processing"
-                @click="emit('addAnother')"
-            >
-                {{ t('family.medicationPlans.form.addAnotherMedication') }}
-            </Button>
+    <PatientFormWizardFooter>
+        <PatientFormWizardFooterButton
+            v-if="canPublish && props.publishUrl !== undefined"
+            variant="primary"
+            :href="props.publishUrl"
+            :disabled="processing"
+        >
+            {{ t('family.medicationPlans.form.share') }}
+        </PatientFormWizardFooterButton>
 
-            <Button
-                v-if="canPublish && props.publishUrl !== undefined"
-                as-child
-                size="lg"
-                :class="actionButtonClass"
-                :disabled="processing"
-            >
-                <Link :href="props.publishUrl">
-                    {{ t('family.medicationPlans.form.share') }}
-                </Link>
-            </Button>
-        </div>
+        <PatientFormWizardFooterButton
+            v-if="canAddAnother"
+            variant="outline"
+            :disabled="processing"
+            @click="emit('addAnother')"
+        >
+            {{ t('family.medicationPlans.form.addAnotherMedication') }}
+        </PatientFormWizardFooterButton>
 
-        <Button
-            type="button"
-            variant="ghost"
-            :class="cn(actionButtonClass, 'text-text-muted')"
+        <PatientFormWizardFooterButton
+            variant="danger"
             :disabled="processing"
             @click="emit('cancel')"
         >
             {{ t('family.medicationPlans.form.cancel') }}
-        </Button>
-    </div>
+        </PatientFormWizardFooterButton>
+    </PatientFormWizardFooter>
 </template>

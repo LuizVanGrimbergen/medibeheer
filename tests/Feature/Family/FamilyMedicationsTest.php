@@ -106,7 +106,14 @@ test('linked family members see medication intake calendar data on family medica
         ->where('medication_calendar_days.14.status', 'complete')
         ->has('medication_calendar_slots', 31)
         ->where('medication_calendar_slots.14.name', 'Paracetamol')
-        ->where('medication_calendar_slots.14.taken_at', fn ($value) => $value !== null));
+        ->where('medication_calendar_slots.14.taken_at', fn ($value) => $value !== null)
+        ->where('medication_calendar_slots.14', function (mixed $slot): bool {
+            $values = is_array($slot) ? $slot : $slot->all();
+
+            return ! array_key_exists('note', $values)
+                && ! array_key_exists('stocks', $values)
+                && ! array_key_exists('supply_estimate_days', $values);
+        }));
 
     CarbonImmutable::setTestNow();
 });

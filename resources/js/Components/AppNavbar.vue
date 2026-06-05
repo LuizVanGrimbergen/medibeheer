@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { Settings } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
 import AppLogo from '@/Components/AppLogo.vue';
+import AppSettingsNavButton from '@/Components/AppSettingsNavButton.vue';
 import DoctorNavbarLinks from '@/Components/Doctor/DoctorNavbarLinks.vue';
-import { Button } from '@/Components/ui/button';
 import type { PageProps } from '@/lib/types';
 
 const props = defineProps<{
@@ -13,7 +11,6 @@ const props = defineProps<{
 }>();
 
 const page = usePage<PageProps>();
-const { t } = useI18n();
 
 const isDoctor = computed(() => page.props.auth.user?.role === 'doctor');
 
@@ -60,16 +57,7 @@ const homeHref = computed(() => {
                     {{ props.userName }}
                 </span>
 
-                <Button
-                    as-child
-                    variant="ghost"
-                    size="icon"
-                    :aria-label="t('app.navigation.settings')"
-                >
-                    <Link :href="route('settings.edit')">
-                        <Settings :size="18" />
-                    </Link>
-                </Button>
+                <AppSettingsNavButton />
             </div>
         </div>
     </nav>
@@ -90,16 +78,7 @@ const homeHref = computed(() => {
                         {{ props.userName }}
                     </span>
 
-                    <Button
-                        as-child
-                        variant="ghost"
-                        size="icon"
-                        :aria-label="t('app.navigation.settings')"
-                    >
-                        <Link :href="route('settings.edit')">
-                            <Settings :size="18" />
-                        </Link>
-                    </Button>
+                    <AppSettingsNavButton />
                 </div>
             </div>
         </nav>

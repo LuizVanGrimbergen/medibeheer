@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import MedicationIntakeHistorySlotCard from '@/Components/Patient/Medications/MedicationIntakeHistorySlotCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
-import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import type {
     MedicationIntakeCalendarDay,
     MedicationIntakeHistorySlot,
@@ -31,8 +30,38 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
-const { selectedCalendarDate, selectedDaySectionRef, onSelectCalendarDate } =
-    useHistorySelectedDay(() => props.calendarMonth);
+const selectedCalendarDate = defineModel<string | null>('selectedDate', {
+    default: null,
+});
+
+const selectedDaySectionRef = ref<InstanceType<
+    typeof HistorySelectedDaySection
+> | null>(null);
+
+watch(
+    () => props.calendarMonth,
+    () => {
+        selectedCalendarDate.value = null;
+    },
+);
+
+function onSelectCalendarDate(dateKey: string): void {
+    const next =
+        selectedCalendarDate.value === dateKey ? null : dateKey;
+
+    selectedCalendarDate.value = next;
+
+    if (next === null) {
+        return;
+    }
+
+    nextTick(() => {
+        selectedDaySectionRef.value?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        });
+    });
+}
 
 const slotsByDate = computed((): Map<string, MedicationIntakeHistorySlot[]> => {
     const map = new Map<string, MedicationIntakeHistorySlot[]>();
@@ -104,14 +133,21 @@ const selectedDayHasSchedule = computed((): boolean => {
                 {{ t(props.selectedDayNoIntakesKey) }}
             </p>
 
-            <div v-else class="flex flex-col gap-4">
-                <MedicationIntakeHistorySlotCard
-                    v-for="slot in selectedDaySlots"
-                    :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
-                    :intake-slot="slot"
-                    :density="props.slotCardDensity"
-                />
-            </div>
+            <slot
+                v-else
+                name="selected-day"
+                :selected-date="selectedCalendarDate"
+                :slots="selectedDaySlots"
+            >
+                <div class="flex flex-col gap-4">
+                    <MedicationIntakeHistorySlotCard
+                        v-for="slot in selectedDaySlots"
+                        :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
+                        :intake-slot="slot"
+                        :density="props.slotCardDensity"
+                    />
+                </div>
+            </slot>
         </HistorySelectedDaySection>
     </div>
 </template>

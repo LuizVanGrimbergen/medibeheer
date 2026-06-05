@@ -25,6 +25,8 @@ class AcceptAppointmentTransportInvitationController extends Controller
 
         $this->appointmentTransportInvitationService->accept($transportInvitation, $family);
 
-        return redirect()->route('family.appointments');
+        return redirect()
+            ->back(fallback: route('family.overview'))
+            ->with('success', __('transport_invitation.flash.accepted'));
     }
 }

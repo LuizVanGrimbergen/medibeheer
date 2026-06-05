@@ -1,9 +1,10 @@
 import {
-    formatAppointmentAddress,
-    type AppointmentAddressFields,
+    formatAppointmentAddress
+    
 } from '@/lib/appointments/formatAppointmentAddress';
+import type {AppointmentAddressFields} from '@/lib/appointments/formatAppointmentAddress';
 
-export function googleMapsSearchUrlForAppointmentAddress(
+function appointmentAddressQuery(
     appointment: AppointmentAddressFields,
 ): string | null {
     const query = formatAppointmentAddress(appointment).trim();
@@ -12,5 +13,29 @@ export function googleMapsSearchUrlForAppointmentAddress(
         return null;
     }
 
+    return query;
+}
+
+export function googleMapsSearchUrlForAppointmentAddress(
+    appointment: AppointmentAddressFields,
+): string | null {
+    const query = appointmentAddressQuery(appointment);
+
+    if (query === null) {
+        return null;
+    }
+
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+export function googleMapsDirectionsUrlForAppointmentAddress(
+    appointment: AppointmentAddressFields,
+): string | null {
+    const query = appointmentAddressQuery(appointment);
+
+    if (query === null) {
+        return null;
+    }
+
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
 }

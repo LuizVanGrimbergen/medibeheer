@@ -5,7 +5,6 @@ use App\Http\Controllers\Family\Dashboard\FamilyLinkController;
 use App\Http\Controllers\Family\Dashboard\FamilyMedicationsController;
 use App\Http\Controllers\Family\Dashboard\FamilyMedicationStockController;
 use App\Http\Controllers\Family\Dashboard\FamilyOverviewController;
-use App\Http\Controllers\Family\Dashboard\FamilyUpdatesController;
 use App\Http\Controllers\Family\Dashboard\FamilyWellbeingController;
 use App\Http\Controllers\Family\Dashboard\SwitchActivePatientController;
 use App\Http\Controllers\Family\Invitations\AcceptAppointmentTransportInvitationController;
@@ -69,7 +68,9 @@ Route::middleware([
         Route::post('medication-plans/{medication_plan_proposal}/revoke', RevokeFamilyMedicationPlanProposalController::class)
             ->name('medication-plans.revoke');
 
-        Route::get('updates', FamilyUpdatesController::class)->name('updates');
+        Route::get('updates', fn () => redirect()->route('family.overview', [
+            'updates' => 'open',
+        ], 301))->name('updates');
 
         /* Family Wellbeing */
         Route::get('wellbeing', FamilyWellbeingController::class)->name('wellbeing');
