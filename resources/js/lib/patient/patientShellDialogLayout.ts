@@ -122,3 +122,7 @@ export const patientConfirmDialogContentClass =
 /** Centered copy block inside {@link PatientConfirmDialog} (matches success screens). */
 export const patientConfirmDialogMessageClass =
     'flex min-h-0 flex-1 flex-col items-center justify-center px-6 py-10 text-center sm:px-10';
+
+/** Centers a short wizard step in the scroll column (footer stays pinned via mt-auto). */
+export const patientShellWizardCenteredStepClass =
+    'flex min-h-0 w-full flex-1 flex-col items-center justify-center px-4 py-8 sm:px-6 sm:py-10';
