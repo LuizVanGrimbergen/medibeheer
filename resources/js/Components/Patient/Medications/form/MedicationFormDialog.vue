@@ -1,49 +1,42 @@
 <script setup lang="ts">
+import { computed, ref, toRef, watch, useSlots } from 'vue';
+import PatientShellFormDialog from '@/Components/Patient/form/PatientShellFormDialog.vue';
 import MedicationFormDialogFooter from '@/Components/Patient/Medications/form/MedicationFormDialogFooter.vue';
-import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import type {
+    MedicationCreateFormWithErrors,
+    MedicationFormWizardStep,
+} from '@/Components/Patient/Medications/form/MedicationFormTypes';
+import MedicationFormWizardSteps from '@/Components/Patient/Medications/form/MedicationFormWizardSteps.vue';
 import { useMedicationFormWizard } from '@/Components/Patient/Medications/form/useMedicationFormWizard';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
-import MedicationCreateSummaryStep from '@/Components/Patient/Medications/steps/MedicationCreateSummaryStep.vue';
-import MedicationDetailsStep from '@/Components/Patient/Medications/steps/MedicationDetailsStep.vue';
-import MedicationNoteStep from '@/Components/Patient/Medications/steps/MedicationNoteStep.vue';
-import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/steps/MedicationScheduleDoseTimesStep.vue';
-import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
-import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
-import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
-import { Card, CardContent } from '@/Components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/Components/ui/dialog';
+import { DialogDescription } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import {
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellPageDescriptionClass,
-    patientShellPageHeaderClass,
-    patientShellPageTitleClass,
-    patientShellWizardCardClass,
-    patientShellWizardCardInnerClass,
-    patientShellWizardFormClass,
-    patientShellWizardStepPanelClass,
-} from '@/lib/patient/patientShellDialogLayout';
-import { ref, toRef } from 'vue';
+import { patientShellPageDescriptionClass } from '@/lib/patient/patientShellDialogLayout';
 
-const props = defineProps<{
-    open: boolean;
-    title: string;
-    formId: string;
-    idPrefix: string;
-    form: MedicationCreateFormWithErrors;
-    dialogContentClass: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        open: boolean;
+        title: string;
+        formId: string;
+        idPrefix: string;
+        form: MedicationCreateFormWithErrors;
+        dialogContentClass: string;
+        startAtSummary?: boolean;
+        showStockFields?: boolean;
+        summaryHeading?: string;
+    }>(),
+    {
+        startAtSummary: false,
+        showStockFields: true,
+    },
+);
+
+const slots = useSlots();
 
 const emit = defineEmits<{
     'update:open': [value: boolean];
     submit: [];
     cancel: [];
+    currentStepChange: [step: MedicationFormWizardStep];
 }>();
 
 const {
@@ -52,14 +45,36 @@ const {
     handleSubmit,
     handleMedicationFormFooterBack,
     goToMedicationWizardStepFromSummary,
+    resetWizardToInitialStep,
 } = useMedicationFormWizard({
     open: () => props.open,
     form: () => props.form,
     idPrefix: () => props.idPrefix,
+    initialStep: () => (props.startAtSummary ? 7 : 1),
     onSubmit: () => {
         emit('submit');
     },
 });
+
+const showWizardProgress = computed(
+    () => !props.startAtSummary || currentStep.value !== 7,
+);
+
+const dialogTitle = computed(() => {
+    if (
+        props.summaryHeading !== undefined &&
+        props.summaryHeading !== '' &&
+        currentStep.value === 7
+    ) {
+        return props.summaryHeading;
+    }
+
+    return props.title;
+});
+
+const showSummaryFooter = computed(
+    () => currentStep.value === 7 && slots.summaryFooter !== undefined,
+);
 
 const isOpen = toRef(() => props.open);
 const progressLabelRef = ref<HTMLElement | null>(null);
@@ -69,98 +84,74 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     isOpen,
     { progressLabelRef },
 );
+
+watch(
+    () => props.startAtSummary,
+    (shouldStartAtSummary) => {
+        if (!shouldStartAtSummary) {
+            return;
+        }
+
+        resetWizardToInitialStep();
+    },
+    { immediate: true },
+);
+
+watch(
+    currentStep,
+    (step) => {
+        emit('currentStepChange', step);
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
-        <DialogContent
-            :class="props.dialogContentClass"
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
-        >
-            <DialogHeader :class="patientShellPageHeaderClass">
-                <DialogTitle :class="patientShellPageTitleClass">
-                    {{ props.title }}
-                </DialogTitle>
-                <DialogDescription
-                    ref="progressLabelRef"
-                    :class="patientShellPageDescriptionClass"
-                    aria-live="polite"
-                >
-                    {{ medicationProgressLabel }}
-                </DialogDescription>
-            </DialogHeader>
-
-            <form
-                :id="props.formId"
-                :class="patientShellWizardFormClass"
-                novalidate
-                @submit.prevent="handleSubmit"
+    <PatientShellFormDialog
+        :open="props.open"
+        :title="dialogTitle"
+        :form-id="props.formId"
+        :dialog-content-class="props.dialogContentClass"
+        :step-key="currentStep"
+        @update:open="emit('update:open', $event)"
+        @submit="handleSubmit"
+        @cancel="emit('cancel')"
+    >
+        <template v-if="showWizardProgress" #description>
+            <DialogDescription
+                ref="progressLabelRef"
+                :class="patientShellPageDescriptionClass"
+                aria-live="polite"
             >
-                <PatientShellWizardScrollBody
-                    :active="props.open"
-                    :step-key="currentStep"
-                >
-                    <div
-                        ref="wizardStepPanelRef"
-                        :class="patientShellWizardStepPanelClass"
-                    >
-                        <MedicationScheduleMealsAndFrequencyStep
-                            v-if="currentStep === 2"
-                            :form="props.form"
-                            :id-prefix="props.idPrefix"
-                        />
-                        <Card v-else :class="patientShellWizardCardClass">
-                            <CardContent class="p-0">
-                                <div :class="patientShellWizardCardInnerClass">
-                                    <MedicationDetailsStep
-                                        v-if="currentStep === 1"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationScheduleTimesPerDayStep
-                                        v-else-if="currentStep === 3"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationScheduleDoseTimesStep
-                                        v-else-if="currentStep === 4"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationScheduleDurationStep
-                                        v-else-if="currentStep === 5"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                    />
-                                    <MedicationNoteStep
-                                        v-else-if="currentStep === 6"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                        show-stock-fields
-                                    />
-                                    <MedicationCreateSummaryStep
-                                        v-else-if="currentStep === 7"
-                                        :form="props.form"
-                                        :id-prefix="props.idPrefix"
-                                        :go-to-wizard-step="
-                                            goToMedicationWizardStepFromSummary
-                                        "
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
+                {{ medicationProgressLabel }}
+            </DialogDescription>
+        </template>
 
-                    <template #footer>
-                        <MedicationFormDialogFooter
-                            :current-step="currentStep"
-                            :processing="props.form.processing"
-                            @cancel="emit('cancel')"
-                            @back="handleMedicationFormFooterBack"
-                        />
-                    </template>
-                </PatientShellWizardScrollBody>
-            </form>
-        </DialogContent>
-    </Dialog>
+        <div ref="wizardStepPanelRef">
+            <MedicationFormWizardSteps
+                :current-step="currentStep"
+                :form="props.form"
+                :id-prefix="props.idPrefix"
+                :show-stock-fields="props.showStockFields"
+                :go-to-wizard-step-from-summary="
+                    goToMedicationWizardStepFromSummary
+                "
+            />
+        </div>
+
+        <template #footer>
+            <slot
+                v-if="showSummaryFooter"
+                name="summaryFooter"
+                :processing="props.form.processing"
+            />
+            <MedicationFormDialogFooter
+                v-else
+                :current-step="currentStep"
+                :processing="props.form.processing"
+                @cancel="emit('cancel')"
+                @back="handleMedicationFormFooterBack"
+            />
+        </template>
+    </PatientShellFormDialog>
 </template>

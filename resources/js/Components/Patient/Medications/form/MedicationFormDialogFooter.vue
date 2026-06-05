@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizardFooter.vue';
+import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { Button } from '@/Components/ui/button';
-import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-} from '@/lib/patient/patientShellDialogLayout';
 
 const props = defineProps<{
     currentStep: MedicationFormWizardStep;
@@ -44,28 +41,23 @@ function handleSecondaryClick(): void {
 </script>
 
 <template>
-    <div :class="patientFormWizardFooterRowClass">
-        <Button
+    <PatientFormWizardFooter>
+        <PatientFormWizardFooterButton
+            variant="primary"
             type="submit"
-            variant="default"
-            size="lg"
             :disabled="props.processing"
-            :class="patientFormWizardFooterPrimaryButtonClass"
         >
             {{ primaryLabel }}
-        </Button>
+        </PatientFormWizardFooterButton>
 
-        <Button
+        <PatientFormWizardFooterButton
             v-if="props.currentStep === 1"
-            type="button"
-            variant="secondary"
-            size="lg"
+            variant="danger"
             :disabled="props.processing"
-            :class="patientFormWizardFooterCancelButtonClass"
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.cancel') }}
-        </Button>
+        </PatientFormWizardFooterButton>
 
         <Button
             v-else
@@ -78,5 +70,5 @@ function handleSecondaryClick(): void {
         >
             {{ t('patient.medications.actions.back') }}
         </Button>
-    </div>
+    </PatientFormWizardFooter>
 </template>
