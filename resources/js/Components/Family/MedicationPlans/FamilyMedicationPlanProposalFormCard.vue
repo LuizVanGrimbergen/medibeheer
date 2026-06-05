@@ -20,7 +20,7 @@ const props = defineProps<{
     canAddAnother?: boolean;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     submit: [];
     cancel: [];
     addAnother: [];

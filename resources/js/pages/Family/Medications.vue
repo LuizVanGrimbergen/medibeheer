@@ -2,19 +2,19 @@
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import FamilyMedicationIntakeSlotCollapsibleCard from '@/Components/Family/Medications/FamilyMedicationIntakeSlotCollapsibleCard.vue';
 import FamilyMedicationRegisterCard from '@/Components/Family/Medications/FamilyMedicationRegisterCard.vue';
-import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';
 import { useHistorySelectedDayNavigation } from '@/composables/history/useHistorySelectedDayNavigation';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
+import type { FamilyMedicationIntakeCalendarSlot } from '@/lib/family/medications/familyMedicationIntakeCalendarSlot';
 import type { FamilyMedicationsScreenProps } from '@/lib/family/medications/familyMedicationsScreenProps';
 import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
 import { compareMedicationInventoryListItems } from '@/lib/patient/inventory/medicationInventoryListSortRank';
-import type { FamilyMedicationIntakeCalendarSlot } from '@/lib/family/medications/familyMedicationIntakeCalendarSlot';
 import { compareTodayMedicationIntakeSlots } from '@/lib/patient/medications/todayMedicationIntakeDayPeriod';
 import type { MedicationListItem } from '@/lib/types';
 
@@ -47,32 +47,29 @@ const calendarNavigationQuery = computed((): Record<string, string> => {
     return query;
 });
 
-const {
-    selectedDateLabel,
-    showPreviousDay,
-    showNextDay,
-} = useHistorySelectedDayNavigation({
-    calendarMonth: () => props.medication_calendar_month,
-    selectedDay: {
-        selectedCalendarDate,
-        selectCalendarDate,
-    },
-    onNavigateMonth(month, date) {
-        router.get(
-            route('family.medications'),
-            {
-                ...calendarNavigationQuery.value,
-                calendar_month: month,
-            },
-            {
-                preserveScroll: true,
-                onSuccess: () => {
-                    selectCalendarDate(date);
+const { selectedDateLabel, showPreviousDay, showNextDay } =
+    useHistorySelectedDayNavigation({
+        calendarMonth: () => props.medication_calendar_month,
+        selectedDay: {
+            selectedCalendarDate,
+            selectCalendarDate,
+        },
+        onNavigateMonth(month, date) {
+            router.get(
+                route('family.medications'),
+                {
+                    ...calendarNavigationQuery.value,
+                    calendar_month: month,
                 },
-            },
-        );
-    },
-});
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        selectCalendarDate(date);
+                    },
+                },
+            );
+        },
+    });
 
 const deepLinkedMedicationId = computed((): number | null => {
     const medication = readFamilyScreenQueryParam('medication', page.url);
@@ -107,7 +104,11 @@ function scrollToDeepLinkedMedication(): void {
         return;
     }
 
-    if (!props.medications.data.some((medication) => medication.id === medicationId)) {
+    if (
+        !props.medications.data.some(
+            (medication) => medication.id === medicationId,
+        )
+    ) {
         return;
     }
 
@@ -126,22 +127,24 @@ watch(
     { immediate: true, deep: true },
 );
 
-const slotsByDate = computed((): Map<string, FamilyMedicationIntakeCalendarSlot[]> => {
-    const map = new Map<string, FamilyMedicationIntakeCalendarSlot[]>();
+const slotsByDate = computed(
+    (): Map<string, FamilyMedicationIntakeCalendarSlot[]> => {
+        const map = new Map<string, FamilyMedicationIntakeCalendarSlot[]>();
 
-    for (const slot of props.medication_calendar_slots) {
-        const existing = map.get(slot.intake_date) ?? [];
+        for (const slot of props.medication_calendar_slots) {
+            const existing = map.get(slot.intake_date) ?? [];
 
-        existing.push(slot);
-        map.set(slot.intake_date, existing);
-    }
+            existing.push(slot);
+            map.set(slot.intake_date, existing);
+        }
 
-    for (const [date, slots] of map.entries()) {
-        map.set(date, [...slots].sort(compareTodayMedicationIntakeSlots));
-    }
+        for (const [date, slots] of map.entries()) {
+            map.set(date, [...slots].sort(compareTodayMedicationIntakeSlots));
+        }
 
-    return map;
-});
+        return map;
+    },
+);
 
 const selectedDaySlots = computed((): FamilyMedicationIntakeCalendarSlot[] => {
     const date = selectedCalendarDate.value;
@@ -216,10 +219,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                 {{ t('family.medications.notLinked') }}
             </p>
 
-            <div
-                v-else
-                class="flex min-w-0 flex-col gap-6"
-            >
+            <div v-else class="flex min-w-0 flex-col gap-6">
                 <MedicationIntakeMonthCalendar
                     :calendar-month="props.medication_calendar_month"
                     :calendar-days="props.medication_calendar_days"
@@ -265,10 +265,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                         }}
                     </p>
 
-                    <div
-                        v-else
-                        class="space-y-4"
-                    >
+                    <div v-else class="space-y-4">
                         <FamilyMedicationIntakeSlotCollapsibleCard
                             v-for="slot in selectedDaySlots"
                             :key="`${slot.medication_schedule_id}-${slot.dose_time}`"
@@ -285,10 +282,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                         {{ t('family.medications.empty') }}
                     </p>
 
-                    <div
-                        v-else
-                        class="space-y-4"
-                    >
+                    <div v-else class="space-y-4">
                         <h2
                             class="text-text-heading text-lg font-semibold md:text-base"
                         >
@@ -299,7 +293,7 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
                             v-for="medication in sortedRegisterMedications"
                             :id="`family-medication-${medication.id}`"
                             :key="medication.id"
-                            class="min-w-0 scroll-mt-6 block"
+                            class="block min-w-0 scroll-mt-6"
                             :medication="medication"
                             :default-open="
                                 medication.id === deepLinkedMedicationId
@@ -309,8 +303,8 @@ const sortedRegisterMedications = computed((): MedicationListItem[] => {
 
                     <NumberedPagination
                         v-if="
-                            selectedCalendarDate === null
-                            && props.medications.meta.last_page > 1
+                            selectedCalendarDate === null &&
+                            props.medications.meta.last_page > 1
                         "
                         route-name="family.medications"
                         :meta="props.medications.meta"

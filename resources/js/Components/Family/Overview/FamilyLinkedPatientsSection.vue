@@ -106,7 +106,9 @@ function selectPatient(switchUrl: string, isActive: boolean): void {
                                   name: patient.name,
                               })
                     "
-                    @click="selectPatient(patient.switch_url, patient.is_active)"
+                    @click="
+                        selectPatient(patient.switch_url, patient.is_active)
+                    "
                 >
                     <span class="min-w-0 flex-1 truncate text-base">
                         {{ patient.name }}

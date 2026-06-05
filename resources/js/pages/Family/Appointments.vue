@@ -130,7 +130,9 @@ watch(
                         details-toggle-variant="header"
                         :show-provider-subtitle="false"
                         :show-compact-google-maps-link="true"
-                        :transport-label="t('family.appointments.transportLabel')"
+                        :transport-label="
+                            t('family.appointments.transportLabel')
+                        "
                         :appointment="{
                             id: appointment.id,
                             doctor_type: appointment.doctor_type,

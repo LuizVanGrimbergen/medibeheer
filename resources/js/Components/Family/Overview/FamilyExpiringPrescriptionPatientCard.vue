@@ -21,11 +21,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <button
-        type="button"
-        class="block w-full text-left"
-        @click="emit('click')"
-    >
+    <button type="button" class="block w-full text-left" @click="emit('click')">
         <Card
             :class="
                 cn(

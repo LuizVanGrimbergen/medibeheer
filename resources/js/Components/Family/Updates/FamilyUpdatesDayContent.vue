@@ -20,17 +20,11 @@ const hasUpdates = computed(
 </script>
 
 <template>
-    <p
-        v-if="!hasUpdates"
-        class="text-text-muted text-sm leading-relaxed"
-    >
+    <p v-if="!hasUpdates" class="text-text-muted text-sm leading-relaxed">
         {{ t('family.updates.emptyToday') }}
     </p>
 
-    <ul
-        v-else
-        class="space-y-4 md:space-y-3"
-    >
+    <ul v-else class="space-y-4 md:space-y-3">
         <li v-for="checkin in props.checkins" :key="checkin.id">
             <FamilyWellbeingCheckinCard :checkin="checkin" />
         </li>
