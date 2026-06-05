@@ -11,7 +11,6 @@ use App\Models\Patient;
 use App\Services\Medications\MedicationSupplyEstimateService;
 use Carbon\CarbonImmutable;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder;
 
 final class MedicationUrgencyToneResolver
 {
@@ -78,15 +77,34 @@ final class MedicationUrgencyToneResolver
         return $this->navAlertTone($worst);
     }
 
+    public function prescriptionNavAlertToneFor(
+        MedicationPrescription $prescription,
+    ): ?MedicationUrgencyTone {
+        return $this->navAlertTone($this->prescriptionExpiryToneFor($prescription));
+    }
+
+    public function prescriptionExpiryDaysRemainingFor(
+        MedicationPrescription $prescription,
+    ): ?int {
+        $expiryDate = $prescription->prescription_expiry_date;
+
+        if ($expiryDate === null) {
+            return null;
+        }
+
+        return $this->daysUntilLocalDate($expiryDate);
+    }
+
     public function prescriptionsNavAlertFor(Patient $patient): ?MedicationUrgencyTone
     {
+        $activeMedicationIds = $patient->medications()
+            ->activeOnMedicationList()
+            ->select('medications.id');
+
         $prescriptions = MedicationPrescription::query()
-            ->where('patient_id', $patient->getKey())
-            ->whereNull('completed_at')
-            ->whereHas(
-                'medication',
-                fn (Builder $query) => $query->activeOnMedicationList(),
-            )
+            ->where('patient_id', '=', $patient->id)
+            ->whereNull('completed_at', 'and', false)
+            ->whereIn('medication_id', $activeMedicationIds, 'and', false)
             ->get(['id', 'prescription_expiry_date']);
 
         $worst = null;
