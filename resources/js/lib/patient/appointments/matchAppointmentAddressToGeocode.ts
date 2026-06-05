@@ -43,7 +43,11 @@ export function citiesMatch(inputCity: string, geocodedCity: string): boolean {
         return false;
     }
 
-    return input === geocoded || input.includes(geocoded) || geocoded.includes(input);
+    return (
+        input === geocoded ||
+        input.includes(geocoded) ||
+        geocoded.includes(input)
+    );
 }
 
 export function streetsMatch(
@@ -57,7 +61,11 @@ export function streetsMatch(
         return false;
     }
 
-    return input === geocoded || input.includes(geocoded) || geocoded.includes(input);
+    return (
+        input === geocoded ||
+        input.includes(geocoded) ||
+        geocoded.includes(input)
+    );
 }
 
 export function collectAppointmentAddressGeocodeFieldErrors(

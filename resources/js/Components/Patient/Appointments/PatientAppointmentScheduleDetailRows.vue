@@ -9,11 +9,7 @@ import type { Appointment } from '@/lib/types';
 const props = defineProps<{
     appointment: Pick<
         Appointment,
-        | 'starts_at'
-        | 'street'
-        | 'house_number'
-        | 'postal_code'
-        | 'city'
+        'starts_at' | 'street' | 'house_number' | 'postal_code' | 'city'
     >;
 }>();
 
@@ -34,7 +30,9 @@ const formattedAddress = computed(() =>
                 aria-hidden="true"
             />
             <div class="min-w-0 flex-1 space-y-1.5">
-                <p class="text-text-heading text-base leading-tight font-semibold">
+                <p
+                    class="text-text-heading text-base leading-tight font-semibold"
+                >
                     {{ t('patient.appointments.labels.when') }}
                 </p>
                 <p
@@ -51,7 +49,9 @@ const formattedAddress = computed(() =>
                 aria-hidden="true"
             />
             <div class="min-w-0 flex-1 space-y-1.5">
-                <p class="text-text-heading text-base leading-tight font-semibold">
+                <p
+                    class="text-text-heading text-base leading-tight font-semibold"
+                >
                     {{ t('patient.appointments.labels.time') }}
                 </p>
                 <p
@@ -68,7 +68,9 @@ const formattedAddress = computed(() =>
                 aria-hidden="true"
             />
             <div class="min-w-0 flex-1 space-y-1.5">
-                <p class="text-text-heading text-base leading-tight font-semibold">
+                <p
+                    class="text-text-heading text-base leading-tight font-semibold"
+                >
                     {{ t('patient.appointments.labels.where') }}
                 </p>
                 <p

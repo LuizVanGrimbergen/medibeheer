@@ -457,7 +457,10 @@ watch(
                     :active="props.open"
                     :step-key="step"
                 >
-                    <div ref="wizardStepPanelRef" class="space-y-3 sm:space-y-4">
+                    <div
+                        ref="wizardStepPanelRef"
+                        class="space-y-3 sm:space-y-4"
+                    >
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                         >
@@ -554,7 +557,9 @@ watch(
                             >
                                 {{
                                     step === 'provider'
-                                        ? t('patient.appointments.actions.cancel')
+                                        ? t(
+                                              'patient.appointments.actions.cancel',
+                                          )
                                         : t('patient.appointments.steps.back')
                                 }}
                             </Button>

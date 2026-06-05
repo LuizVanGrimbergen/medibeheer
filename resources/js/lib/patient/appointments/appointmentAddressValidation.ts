@@ -6,9 +6,10 @@ export type AppointmentAddressFieldValues = {
     city: string;
 };
 
-export type AppointmentAddressValidationValues = AppointmentAddressFieldValues & {
-    house_number?: string;
-};
+export type AppointmentAddressValidationValues =
+    AppointmentAddressFieldValues & {
+        house_number?: string;
+    };
 
 export type AppointmentAddressFieldErrorKey = 'street' | 'postal_code' | 'city';
 

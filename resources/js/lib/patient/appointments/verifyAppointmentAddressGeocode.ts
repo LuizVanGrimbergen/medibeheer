@@ -1,5 +1,5 @@
-import { geocodeAppointmentAddress } from '@/lib/google-maps/geocodeAppointmentAddress';
 import type { AppointmentAddressGeocodeValues } from '@/lib/google-maps/geocodeAppointmentAddress';
+import { geocodeAppointmentAddress } from '@/lib/google-maps/geocodeAppointmentAddress';
 import type { AppointmentAddressFieldErrors } from '@/lib/patient/appointments/appointmentAddressValidation';
 import appointmentsNl from '@/translations/nl/patient/appointments';
 
@@ -17,8 +17,7 @@ export function isAppointmentAddressGeocodeErrorMessage(
     message: string | undefined,
 ): boolean {
     return (
-        message !== undefined &&
-        GEOCODE_ERROR_MESSAGE_VALUES.includes(message)
+        message !== undefined && GEOCODE_ERROR_MESSAGE_VALUES.includes(message)
     );
 }
 
