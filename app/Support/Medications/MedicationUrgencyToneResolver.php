@@ -16,6 +16,8 @@ final class MedicationUrgencyToneResolver
 {
     public const int CRITICAL_MAX_DAYS = 7;
 
+    public const int REMINDER_URGENT_MAX_DAYS = 2;
+
     public const int WARNING_MAX_DAYS = 14;
 
     public function __construct(
