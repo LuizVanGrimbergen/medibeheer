@@ -7,7 +7,7 @@ use App\Models\MedicationPrescription;
 use App\Models\User;
 use App\Notifications\Medications\PushReminders\PrescriptionExpiryNotification;
 use App\Support\Medications\MedicationUrgencyToneResolver;
-use App\Support\Medications\PushReminders\PrescriptionExpiry\ReminderTranslations;
+use App\Support\PushReminders\ReminderTranslations;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;
