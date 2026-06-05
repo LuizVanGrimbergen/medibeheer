@@ -8,7 +8,7 @@ use App\Models\MedicationStock;
 use App\Models\User;
 use App\Notifications\Medications\PushReminders\LowStockNotification;
 use App\Support\Medications\MedicationUrgencyToneResolver;
-use App\Support\Medications\PushReminders\LowStock\ReminderTranslations;
+use App\Support\PushReminders\ReminderTranslations;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Notification;

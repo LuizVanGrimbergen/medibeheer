@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
@@ -10,12 +11,53 @@ import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/patient/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
+import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
 const { t } = useI18n();
+const page = usePage();
+
+const paginationQuery = computed((): Record<string, string | number> => {
+    const query: Record<string, string | number> = {};
+    const appointment = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointment !== null) {
+        query.appointment = appointment;
+    }
+
+    return query;
+});
+
+function scrollToDeepLinkedAppointment(): void {
+    const appointmentId = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointmentId === null) {
+        return;
+    }
+
+    const id = Number(appointmentId);
+
+    if (!props.appointments.data.some((appointment) => appointment.id === id)) {
+        return;
+    }
+
+    nextTick(() => {
+        document
+            .getElementById(`patient-appointment-${id}`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+watch(
+    () => [page.url, props.appointments.data] as const,
+    () => {
+        scrollToDeepLinkedAppointment();
+    },
+    { immediate: true, deep: true },
+);
 
 const {
     doctorTypeOptions,
@@ -76,6 +118,7 @@ const {
                         class="min-w-0"
                     >
                         <AppointmentCard
+                            :anchor-id="`patient-appointment-${appointment.id}`"
                             :appointment="appointment"
                             :done-displayed="
                                 isAppointmentMarkedDoneInUi(appointment)
@@ -120,6 +163,7 @@ const {
                     "
                     route-name="patient.appointments"
                     :meta="props.appointments.meta"
+                    :query="paginationQuery"
                 />
 
                 <Card

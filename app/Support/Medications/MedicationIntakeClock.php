@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Support\Medications;
 
+use App\Support\AppClock;
 use Carbon\CarbonImmutable;
 
 final class MedicationIntakeClock
 {
-    public const string TIMEZONE = 'Europe/Brussels';
+    public const string TIMEZONE = AppClock::TIMEZONE;
 
     public static function now(): CarbonImmutable
     {
-        return CarbonImmutable::now(self::TIMEZONE);
+        return AppClock::now();
     }
 
     public static function today(): CarbonImmutable
     {
-        return self::now()->startOfDay();
+        return AppClock::today();
     }
 }
