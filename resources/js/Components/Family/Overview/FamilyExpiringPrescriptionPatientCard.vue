@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { Clock, Pill } from 'lucide-vue-next';
+import { Calendar, FileText, Pill } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Card, CardContent } from '@/Components/ui/card';
-import type { FamilyLowStockPatient } from '@/lib/family/overview/familyLowStockPatients';
+import type { FamilyExpiringPrescriptionPatient } from '@/lib/family/overview/familyExpiringPrescriptionPatients';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
+import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { cn } from '@/lib/utils';
 
 const toneClasses = medicationUrgencyToneClasses('critical');
 
 const props = defineProps<{
-    patient: FamilyLowStockPatient;
+    patient: FamilyExpiringPrescriptionPatient;
 }>();
 
 const emit = defineEmits<{
@@ -17,20 +18,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-function supplyEstimateLine(days: number): string {
-    if (days < 1) {
-        return t('patient.inventory.supplyEstimateApproxLessThanDay');
-    }
-
-    if (days === 1) {
-        return t('patient.inventory.supplyEstimateApproxOneDay');
-    }
-
-    return t('patient.inventory.supplyEstimateApproxDays', {
-        days: String(days),
-    });
-}
 </script>
 
 <template>
@@ -57,8 +44,8 @@ function supplyEstimateLine(days: number): string {
                         </p>
 
                         <div
-                            v-for="medication in props.patient.medications"
-                            :key="medication.id"
+                            v-for="prescription in props.patient.prescriptions"
+                            :key="prescription.id"
                             class="text-text flex flex-wrap items-center gap-x-5 gap-y-2 text-base"
                         >
                             <span
@@ -72,13 +59,13 @@ function supplyEstimateLine(days: number): string {
                                     aria-hidden="true"
                                 />
                                 <span class="font-semibold">
-                                    {{ medication.name }}
+                                    {{ prescription.medication_name }}
                                 </span>
                             </span>
                             <span
                                 class="inline-flex min-w-0 items-center gap-2"
                             >
-                                <Clock
+                                <Calendar
                                     :size="18"
                                     :class="
                                         cn('shrink-0', toneClasses.pillIcon)
@@ -87,9 +74,32 @@ function supplyEstimateLine(days: number): string {
                                 />
                                 <span class="font-semibold">
                                     {{
-                                        supplyEstimateLine(
-                                            medication.supply_estimate_days,
+                                        prescriptionExpiryStatusLine(
+                                            t,
+                                            prescription.days_remaining,
                                         )
+                                    }}
+                                </span>
+                            </span>
+                            <span
+                                class="inline-flex min-w-0 items-center gap-2"
+                            >
+                                <FileText
+                                    :size="18"
+                                    :class="
+                                        cn('shrink-0', toneClasses.pillIcon)
+                                    "
+                                    aria-hidden="true"
+                                />
+                                <span class="font-semibold">
+                                    {{
+                                        prescription.is_last_in_batch
+                                            ? t(
+                                                  'family.overview.prescriptionLastInBatch',
+                                              )
+                                            : t(
+                                                  'family.overview.prescriptionNotLastInBatch',
+                                              )
                                     }}
                                 </span>
                             </span>

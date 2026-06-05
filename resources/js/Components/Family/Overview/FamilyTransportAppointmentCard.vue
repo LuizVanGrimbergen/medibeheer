@@ -1,22 +1,38 @@
 <script setup lang="ts">
-import { Calendar, ChevronRight, Clock, MapPin } from 'lucide-vue-next';
+import { Calendar, Clock, MapPin } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import AppointmentGoogleMapsIconLink from '@/Components/Appointments/AppointmentGoogleMapsIconLink.vue';
+import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
 import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
 import { Card, CardContent } from '@/Components/ui/card';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { FamilyAcceptedTransportAppointment } from '@/lib/family/overview/familyAcceptedTransportAppointments';
+import { googleMapsDirectionsUrlForAppointmentAddress } from '@/lib/google-maps/googleMapsSearchUrlForAppointmentAddress';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     appointment: FamilyAcceptedTransportAppointment;
     variant: 'pending' | 'accepted';
+    acceptUrl?: string;
+    declineUrl?: string;
 }>();
 
 const emit = defineEmits<{
-    click: [];
+    'accept-transport': [];
+    'decline-transport': [];
 }>();
 
-const { formatDateOnly, formatTimeOnly, doctorTypeLabel } =
-    useAppointmentDisplay();
+const { t } = useI18n();
+
+const showTransportActions = computed(
+    () =>
+        props.variant === 'pending' &&
+        props.acceptUrl !== undefined &&
+        props.acceptUrl !== '',
+);
+
+const { formatDateOnly, formatTimeOnly } = useAppointmentDisplay();
 
 const accentIconClass =
     props.variant === 'pending'
@@ -28,66 +44,47 @@ const cardBorderClass =
         ? 'border-stock-near/70 dark:border-stock-near-dark/75'
         : 'border-primary/50';
 
-function appointmentTitle(
-    appointment: FamilyAcceptedTransportAppointment,
-): string {
-    const provider = appointment.provider_name.trim();
+const formattedAddress = computed(() =>
+    formatAppointmentAddress(props.appointment),
+);
 
-    if (provider !== '') {
-        return provider;
-    }
-
-    return doctorTypeLabel(appointment.doctor_type);
-}
-
-function appointmentAddress(
-    appointment: FamilyAcceptedTransportAppointment,
-): string {
-    return formatAppointmentAddress(appointment);
-}
+const routeUrl = computed(() =>
+    googleMapsDirectionsUrlForAppointmentAddress(props.appointment),
+);
 </script>
 
 <template>
-    <button
-        type="button"
-        class="group block w-full text-left"
-        @click="emit('click')"
-    >
+    <div class="block w-full">
         <Card
             :class="
                 cn(
-                    'bg-surface group-hover:bg-surface-2 shadow-sm transition',
+                    'bg-surface shadow-sm transition',
                     'rounded-2xl',
                     cardBorderClass,
                 )
             "
         >
             <CardContent class="p-4 md:p-4">
-                <div class="flex items-start gap-3">
+                <div class="flex items-center gap-3">
                     <div class="min-w-0 flex-1 space-y-2.5">
-                        <div class="space-y-0.5">
-                            <p
-                                class="text-text-heading text-base leading-snug font-semibold md:text-[0.9375rem]"
-                            >
-                                {{ appointmentTitle(props.appointment) }}
-                            </p>
-                            <p class="text-text text-sm font-medium">
-                                {{ props.appointment.patient_name }}
-                            </p>
-                        </div>
+                        <p
+                            class="text-text-heading text-base leading-snug font-semibold md:text-[0.9375rem]"
+                        >
+                            {{ props.appointment.patient_name }}
+                        </p>
 
                         <div
-                            class="text-text flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm"
+                            class="text-text flex flex-wrap items-center gap-x-5 gap-y-2 text-base"
                         >
                             <span
-                                class="inline-flex min-w-0 items-center gap-1.5"
+                                class="inline-flex min-w-0 items-center gap-2"
                             >
                                 <Calendar
-                                    :size="16"
+                                    :size="18"
                                     :class="cn('shrink-0', accentIconClass)"
                                     aria-hidden="true"
                                 />
-                                <span class="font-medium">
+                                <span class="font-semibold">
                                     {{
                                         formatDateOnly(
                                             props.appointment.starts_at,
@@ -96,14 +93,14 @@ function appointmentAddress(
                                 </span>
                             </span>
                             <span
-                                class="inline-flex min-w-0 items-center gap-1.5"
+                                class="inline-flex min-w-0 items-center gap-2"
                             >
                                 <Clock
-                                    :size="16"
+                                    :size="18"
                                     :class="cn('shrink-0', accentIconClass)"
                                     aria-hidden="true"
                                 />
-                                <span class="font-medium tabular-nums">
+                                <span class="font-semibold tabular-nums">
                                     {{
                                         formatTimeOnly(
                                             props.appointment.starts_at,
@@ -113,28 +110,55 @@ function appointmentAddress(
                             </span>
                         </div>
 
-                        <p
-                            v-if="appointmentAddress(props.appointment) !== ''"
-                            class="text-text-muted flex items-start gap-1.5 text-sm leading-snug"
+                        <div
+                            v-if="formattedAddress !== ''"
+                            class="text-text inline-flex min-w-0 items-start gap-2 text-base"
                         >
                             <MapPin
-                                :size="16"
+                                :size="18"
                                 :class="cn('mt-0.5 shrink-0', accentIconClass)"
                                 aria-hidden="true"
                             />
-                            <span class="min-w-0 text-pretty wrap-break-word">
-                                {{ appointmentAddress(props.appointment) }}
+                            <span
+                                class="min-w-0 font-semibold leading-snug text-pretty wrap-break-word"
+                            >
+                                {{ formattedAddress }}
                             </span>
-                        </p>
+                        </div>
                     </div>
 
-                    <ChevronRight
-                        :size="18"
-                        class="text-text-muted group-hover:text-text mt-0.5 shrink-0 transition"
-                        aria-hidden="true"
+                    <AppointmentGoogleMapsIconLink
+                        v-if="routeUrl"
+                        :href="routeUrl"
+                        icon="route"
+                        :title="t('family.overview.transportOpenRoute')"
+                        :ariaLabel="
+                            t('family.overview.transportOpenRouteAria', {
+                                address: formattedAddress,
+                            })
+                        "
                     />
                 </div>
             </CardContent>
+
+            <div
+                v-if="showTransportActions"
+                class="border-border border-t px-4 pb-4 pt-3 md:px-5 md:pb-5"
+            >
+                <AppointmentPairActionButtons
+                    centered
+                    :show-secondary="Boolean(props.declineUrl)"
+                    @primary-click="emit('accept-transport')"
+                    @secondary-click="emit('decline-transport')"
+                >
+                    <template #primary>
+                        {{ t('family.appointments.acceptTransport') }}
+                    </template>
+                    <template #secondary>
+                        {{ t('family.appointments.declineTransport') }}
+                    </template>
+                </AppointmentPairActionButtons>
+            </div>
         </Card>
-    </button>
+    </div>
 </template>

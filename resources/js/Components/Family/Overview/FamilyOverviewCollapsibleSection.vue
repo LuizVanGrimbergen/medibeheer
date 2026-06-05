@@ -14,6 +14,7 @@ const props = withDefaults(
         heading: string;
         toggleLabel: string;
         iconWrapperClass: string;
+        subheading?: string;
         collapsedSummary?: string;
         collapsedSummaryClass?: string;
         contentClass?: string;
@@ -38,7 +39,7 @@ const props = withDefaults(
                 <div
                     :class="
                         cn(
-                            'flex size-10 shrink-0 items-center justify-center rounded-full',
+                            'flex size-10 shrink-0 items-center justify-center rounded-full [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:stroke-[1.75]',
                             props.iconWrapperClass,
                         )
                     "
@@ -53,6 +54,15 @@ const props = withDefaults(
                     >
                         {{ props.heading }}
                     </h2>
+                    <p
+                        v-if="
+                            props.subheading !== undefined &&
+                            props.subheading !== ''
+                        "
+                        class="text-text-muted mt-0.5 text-sm"
+                    >
+                        {{ props.subheading }}
+                    </p>
                     <p
                         v-if="
                             !open &&
@@ -72,6 +82,7 @@ const props = withDefaults(
 
                 <ChevronDown
                     :size="20"
+                    :stroke-width="1.75"
                     :class="
                         cn(
                             'text-text-muted shrink-0 transition-transform duration-200',

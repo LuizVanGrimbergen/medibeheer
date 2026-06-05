@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { Car } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -13,7 +12,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 
 const hasAppointments = computed(() => props.appointments.length > 0);
 
@@ -28,21 +27,6 @@ const collapsedSummary = computed(() => {
         count: String(count),
     });
 });
-
-function openPatientAppointments(
-    appointment: FamilyAcceptedTransportAppointment,
-): void {
-    router.post(
-        appointment.switch_url,
-        {},
-        {
-            preserveScroll: true,
-            onSuccess: () => {
-                router.visit(appointment.appointments_url);
-            },
-        },
-    );
-}
 </script>
 
 <template>
@@ -55,7 +39,7 @@ function openPatientAppointments(
         icon-wrapper-class="bg-primary/12 text-primary"
     >
         <template #icon>
-            <Car class="size-5" />
+            <Car :size="20" :stroke-width="1.75" />
         </template>
 
         <ul class="space-y-4 md:space-y-3">
@@ -63,7 +47,6 @@ function openPatientAppointments(
                 <FamilyTransportAppointmentCard
                     :appointment="appointment"
                     variant="accepted"
-                    @click="openPatientAppointments(appointment)"
                 />
             </li>
         </ul>
