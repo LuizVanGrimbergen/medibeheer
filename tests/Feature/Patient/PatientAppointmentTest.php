@@ -54,6 +54,68 @@ test('patient appointments index paginates scheduled appointments', function () 
             ->where('appointment_view', 'planned'));
 });
 
+test('patient appointments opens the paginated page for a deep linked planned appointment', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    foreach (range(1, 11) as $offset) {
+        Appointment::factory()->for($patient)->create([
+            'status' => AppointmentStatus::SCHEDULED,
+            'starts_at' => now()->addDays($offset),
+        ]);
+    }
+
+    $target = Appointment::factory()->for($patient)->create([
+        'status' => AppointmentStatus::SCHEDULED,
+        'starts_at' => now()->addDays(20),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('patient.appointments', ['appointment' => $target->id]))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments')
+            ->where('appointments.meta.current_page', 2)
+            ->where('appointments.data.1.id', $target->id));
+});
+
+test('patient appointments ignores invalid deep link appointment ids', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    Appointment::factory()->for($patient)->count(2)->create([
+        'status' => AppointmentStatus::SCHEDULED,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('patient.appointments', ['appointment' => 999_999]))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments')
+            ->where('appointments.meta.current_page', 1));
+});
+
+test('patient appointments ignores deep link for completed appointments', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $completed = Appointment::factory()->for($patient)->create([
+        'status' => AppointmentStatus::DONE,
+        'starts_at' => now()->subDay(),
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('patient.appointments', ['appointment' => $completed->id]))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments')
+            ->where('appointments.meta.current_page', 1)
+            ->where('appointments.data', []));
+});
+
 test('patients can create an appointment', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
