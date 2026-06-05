@@ -25,6 +25,12 @@ export type TodayMedicationIntakePeriodSection = {
     pendingSlots: TodayMedicationIntakeSlot[];
 };
 
+/** Minimum fields used by {@link compareTodayMedicationIntakeSlots}. */
+export type MedicationIntakeSlotSortable = {
+    day_period: TodayMedicationIntakeDayPeriodValue;
+    dose_time: string;
+};
+
 function minutesSinceMidnight(value: string): number {
     const match = /^(\d{1,2}):(\d{2})$/.exec(value.trim());
 
@@ -51,8 +57,8 @@ function dayPeriodSortRank(
 }
 
 export function compareTodayMedicationIntakeSlots(
-    left: TodayMedicationIntakeSlot,
-    right: TodayMedicationIntakeSlot,
+    left: MedicationIntakeSlotSortable,
+    right: MedicationIntakeSlotSortable,
 ): number {
     const periodCompare =
         dayPeriodSortRank(left.day_period) -
