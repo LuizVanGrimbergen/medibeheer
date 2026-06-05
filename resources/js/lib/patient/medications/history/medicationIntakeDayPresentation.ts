@@ -15,6 +15,7 @@ export type MedicationIntakeDayPresentation = {
     status: MedicationIntakeDayIconStatusValue;
     icon: LucideIcon;
     faceClass: string;
+    iconBackgroundClass: string;
     labelKey: `patient.medications.history.status.${MedicationIntakeDayIconStatusValue}`;
 };
 
@@ -29,7 +30,7 @@ const MEDICATION_INTAKE_DAY_ICON: Record<
 
 type MedicationIntakeDayPresentationFields = Pick<
     MedicationIntakeDayPresentation,
-    'faceClass' | 'labelKey'
+    'faceClass' | 'iconBackgroundClass' | 'labelKey'
 >;
 
 const MEDICATION_INTAKE_DAY_PRESENTATION: Record<
@@ -38,14 +39,17 @@ const MEDICATION_INTAKE_DAY_PRESENTATION: Record<
 > = {
     complete: {
         faceClass: 'text-success',
+        iconBackgroundClass: 'bg-success/10',
         labelKey: 'patient.medications.history.status.complete',
     },
     partial: {
         faceClass: 'text-warning',
+        iconBackgroundClass: 'bg-warning/10',
         labelKey: 'patient.medications.history.status.partial',
     },
     none_taken: {
         faceClass: 'text-danger',
+        iconBackgroundClass: 'bg-danger/10',
         labelKey: 'patient.medications.history.status.none_taken',
     },
 };

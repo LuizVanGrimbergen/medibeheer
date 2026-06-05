@@ -10,7 +10,12 @@ import {
 } from '@/lib/history/formatHistoryCalendarDate';
 import type { HistoryMonthCalendarCell } from '@/lib/history/historyMonthCalendarTypes';
 import { indexMedicationIntakeCalendarDays } from '@/lib/patient/medications/history/indexMedicationIntakeCalendarDays';
+import {
+    isMedicationIntakeDayIconStatus,
+    type MedicationIntakeDayIconStatusValue,
+} from '@/lib/patient/medications/history/medicationIntakeDayPresentation';
 import type { MedicationIntakeCalendarDay } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
+import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
@@ -22,6 +27,9 @@ const props = withDefaults(
         density?: 'default' | 'compact';
         showMonthNavigation?: boolean;
         headerTitle?: string;
+        statusFilter?: MedicationIntakeDayIconStatusValue | null;
+        statusCounts?: Record<MedicationIntakeDayIconStatusValue, number>;
+        selectableLegendStatuses?: readonly MedicationIntakeDayIconStatusValue[];
     }>(),
     {
         selectedDate: null,
@@ -29,12 +37,20 @@ const props = withDefaults(
         density: 'default',
         showMonthNavigation: true,
         headerTitle: undefined,
+        statusFilter: null,
+        statusCounts: undefined,
+        selectableLegendStatuses: undefined,
     },
 );
 
 const emit = defineEmits<{
     selectDate: [dateKey: string];
+    selectStatusFilter: [status: MedicationIntakeDayIconStatusValue];
 }>();
+
+const hasSelectableLegend = computed(
+    (): boolean => props.statusCounts !== undefined,
+);
 
 const { t, locale } = useI18n();
 
@@ -73,44 +89,84 @@ function dayAriaLabel(cell: HistoryMonthCalendarCell): string {
         });
     }
 
+    let displayedStatus = day.status;
+
+    if (
+        props.statusFilter !== null &&
+        isMedicationIntakeDayIconStatus(displayedStatus) &&
+        displayedStatus !== props.statusFilter
+    ) {
+        return t('patient.medications.history.calendar.dayNoSchedule', {
+            date: longDate,
+        });
+    }
+
     return t('patient.medications.history.calendar.dayWithStatus', {
         date: longDate,
-        status: t(`patient.medications.history.status.${day.status}`),
+        status: t(`patient.medications.history.status.${displayedStatus}`),
     });
 }
 </script>
 
 <template>
-    <HistoryMonthCalendar
-        :calendar-month="props.calendarMonth"
-        :selected-date="props.selectedDate"
-        :navigate-route-name="props.navigateRouteName"
-        :navigate-query-key="props.navigateQueryKey"
-        :density="props.density"
-        :show-month-navigation="props.showMonthNavigation"
-        :header-title="props.headerTitle"
-        grid-caption-key="patient.medications.history.calendar.gridAria"
-        :prev-month-aria-label="
-            t('patient.medications.history.calendar.prevMonth')
+    <div
+        :class="
+            cn(
+                'flex min-w-0 flex-col',
+                hasSelectableLegend ? 'gap-2' : 'gap-0',
+            )
         "
-        :next-month-aria-label="
-            t('patient.medications.history.calendar.nextMonth')
-        "
-        :open-day-details-aria-label="
-            t('patient.medications.history.calendar.openDayDetails')
-        "
-        :day-aria-label="dayAriaLabel"
-        @select-date="emit('selectDate', $event)"
     >
-        <template #day-indicator="{ cell }">
-            <MedicationIntakeCalendarDayIndicator
-                :cell="cell"
-                :days-by-date="daysByDate"
-            />
-        </template>
+        <HistoryMonthCalendar
+            :calendar-month="props.calendarMonth"
+            :selected-date="props.selectedDate"
+            :navigate-route-name="props.navigateRouteName"
+            :navigate-query-key="props.navigateQueryKey"
+            :density="props.density"
+            :show-month-navigation="props.showMonthNavigation"
+            :header-title="props.headerTitle"
+            grid-caption-key="patient.medications.history.calendar.gridAria"
+            :prev-month-aria-label="
+                t('patient.medications.history.calendar.prevMonth')
+            "
+            :next-month-aria-label="
+                t('patient.medications.history.calendar.nextMonth')
+            "
+            :open-day-details-aria-label="
+                t('patient.medications.history.calendar.openDayDetails')
+            "
+            :day-aria-label="dayAriaLabel"
+            @select-date="emit('selectDate', $event)"
+        >
+            <template #day-indicator="{ cell }">
+                <MedicationIntakeCalendarDayIndicator
+                    :cell="cell"
+                    :days-by-date="daysByDate"
+                    :status-filter="props.statusFilter"
+                />
+            </template>
 
-        <template #legend>
-            <MedicationIntakeDayLegend />
-        </template>
-    </HistoryMonthCalendar>
+            <template v-if="!hasSelectableLegend" #legend>
+                <MedicationIntakeDayLegend />
+            </template>
+        </HistoryMonthCalendar>
+
+        <fieldset
+            v-if="hasSelectableLegend"
+            class="w-full min-w-0 border-0 p-0"
+        >
+            <legend class="sr-only">
+                {{ t('doctor.patients.medicationLegendFilter') }}
+            </legend>
+
+            <MedicationIntakeDayLegend
+                :statuses="props.selectableLegendStatuses"
+                presentation="filter"
+                selectable
+                :selected-status="props.statusFilter"
+                :status-counts="props.statusCounts"
+                @select-status="emit('selectStatusFilter', $event)"
+            />
+        </fieldset>
+    </div>
 </template>
