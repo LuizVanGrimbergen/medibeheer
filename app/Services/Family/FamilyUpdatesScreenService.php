@@ -5,31 +5,27 @@ declare(strict_types=1);
 namespace App\Services\Family;
 
 use App\Models\Patient;
-use App\Support\FamilyUpdatesPeriodDays;
-use Illuminate\Http\Request;
 
 final class FamilyUpdatesScreenService
 {
+    private const UPDATES_LOOKBACK_DAYS = 1;
+
     public function __construct(
         private FamilyDailyCheckinListService $checkinList,
         private FamilyMedicationIntakeListService $medicationIntakeList,
     ) {}
 
-    public function buildProps(Request $request, Patient $patient): array
+    public function buildProps(Patient $patient): array
     {
-        $periodDays = FamilyUpdatesPeriodDays::fromRequest($request);
-
         return [
-            'updates_period_days' => $periodDays,
-            'updates_checkins' => $this->checkinList->withinDaysForPatient($patient, $periodDays),
-            'updates_medication_intakes' => $this->medicationIntakeList->takenWithinDaysForPatient($patient, $periodDays),
+            'updates_checkins' => $this->checkinList->withinDaysForPatient($patient, self::UPDATES_LOOKBACK_DAYS),
+            'updates_medication_intakes' => $this->medicationIntakeList->takenWithinDaysForPatient($patient, self::UPDATES_LOOKBACK_DAYS),
         ];
     }
 
-    public function emptyProps(Request $request): array
+    public function emptyProps(): array
     {
         return [
-            'updates_period_days' => FamilyUpdatesPeriodDays::fromRequest($request),
             'updates_checkins' => [],
             'updates_medication_intakes' => [],
         ];
