@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Frown, Meh, Smile } from 'lucide-vue-next';
 import { computed } from 'vue';
 import type { HTMLAttributes } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { MoodIcon } from '@/Components/ui/mood-icon';
+import { DAILY_MOOD_OPTIONS } from '@/lib/mood/dailyMoodPresentation';
 import type { DailyMoodScoreValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -21,39 +23,13 @@ const emit = defineEmits<{
     'update:modelValue': [value: DailyMoodScoreValue | null];
 }>();
 
-type MoodOption = {
-    value: DailyMoodScoreValue;
-    icon: typeof Frown;
-    faceClass: string;
-    label: string;
-};
-
-const moodOptions: readonly MoodOption[] = [
-    {
-        value: 'bad',
-        icon: Frown,
-        faceClass: 'text-danger',
-        label: 'Slecht',
-    },
-    {
-        value: 'ok',
-        icon: Meh,
-        faceClass: 'text-warning',
-        label: 'Gaat wel',
-    },
-    {
-        value: 'good',
-        icon: Smile,
-        faceClass: 'text-success',
-        label: 'Goed',
-    },
-] as const;
+const { t } = useI18n();
 
 function isSelected(value: DailyMoodScoreValue): boolean {
     return props.modelValue === value;
 }
 
-const optionsForTemplate = computed(() => moodOptions);
+const optionsForTemplate = computed(() => DAILY_MOOD_OPTIONS);
 </script>
 
 <template>
@@ -69,12 +45,12 @@ const optionsForTemplate = computed(() => moodOptions);
 
         <label
             v-for="mood in optionsForTemplate"
-            :key="mood.value"
+            :key="mood.mood"
             :class="
                 cn(
                     'group flex min-h-28 w-full cursor-pointer flex-col items-center gap-2 rounded-2xl px-2.5 py-3 text-center transition-colors focus-within:ring-2 focus-within:ring-focus/25 sm:min-h-32 sm:gap-2.5 sm:px-3 sm:py-4 md:min-h-36 md:w-auto md:gap-3 md:px-6 md:py-5',
                     disabled && 'cursor-not-allowed opacity-60',
-                    isSelected(mood.value) && 'bg-surface-hover',
+                    isSelected(mood.mood) && 'bg-surface-hover',
                 )
             "
         >
@@ -82,23 +58,18 @@ const optionsForTemplate = computed(() => moodOptions);
                 class="sr-only"
                 type="radio"
                 name="mood"
-                :value="mood.value"
+                :value="mood.mood"
                 :disabled="disabled"
-                :checked="isSelected(mood.value)"
-                @change="emit('update:modelValue', mood.value)"
+                :checked="isSelected(mood.mood)"
+                @change="emit('update:modelValue', mood.mood)"
             />
-            <component
-                :is="mood.icon"
-                :class="cn('size-12 stroke-[1.75] sm:size-14 md:size-16', mood.faceClass)"
-                aria-hidden="true"
-            />
+            <MoodIcon :mood="mood.mood" size="picker" />
             <span
                 class="text-sm font-semibold leading-snug text-text-muted sm:text-base md:text-lg"
-                :class="isSelected(mood.value) && 'text-text'"
+                :class="isSelected(mood.mood) && 'text-text'"
             >
-                {{ mood.label }}
+                {{ t(mood.labelKey) }}
             </span>
         </label>
     </fieldset>
 </template>
-
