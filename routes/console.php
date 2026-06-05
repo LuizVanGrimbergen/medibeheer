@@ -27,6 +27,14 @@ Schedule::command('medication:send-prescription-expiry-reminders')
     ->dailyAt('09:00')
     ->withoutOverlapping();
 
+Schedule::command('appointment:send-two-day-reminders')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();
+
+Schedule::command('appointment:send-two-hour-reminders')
+    ->everyMinute()
+    ->withoutOverlapping();
+
 /*
 |--------------------------------------------------------------------------
 | Manual / diagnostic commands (app/Console/Commands)
@@ -39,5 +47,9 @@ Schedule::command('medication:send-prescription-expiry-reminders')
 | medication:send-low-stock-reminders              — seven-day supply web push (patient + family)
 | medication:preview-prescription-expiry-reminders — list expiring prescriptions + recipients
 | medication:send-prescription-expiry-reminders    — seven-day prescription expiry push
+| appointment:preview-two-day-reminders            — list appointments two calendar days out + recipients
+| appointment:send-two-day-reminders               — two calendar days before appointment push
+| appointment:preview-two-hour-reminders           — list appointments starting in two hours + recipients
+| appointment:send-two-hour-reminders              — two hours before appointment push
 |
 */
