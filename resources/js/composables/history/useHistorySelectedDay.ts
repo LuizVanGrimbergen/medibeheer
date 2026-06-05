@@ -18,12 +18,13 @@ export function useHistorySelectedDay(calendarMonth: MaybeRefOrGetter<string>) {
         },
     );
 
-    function onSelectCalendarDate(dateKey: string): void {
-        const next = selectedCalendarDate.value === dateKey ? null : dateKey;
+    function selectCalendarDate(
+        dateKey: string | null,
+        scroll = true,
+    ): void {
+        selectedCalendarDate.value = dateKey;
 
-        selectedCalendarDate.value = next;
-
-        if (next === null) {
+        if (dateKey === null || !scroll) {
             return;
         }
 
@@ -35,9 +36,17 @@ export function useHistorySelectedDay(calendarMonth: MaybeRefOrGetter<string>) {
         });
     }
 
+    function onSelectCalendarDate(dateKey: string): void {
+        const next =
+            selectedCalendarDate.value === dateKey ? null : dateKey;
+
+        selectCalendarDate(next);
+    }
+
     return {
         selectedCalendarDate,
         selectedDaySectionRef,
         onSelectCalendarDate,
+        selectCalendarDate,
     };
 }
