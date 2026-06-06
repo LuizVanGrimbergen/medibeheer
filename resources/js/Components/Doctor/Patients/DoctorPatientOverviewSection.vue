@@ -94,7 +94,7 @@ watch(
             :prescriptions="props.urgent_prescriptions"
         />
 
-        <div class="grid min-w-0 gap-5 lg:grid-cols-2 lg:items-start">
+        <div class="grid min-w-0 gap-5 md:grid-cols-2 md:items-start">
             <DoctorPatientMedicationSection
                 ref="medicationSectionRef"
                 v-model:open="medicationSectionOpen"
