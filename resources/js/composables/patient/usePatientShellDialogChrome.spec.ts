@@ -44,7 +44,6 @@ describe('usePatientShellDialogChrome', () => {
     it('keeps the footer hidden on full-page shell routes after Inertia finish', async () => {
         const {
             isPatientShellFooterHidden,
-            resetPatientShellDialogChromeOpenCount,
             usePatientShellPageChrome,
         } = await loadModule();
 
