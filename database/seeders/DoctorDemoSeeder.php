@@ -27,6 +27,10 @@ class DoctorDemoSeeder extends Seeder
             'email' => 'anna.maas@voorbeeld.nl',
         ],
         [
+            'name' => AndreVanGrimbergenDemoSeeder::DEMO_PATIENT_NAME,
+            'email' => AndreVanGrimbergenDemoSeeder::DEMO_PATIENT_EMAIL,
+        ],
+        [
             'name' => 'Lucas Bakker',
             'email' => 'lucas.bakker@voorbeeld.nl',
         ],
