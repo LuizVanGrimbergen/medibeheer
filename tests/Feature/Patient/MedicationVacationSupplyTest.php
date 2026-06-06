@@ -3,6 +3,7 @@
 use App\Enums\MedicationIntakeFrequency;
 use App\Models\Family;
 use App\Models\Medication;
+use App\Models\MedicationPrescription;
 use App\Models\MedicationSchedule;
 use App\Models\MedicationStock;
 use App\Models\Patient;
@@ -108,7 +109,54 @@ it('patients can open the vacation supply page from inventory', function () {
         ->component('Patient/Inventory/Vacation')
         ->where('starts_on', '')
         ->where('ends_on', '')
-        ->where('result', null));
+        ->where('result', null)
+        ->has('expiring_prescriptions', 0));
+});
+
+it('includes expiring prescriptions on vacation results', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $expiringMedication = Medication::factory()
+        ->for($patient)
+        ->has(MedicationStock::factory(), 'stocks')
+        ->create([
+            'stock_pieces_per_package' => 12,
+        ]);
+    MedicationSchedule::factory()->forMedication($expiringMedication)->create([
+        'intake_frequency' => MedicationIntakeFrequency::DAILY,
+        'times_per_day' => '1',
+        'dose_quantity' => '1',
+        'start_date' => now()->subDay(),
+        'end_date' => now()->addMonth(),
+    ]);
+    MedicationPrescription::factory()
+        ->forMedication($expiringMedication)
+        ->create([
+            'prescription_expiry_date' => '2026-05-19',
+        ]);
+
+    $safeMedication = Medication::factory()->for($patient)->create();
+    MedicationPrescription::factory()
+        ->forMedication($safeMedication)
+        ->create([
+            'prescription_expiry_date' => '2026-08-01',
+        ]);
+
+    $expiringMedication->stocks()->first()?->update(['current_stock' => '0']);
+
+    $response = $this->actingAs($user)->post(route('patient.inventory.vacation.store'), [
+        'starts_on' => '2026-05-15',
+        'ends_on' => '2026-05-16',
+    ]);
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('Patient/Inventory/Vacation')
+        ->has('expiring_prescriptions', 1)
+        ->where('expiring_prescriptions.0.medication_name', $expiringMedication->name)
+        ->where('expiring_prescriptions.0.days_remaining', 5));
 });
 
 it('patients can calculate vacation supply on a dedicated page', function () {
