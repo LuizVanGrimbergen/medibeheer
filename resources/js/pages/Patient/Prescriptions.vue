@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import AddPrescriptionDialog from '@/Components/Patient/Prescriptions/AddPrescriptionDialog.vue';
+import PrescriptionExpiryEditDialog from '@/Components/Patient/Prescriptions/form/PrescriptionExpiryEditDialog.vue';
 import MedicationPrescriptionCard from '@/Components/Patient/Prescriptions/MedicationPrescriptionCard.vue';
 import PrescriptionPickedUpSuccessScreen from '@/Components/Patient/Prescriptions/PrescriptionPickedUpSuccessScreen.vue';
 import PrescriptionsPageIntro from '@/Components/Patient/Prescriptions/PrescriptionsPageIntro.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
+import { usePatientPrescriptionCardActions } from '@/composables/patient/usePatientPrescriptionCardActions';
 import { usePatientPrescriptionsPage } from '@/composables/patient/usePatientPrescriptionsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { compareMedicationPrescriptionListItems } from '@/lib/patient/prescriptions/compareMedicationPrescriptionListItems';
@@ -40,7 +44,21 @@ const {
     closeAddPrescriptionDialog,
     handlePrescriptionDialogSubmit,
     handlePrescriptionDialogBackOrCancel,
+    goToPrescriptionWizardStepFromSummary,
 } = usePatientPrescriptionsPage(() => props.medication_choices);
+
+const {
+    editDialogOpen,
+    prescriptionPendingEdit,
+    openEditPrescriptionDialog,
+    closeEditPrescriptionDialog,
+    deleteDialogOpen,
+    prescriptionPendingDelete,
+    deleteProcessing,
+    openDeletePrescriptionDialog,
+    closeDeletePrescriptionDialog,
+    confirmDeletePrescription,
+} = usePatientPrescriptionCardActions();
 
 const sortedPrescriptions = computed((): MedicationPrescriptionListItem[] => {
     const items = [...props.prescriptions.data];
@@ -99,6 +117,8 @@ const emptyStateMessage = computed((): string => {
                         <MedicationPrescriptionCard
                             :prescription="prescription"
                             :on-picked-up="showPrescriptionPickedUpSuccess"
+                            @edit="openEditPrescriptionDialog(prescription)"
+                            @delete="openDeletePrescriptionDialog(prescription)"
                         />
                     </li>
                 </ul>
@@ -125,6 +145,49 @@ const emptyStateMessage = computed((): string => {
             </section>
         </PatientPageShell>
 
+        <PrescriptionExpiryEditDialog
+            v-if="prescriptionPendingEdit !== null"
+            :open="editDialogOpen"
+            :prescription="prescriptionPendingEdit"
+            form-id="patient-prescription-edit-form"
+            id-prefix="patient-prescription-edit"
+            :dialog-content-class="prescriptionFormDialogLayoutClass"
+            @update:open="
+                (open) => {
+                    if (!open) {
+                        closeEditPrescriptionDialog();
+                    }
+                }
+            "
+            @saved="closeEditPrescriptionDialog"
+        />
+
+        <PatientConfirmDialog
+            v-if="prescriptionPendingDelete !== null"
+            :open="deleteDialogOpen"
+            :title="t('patient.prescriptions.deleteConfirm.title')"
+            :description="
+                t('patient.prescriptions.deleteConfirm.message', {
+                    name: prescriptionPendingDelete.medication.name,
+                })
+            "
+            :confirm-label="t('patient.prescriptions.deleteConfirm.confirm')"
+            :cancel-label="t('patient.prescriptions.deleteConfirm.cancel')"
+            :processing="deleteProcessing"
+            :icon="Trash2"
+            icon-tone="danger"
+            cancel-first
+            cancel-tone="primary"
+            @update:open="
+                (open) => {
+                    if (!open) {
+                        closeDeletePrescriptionDialog();
+                    }
+                }
+            "
+            @confirm="confirmDeletePrescription"
+        />
+
         <AddPrescriptionDialog
             v-model:open="addDialogOpen"
             v-model:selected-medication-id="selectedMedicationId"
@@ -138,6 +201,9 @@ const emptyStateMessage = computed((): string => {
             :quantity-client-error="quantityClientError"
             :medication-client-error="medicationClientError"
             :expiry-dates-client-error="expiryDatesClientError"
+            :go-to-wizard-step-from-summary="
+                goToPrescriptionWizardStepFromSummary
+            "
             @submit="handlePrescriptionDialogSubmit"
             @cancel="closeAddPrescriptionDialog"
             @back="handlePrescriptionDialogBackOrCancel"

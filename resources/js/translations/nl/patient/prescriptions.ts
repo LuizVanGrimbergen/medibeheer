@@ -3,6 +3,21 @@ export default {
     metaDescription:
         'Overzicht van de vervaldatums van uw medicatievoorschriften in Medibeheer.',
     listHeading: 'Uw voorschriften per medicatie',
+    cardActionsAriaLabel: 'Acties voor dit voorschrift',
+    actions: {
+        edit: 'Wijzigen',
+        delete: 'Verwijderen',
+        save: 'Opslaan',
+        cancel: 'Annuleren',
+    },
+    dialogEditTitle: 'Voorschrift wijzigen',
+    deleteConfirm: {
+        title: 'Voorschrift verwijderen?',
+        message:
+            'Weet u zeker dat u dit voorschrift voor “{name}” wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+        confirm: 'Ja, verwijderen',
+        cancel: 'Annuleren',
+    },
     empty: 'U heeft nog geen voorschriften toegevoegd. Tik op “Voorschrift toevoegen” om te beginnen.',
     emptyMedications:
         'U heeft nog geen medicaties. Voeg eerst medicatie toe om voorschriften te kunnen registreren.',
@@ -12,6 +27,12 @@ export default {
     addPrescription: 'Voorschrift toevoegen',
     dialogTitle: 'Voorschrift toevoegen',
     stepsProgress: 'Stap {current} van {total}',
+    overview: {
+        title: 'Controleer uw gegevens',
+        sectionDetails: 'Voorschrift',
+        sectionExpiryDates: 'Vervaldata',
+        editRowAria: '{field} bewerken',
+    },
     medicationLabel: 'Medicatie',
     medicationPlaceholder: 'Kies een medicatie',
     quantityLabel: 'Aantal voorschriften',

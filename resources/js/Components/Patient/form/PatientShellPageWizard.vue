@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { usePatientShellPageChrome } from '@/composables/patient/usePatientShellDialogChrome';
 import {
     patientShellPageDescriptionClass,
     patientShellPageHeaderClass,
@@ -10,6 +11,8 @@ defineProps<{
     title: string;
     description?: string;
 }>();
+
+usePatientShellPageChrome();
 </script>
 
 <template>

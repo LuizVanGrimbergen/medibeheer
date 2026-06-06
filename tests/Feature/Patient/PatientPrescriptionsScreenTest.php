@@ -212,6 +212,78 @@ test('patients can update prescription pickup status', function () {
             ->where('prescriptions.data.0.pickup_status', 'pending'));
 });
 
+test('patients can update a prescription expiry date', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()
+        ->for($patient)
+        ->create();
+
+    $prescription = MedicationPrescription::factory()->forMedication($medication)->create([
+        'prescription_expiry_date' => '2026-06-02',
+    ]);
+
+    $response = $this->actingAs($user)->patch(
+        route('patient.prescriptions.update', $prescription),
+        ['prescription_expiry_date' => '2026-12-15'],
+    );
+
+    $response->assertRedirect(route('patient.prescriptions'));
+
+    expect($prescription->fresh()->prescription_expiry_date?->format('Y-m-d'))
+        ->toBe('2026-12-15');
+});
+
+test('patients can delete a prescription', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $medication = Medication::factory()
+        ->for($patient)
+        ->create();
+
+    $prescription = MedicationPrescription::factory()->forMedication($medication)->create([
+        'prescription_expiry_date' => '2026-06-02',
+    ]);
+
+    $response = $this->actingAs($user)->delete(
+        route('patient.prescriptions.destroy', $prescription),
+    );
+
+    $response->assertRedirect(route('patient.prescriptions'));
+
+    expect($prescription->fresh()->trashed())->toBeTrue();
+
+    $this->actingAs($user)
+        ->get(route('patient.prescriptions'))
+        ->assertInertia(fn ($page) => $page
+            ->where('prescriptions.meta.total', 0));
+});
+
+test('patients cannot delete another patients prescription', function () {
+    $firstUser = User::factory()->patient()->create();
+    $secondUser = User::factory()->patient()->create();
+
+    $medication = Medication::factory()
+        ->for($firstUser->patient)
+        ->create();
+
+    $prescription = MedicationPrescription::factory()->forMedication($medication)->create([
+        'prescription_expiry_date' => '2026-06-02',
+    ]);
+
+    $response = $this->actingAs($secondUser)->delete(
+        route('patient.prescriptions.destroy', $prescription),
+    );
+
+    $response->assertForbidden();
+
+    expect($prescription->fresh()->trashed())->toBeFalse();
+});
+
 test('guests are redirected when visiting patient prescriptions', function () {
     $response = $this->get(route('patient.prescriptions'));
 

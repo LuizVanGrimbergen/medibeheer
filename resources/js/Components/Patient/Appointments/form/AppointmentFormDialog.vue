@@ -3,6 +3,7 @@ import { computed, nextTick, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import AppointmentAddressStep from '@/Components/Patient/Appointments/steps/AppointmentAddressStep.vue';
+import AppointmentCreateSummaryStep from '@/Components/Patient/Appointments/steps/AppointmentCreateSummaryStep.vue';
 import AppointmentNotesStep from '@/Components/Patient/Appointments/steps/AppointmentNotesStep.vue';
 import AppointmentProviderStep from '@/Components/Patient/Appointments/steps/AppointmentProviderStep.vue';
 import AppointmentScheduleStep from '@/Components/Patient/Appointments/steps/AppointmentScheduleStep.vue';
@@ -18,6 +19,7 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import { getGoogleMapsApiKey } from '@/lib/google-maps/loadGoogleMapsApi';
 import {
     applyAppointmentAddressFieldErrors,
@@ -96,6 +98,8 @@ const currentStepIndex = computed(() => stepOrder.value.indexOf(step.value));
 const isOpen = toRef(() => props.open);
 const progressLabelRef = ref<HTMLElement | null>(null);
 
+usePatientShellDialogChromeSync(isOpen);
+
 const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     currentStepIndex,
     isOpen,
@@ -109,7 +113,8 @@ const progressLabel = computed(() =>
     }),
 );
 
-const isNotesStep = computed(() => step.value === 'notes');
+const isSummaryStep = computed(() => step.value === 'summary');
+const showTransportStep = computed(() => props.transportFamilies.length > 0);
 const isVerifyingAddress = ref(false);
 const addressStepRef = ref<InstanceType<typeof AppointmentAddressStep> | null>(
     null,
@@ -314,62 +319,93 @@ function handleCancelOrBack(): void {
     goBack();
 }
 
-async function handlePrimaryAction(): Promise<void> {
-    if (step.value === 'notes') {
-        if (props.form.processing) {
-            return;
-        }
+async function submitAppointmentForm(): Promise<void> {
+    if (props.form.processing) {
+        return;
+    }
 
-        const fieldErrors = getPatientAppointmentDialogFormFieldErrors(
-            {
-                doctor_type: props.form.doctor_type,
-                provider_name: props.form.provider_name,
-                street: props.form.street,
-                house_number: props.form.house_number,
-                postal_code: props.form.postal_code,
-                city: props.form.city,
-                starts_at_date: props.form.starts_at_date,
-                starts_at_time: props.form.starts_at_time,
-                notes: props.form.notes,
-                needs_transport: props.form.needs_transport,
-                transport_family_ids: props.form.transport_family_ids,
-                status: props.form.status,
-            },
-            permitPastStartsAtOptions.value,
-        );
+    const fieldErrors = getPatientAppointmentDialogFormFieldErrors(
+        {
+            doctor_type: props.form.doctor_type,
+            provider_name: props.form.provider_name,
+            street: props.form.street,
+            house_number: props.form.house_number,
+            postal_code: props.form.postal_code,
+            city: props.form.city,
+            starts_at_date: props.form.starts_at_date,
+            starts_at_time: props.form.starts_at_time,
+            notes: props.form.notes,
+            needs_transport: props.form.needs_transport,
+            transport_family_ids: props.form.transport_family_ids,
+            status: props.form.status,
+        },
+        permitPastStartsAtOptions.value,
+    );
 
-        const hasFieldErrors = Object.values(fieldErrors).some(
-            (message) => message !== undefined && message.length > 0,
-        );
+    const hasFieldErrors = Object.values(fieldErrors).some(
+        (message) => message !== undefined && message.length > 0,
+    );
 
-        if (hasFieldErrors) {
-            props.form.clearErrors();
-            applyFieldErrorsToForm(fieldErrors);
-
-            const nextStep = firstAppointmentFormStepContainingFieldErrors(
-                fieldErrors,
-                stepOrder.value,
-            );
-
-            if (nextStep !== null) {
-                step.value = nextStep;
-            }
-
-            scrollAppointmentFormFirstFieldErrorIntoView(
-                step.value,
-                fieldErrors,
-            );
-
-            return;
-        }
-
+    if (hasFieldErrors) {
         props.form.clearErrors();
-        emit('submit');
+        applyFieldErrorsToForm(fieldErrors);
+
+        const nextStep = firstAppointmentFormStepContainingFieldErrors(
+            fieldErrors,
+            stepOrder.value,
+        );
+
+        if (nextStep !== null) {
+            step.value = nextStep;
+        }
+
+        scrollAppointmentFormFirstFieldErrorIntoView(step.value, fieldErrors);
+
+        return;
+    }
+
+    props.form.clearErrors();
+    emit('submit');
+}
+
+async function handlePrimaryAction(): Promise<void> {
+    if (step.value === 'summary') {
+        await submitAppointmentForm();
 
         return;
     }
 
     await tryAdvanceFromCurrentStep();
+}
+
+function goToAppointmentWizardStepFromSummary(
+    stepId: AppointmentFormStepId,
+    focusElementIdSuffix?: string,
+): void {
+    if (!props.open || props.form.processing || step.value !== 'summary') {
+        return;
+    }
+
+    props.form.clearErrors();
+    step.value = stepId;
+
+    void nextTick(() => {
+        if (
+            focusElementIdSuffix !== undefined &&
+            focusElementIdSuffix.length > 0
+        ) {
+            document
+                .getElementById(`${props.idPrefix}-${focusElementIdSuffix}`)
+                ?.focus({ preventScroll: true });
+
+            return;
+        }
+
+        const suffix = focusTargetIdByStep[stepId];
+        document
+            .getElementById(`${props.idPrefix}-${suffix}`)
+            ?.focus({ preventScroll: true });
+    });
 }
 
 watch(
@@ -400,6 +436,7 @@ const focusTargetIdByStep: Record<AppointmentFormStepId, string> = {
     schedule: 'starts-at-date',
     transport: 'needs-transport',
     notes: 'notes',
+    summary: 'create-summary-title',
 };
 
 watch(
@@ -461,7 +498,19 @@ watch(
                         ref="wizardStepPanelRef"
                         class="space-y-3 sm:space-y-4"
                     >
+                        <AppointmentCreateSummaryStep
+                            v-if="step === 'summary'"
+                            :form="props.form"
+                            :id-prefix="props.idPrefix"
+                            :transport-families="props.transportFamilies"
+                            :show-transport-step="showTransportStep"
+                            :go-to-wizard-step="
+                                goToAppointmentWizardStepFromSummary
+                            "
+                        />
+
                         <Card
+                            v-else
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
                         >
                             <CardContent class="p-0">
@@ -521,7 +570,7 @@ watch(
                             class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
                         >
                             <Button
-                                v-if="!isNotesStep"
+                                v-if="!isSummaryStep"
                                 type="button"
                                 variant="default"
                                 size="lg"

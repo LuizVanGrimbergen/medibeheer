@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Services\Medications\PushReminders;
+namespace App\Services\PushReminders;
 
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Models\User;
-use App\Support\Medications\PushReminders\PushReminderAudience;
-use App\Support\Medications\PushReminders\PushReminderRecipient;
+use App\Support\PushReminders\PushReminderAudience;
+use App\Support\PushReminders\PushReminderRecipient;
 use Illuminate\Support\Collection;
 
 final class RecipientsResolver
@@ -40,10 +40,26 @@ final class RecipientsResolver
     /**
      * @return list<PushReminderRecipient>
      */
+    public function forAppointment(Patient $patient, int $appointmentId): array
+    {
+        return $this->forPatient(
+            $patient,
+            route('patient.appointments', ['appointment' => $appointmentId], absolute: false),
+            familyOpenUrl: route('family.appointments', [
+                'view' => 'planned',
+                'appointment' => $appointmentId,
+            ], absolute: false),
+        );
+    }
+
+    /**
+     * @return list<PushReminderRecipient>
+     */
     public function forPatient(
         Patient $patient,
         string $patientOpenUrl,
         ?int $familyMedicationId = null,
+        ?string $familyOpenUrl = null,
     ): array {
         $patient->loadMissing(['user', 'families.user']);
 
@@ -67,14 +83,14 @@ final class RecipientsResolver
                 continue;
             }
 
-            $familyOpenUrl = $familyMedicationId !== null
+            $resolvedFamilyOpenUrl = $familyOpenUrl ?? ($familyMedicationId !== null
                 ? route('family.medications', ['medication' => $familyMedicationId], absolute: false)
-                : route('family.overview', absolute: false);
+                : route('family.overview', absolute: false));
 
             $recipients[] = new PushReminderRecipient(
                 user: $familyUser,
                 audience: PushReminderAudience::Family,
-                openUrl: $familyOpenUrl,
+                openUrl: $resolvedFamilyOpenUrl,
                 patientName: $patientName,
             );
         }

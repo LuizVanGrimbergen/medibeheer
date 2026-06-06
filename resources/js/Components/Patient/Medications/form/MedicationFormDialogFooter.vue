@@ -5,6 +5,7 @@ import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizard
 import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { Button } from '@/Components/ui/button';
+import { patientFormWizardFooterCancelButtonClass } from '@/lib/patient/patientShellDialogLayout';
 
 const props = defineProps<{
     currentStep: MedicationFormWizardStep;
@@ -29,35 +30,28 @@ const primaryLabel = computed(() => {
     return t('patient.medications.actions.next');
 });
 
-function handleSecondaryClick(): void {
-    if (props.currentStep === 1) {
-        emit('cancel');
+function handleCancelClick(): void {
+    emit('cancel');
+}
 
-        return;
-    }
-
+function handleBackClick(): void {
     emit('back');
 }
 </script>
 
 <template>
     <PatientFormWizardFooter>
-        <PatientFormWizardFooterButton
-            variant="primary"
-            type="submit"
-            :disabled="props.processing"
-        >
-            {{ primaryLabel }}
-        </PatientFormWizardFooterButton>
-
-        <PatientFormWizardFooterButton
+        <Button
             v-if="props.currentStep === 1"
-            variant="danger"
+            type="button"
+            variant="secondary"
+            size="lg"
             :disabled="props.processing"
-            @click.stop.prevent="handleSecondaryClick"
+            :class="patientFormWizardFooterCancelButtonClass"
+            @click="handleCancelClick"
         >
             {{ t('patient.medications.actions.cancel') }}
-        </PatientFormWizardFooterButton>
+        </Button>
 
         <Button
             v-else
@@ -66,9 +60,17 @@ function handleSecondaryClick(): void {
             size="lg"
             :disabled="props.processing"
             :class="medicationFormDialogFooterBackButtonClass"
-            @click.stop.prevent="handleSecondaryClick"
+            @click="handleBackClick"
         >
             {{ t('patient.medications.actions.back') }}
         </Button>
+
+        <PatientFormWizardFooterButton
+            variant="primary"
+            type="submit"
+            :disabled="props.processing"
+        >
+            {{ primaryLabel }}
+        </PatientFormWizardFooterButton>
     </PatientFormWizardFooter>
 </template>

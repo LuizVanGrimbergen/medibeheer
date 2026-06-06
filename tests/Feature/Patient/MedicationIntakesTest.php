@@ -33,6 +33,7 @@ test('patient dashboard includes today medication intake slots', function () {
         'dose' => '1',
         'dose_unit' => MedicationDoseUnit::PIECE,
         'type_medication' => MedicationType::PILL,
+        'strength' => null,
         'note' => 'Met water innemen.',
     ]);
 
@@ -63,6 +64,10 @@ test('patient dashboard includes today medication intake slots', function () {
             ->where('today_medication_intakes.0.intake_frequency', MedicationIntakeFrequency::DAILY)
             ->where('today_medication_intakes.0.intake_weekdays', null)
             ->where('today_medication_intakes.0.note', 'Met water innemen.')
+            ->where('today_medication_intakes.0.strength', null)
+            ->where('today_medication_intakes.0.schedule_start_date', '2026-05-01')
+            ->where('today_medication_intakes.0.schedule_end_date', '2026-12-31')
+            ->where('today_medication_intakes.0.schedule_dose_times', ['08:00', '20:00'])
             ->where('today_medication_intakes.0.taken_at', null)
             ->where('today_medication_intakes.1.dose_time', '20:00')
             ->where('today_medication_intakes.1.day_period', 'evening')));

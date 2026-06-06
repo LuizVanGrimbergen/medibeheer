@@ -21,6 +21,7 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import {
     patientShellDialogOverlayAboveAppChromeClass,
     patientShellWizardFormClass,
@@ -62,6 +63,8 @@ const secondaryButtonClass =
 
 const isOpen = toRef(() => props.open);
 const progressLabelRef = ref<HTMLElement | null>(null);
+
+usePatientShellDialogChromeSync(isOpen);
 
 const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     editingStep,

@@ -1,21 +1,65 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
+import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/patient/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
+import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
 const { t } = useI18n();
+const page = usePage();
+
+const paginationQuery = computed((): Record<string, string | number> => {
+    const query: Record<string, string | number> = {};
+    const appointment = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointment !== null) {
+        query.appointment = appointment;
+    }
+
+    return query;
+});
+
+function scrollToDeepLinkedAppointment(): void {
+    const appointmentId = readFamilyScreenQueryParam('appointment', page.url);
+
+    if (appointmentId === null) {
+        return;
+    }
+
+    const id = Number(appointmentId);
+
+    if (!props.appointments.data.some((appointment) => appointment.id === id)) {
+        return;
+    }
+
+    nextTick(() => {
+        document
+            .getElementById(`patient-appointment-${id}`)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+watch(
+    () => [page.url, props.appointments.data] as const,
+    () => {
+        scrollToDeepLinkedAppointment();
+    },
+    { immediate: true, deep: true },
+);
 
 const {
     doctorTypeOptions,
@@ -33,7 +77,12 @@ const {
     hasNoAppointmentsAtAll,
     submitNewAppointment,
     submitAppointmentRevision,
-    confirmAndDeleteAppointment,
+    openDeleteAppointmentDialog,
+    closeDeleteAppointmentDialog,
+    confirmDeleteAppointment,
+    deleteDialogOpen,
+    appointmentPendingDelete,
+    deleteProcessing,
     isAppointmentUpdateInFlight,
     isAppointmentMarkedDoneInUi,
     reopenScheduledAppointmentAfterCompletion,
@@ -76,6 +125,7 @@ const {
                         class="min-w-0"
                     >
                         <AppointmentCard
+                            :anchor-id="`patient-appointment-${appointment.id}`"
                             :appointment="appointment"
                             :done-displayed="
                                 isAppointmentMarkedDoneInUi(appointment)
@@ -84,6 +134,7 @@ const {
                                 isAppointmentUpdateInFlight(appointment.id)
                             "
                             :show-actions="true"
+                            :show-provider-subtitle="false"
                             :show-transport-section="true"
                             :show-done-toggle="true"
                             :complete-form-href="
@@ -99,7 +150,7 @@ const {
                                 )
                             "
                             @edit="openAppointmentEditor(appointment)"
-                            @delete="confirmAndDeleteAppointment(appointment)"
+                            @delete="openDeleteAppointmentDialog(appointment)"
                             @update:done="
                                 (on) => {
                                     if (!on) {
@@ -120,6 +171,7 @@ const {
                     "
                     route-name="patient.appointments"
                     :meta="props.appointments.meta"
+                    :query="paginationQuery"
                 />
 
                 <Card
@@ -153,6 +205,28 @@ const {
             @update:open="(open) => (createDialogOpen = open)"
             @submit="submitNewAppointment"
             @cancel="createDialogOpen = false"
+        />
+
+        <PatientConfirmDialog
+            v-if="appointmentPendingDelete !== null"
+            :open="deleteDialogOpen"
+            :title="t('patient.appointments.deleteConfirm.title')"
+            :description="t('patient.appointments.deleteConfirm.message')"
+            :confirm-label="t('patient.appointments.deleteConfirm.confirm')"
+            :cancel-label="t('patient.appointments.deleteConfirm.cancel')"
+            :processing="deleteProcessing"
+            :icon="Trash2"
+            icon-tone="danger"
+            cancel-first
+            cancel-tone="primary"
+            @update:open="
+                (open) => {
+                    if (!open) {
+                        closeDeleteAppointmentDialog();
+                    }
+                }
+            "
+            @confirm="confirmDeleteAppointment"
         />
 
         <AppointmentFormDialog

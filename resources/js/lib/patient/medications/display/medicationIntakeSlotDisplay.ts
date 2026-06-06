@@ -106,7 +106,11 @@ export function medicationCardHeaderSummary(
     }
 
     if (times.length > 0) {
-        parts.push(times.join(', '));
+        parts.push(
+            t('patient.medications.cardHeaderIntakeTimesCount', {
+                count: times.length,
+            }),
+        );
     }
 
     if (parts.length > 0) {

@@ -7,7 +7,7 @@ namespace App\Support\Medications\PushReminders\LowStock;
 use App\Models\Medication;
 use App\Models\MedicationStock;
 use App\Services\Medications\MedicationSupplyEstimateService;
-use App\Services\Medications\PushReminders\RecipientsResolver;
+use App\Services\PushReminders\RecipientsResolver;
 use App\Support\Medications\MedicationUrgencyToneResolver;
 use App\Support\Medications\PushReminders\PushReminderTier;
 use Illuminate\Support\Facades\Cache;

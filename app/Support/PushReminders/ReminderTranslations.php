@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Support\Medications\PushReminders\LowStock;
+namespace App\Support\PushReminders;
 
 final class ReminderTranslations
 {

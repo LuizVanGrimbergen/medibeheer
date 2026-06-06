@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, watch } from 'vue';
+import DailyCheckinWizardDialog from '@/Components/Patient/DailyCheckins/form/DailyCheckinWizardDialog.vue';
+import type { DailyCheckinWizardDialogStep } from '@/Components/Patient/DailyCheckins/form/DailyCheckinWizardDialogTypes';
 import { useDailyCheckin } from '@/Components/Patient/DailyCheckins/form/useDailyCheckin';
 import DailyCheckinMoodStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinMoodStep.vue';
-import DailyCheckinNoteStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinNoteStep.vue';
-import DailyCheckinSymptomsStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinSymptomsStep.vue';
-import { Button } from '@/Components/ui/button';
-import { Card, CardContent } from '@/Components/ui/card';
-import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import {
-    patientAppointmentFormPrimaryPairButtonClass,
-    patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import PatientShellWizardCard from '@/Components/Patient/form/PatientShellWizardCard.vue';
 import type { DailyCheckin, DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -19,25 +12,10 @@ const props = defineProps<{
     today_checkin: DailyCheckin | null;
 }>();
 
-const { t } = useI18n();
+const dialogOpen = ref(false);
+const dialogStep = ref<DailyCheckinWizardDialogStep>('symptoms');
+const dialogMood = ref<DailyMoodScoreValue | null>(null);
 
-type CheckinStep = 'mood' | 'symptoms' | 'note';
-
-const checkinStepOrder: CheckinStep[] = ['mood', 'symptoms', 'note'];
-
-const step = ref<CheckinStep>('mood');
-const isWizardOpen = ref(true);
-
-const stepIndex = computed(() => checkinStepOrder.indexOf(step.value));
-
-const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
-    stepIndex,
-    isWizardOpen,
-);
-const showActionBar = computed(
-    () => step.value === 'symptoms' || step.value === 'note',
-);
-const previousMood = ref<DailyMoodScoreValue | null>(null);
 const {
     form,
     note,
@@ -49,68 +27,87 @@ const {
     resetNote,
     resetSymptoms,
     setMood,
+    clearMood,
     symptomChipClass,
     toggleSymptom,
     submit,
 } = useDailyCheckin(props.today_date, props.today_checkin);
+
+function resetDialogState(): void {
+    dialogStep.value = 'symptoms';
+    resetSymptoms();
+    resetNote();
+    clearMood();
+    dialogMood.value = null;
+}
 
 function startCheckin(mood: DailyMoodScoreValue | null): void {
     if (mood === null) {
         return;
     }
 
-    const priorMood = selectedMood.value;
+    const moodChanged = selectedMood.value !== mood;
 
-    previousMood.value = priorMood;
     setMood(mood);
+    dialogMood.value = mood;
 
     if (mood === 'good') {
         resetSymptoms();
         resetNote();
-        step.value = 'note';
+        dialogStep.value = 'note';
+    } else {
+        if (moodChanged) {
+            resetSymptoms();
+        }
+
+        dialogStep.value = 'symptoms';
+    }
+
+    dialogOpen.value = true;
+}
+
+function handleDialogCancel(): void {
+    dialogOpen.value = false;
+}
+
+function handleDialogBack(): void {
+    if (dialogStep.value === 'note' && dialogMood.value !== 'good') {
+        dialogStep.value = 'symptoms';
 
         return;
     }
 
-    if (priorMood !== mood) {
-        resetSymptoms();
-    }
-
-    step.value = 'symptoms';
-}
-
-function backToMoodStep(): void {
-    step.value = 'mood';
+    handleDialogCancel();
 }
 
 function openNoteStep(): void {
     form.symptoms = [...selectedSymptoms.value];
     resetNote();
-    step.value = 'note';
-}
-
-function backFromNote(): void {
-    const mood = selectedMood.value;
-
-    if (mood === 'bad' || mood === 'ok') {
-        step.value = 'symptoms';
-
-        return;
-    }
-
-    step.value = 'mood';
+    dialogStep.value = 'note';
 }
 
 function submitCheckin(): void {
     submit(() => {
-        step.value = 'mood';
+        dialogOpen.value = false;
     });
 }
 
+function handleDialogOpenChange(open: boolean): void {
+    dialogOpen.value = open;
+
+    if (open) {
+        return;
+    }
+
+    globalThis.setTimeout(() => {
+        resetDialogState();
+    }, 200);
+}
+
 watch(
-    () => step.value,
+    () => dialogStep.value,
     async (current) => {
-        if (current !== 'note') {
+        if (!dialogOpen.value || current !== 'note') {
             return;
         }
 
@@ -120,102 +117,30 @@ watch(
 </script>
 
 <template>
-    <div v-if="!today_checkin" class="space-y-3 sm:space-y-4">
-        <Card
-            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
-        >
-            <CardContent class="p-0">
-                <div
-                    ref="wizardStepPanelRef"
-                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
-                >
-                    <DailyCheckinMoodStep
-                        v-if="step === 'mood'"
-                        :model-value="selectedMood"
-                        :disabled="form.processing"
-                        @update:model-value="startCheckin"
-                    />
+    <div class="space-y-3 sm:space-y-4">
+        <PatientShellWizardCard v-if="!dialogOpen">
+            <DailyCheckinMoodStep
+                :model-value="selectedMood"
+                :disabled="form.processing"
+                @update:model-value="startCheckin"
+            />
+        </PatientShellWizardCard>
 
-                    <DailyCheckinSymptomsStep
-                        v-if="step === 'symptoms'"
-                        :processing="form.processing"
-                        :chip-class="symptomChipClass"
-                        @toggle="toggleSymptom"
-                    />
-
-                    <DailyCheckinNoteStep
-                        v-if="step === 'note'"
-                        v-model="note"
-                        :textarea-id="textareaId"
-                    />
-                </div>
-            </CardContent>
-        </Card>
-
-        <Card
-            v-if="showActionBar"
-            class="border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] sm:rounded-3xl"
-        >
-            <CardContent class="px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8">
-                <div
-                    class="flex w-full min-w-0 flex-col-reverse gap-2 sm:flex-row sm:gap-3"
-                >
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        size="lg"
-                        :class="patientSoftDangerActionButtonClass"
-                        :disabled="form.processing"
-                        @click="
-                            step === 'symptoms'
-                                ? backToMoodStep()
-                                : backFromNote()
-                        "
-                    >
-                        {{
-                            step === 'symptoms'
-                                ? t(
-                                      'patient.dashboard.dailyCheckins.symptoms.cancel',
-                                  )
-                                : t(
-                                      'patient.dashboard.dailyCheckins.noteDialog.cancel',
-                                  )
-                        }}
-                    </Button>
-
-                    <Button
-                        v-if="step === 'symptoms'"
-                        type="button"
-                        variant="default"
-                        size="lg"
-                        :class="patientAppointmentFormPrimaryPairButtonClass"
-                        :disabled="form.processing"
-                        @click="openNoteStep"
-                    >
-                        {{
-                            t(
-                                'patient.dashboard.dailyCheckins.symptoms.continue',
-                            )
-                        }}
-                    </Button>
-
-                    <Button
-                        v-else
-                        type="button"
-                        variant="default"
-                        size="lg"
-                        :class="patientAppointmentFormPrimaryPairButtonClass"
-                        :disabled="submitDisabled"
-                        @click="submitCheckin"
-                    >
-                        {{
-                            t(
-                                'patient.dashboard.dailyCheckins.noteDialog.confirm',
-                            )
-                        }}
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+        <DailyCheckinWizardDialog
+            :open="dialogOpen"
+            :mood="dialogMood"
+            v-model:current-step="dialogStep"
+            v-model:note="note"
+            :processing="form.processing"
+            :submit-disabled="submitDisabled"
+            :textarea-id="textareaId"
+            :chip-class="symptomChipClass"
+            @update:open="handleDialogOpenChange"
+            @cancel="handleDialogCancel"
+            @back="handleDialogBack"
+            @next="openNoteStep"
+            @toggle-symptom="toggleSymptom"
+            @submit="submitCheckin"
+        />
     </div>
 </template>

@@ -145,6 +145,10 @@ final class PatientScheduledIntakeSlotBuilder
             'type_medication' => $medication->type_medication->value,
             'dose' => $this->firstFilledDose($schedule, $medication),
             'dose_unit' => $medication->dose_unit?->value,
+            'strength' => filled($medication->strength) ? (string) $medication->strength : null,
+            'schedule_start_date' => $schedule->start_date?->toDateString(),
+            'schedule_end_date' => $schedule->end_date?->toDateString(),
+            'schedule_dose_times' => $this->scheduleOccursOnDate->sortedDoseTimes($schedule),
             'note' => filled($medication->note) ? (string) $medication->note : null,
             'taken_at' => $intake?->taken_at?->toIso8601String(),
             'stocks' => $medication->stocks

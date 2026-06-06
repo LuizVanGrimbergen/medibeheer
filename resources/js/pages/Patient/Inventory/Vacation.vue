@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { Images, Loader2, Package, PillBottle } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
 import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import InventoryVacationDateField from '@/Components/Patient/Inventory/InventoryVacationDateField.vue';
+import InventoryVacationExpiringPrescriptionsSection from '@/Components/Patient/Inventory/InventoryVacationExpiringPrescriptionsSection.vue';
 import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
 import InventoryVacationPickupBoxCalculator from '@/Components/Patient/Inventory/InventoryVacationPickupBoxCalculator.vue';
 import InventoryVacationShareStepPanel from '@/Components/Patient/Inventory/InventoryVacationShareStepPanel.vue';
@@ -38,7 +39,31 @@ import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 const props = defineProps<PatientInventoryVacationPageProps>();
 
+const page = usePage();
 const { t } = useI18n();
+
+onMounted(() => {
+    if (props.result === null) {
+        return;
+    }
+
+    if (Object.hasOwn(page.props, 'expiring_prescriptions')) {
+        return;
+    }
+
+    router.post(
+        route('patient.inventory.vacation.store'),
+        {
+            starts_on: props.starts_on,
+            ends_on: props.ends_on,
+        },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            only: ['expiring_prescriptions'],
+        },
+    );
+});
 
 const form = useForm({
     starts_on: props.starts_on,
@@ -169,6 +194,7 @@ const vacationShareImagePayload = computed(() => {
         departureLabel: t('patient.inventory.vacationResultsDepartureLabel'),
         returnLabel: t('patient.inventory.vacationResultsReturnLabel'),
         savedPackageHint: vacationSavedPackageHint.value,
+        expiringPrescriptions: props.expiring_prescriptions,
         totalLabel: t('patient.inventory.vacationPickupCalculator.totalLabel'),
         minimumBoxesLabel: t(
             'patient.inventory.vacationPickupCalculator.minimumBoxesLabel',
@@ -204,6 +230,7 @@ const {
     shareFlowOpen,
     shareStepCurrent,
     shareStepTotal,
+    plannedShareImageCount,
     prepareShareFiles,
     shareCurrentImage,
 } = useInventoryVacationShareToPhotos({
@@ -211,11 +238,29 @@ const {
     startsOn: computed(() => form.starts_on),
     t,
 });
+
+const shareStepPanelRef = ref<HTMLElement | null>(null);
+
+watch(shareFlowOpen, async (open) => {
+    if (!open) {
+        return;
+    }
+
+    await nextTick();
+    shareStepPanelRef.value?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+    });
+});
 </script>
 
 <template>
     <Head>
         <title>{{ t('patient.inventory.vacationDialogTitle') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.inventory.vacationMetaDescription')"
+        />
     </Head>
 
     <PatientLayout>
@@ -270,6 +315,23 @@ const {
                         <template #footer>
                             <div :class="patientFormWizardFooterRowClass">
                                 <Button
+                                    as-child
+                                    variant="secondary"
+                                    size="lg"
+                                    :class="
+                                        patientFormWizardFooterCancelButtonClass
+                                    "
+                                    :disabled="form.processing"
+                                >
+                                    <Link :href="route('patient.inventory')">
+                                        {{
+                                            t(
+                                                'patient.inventory.vacationBackToInventory',
+                                            )
+                                        }}
+                                    </Link>
+                                </Button>
+                                <Button
                                     type="submit"
                                     variant="default"
                                     size="lg"
@@ -287,23 +349,6 @@ const {
                                                   'patient.inventory.vacationCalculate',
                                               )
                                     }}
-                                </Button>
-                                <Button
-                                    as-child
-                                    variant="secondary"
-                                    size="lg"
-                                    :class="
-                                        patientFormWizardFooterCancelButtonClass
-                                    "
-                                    :disabled="form.processing"
-                                >
-                                    <Link :href="route('patient.inventory')">
-                                        {{
-                                            t(
-                                                'patient.inventory.vacationBackToInventory',
-                                            )
-                                        }}
-                                    </Link>
                                 </Button>
                             </div>
                         </template>
@@ -373,23 +418,18 @@ const {
                                 }}
                             </p>
 
-                            <h2
-                                v-if="props.result.items.length > 0"
-                                :class="patientPageSectionTitleClass"
-                            >
-                                {{
-                                    t('patient.inventory.vacationResultsTitle')
-                                }}
-                            </h2>
-
                             <div class="space-y-3">
-                                <InventoryVacationShareStepPanel
+                                <div
                                     v-if="shareFlowOpen"
-                                    :step-current="shareStepCurrent"
-                                    :step-total="shareStepTotal"
-                                    :steps-completed="shareStepCurrent - 1"
-                                    @share="shareCurrentImage"
-                                />
+                                    ref="shareStepPanelRef"
+                                >
+                                    <InventoryVacationShareStepPanel
+                                        :step-current="shareStepCurrent"
+                                        :step-total="shareStepTotal"
+                                        :steps-completed="shareStepCurrent - 1"
+                                        @share="shareCurrentImage"
+                                    />
+                                </div>
 
                                 <Button
                                     v-else
@@ -401,9 +441,18 @@ const {
                                     "
                                     :disabled="isSaving"
                                     :aria-label="
-                                        t(
-                                            'patient.inventory.vacationSaveToPhotos',
-                                        )
+                                        plannedShareImageCount > 1
+                                            ? t(
+                                                  'patient.inventory.vacationSaveToPhotosMultiple',
+                                                  {
+                                                      count: String(
+                                                          plannedShareImageCount,
+                                                      ),
+                                                  },
+                                              )
+                                            : t(
+                                                  'patient.inventory.vacationSaveToPhotos',
+                                              )
                                     "
                                     @click="prepareShareFiles"
                                 >
@@ -423,9 +472,18 @@ const {
                                                 ? t(
                                                       'patient.inventory.vacationSaving',
                                                   )
-                                                : t(
-                                                      'patient.inventory.vacationSaveToPhotos',
-                                                  )
+                                                : plannedShareImageCount > 1
+                                                  ? t(
+                                                        'patient.inventory.vacationSaveToPhotosMultiple',
+                                                        {
+                                                            count: String(
+                                                                plannedShareImageCount,
+                                                            ),
+                                                        },
+                                                    )
+                                                  : t(
+                                                        'patient.inventory.vacationSaveToPhotos',
+                                                    )
                                         }}
                                     </span>
                                 </Button>
@@ -487,6 +545,21 @@ const {
                                     </span>
                                 </div>
                             </div>
+
+                            <InventoryVacationExpiringPrescriptionsSection
+                                v-if="props.expiring_prescriptions.length > 0"
+                                :heading="
+                                    t(
+                                        'patient.inventory.vacationExpiringPrescriptionsHeading',
+                                    )
+                                "
+                                :intro="
+                                    t(
+                                        'patient.inventory.vacationExpiringPrescriptionsIntro',
+                                    )
+                                "
+                                :prescriptions="props.expiring_prescriptions"
+                            />
 
                             <ul
                                 v-if="props.result.items.length > 0"

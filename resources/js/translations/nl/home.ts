@@ -1,7 +1,7 @@
 export default {
     metaTitle: 'Medicatiebeheer voor patiënten, familie en zorgverleners',
     metaDescription:
-        'Medibeheer: medicatie, voorschriften, innames, voorraad, afspraken, medicatieplannen en check-ins. Voor patiënten, familie en zorgverleners.',
+        'Medibeheer is een veilige webapp voor medicatiebeheer, voorschriften, innames, voorraad, afspraken en check-ins. Voor patiënten, familie en zorgverleners in België en Nederland.',
     welcomeTitle: 'Welkom bij',
     welcomeSubtitle: 'U vertrouwde gezondheidspartner.',
     featuresHeading: 'Wat doet Medibeheer?',

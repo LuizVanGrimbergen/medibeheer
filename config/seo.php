@@ -4,8 +4,38 @@ return [
 
     'description' => env(
         'SEO_DESCRIPTION',
-        'Medibeheer is een veilige webapp voor medicatiebeheer, voorschriften, innames, voorraad, afspraken en medicatieplannen. Voor patiënten, familie en zorgverleners in België en Nederland.',
+        'Medibeheer is een veilige webapp voor medicatiebeheer, voorschriften, innames, voorraad, afspraken en check-ins. Voor patiënten, familie en zorgverleners in België en Nederland.',
     ),
+
+    'pages' => [
+        'home' => [
+            'title' => 'Medicatiebeheer voor patiënten, familie en zorgverleners',
+            'description' => env(
+                'SEO_DESCRIPTION',
+                'Medibeheer is een veilige webapp voor medicatiebeheer, voorschriften, innames, voorraad, afspraken en check-ins. Voor patiënten, familie en zorgverleners in België en Nederland.',
+            ),
+        ],
+        'login' => [
+            'title' => 'Log in',
+            'description' => 'Log in bij Medibeheer om medicatie, innames, voorraad en afspraken veilig te beheren als patiënt, familie of zorgverlener.',
+        ],
+        'register' => [
+            'title' => 'Registreren',
+            'description' => 'Maak een gratis Medibeheer-account aan voor veilig medicatiebeheer, innames en afspraken, voor patiënten, familie en zorgverleners.',
+        ],
+        'password.request' => [
+            'title' => 'Wachtwoord vergeten',
+            'description' => 'Wachtwoord vergeten? Vraag een veilige resetlink aan voor uw Medibeheer-account.',
+        ],
+        'legal.privacy' => [
+            'title' => 'Privacybeleid',
+            'description' => 'Lees hoe Medibeheer uw persoons- en gezondheidsgegevens verwerkt, bewaart en beschermt conform de AVG/GDPR.',
+        ],
+        'legal.cookies' => [
+            'title' => 'Cookiebeleid',
+            'description' => 'Informatie over cookies, lokale opslag en push-instellingen in de Medibeheer webapp.',
+        ],
+    ],
 
     'locale' => env('SEO_LOCALE', 'nl_BE'),
 

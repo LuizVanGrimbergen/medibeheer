@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
 import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
+import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import MedicationPrescriptionListItemSection from '@/Components/Patient/Prescriptions/MedicationPrescriptionListItem.vue';
 import PrescriptionLastAppointmentTag from '@/Components/Patient/Prescriptions/PrescriptionLastAppointmentTag.vue';
@@ -13,20 +14,32 @@ import { usePatientPrescriptionCompleteActions } from '@/composables/patient/use
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import {
-    prescriptionShowsCollapsedPickupAction,
     prescriptionShowsExpandedPickupControl,
+    prescriptionShowsPrimaryPickupAction,
 } from '@/lib/patient/prescriptions/prescriptionCollapsedPickupVisibility';
 import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { prescriptionExpiryUrgencyContext } from '@/lib/patient/prescriptions/prescriptionExpiryUrgency';
+import { patientPageCardHeaderWithActionsClass } from '@/lib/patient/patientPageTypography';
 import type {
     MedicationPrescriptionListItem,
     MedicationPrescriptionPickupStatusValue,
     MedicationTypeValue,
 } from '@/lib/types';
 
-const props = defineProps<{
-    prescription: MedicationPrescriptionListItem;
-    onPickedUp?: (isLastInBatch: boolean) => void;
+const props = withDefaults(
+    defineProps<{
+        prescription: MedicationPrescriptionListItem;
+        onPickedUp?: (isLastInBatch: boolean) => void;
+        showActions?: boolean;
+    }>(),
+    {
+        showActions: true,
+    },
+);
+
+const emit = defineEmits<{
+    edit: [];
+    delete: [];
 }>();
 
 const { t } = useI18n();
@@ -72,13 +85,9 @@ const expiryProgressAriaLabel = computed((): string => {
     });
 });
 
-const showCollapsedPickupAction = computed(() =>
-    prescriptionShowsCollapsedPickupAction(isOpen.value),
-);
+const showPrimaryPickupAction = prescriptionShowsPrimaryPickupAction();
 
-const showExpandedPickupControl = computed(() =>
-    prescriptionShowsExpandedPickupControl(isOpen.value),
-);
+const showExpandedPickupControl = prescriptionShowsExpandedPickupControl();
 
 const isPickupUpdateDisabled = computed(() =>
     isPrescriptionUpdateInFlight(props.prescription.id),
@@ -107,7 +116,25 @@ function onPickupStatusUpdate(
     >
         <CardContent class="relative p-6 sm:p-7">
             <Collapsible v-model:open="isOpen" class="flex flex-col gap-5">
-                <div class="space-y-3.5">
+                <PatientListCardActionsToolbar
+                    v-if="props.showActions"
+                    :ariaLabel="t('patient.prescriptions.cardActionsAriaLabel')"
+                    :showEdit="true"
+                    :showDelete="true"
+                    :editAriaLabel="t('patient.prescriptions.actions.edit')"
+                    :deleteAriaLabel="t('patient.prescriptions.actions.delete')"
+                    @edit="emit('edit')"
+                    @delete="emit('delete')"
+                />
+
+                <div
+                    class="space-y-3.5"
+                    :class="
+                        props.showActions
+                            ? patientPageCardHeaderWithActionsClass
+                            : null
+                    "
+                >
                     <MedicationListCardLead
                         :name="prescription.medication.name"
                         :type-medication="
@@ -119,7 +146,7 @@ function onPickupStatusUpdate(
                     >
                         <template
                             v-if="prescription.is_last_in_batch"
-                            #title-after
+                            #title-before
                         >
                             <PrescriptionLastAppointmentTag />
                         </template>
@@ -152,6 +179,13 @@ function onPickupStatusUpdate(
                     </template>
                 </div>
 
+                <PrescriptionPickupControl
+                    v-if="showPrimaryPickupAction"
+                    :pickup-status="prescription.pickup_status"
+                    :disabled="isPickupUpdateDisabled"
+                    @update:pickup-status="onPickupStatusUpdate"
+                />
+
                 <CollapsibleContent>
                     <MedicationPrescriptionListItemSection
                         :prescription="prescription"
@@ -161,13 +195,6 @@ function onPickupStatusUpdate(
                         @update:pickup-status="onPickupStatusUpdate"
                     />
                 </CollapsibleContent>
-
-                <PrescriptionPickupControl
-                    v-if="showCollapsedPickupAction"
-                    :pickup-status="prescription.pickup_status"
-                    :disabled="isPickupUpdateDisabled"
-                    @update:pickup-status="onPickupStatusUpdate"
-                />
 
                 <PatientListCardDetailsToggle
                     :mode="isOpen ? 'collapse' : 'expand'"

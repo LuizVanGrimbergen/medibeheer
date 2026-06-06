@@ -6,7 +6,7 @@ namespace App\Console\Commands\Medications\PushReminders;
 
 use App\Models\Medication;
 use App\Services\Medications\PushReminders\LowStock\CandidatesQuery;
-use App\Services\Medications\PushReminders\RecipientsResolver;
+use App\Services\PushReminders\RecipientsResolver;
 use App\Support\Medications\PushReminders\LowStock\ReminderCache;
 use App\Support\Medications\PushReminders\PushReminderTier;
 use Illuminate\Console\Command;

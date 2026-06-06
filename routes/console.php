@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\AppClock;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -15,6 +16,11 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('privacy:purge-expired-data')->daily();
 
+Schedule::command('patient:open-daily-checkin-window')
+    ->dailyAt('00:01')
+    ->timezone(AppClock::TIMEZONE)
+    ->withoutOverlapping();
+
 Schedule::command('patient:send-medication-due-reminders')
     ->everyMinute()
     ->withoutOverlapping();
@@ -27,11 +33,20 @@ Schedule::command('medication:send-prescription-expiry-reminders')
     ->dailyAt('09:00')
     ->withoutOverlapping();
 
+Schedule::command('appointment:send-two-day-reminders')
+    ->dailyAt('09:00')
+    ->withoutOverlapping();
+
+Schedule::command('appointment:send-two-hour-reminders')
+    ->everyMinute()
+    ->withoutOverlapping();
+
 /*
 |--------------------------------------------------------------------------
 | Manual / diagnostic commands (app/Console/Commands)
 |--------------------------------------------------------------------------
 |
+| patient:open-daily-checkin-window           — daily check-in UI window (00:01 Brussels; no push)
 | patient:send-test-push-notification       — immediate test push
 | patient:preview-medication-due-reminders  — slots due this minute
 | patient:diagnose-medication-push-reminders — VAPID, subscription, schedule debug
@@ -39,5 +54,9 @@ Schedule::command('medication:send-prescription-expiry-reminders')
 | medication:send-low-stock-reminders              — seven-day supply web push (patient + family)
 | medication:preview-prescription-expiry-reminders — list expiring prescriptions + recipients
 | medication:send-prescription-expiry-reminders    — seven-day prescription expiry push
+| appointment:preview-two-day-reminders            — list appointments two calendar days out + recipients
+| appointment:send-two-day-reminders               — two calendar days before appointment push
+| appointment:preview-two-hour-reminders           — list appointments starting in two hours + recipients
+| appointment:send-two-hour-reminders              — two hours before appointment push
 |
 */

@@ -1,15 +1,15 @@
 export default {
-    settingsTitle: 'Voorraadmeldingen',
+    settingsTitle: 'Meldingen',
     settingsLinkDescription:
-        'Meldingen aan- of uitzetten wanneer de voorraad van een patiënt bijna op is.',
+        'Meldingen aan- of uitzetten voor voorraad, recepten en afspraken van gekoppelde patiënten.',
     settingsDescription:
-        'U krijgt een melding wanneer een gekoppelde patiënt nog ongeveer zeven dagen medicatie over heeft. Tik op de melding om de voorraad te bekijken.',
-    settingsEnabledStatus: 'Voorraadmeldingen staan aan.',
-    settingsDisabledStatus: 'Voorraadmeldingen staan uit.',
+        'U krijgt meldingen wanneer de medicatievoorraad van een gekoppelde patiënt bijna op is, wanneer een recept bijna verloopt, en twee dagen en twee uur voor een geplande afspraak. Tik op een melding om direct naar de juiste pagina te gaan.',
+    settingsEnabledStatus: 'Meldingen staan aan.',
+    settingsDisabledStatus: 'Meldingen staan uit.',
     disableButton: 'Meldingen uitzetten',
-    promptTitle: 'Melding bij lage voorraad',
+    promptTitle: 'Meldingen voor gekoppelde patiënten',
     promptDescription:
-        'U krijgt een melding wanneer de medicatievoorraad van een gekoppelde patiënt bijna op is. Tik op de melding om de voorraad te bekijken.',
+        'U krijgt meldingen bij lage voorraad, een bijna verlopen recept of een komende afspraak van een gekoppelde patiënt. Tik op een melding om direct naar de juiste pagina te gaan.',
     installRequiredNote:
         'Op iPhone: zet Medibeheer eerst op uw beginscherm (zie de gele balk bovenaan). Open de app daarna via dat icoon, niet via Safari.',
     deniedDescription:
@@ -18,8 +18,7 @@ export default {
         'Meldingen zijn op dit moment niet beschikbaar. Vraag hulp aan de beheerder als dit blijft.',
     enableButton: 'Meldingen aanzetten',
     dismissPromptAriaLabel: 'Melding sluiten',
-    dismissPromptHint:
-        'U kunt voorraadmeldingen later inschakelen onder Instellingen.',
+    dismissPromptHint: 'U kunt meldingen later inschakelen onder Instellingen.',
     registrationDenied:
         'Meldingen zijn niet toegestaan. Zet meldingen aan in de instellingen van uw browser.',
     registrationServiceWorkerFailed:

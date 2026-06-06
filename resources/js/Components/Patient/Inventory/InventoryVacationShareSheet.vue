@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
+import InventoryVacationExpiringPrescriptionsSection from '@/Components/Patient/Inventory/InventoryVacationExpiringPrescriptionsSection.vue';
 import InventoryVacationShareMedicationPickup from '@/Components/Patient/Inventory/InventoryVacationShareMedicationPickup.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
@@ -70,22 +71,30 @@ defineProps<{
             {{ payload.emptyMessage }}
         </p>
 
+        <div
+            v-if="payload.savedPackageHint !== null"
+            class="border-border/60 bg-surface-2/30 flex w-full min-w-0 items-start gap-3.5 rounded-2xl border px-4 py-3.5 sm:gap-4 sm:rounded-3xl sm:px-5 sm:py-4"
+        >
+            <p
+                class="text-text-heading text-sm leading-snug font-semibold sm:text-base"
+            >
+                {{ payload.savedPackageHint }}
+            </p>
+        </div>
+
+        <InventoryVacationExpiringPrescriptionsSection
+            :prescriptions="payload.expiringPrescriptions"
+        />
+
         <section v-if="payload.items.length > 0" class="space-y-4">
             <h2 :class="patientPageSectionTitleClass">
                 {{ payload.listHeading }}
             </h2>
 
-            <p
-                v-if="payload.savedPackageHint !== null"
-                class="text-text-muted text-base leading-relaxed"
-            >
-                {{ payload.savedPackageHint }}
-            </p>
-
             <ul class="flex flex-col gap-4">
                 <li
                     v-for="item in payload.items"
-                    :key="item.name"
+                    :key="item.medicationId"
                     :[INVENTORY_VACATION_SHARE_MEDICATION_DATA_ATTRIBUTE]="true"
                 >
                     <Card :class="inventoryVacationResultsCardClass">

@@ -15,6 +15,15 @@ export default {
         'Er zijn momenteel geen geplande afspraken. Nieuwe afspraken verschijnen hier zodra u ze toevoegt.',
     dialogTitle: 'Nieuwe afspraak',
     dialogEditTitle: 'Afspraak wijzigen',
+    overview: {
+        title: 'Controleer uw gegevens',
+        sectionProvider: 'Zorgverlener',
+        sectionAddress: 'Adres',
+        sectionSchedule: 'Datum en tijd',
+        sectionTransport: 'Transport',
+        sectionNotes: 'Notities',
+        editRowAria: '{field} bewerken',
+    },
     steps: {
         progress: 'Stap {current} van {total}',
         continue: 'Volgende',
@@ -88,8 +97,13 @@ export default {
         delete: 'Verwijderen',
         edit: 'Wijzigen',
     },
-    deleteConfirm:
-        'Weet u zeker dat u deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+    deleteConfirm: {
+        title: 'Afspraak verwijderen?',
+        message:
+            'Weet u zeker dat u deze afspraak wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+        confirm: 'Ja, verwijderen',
+        cancel: 'Annuleren',
+    },
     labels: {
         when: 'Wanneer',
         time: 'Tijd',

@@ -1,7 +1,22 @@
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 
 /** Keeps each saved image readable on a phone screen. */
-export const INVENTORY_VACATION_MEDICATIONS_PER_SHARE_PAGE = 4;
+export const INVENTORY_VACATION_MEDICATIONS_PER_SHARE_PAGE = 5;
+
+export function inventoryVacationPlannedShareImageCount(
+    itemCount: number,
+    itemsPerPage: number = INVENTORY_VACATION_MEDICATIONS_PER_SHARE_PAGE,
+): number {
+    if (itemCount <= 0) {
+        return 1;
+    }
+
+    if (itemCount <= itemsPerPage) {
+        return 1;
+    }
+
+    return Math.ceil(itemCount / itemsPerPage);
+}
 
 export function splitInventoryVacationShareImagePayloads(
     payload: InventoryVacationShareImagePayload,
@@ -39,6 +54,10 @@ export function splitInventoryVacationShareImagePayloads(
             pageLabel: `${pageIndex + 1} / ${totalPages}`,
             skippedNote: isLastPage ? payload.skippedNote : null,
             emptyMessage: null,
+            expiringPrescriptions:
+                pageIndex === 0 ? payload.expiringPrescriptions : [],
+            savedPackageHint:
+                pageIndex === 0 ? payload.savedPackageHint : null,
         });
     }
 

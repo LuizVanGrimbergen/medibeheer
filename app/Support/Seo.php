@@ -67,21 +67,61 @@ class Seo
         return $locale;
     }
 
+    /**
+     * @return array{title: string, description: string}|null
+     */
+    public static function documentMeta(Request $request): ?array
+    {
+        $routeName = $request->route()?->getName();
+
+        if ($routeName === null || ! in_array($routeName, self::indexableRouteNames(), true)) {
+            return null;
+        }
+
+        /** @var array<string, array{title: string, description: string}> $pages */
+        $pages = config('seo.pages', []);
+
+        $meta = $pages[$routeName] ?? null;
+
+        if ($meta === null) {
+            return null;
+        }
+
+        return [
+            'title' => $meta['title'],
+            'description' => $meta['description'],
+        ];
+    }
+
     /** @return array<string, mixed> */
     public static function homeStructuredData(Request $request): array
     {
+        $homeMeta = self::documentMeta($request);
         /** @var string $description */
-        $description = config('seo.description');
+        $description = $homeMeta['description'] ?? config('seo.description');
+        $siteName = config('app.name');
+        $url = self::canonicalUrl($request);
 
         return [
             '@context' => 'https://schema.org',
-            '@type' => 'WebApplication',
-            'name' => config('app.name'),
-            'applicationCategory' => 'HealthApplication',
-            'operatingSystem' => 'Web',
-            'description' => $description,
-            'url' => self::canonicalUrl($request),
-            'inLanguage' => 'nl',
+            '@graph' => [
+                [
+                    '@type' => 'WebSite',
+                    'name' => $siteName,
+                    'url' => $url,
+                    'description' => $description,
+                    'inLanguage' => 'nl',
+                ],
+                [
+                    '@type' => 'WebApplication',
+                    'name' => $siteName,
+                    'applicationCategory' => 'HealthApplication',
+                    'operatingSystem' => 'Web',
+                    'description' => $description,
+                    'url' => $url,
+                    'inLanguage' => 'nl',
+                ],
+            ],
         ];
     }
 

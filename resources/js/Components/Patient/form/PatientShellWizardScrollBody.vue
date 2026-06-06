@@ -2,10 +2,10 @@
 import { ChevronDown } from 'lucide-vue-next';
 import { toRef, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
+import PatientShellWizardFooterCard from '@/Components/Patient/form/PatientShellWizardFooterCard.vue';
 import { usePatientShellWizardScrollHint } from '@/composables/patient/usePatientShellWizardScrollHint';
 import { usePatientShellWizardScrollReset } from '@/composables/patient/usePatientShellWizardScrollReset';
 import {
-    patientShellWizardFooterClass,
     patientShellWizardScrollBodyClass,
     patientShellWizardShellClass,
 } from '@/lib/patient/patientShellDialogLayout';
@@ -42,10 +42,19 @@ const { t } = useI18n();
 <template>
     <div :class="patientShellWizardShellClass">
         <div ref="scrollRef" :class="patientShellWizardScrollBodyClass">
-            <slot />
+            <div
+                class="flex min-h-full min-w-0 flex-col space-y-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] sm:space-y-4"
+            >
+                <slot />
 
-            <div ref="footerRef" :class="patientShellWizardFooterClass">
-                <slot name="footer" />
+                <PatientShellWizardFooterCard
+                    v-if="$slots.footer"
+                    class="mt-auto shrink-0"
+                >
+                    <div ref="footerRef">
+                        <slot name="footer" />
+                    </div>
+                </PatientShellWizardFooterCard>
             </div>
         </div>
 

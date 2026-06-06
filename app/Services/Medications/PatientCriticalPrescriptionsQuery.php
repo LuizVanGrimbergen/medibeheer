@@ -26,6 +26,36 @@ final class PatientCriticalPrescriptionsQuery
      */
     public function forPatient(Patient $patient): array
     {
+        return $this->prescriptionAlertsFor($patient, criticalOnly: true);
+    }
+
+    /**
+     * @return list<array{
+     *     id: int,
+     *     medication_id: int,
+     *     medication_name: string,
+     *     days_remaining: int,
+     *     is_last_in_batch: bool,
+     * }>
+     */
+    public function forPatientNavAlerts(Patient $patient): array
+    {
+        return $this->prescriptionAlertsFor($patient, criticalOnly: false);
+    }
+
+    /**
+     * @return list<array{
+     *     id: int,
+     *     medication_id: int,
+     *     medication_name: string,
+     *     days_remaining: int,
+     *     is_last_in_batch: bool,
+     * }>
+     */
+    private function prescriptionAlertsFor(
+        Patient $patient,
+        bool $criticalOnly,
+    ): array {
         $activeMedicationIds = $patient->medications()
             ->activeOnMedicationList()
             ->select('medications.id');
@@ -41,7 +71,7 @@ final class PatientCriticalPrescriptionsQuery
         $urgentPrescriptions = [];
 
         foreach ($prescriptions as $prescription) {
-            $entry = $this->urgentPrescriptionEntry($prescription);
+            $entry = $this->prescriptionAlertEntry($prescription, $criticalOnly);
 
             if ($entry === null) {
                 continue;
@@ -67,12 +97,17 @@ final class PatientCriticalPrescriptionsQuery
      *     is_last_in_batch: bool,
      * }|null
      */
-    private function urgentPrescriptionEntry(
+    private function prescriptionAlertEntry(
         MedicationPrescription $prescription,
+        bool $criticalOnly,
     ): ?array {
         $tone = $this->urgencyToneResolver->prescriptionNavAlertToneFor($prescription);
 
-        if ($tone !== MedicationUrgencyTone::CRITICAL) {
+        if ($tone === null) {
+            return null;
+        }
+
+        if ($criticalOnly && $tone !== MedicationUrgencyTone::CRITICAL) {
             return null;
         }
 
