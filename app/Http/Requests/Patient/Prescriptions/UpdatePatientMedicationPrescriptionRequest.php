@@ -25,10 +25,18 @@ class UpdatePatientMedicationPrescriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'completed' => ['required_without:pickup_status', 'boolean'],
+            'completed' => [
+                'required_without_all:pickup_status,prescription_expiry_date',
+                'boolean',
+            ],
             'pickup_status' => [
-                'required_without:completed',
+                'required_without_all:completed,prescription_expiry_date',
                 Rule::enum(MedicationPrescriptionPickupStatus::class),
+            ],
+            'prescription_expiry_date' => [
+                'required_without_all:completed,pickup_status',
+                'date',
+                'date_format:Y-m-d',
             ],
         ];
     }
