@@ -1,7 +1,6 @@
 import type { RequestPayload } from '@inertiajs/core';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import type {
     AppointmentStatusValue,
     Appointment as PatientAppointment,
@@ -12,8 +11,6 @@ type DispatchAppointmentUpdateOptions = {
 };
 
 export function usePatientAppointmentRemoteActions() {
-    const { t } = useI18n();
-
     const appointmentIdsAwaitingResponse = ref<number[]>([]);
     const optimisticDoneUiByAppointmentId = ref<
         Partial<Record<number, boolean>>
@@ -70,15 +67,39 @@ export function usePatientAppointmentRemoteActions() {
         );
     }
 
-    function confirmAndDeleteAppointment(
+    const deleteDialogOpen = ref(false);
+    const appointmentPendingDelete = ref<PatientAppointment | null>(null);
+    const deleteProcessing = ref(false);
+
+    function openDeleteAppointmentDialog(
         appointment: PatientAppointment,
     ): void {
-        if (!confirm(t('patient.appointments.deleteConfirm'))) {
+        appointmentPendingDelete.value = appointment;
+        deleteDialogOpen.value = true;
+    }
+
+    function closeDeleteAppointmentDialog(): void {
+        deleteDialogOpen.value = false;
+        appointmentPendingDelete.value = null;
+    }
+
+    function confirmDeleteAppointment(): void {
+        const appointment = appointmentPendingDelete.value;
+
+        if (appointment === null) {
             return;
         }
 
+        deleteProcessing.value = true;
+
         router.delete(route('patient.appointments.destroy', appointment.id), {
             preserveScroll: true,
+            onSuccess: () => {
+                closeDeleteAppointmentDialog();
+            },
+            onFinish: () => {
+                deleteProcessing.value = false;
+            },
         });
     }
 
@@ -111,7 +132,12 @@ export function usePatientAppointmentRemoteActions() {
     return {
         isAppointmentUpdateInFlight,
         isAppointmentMarkedDoneInUi,
-        confirmAndDeleteAppointment,
+        openDeleteAppointmentDialog,
+        closeDeleteAppointmentDialog,
+        confirmDeleteAppointment,
+        deleteDialogOpen,
+        appointmentPendingDelete,
+        deleteProcessing,
         reopenScheduledAppointmentAfterCompletion,
     };
 }
