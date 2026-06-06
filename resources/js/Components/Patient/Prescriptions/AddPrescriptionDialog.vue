@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import PrescriptionFormDialogFooter from '@/Components/Patient/Prescriptions/form/PrescriptionFormDialogFooter.vue';
+import PrescriptionCreateSummaryStep from '@/Components/Patient/Prescriptions/steps/PrescriptionCreateSummaryStep.vue';
 import PrescriptionDetailsStep from '@/Components/Patient/Prescriptions/steps/PrescriptionDetailsStep.vue';
 import PrescriptionExpiryDatesStep from '@/Components/Patient/Prescriptions/steps/PrescriptionExpiryDatesStep.vue';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -14,6 +15,7 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import {
     patientShellDialogOverlayAboveAppChromeClass,
     patientShellPageDescriptionClass,
@@ -47,6 +49,10 @@ const props = defineProps<{
     quantityClientError: string;
     medicationClientError: string;
     expiryDatesClientError: string;
+    goToWizardStepFromSummary: (
+        step: PrescriptionFormWizardStep,
+        focusElementIdSuffix?: string,
+    ) => void;
 }>();
 
 const emit = defineEmits<{
@@ -67,6 +73,8 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     isOpen,
     { progressLabelRef },
 );
+
+usePatientShellDialogChromeSync(open);
 </script>
 
 <template>
@@ -102,7 +110,21 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                         ref="wizardStepPanelRef"
                         :class="patientShellWizardStepPanelClass"
                     >
-                        <Card :class="patientShellWizardCardClass">
+                        <PrescriptionCreateSummaryStep
+                            v-if="currentStep === 3"
+                            :form="props.form"
+                            :id-prefix="props.idPrefix"
+                            :selected-medication-id="selectedMedicationId"
+                            :medication-choices="props.medicationChoices"
+                            :go-to-wizard-step="
+                                props.goToWizardStepFromSummary
+                            "
+                        />
+
+                        <Card
+                            v-else
+                            :class="patientShellWizardCardClass"
+                        >
                             <CardContent class="p-0">
                                 <div :class="patientShellWizardCardInnerClass">
                                     <PrescriptionDetailsStep
@@ -124,7 +146,7 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                                     />
 
                                     <PrescriptionExpiryDatesStep
-                                        v-else
+                                        v-else-if="currentStep === 2"
                                         :id-prefix="props.idPrefix"
                                         :form="props.form"
                                         :expiry-dates-client-error="

@@ -8,6 +8,7 @@ import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patien
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 
 const prescriptionFormDialogLayoutClass = patientShellDialogContentClass('md');
+const addPrescriptionFormIdPrefix = 'patient-add-prescription';
 
 const PRESCRIPTION_QUANTITY_MIN = 1;
 const PRESCRIPTION_QUANTITY_MAX = 24;
@@ -150,10 +151,12 @@ export function usePatientPrescriptionsPage(
         progressLabel,
         handleSubmit: handlePrescriptionDialogSubmit,
         handleBackOrCancel: handlePrescriptionDialogBackOrCancel,
+        goToPrescriptionWizardStepFromSummary,
     } = usePrescriptionFormWizard({
         open: addDialogOpen,
         form,
         selectedMedicationId,
+        idPrefix: ref(addPrescriptionFormIdPrefix),
         quantityClientError,
         medicationClientError,
         expiryDatesClientError,
@@ -188,5 +191,6 @@ export function usePatientPrescriptionsPage(
         closeAddPrescriptionDialog,
         handlePrescriptionDialogSubmit,
         handlePrescriptionDialogBackOrCancel,
+        goToPrescriptionWizardStepFromSummary,
     };
 }
