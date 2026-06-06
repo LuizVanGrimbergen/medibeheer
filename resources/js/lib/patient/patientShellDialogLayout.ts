@@ -36,16 +36,21 @@ export const patientShellPageTitleClass =
 export const patientShellPageDescriptionClass =
     'text-text-heading block text-sm leading-snug font-medium md:text-base md:leading-relaxed';
 
-export const patientShellWizardStepPanelClass = 'space-y-3 md:space-y-3';
+export const patientShellWizardStepPanelClass = 'space-y-3 sm:space-y-4';
 
 export const patientShellWizardCardClass =
-    'border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl';
+    'border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl';
 
 export const patientShellWizardCardInnerClass =
-    'bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-5 md:rounded-3xl md:px-5 md:py-5 lg:space-y-6 lg:px-7 lg:py-7';
+    'bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8';
+
+export const patientShellWizardFooterCardClass =
+    'border-border/80 text-text rounded-2xl border bg-transparent shadow-sm shadow-black/[0.03] sm:rounded-3xl';
+
+export const patientShellWizardFooterCardInnerClass = 'px-4 py-3 sm:px-5 sm:py-4 md:px-7 lg:px-8';
 
 export const patientFormWizardFooterRowClass =
-    'flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3';
+    'flex w-full min-w-0 flex-col-reverse gap-2 sm:flex-row sm:gap-3';
 
 export const patientFormWizardFooterPrimaryButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
@@ -74,19 +79,19 @@ const patientShellDialogMobileClassMaxMd = [
 ].join(' ');
 
 const patientShellDialogDesktopFromSm = [
-    'sm:h-auto sm:!top-[4.75rem] sm:!bottom-[5.5rem] sm:!translate-y-0 sm:!max-h-none sm:w-[min(36rem,calc(100vw-2rem))] sm:max-w-none sm:overflow-hidden',
+    'sm:h-auto sm:!top-[4.75rem] sm:!bottom-0 sm:!translate-y-0 sm:!max-h-none sm:w-[min(36rem,calc(100vw-2rem))] sm:max-w-none sm:overflow-hidden',
     'sm:gap-4 sm:rounded-2xl sm:border-2 sm:border-border sm:p-5 sm:shadow-lg',
     'lg:gap-6 lg:p-6',
 ].join(' ');
 
 const patientShellDialogDesktopFromMd = [
-    'md:h-auto md:!top-[4.75rem] md:!bottom-[5.5rem] md:!translate-y-0 md:!max-h-none md:w-[min(36rem,calc(100vw-2rem))] md:max-w-none md:overflow-hidden',
+    'md:h-auto md:!top-[4.75rem] md:!bottom-0 md:!translate-y-0 md:!max-h-none md:w-[min(36rem,calc(100vw-2rem))] md:max-w-none md:overflow-hidden',
     'md:gap-4 md:rounded-2xl md:border-2 md:border-border md:p-5 md:shadow-lg',
     'lg:w-[min(42rem,calc(100vw-2.5rem))] lg:gap-6 lg:p-6',
 ].join(' ');
 
 /**
- * Reka-ui DialogContent classes: edge-to-edge below the desktop breakpoint, inset below AppNavbar / above bottom nav from sm or md up.
+ * Reka-ui DialogContent classes: edge-to-edge below the desktop breakpoint, inset below AppNavbar from sm or md up (footer nav is hidden while open).
  *
  * Desktop `top` is at least ~4.75rem so the panel clears the sticky AppNavbar (py-4 + content + border).
  *

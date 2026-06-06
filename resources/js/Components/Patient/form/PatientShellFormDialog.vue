@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import {
     Dialog,
@@ -8,6 +8,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/Components/ui/dialog';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import {
     patientShellDialogContentClass,
     patientShellDialogOverlayAboveAppChromeClass,
@@ -50,6 +51,8 @@ const resolvedDialogContentClass = computed(
 const overlayClass = computed(() =>
     patientShellDialogOverlayAboveAppChromeClass(props.desktopFrom),
 );
+
+usePatientShellDialogChromeSync(toRef(() => props.open));
 
 function onDialogOpenChange(value: boolean): void {
     emit('update:open', value);

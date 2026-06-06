@@ -25,8 +25,8 @@ const backButtonClass =
     'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
 
 const primaryLabel = computed(() => {
-    if (props.currentStep === 2) {
-        return t('patient.medications.actions.save');
+    if (props.currentStep === 3) {
+        return t('patient.prescriptions.actions.save');
     }
 
     return t('patient.medications.actions.next');
@@ -45,16 +45,6 @@ function handleSecondaryClick(): void {
 
 <template>
     <div :class="patientFormWizardFooterRowClass">
-        <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            :disabled="processing"
-            :class="patientFormWizardFooterPrimaryButtonClass"
-        >
-            {{ primaryLabel }}
-        </Button>
-
         <Button
             v-if="currentStep === 1"
             type="button"
@@ -77,6 +67,16 @@ function handleSecondaryClick(): void {
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.back') }}
+        </Button>
+
+        <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            :disabled="processing"
+            :class="patientFormWizardFooterPrimaryButtonClass"
+        >
+            {{ primaryLabel }}
         </Button>
     </div>
 </template>
