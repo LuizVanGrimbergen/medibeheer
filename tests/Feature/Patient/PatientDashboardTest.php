@@ -1,6 +1,38 @@
 <?php
 
+use App\Enums\DailyMoodScore;
+use App\Models\DailyCheckin;
 use App\Models\User;
+use App\Support\Medications\MedicationIntakeClock;
+
+test('patient dashboard includes today check-in when one exists for today', function () {
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    DailyCheckin::query()->create([
+        'patient_id' => $patient->id,
+        'checkin_date' => MedicationIntakeClock::today()->toDateString(),
+        'mood_score' => DailyMoodScore::GOOD,
+        'note' => null,
+    ]);
+
+    $this->actingAs($user)
+        ->get(route('patient.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('today_checkin.mood_score', 'good')
+            ->etc());
+});
+
+test('patient dashboard has no today check-in payload before first check-in', function () {
+    $user = User::factory()->patient()->create();
+
+    $this->actingAs($user)
+        ->get(route('patient.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('today_checkin', null));
+});
 
 test('verified patients can visit the patient dashboard', function () {
     $user = User::factory()->create(['role' => 'patient']);

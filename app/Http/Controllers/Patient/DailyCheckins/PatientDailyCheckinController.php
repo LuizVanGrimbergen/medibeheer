@@ -9,7 +9,7 @@ use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\DailyCheckins\StoreDailyCheckinRequest;
 use App\Models\DailyCheckin;
 use App\Services\Patient\DailyCheckinEncouragementService;
-use Carbon\CarbonImmutable;
+use App\Support\AppClock;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +29,7 @@ class PatientDailyCheckinController extends Controller
 
         $validated = $request->validated();
 
-        $today = CarbonImmutable::today();
+        $today = AppClock::today();
 
         $alreadyCheckedInToday = $patient
             ->dailyCheckins()

@@ -6,14 +6,14 @@ namespace App\Services\Family;
 
 use App\Models\DailyCheckin;
 use App\Models\Patient;
+use App\Support\AppClock;
 use App\Support\InertiaPagination;
-use Carbon\CarbonImmutable;
 
 final class FamilyDailyCheckinListService
 {
     public function withinDaysForPatient(Patient $patient, int $days): array
     {
-        $today = CarbonImmutable::today();
+        $today = AppClock::today();
         $from = $today->subDays($days - 1);
 
         return DailyCheckin::query()

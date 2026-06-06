@@ -7,8 +7,46 @@ use App\Enums\DailyMoodScore;
 use App\Events\Family\DailyCheckinCreatedEvent;
 use App\Models\DailyCheckin;
 use App\Models\User;
+use App\Support\AppClock;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+
+test('daily check-in uses the Europe Brussels calendar date when storing and on the dashboard', function () {
+    CarbonImmutable::setTestNow(
+        CarbonImmutable::parse('2026-06-07 00:30:00', AppClock::TIMEZONE),
+    );
+
+    $user = User::factory()->patient()->create();
+    $patient = $user->patient;
+    expect($patient)->not->toBeNull();
+
+    $csrfToken = 'test-csrf-token';
+
+    $this->actingAs($user)
+        ->withSession(['_token' => $csrfToken])
+        ->post(route('patient.daily-checkins.store'), [
+            '_token' => $csrfToken,
+            'mood_score' => DailyMoodScore::GOOD->value,
+            'note' => null,
+        ])
+        ->assertRedirect(route('patient.dashboard'));
+
+    $checkinDate = DailyCheckin::query()
+        ->where('patient_id', $patient->id)
+        ->value('checkin_date');
+
+    expect($checkinDate?->format('Y-m-d'))->toBe('2026-06-07');
+
+    $this->actingAs($user)
+        ->get(route('patient.dashboard'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('today_date', '2026-06-07')
+            ->where('today_checkin.mood_score', DailyMoodScore::GOOD->value));
+
+    CarbonImmutable::setTestNow();
+});
 
 test('storing a daily check-in dispatches a family updates broadcast event', function () {
     Event::fake([DailyCheckinCreatedEvent::class]);
