@@ -52,8 +52,18 @@ test('homepage includes json-ld structured data in the initial html', function (
     $this->get('/')
         ->assertOk()
         ->assertSee('application/ld+json', false)
+        ->assertSee('WebSite', false)
         ->assertSee('WebApplication', false)
         ->assertSee(route('home', absolute: true), false);
+});
+
+test('homepage includes a server-rendered meta description for search engines', function () {
+    /** @var TestCase $this */
+    $description = config('seo.pages.home.description');
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('<meta name="description" content="'.e($description).'">', false);
 });
 
 test('sitemap entries include changefreq and priority', function () {

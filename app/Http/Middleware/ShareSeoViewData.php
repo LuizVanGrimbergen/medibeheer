@@ -15,6 +15,16 @@ class ShareSeoViewData
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $documentMeta = Seo::documentMeta($request);
+
+        if ($documentMeta !== null) {
+            View::share([
+                'documentMeta' => $documentMeta,
+                'documentCanonicalUrl' => Seo::canonicalUrl($request),
+                'documentOgImageUrl' => Seo::ogImageUrl(),
+            ]);
+        }
+
         if ($request->routeIs('home')) {
             View::share(
                 'structuredDataJson',
