@@ -61,6 +61,7 @@ const visualToneClasses = computed(() =>
             />
         </div>
         <div class="min-w-0 flex-1 space-y-1 overflow-hidden">
+            <slot v-if="$slots['title-before']" name="title-before" />
             <p :class="patientMedicationListCardLeadTitleClass">
                 {{ name }}
             </p>
