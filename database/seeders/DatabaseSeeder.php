@@ -88,6 +88,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PatientWebPushDemoSeeder::class, false, [
             'patientUser' => $primaryPatientUser,
         ]);
+        $this->call(AndreVanGrimbergenDemoSeeder::class);
         $this->call(DoctorDemoSeeder::class);
 
         $primaryPatient->refresh();
