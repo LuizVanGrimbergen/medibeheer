@@ -5,6 +5,11 @@ export type InventoryVacationImageShareStepOutcome =
     | 'aborted'
     | 'downloaded';
 
+/** iOS Photos recognizes JPEG shares; PNG is often saved as a file instead. */
+export const INVENTORY_VACATION_SHARE_IMAGE_MIME = 'image/jpeg';
+
+export const INVENTORY_VACATION_SHARE_IMAGE_EXTENSION = 'jpg';
+
 export function buildInventoryVacationShareFiles(
     blobs: Blob[],
     baseFilename: string,
@@ -18,7 +23,14 @@ export function buildInventoryVacationShareFiles(
                     index,
                     blobs.length,
                 ),
-                { type: 'image/png' },
+                {
+                    type:
+                        blob.type === '' ||
+                        blob.type === 'application/octet-stream'
+                            ? INVENTORY_VACATION_SHARE_IMAGE_MIME
+                            : blob.type,
+                    lastModified: Date.now(),
+                },
             ),
     );
 }
@@ -28,15 +40,14 @@ function inventoryVacationShareFilename(
     index: number,
     total: number,
 ): string {
+    const extension = INVENTORY_VACATION_SHARE_IMAGE_EXTENSION;
+    const stem = baseFilename.replace(/\.(png|jpe?g)$/iu, '');
+
     if (total <= 1) {
-        return baseFilename.endsWith('.png')
-            ? baseFilename
-            : `${baseFilename}.png`;
+        return `${stem}.${extension}`;
     }
 
-    const stem = baseFilename.replace(/\.png$/iu, '');
-
-    return `${stem}-${index + 1}.png`;
+    return `${stem}-${index + 1}.${extension}`;
 }
 
 function downloadBlob(blob: Blob, filename: string): void {
@@ -67,13 +78,13 @@ export function canShareVacationImagesFromBrowser(): boolean {
 
 export async function shareVacationImageFile(
     file: File,
-    shareTitle: string,
+    _shareTitle: string,
 ): Promise<InventoryVacationImageShareStepOutcome> {
     if (canShareVacationImageFile(file)) {
         try {
+            // Share files only: a `title` makes iOS treat the payload as a document.
             await navigator.share({
                 files: [file],
-                title: shareTitle,
             });
 
             return 'shared';

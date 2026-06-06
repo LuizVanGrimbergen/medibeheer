@@ -24,6 +24,3 @@ export const inventoryVacationResultsCardClass =
 
 export const inventoryVacationPeriodBadgeClass =
     'rounded-full bg-primary px-4 py-1.5 text-sm font-bold text-white sm:text-base';
-
-export const inventoryVacationShareStepPanelClass =
-    'space-y-3 rounded-2xl border-2 border-primary/30 bg-primary/5 p-4 sm:p-5';
