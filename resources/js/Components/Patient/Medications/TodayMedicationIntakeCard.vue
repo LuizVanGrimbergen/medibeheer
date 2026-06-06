@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
-import { AlertTriangle, Check } from 'lucide-vue-next';
+import { AlertTriangle, Check, Clock, Package, Scale } from 'lucide-vue-next';
 import type { ComponentPublicInstance } from 'vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
+import PatientListCardDetailsGroup from '@/Components/Patient/PatientListCardDetailsGroup.vue';
+import PatientListCardDetailsGroupItem from '@/Components/Patient/PatientListCardDetailsGroupItem.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -86,6 +88,25 @@ const doseLine = computed(() => medicationIntakeDoseLine(t, props.intakeSlot));
 
 const notePreview = computed(() =>
     medicationIntakeNotePreview(props.intakeSlot),
+);
+
+const strengthLine = computed(
+    () => props.intakeSlot.strength?.trim() || null,
+);
+
+const scheduleDoseTimes = computed((): string[] =>
+    props.intakeSlot.schedule_dose_times
+        .map((time) => time.trim())
+        .filter((time) => time.length > 0),
+);
+
+const doseTimesDisplay = computed(() => scheduleDoseTimes.value.join(', '));
+
+const hasIntakeDetailsGroup = computed(
+    () =>
+        doseLine.value !== null ||
+        strengthLine.value !== null ||
+        scheduleDoseTimes.value.length > 0,
 );
 
 const headerSummary = computed(() =>
@@ -225,7 +246,7 @@ function confirmCustomTakenTime(): void {
                 :aria-label="t('patient.inventory.lowStockBadge')"
             />
 
-            <Collapsible v-model:open="isOpen">
+            <Collapsible v-model:open="isOpen" class="flex flex-col gap-5">
                 <MedicationListCardLead
                     :name="intakeSlot.name"
                     :type-medication="
@@ -242,10 +263,7 @@ function confirmCustomTakenTime(): void {
                     </template>
                 </MedicationListCardLead>
 
-                <div
-                    v-if="showBeforeWindowState"
-                    class="mt-5 flex flex-col gap-3"
-                >
+                <div v-if="showBeforeWindowState" class="flex flex-col gap-3">
                     <Button
                         type="button"
                         class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
@@ -262,7 +280,7 @@ function confirmCustomTakenTime(): void {
 
                 <div
                     v-else-if="showStandardTakeButton"
-                    class="mt-5 flex flex-col gap-2"
+                    class="flex flex-col gap-2"
                 >
                     <Button
                         type="button"
@@ -278,7 +296,7 @@ function confirmCustomTakenTime(): void {
 
                 <div
                     v-else-if="showPastSnoozeActions"
-                    class="mt-5 flex flex-col gap-3"
+                    class="flex flex-col gap-3"
                 >
                     <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Button
@@ -361,7 +379,7 @@ function confirmCustomTakenTime(): void {
                     />
                 </div>
 
-                <div v-else-if="isTaken" class="mt-5">
+                <div v-else-if="isTaken">
                     <Button
                         type="button"
                         class="min-h-14 w-full touch-manipulation rounded-2xl text-lg font-bold sm:min-h-12 sm:text-base"
@@ -380,79 +398,70 @@ function confirmCustomTakenTime(): void {
                 </div>
 
                 <CollapsibleContent>
-                    <div class="pt-4">
-                        <div class="flex flex-col gap-4 sm:gap-5">
-                            <div
-                                class="grid min-w-0 grid-cols-1 gap-3 sm:gap-4"
-                                :class="
-                                    doseLine !== null ? 'sm:grid-cols-2' : null
+                    <div class="space-y-6 pt-4">
+                        <PatientListCardDetailsGroup
+                            v-if="hasIntakeDetailsGroup"
+                        >
+                            <PatientListCardDetailsGroupItem
+                                v-if="doseLine !== null"
+                                :label="
+                                    t(
+                                        'patient.medications.overview.amountPerIntake',
+                                    )
                                 "
                             >
-                                <div
-                                    v-if="doseLine !== null"
-                                    class="border-border/70 bg-bg flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
-                                >
-                                    <span
-                                        class="text-text-muted text-sm leading-snug font-semibold sm:text-base"
-                                    >
-                                        {{
-                                            t(
-                                                'patient.dashboard.todayMedications.intakeCard.dose',
-                                            )
-                                        }}
-                                    </span>
-                                    <span
-                                        class="text-text-heading text-xl leading-tight font-bold wrap-break-word tabular-nums sm:text-2xl"
-                                    >
-                                        {{ doseLine }}
-                                    </span>
-                                </div>
+                                <template #icon>
+                                    <Package
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ doseLine }}
+                            </PatientListCardDetailsGroupItem>
 
-                                <div
-                                    class="border-border/70 bg-bg flex min-w-0 flex-col justify-center gap-1.5 rounded-2xl border px-4 py-3.5 sm:gap-2 sm:px-5 sm:py-4"
-                                >
-                                    <span
-                                        class="text-text-muted text-sm leading-snug font-semibold sm:text-base"
-                                    >
-                                        {{
-                                            t(
-                                                'patient.dashboard.todayMedications.intakeCard.time',
-                                            )
-                                        }}
-                                    </span>
-                                    <span
-                                        class="text-text-heading text-xl leading-tight font-bold tabular-nums sm:text-2xl"
-                                    >
-                                        {{ intakeSlot.dose_time }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div
-                                v-if="notePreview !== null"
-                                class="flex flex-col gap-1.5"
+                            <PatientListCardDetailsGroupItem
+                                v-if="strengthLine !== null"
+                                :label="
+                                    t('patient.medications.fields.strength')
+                                "
                             >
-                                <span
-                                    class="text-text-muted text-sm font-semibold sm:text-base"
-                                >
-                                    {{
-                                        t(
-                                            'patient.dashboard.todayMedications.intakeCard.note',
-                                        )
-                                    }}
-                                </span>
-                                <p
-                                    class="text-text min-w-0 text-base leading-relaxed wrap-break-word whitespace-pre-wrap sm:text-lg"
-                                >
-                                    {{ notePreview }}
-                                </p>
-                            </div>
-                        </div>
+                                <template #icon>
+                                    <Scale
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ strengthLine }}
+                            </PatientListCardDetailsGroupItem>
+
+                            <PatientListCardDetailsGroupItem
+                                v-if="scheduleDoseTimes.length > 0"
+                                :label="
+                                    t('patient.medications.fields.doseTime')
+                                "
+                            >
+                                <template #icon>
+                                    <Clock
+                                        :stroke-width="2"
+                                        aria-hidden="true"
+                                    />
+                                </template>
+                                {{ doseTimesDisplay }}
+                            </PatientListCardDetailsGroupItem>
+                        </PatientListCardDetailsGroup>
+
+                        <p
+                            v-if="notePreview !== null"
+                            class="border-primary text-text border-l-[3px] py-0.5 pl-3.5 text-base leading-relaxed italic sm:text-lg"
+                        >
+                            {{ notePreview }}
+                        </p>
                     </div>
                 </CollapsibleContent>
 
                 <PatientListCardDetailsToggle
                     :mode="isOpen ? 'collapse' : 'expand'"
+                    wrapper-class="mt-0 border-t-0 pt-0"
                     :label="
                         t(
                             isOpen
