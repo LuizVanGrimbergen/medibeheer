@@ -13,7 +13,8 @@ export function focusPlaceAutocompleteSearch(
         return false;
     }
 
-    input.focus({ preventScroll: true });
+    input.focus({ preventScroll: false });
+    input.scrollIntoView({ block: 'center', behavior: 'smooth' });
 
     return true;
 }

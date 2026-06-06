@@ -20,13 +20,15 @@ gmp-place-autocomplete.patient-place-autocomplete {
     min-height: 3.5rem;
     box-sizing: border-box;
     background-color: var(--color-surface);
-    color: var(--color-text);
+    color: var(--color-input-text, var(--color-text));
     border: 2px solid var(--color-border);
     border-radius: 1rem;
-    color-scheme: light;
+    color-scheme: only light;
     font-family: var(--font-body);
     font-size: 1.125rem;
     line-height: 1.75rem;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
 }
 
 gmp-place-autocomplete.patient-place-autocomplete::part(focus-ring) {
@@ -34,7 +36,9 @@ gmp-place-autocomplete.patient-place-autocomplete::part(focus-ring) {
 }
 
 gmp-place-autocomplete.patient-place-autocomplete
-    .patient-place-autocomplete-clear-icon {
+    .patient-place-autocomplete-clear-icon,
+gmp-place-autocomplete.patient-place-autocomplete
+    .patient-place-autocomplete-input-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -42,15 +46,9 @@ gmp-place-autocomplete.patient-place-autocomplete
     pointer-events: none;
 }
 
-.patient-place-autocomplete-host .patient-place-autocomplete-leading-icon {
-    position: absolute;
-    top: 50%;
-    left: 1rem;
-    z-index: 1;
-    display: inline-flex;
-    transform: translateY(-50%);
+gmp-place-autocomplete.patient-place-autocomplete
+    .patient-place-autocomplete-input-icon {
     color: var(--color-primary);
-    pointer-events: none;
 }
 
 gmp-place-autocomplete.patient-place-autocomplete::part(input) {
@@ -58,15 +56,24 @@ gmp-place-autocomplete.patient-place-autocomplete::part(input) {
     min-height: 3.5rem;
     box-sizing: border-box;
     padding: 0.875rem 1rem;
-    padding-left: 2.75rem;
     padding-right: 2.75rem;
     border: none;
     outline: none;
     background-color: transparent;
-    color: var(--color-text);
+    color: var(--color-input-text, var(--color-text));
+    -webkit-text-fill-color: var(--color-input-text, var(--color-text));
+    caret-color: var(--color-input-text, var(--color-text));
+    -webkit-user-select: text;
+    user-select: text;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+    opacity: 1;
+}
+
+gmp-place-autocomplete.patient-place-autocomplete::part(input)::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
 }
 
 gmp-place-autocomplete.patient-place-autocomplete::part(prediction-list) {
@@ -110,4 +117,18 @@ gmp-place-autocomplete.patient-place-autocomplete::part(
 gmp-place-autocomplete.patient-place-autocomplete::part(prediction-item-match) {
     color: var(--color-primary);
     font-weight: 700;
+}
+
+@media (width < 640px) {
+    gmp-place-autocomplete.patient-place-autocomplete {
+        min-height: 4rem;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
+
+    gmp-place-autocomplete.patient-place-autocomplete::part(input) {
+        min-height: 4rem;
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+    }
 }

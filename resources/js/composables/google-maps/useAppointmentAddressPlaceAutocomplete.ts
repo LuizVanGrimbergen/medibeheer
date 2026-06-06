@@ -8,6 +8,7 @@ import {
     importGoogleMapsPlacesLibrary,
 } from '@/lib/google-maps/loadGoogleMapsApi';
 import { mountPlaceAutocompleteLucideClearIcon } from '@/lib/google-maps/mountPlaceAutocompleteLucideClearIcon';
+import { mountPlaceAutocompleteLucideInputIcon } from '@/lib/google-maps/mountPlaceAutocompleteLucideInputIcon';
 import { parseGooglePlaceAddressComponents } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
 import { looseInertiaForm } from '@/lib/inertia/looseInertiaForm';
 import { isAppointmentAddressComplete } from '@/lib/patient/appointments/isAppointmentAddressComplete';
@@ -43,6 +44,9 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
     let selectListener: ((event: Event) => void) | null = null;
     let clearIconHandle: ReturnType<
         typeof mountPlaceAutocompleteLucideClearIcon
+    > | null = null;
+    let inputIconHandle: ReturnType<
+        typeof mountPlaceAutocompleteLucideInputIcon
     > | null = null;
 
     const syncSearchInputValue = (): void => {
@@ -144,6 +148,8 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
                 };
 
                 element.addEventListener('gmp-select', selectListener);
+                inputIconHandle =
+                    mountPlaceAutocompleteLucideInputIcon(element);
                 clearIconHandle =
                     mountPlaceAutocompleteLucideClearIcon(element);
                 host.replaceChildren(element);
@@ -170,10 +176,12 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
         }
 
         clearIconHandle?.unmount();
+        inputIconHandle?.unmount();
         options.hostRef.value?.replaceChildren();
         autocompleteElement = null;
         selectListener = null;
         clearIconHandle = null;
+        inputIconHandle = null;
     });
 
     return { isAvailable, loadError, placesVerifiedSnapshot };

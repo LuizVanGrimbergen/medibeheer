@@ -362,6 +362,10 @@ export type TodayMedicationIntakeSlot = {
     type_medication: MedicationTypeValue;
     dose: string | null;
     dose_unit: MedicationDoseUnitValue | null;
+    strength: string | null;
+    schedule_start_date: string | null;
+    schedule_end_date: string | null;
+    schedule_dose_times: string[];
     note: string | null;
     taken_at: string | null;
     stocks: TodayMedicationIntakeStockItem[];

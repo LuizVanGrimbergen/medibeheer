@@ -9,7 +9,6 @@ import PatientMedicationOnboardingShortcuts from '@/Components/Patient/Medicatio
 import PatientMedicationReminderPrompt from '@/Components/Patient/Medications/PatientMedicationReminderPrompt.vue';
 import TodayMedicationIntakesSection from '@/Components/Patient/Medications/TodayMedicationIntakesSection.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { Card, CardContent } from '@/Components/ui/card';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import type {
     DailyCheckin,
@@ -24,7 +23,7 @@ const page = usePage<PageProps>();
 const props = withDefaults(
     defineProps<{
         today_date: string;
-        today_checkin?: DailyCheckin | null;
+        today_checkin: DailyCheckin | null;
         today_medication_intakes?: TodayMedicationIntakeSlot[];
         pending_push_medication_mark: string | null;
         has_medications?: boolean;
@@ -40,7 +39,33 @@ const showMedicationOnboardingShortcuts = computed(
     () => !props.has_medications,
 );
 
-const isTodayCheckinLoading = computed(() => props.today_checkin === undefined);
+const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
+    const raw = page.props.flash?.daily_checkin_mood;
+
+    if (raw === 'bad' || raw === 'ok' || raw === 'good') {
+        return raw;
+    }
+
+    return null;
+});
+
+const showDailyCheckinCard = computed(
+    () =>
+        props.today_checkin === null &&
+        dailyCheckinMoodFlash.value === null,
+);
+
+const dailyCheckinEncouragementFlash = computed((): string | null => {
+    const raw = page.props.flash?.daily_checkin_encouragement;
+
+    if (typeof raw !== 'string') {
+        return null;
+    }
+
+    const trimmed = raw.trim();
+
+    return trimmed === '' ? null : trimmed;
+});
 
 const PUSH_MARK_SUCCESS_ROUTE = route('patient.medication-push-mark.success');
 
@@ -62,25 +87,20 @@ function localCalendarDateIso(): string {
     return `${y}-${m}-${d}`;
 }
 
-function maybeReloadWhenCalendarDayAdvanced(): void {
-    if (localCalendarDateIso() === props.today_date) {
-        return;
-    }
-
-    router.reload();
+function hasCalendarDayAdvanced(): boolean {
+    return localCalendarDateIso() !== props.today_date;
 }
 
-const documentVisibility = useDocumentVisibility();
+function reloadDashboardState(): void {
+    if (hasCalendarDayAdvanced()) {
+        router.reload();
 
-watch(documentVisibility, (state) => {
-    if (state !== 'visible') {
         return;
     }
-
-    maybeReloadWhenCalendarDayAdvanced();
 
     router.reload({
         only: [
+            'today_date',
             'today_checkin',
             'today_medication_intakes',
             'pending_push_medication_mark',
@@ -94,6 +114,16 @@ watch(documentVisibility, (state) => {
             );
         },
     });
+}
+
+const documentVisibility = useDocumentVisibility();
+
+watch(documentVisibility, (state) => {
+    if (state !== 'visible') {
+        return;
+    }
+
+    reloadDashboardState();
 });
 
 function onWindowPageShow(): void {
@@ -101,7 +131,7 @@ function onWindowPageShow(): void {
         return;
     }
 
-    maybeReloadWhenCalendarDayAdvanced();
+    reloadDashboardState();
 }
 
 let pushMarkBroadcastChannel: BroadcastChannel | null = null;
@@ -126,86 +156,29 @@ onUnmounted(() => {
 
     pushMarkBroadcastChannel?.close();
 });
-
-const dailyCheckinMoodFlash = computed((): DailyMoodScoreValue | null => {
-    const raw = page.props.flash?.daily_checkin_mood;
-
-    if (raw === 'bad' || raw === 'ok' || raw === 'good') {
-        return raw;
-    }
-
-    return null;
-});
-
-const dailyCheckinEncouragementFlash = computed((): string | null => {
-    const raw = page.props.flash?.daily_checkin_encouragement;
-
-    if (typeof raw !== 'string') {
-        return null;
-    }
-
-    const trimmed = raw.trim();
-
-    return trimmed === '' ? null : trimmed;
-});
 </script>
 
 <template>
     <Head>
         <title>{{ t('patient.dashboard.title') }}</title>
+        <meta
+            name="description"
+            :content="t('patient.dashboard.metaDescription')"
+        />
     </Head>
 
     <PatientLayout>
-        <PatientPageShell
-            :title="t('patient.dashboard.heading')"
-            class="min-h-full"
-        >
+        <PatientPageShell :title="t('patient.dashboard.heading')">
             <DailyCheckinSuccessScreen
                 :mood="dailyCheckinMoodFlash"
                 :message="dailyCheckinEncouragementFlash"
             />
 
             <DailyCheckinCard
-                v-if="!isTodayCheckinLoading && props.today_checkin === null"
+                v-if="showDailyCheckinCard"
                 :today_date="props.today_date"
                 :today_checkin="null"
             />
-
-            <Card
-                v-else-if="isTodayCheckinLoading"
-                class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] sm:rounded-3xl"
-                aria-busy="true"
-            >
-                <CardContent class="p-0">
-                    <div
-                        class="bg-surface space-y-5 rounded-2xl px-4 py-4 sm:space-y-6 sm:rounded-3xl sm:px-5 sm:py-5 md:p-7 lg:p-8"
-                    >
-                        <div class="space-y-1 sm:space-y-1.5">
-                            <p class="daily-checkin-mood-step-title">
-                                {{ t('patient.dashboard.dailyCheckins.title') }}
-                            </p>
-                            <p class="daily-checkin-mood-step-description">
-                                {{
-                                    t(
-                                        'patient.dashboard.dailyCheckins.description',
-                                    )
-                                }}
-                            </p>
-                        </div>
-
-                        <div
-                            class="mx-auto grid w-full max-w-xl grid-cols-3 gap-2.5 sm:gap-3 md:flex md:w-auto md:max-w-none md:items-center md:justify-center md:gap-12"
-                            aria-hidden="true"
-                        >
-                            <div
-                                v-for="index in 3"
-                                :key="index"
-                                class="bg-surface-2 min-h-28 animate-pulse rounded-2xl sm:min-h-32 md:min-h-36"
-                            />
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
 
             <PatientMedicationOnboardingShortcuts
                 v-if="showMedicationOnboardingShortcuts"

@@ -10,7 +10,8 @@ export type AppointmentFormStepId =
     | 'address'
     | 'schedule'
     | 'transport'
-    | 'notes';
+    | 'notes'
+    | 'summary';
 
 export const APPOINTMENT_FORM_STEP_ORDER: AppointmentFormStepId[] = [
     'provider',
@@ -18,6 +19,7 @@ export const APPOINTMENT_FORM_STEP_ORDER: AppointmentFormStepId[] = [
     'address',
     'schedule',
     'notes',
+    'summary',
 ];
 
 export type AppointmentFormInlineStepErrorKey =

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
 import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
 import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
@@ -75,7 +77,12 @@ const {
     hasNoAppointmentsAtAll,
     submitNewAppointment,
     submitAppointmentRevision,
-    confirmAndDeleteAppointment,
+    openDeleteAppointmentDialog,
+    closeDeleteAppointmentDialog,
+    confirmDeleteAppointment,
+    deleteDialogOpen,
+    appointmentPendingDelete,
+    deleteProcessing,
     isAppointmentUpdateInFlight,
     isAppointmentMarkedDoneInUi,
     reopenScheduledAppointmentAfterCompletion,
@@ -127,6 +134,7 @@ const {
                                 isAppointmentUpdateInFlight(appointment.id)
                             "
                             :show-actions="true"
+                            :show-provider-subtitle="false"
                             :show-transport-section="true"
                             :show-done-toggle="true"
                             :complete-form-href="
@@ -142,7 +150,7 @@ const {
                                 )
                             "
                             @edit="openAppointmentEditor(appointment)"
-                            @delete="confirmAndDeleteAppointment(appointment)"
+                            @delete="openDeleteAppointmentDialog(appointment)"
                             @update:done="
                                 (on) => {
                                     if (!on) {
@@ -197,6 +205,28 @@ const {
             @update:open="(open) => (createDialogOpen = open)"
             @submit="submitNewAppointment"
             @cancel="createDialogOpen = false"
+        />
+
+        <PatientConfirmDialog
+            v-if="appointmentPendingDelete !== null"
+            :open="deleteDialogOpen"
+            :title="t('patient.appointments.deleteConfirm.title')"
+            :description="t('patient.appointments.deleteConfirm.message')"
+            :confirm-label="t('patient.appointments.deleteConfirm.confirm')"
+            :cancel-label="t('patient.appointments.deleteConfirm.cancel')"
+            :processing="deleteProcessing"
+            :icon="Trash2"
+            icon-tone="danger"
+            cancel-first
+            cancel-tone="primary"
+            @update:open="
+                (open) => {
+                    if (!open) {
+                        closeDeleteAppointmentDialog();
+                    }
+                }
+            "
+            @confirm="confirmDeleteAppointment"
         />
 
         <AppointmentFormDialog

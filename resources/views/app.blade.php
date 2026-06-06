@@ -10,7 +10,34 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Medibeheer') }}">
 
-    <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    @isset($documentMeta)
+        @php
+            $siteName = config('app.name', 'Medibeheer');
+            $pageTitle = $documentMeta['title'];
+            $fullTitle = "{$pageTitle} - {$siteName}";
+            $description = $documentMeta['description'];
+            $canonicalUrl = $documentCanonicalUrl;
+            $ogImageUrl = $documentOgImageUrl;
+            $ogLocale = config('seo.locale', 'nl_BE');
+        @endphp
+        <title>{{ $fullTitle }}</title>
+        <meta name="description" content="{{ $description }}">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ $canonicalUrl }}">
+        <meta property="og:type" content="website">
+        <meta property="og:locale" content="{{ $ogLocale }}">
+        <meta property="og:site_name" content="{{ $siteName }}">
+        <meta property="og:title" content="{{ $fullTitle }}">
+        <meta property="og:description" content="{{ $description }}">
+        <meta property="og:url" content="{{ $canonicalUrl }}">
+        <meta property="og:image" content="{{ $ogImageUrl }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $fullTitle }}">
+        <meta name="twitter:description" content="{{ $description }}">
+        <meta name="twitter:image" content="{{ $ogImageUrl }}">
+    @else
+        <title inertia>{{ config('app.name', 'Laravel') }}</title>
+    @endisset
     <link rel="manifest" href="/manifest.webmanifest">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="icon" href="/images/medibeheer-pwa.png" type="image/png" sizes="192x192">

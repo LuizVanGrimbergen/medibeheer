@@ -21,9 +21,6 @@ const emit = defineEmits<{
         <p class="daily-checkin-step-title">
             {{ t('patient.dashboard.dailyCheckins.symptoms.title') }}
         </p>
-        <p class="daily-checkin-step-description">
-            {{ t('patient.dashboard.dailyCheckins.symptoms.hint') }}
-        </p>
 
         <div class="flex flex-wrap gap-2 sm:gap-3">
             <Button

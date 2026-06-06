@@ -36,7 +36,14 @@ export function usePatientAppointmentsPage(
         hasNoAppointmentsAtAll,
         submitNewAppointment: formDialogs.submitNewAppointment,
         submitAppointmentRevision: formDialogs.submitAppointmentRevision,
-        confirmAndDeleteAppointment: remoteActions.confirmAndDeleteAppointment,
+        openDeleteAppointmentDialog:
+            remoteActions.openDeleteAppointmentDialog,
+        closeDeleteAppointmentDialog:
+            remoteActions.closeDeleteAppointmentDialog,
+        confirmDeleteAppointment: remoteActions.confirmDeleteAppointment,
+        deleteDialogOpen: remoteActions.deleteDialogOpen,
+        appointmentPendingDelete: remoteActions.appointmentPendingDelete,
+        deleteProcessing: remoteActions.deleteProcessing,
         isAppointmentUpdateInFlight: remoteActions.isAppointmentUpdateInFlight,
         isAppointmentMarkedDoneInUi: remoteActions.isAppointmentMarkedDoneInUi,
         reopenScheduledAppointmentAfterCompletion:

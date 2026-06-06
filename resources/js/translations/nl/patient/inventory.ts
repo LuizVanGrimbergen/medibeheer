@@ -31,6 +31,8 @@ export default {
     vacationButton: 'Vakantie',
     vacationBackToInventory: 'Terug naar voorraad',
     vacationDialogTitle: 'Medicatie voor op reis',
+    vacationMetaDescription:
+        'Bereken hoeveel medicatie u extra moet halen voor uw reisperiode in Medibeheer.',
     vacationDialogDescription:
         'Kies uw vertrek- en terugkomstdatum. Wij berekenen hoeveel medicatie u extra moet halen voor die periode.',
     vacationStartsOnLabel: 'Vertrekdatum',
@@ -40,6 +42,7 @@ export default {
     vacationBackToDates: 'Datums aanpassen',
     vacationSave: 'Opslaan',
     vacationSaveToPhotos: "Opslaan in Foto's",
+    vacationSaveToPhotosMultiple: "Opslaan in {count} foto's",
     vacationDone: 'Gereed',
     vacationSaving: 'Bezig met opslaan…',
     vacationSaveFailed:
@@ -49,7 +52,7 @@ export default {
     vacationSaveShareHintMultiple:
         'Alle {count} afbeeldingen zijn aangeboden. Controleer in de Foto’s-app of u ze allemaal heeft.',
     vacationShareStepPrompt:
-        'Afbeelding {current} van {total}. Tik op de knop, kies “Bewaar in Foto’s”, en ga daarna door met de volgende.',
+        'Afbeelding {current} van {total} (max. {perPage} medicaties per afbeelding). Tik op de knop, kies “Bewaar in Foto’s”, en ga daarna door met de volgende.',
     vacationShareStepButton: 'Bewaar afbeelding {current} van {total}',
     vacationShareStepProgress:
         '{saved} van {total} afbeeldingen aangeboden via het deelmenu.',

@@ -104,6 +104,11 @@ watch(
     },
     { immediate: true },
 );
+
+function handleDialogCancel(): void {
+    emit('update:open', false);
+    emit('cancel');
+}
 </script>
 
 <template>
@@ -115,7 +120,7 @@ watch(
         :step-key="currentStep"
         @update:open="emit('update:open', $event)"
         @submit="handleSubmit"
-        @cancel="emit('cancel')"
+        @cancel="handleDialogCancel"
     >
         <template v-if="showWizardProgress" #description>
             <DialogDescription
@@ -149,7 +154,7 @@ watch(
                 v-else
                 :current-step="currentStep"
                 :processing="props.form.processing"
-                @cancel="emit('cancel')"
+                @cancel="handleDialogCancel"
                 @back="handleMedicationFormFooterBack"
             />
         </template>

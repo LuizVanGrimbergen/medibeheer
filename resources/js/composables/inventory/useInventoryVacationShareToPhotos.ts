@@ -4,6 +4,7 @@ import type { Composer } from 'vue-i18n';
 import { createInventoryVacationShareFiles } from '@/lib/patient/inventory/createInventoryVacationShareFiles';
 import { inventoryVacationShareFilename } from '@/lib/patient/inventory/inventoryVacationShareFilename';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
+import { inventoryVacationPlannedShareImageCount } from '@/lib/patient/inventory/splitInventoryVacationShareImagePayloads';
 import {
     canShareVacationImagesFromBrowser,
     shareOrDownloadInventoryVacationShareFiles,
@@ -42,6 +43,23 @@ export function useInventoryVacationShareToPhotos(
 
     const shareStepCurrent = computed(() => shareStepIndex.value + 1);
     const shareStepTotal = computed(() => shareFiles.value.length);
+
+    const plannedShareImageCount = computed(() => {
+        const payload = options.shareImagePayload.value;
+
+        if (payload === null) {
+            return 0;
+        }
+
+        return inventoryVacationPlannedShareImageCount(payload.items.length);
+    });
+
+    function openShareFlow(files: File[], title: string): void {
+        shareListTitle.value = title;
+        shareFiles.value = files;
+        shareStepIndex.value = 0;
+        shareFlowOpen.value = true;
+    }
 
     function resetShareFlow(): void {
         shareFlowOpen.value = false;
@@ -103,11 +121,11 @@ export function useInventoryVacationShareToPhotos(
                 filename,
             );
 
-            if (canShareVacationImagesFromBrowser()) {
-                shareListTitle.value = payload.title;
-                shareFiles.value = files;
-                shareStepIndex.value = 0;
-                shareFlowOpen.value = true;
+            const useStepFlow =
+                files.length > 1 || canShareVacationImagesFromBrowser();
+
+            if (useStepFlow) {
+                openShareFlow(files, payload.title);
 
                 return;
             }
@@ -136,6 +154,7 @@ export function useInventoryVacationShareToPhotos(
         shareFlowOpen,
         shareStepCurrent,
         shareStepTotal,
+        plannedShareImageCount,
         prepareShareFiles,
         shareCurrentImage,
     };

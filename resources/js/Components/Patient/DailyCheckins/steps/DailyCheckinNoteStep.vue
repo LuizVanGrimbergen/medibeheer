@@ -15,23 +15,15 @@ const note = defineModel<string>({ required: true });
         <p class="daily-checkin-step-title">
             {{ t('patient.dashboard.dailyCheckins.noteDialog.title') }}
         </p>
-        <p class="daily-checkin-step-description">
-            {{ t('patient.dashboard.dailyCheckins.noteDialog.description') }}
-        </p>
 
-        <div class="space-y-2 sm:space-y-3">
-            <p class="daily-checkin-step-label">
-                {{ t('patient.dashboard.dailyCheckins.noteDialog.label') }}
-            </p>
-            <textarea
-                :id="textareaId"
-                v-model="note"
-                rows="4"
-                class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:border-focus focus-visible:ring-focus/25 box-border min-h-32 w-full shrink-0 rounded-2xl border-2 px-4 py-3.5 text-lg leading-relaxed focus-visible:ring-2 sm:min-h-40 sm:px-5 sm:py-4 sm:text-xl"
-                :placeholder="
-                    t('patient.dashboard.dailyCheckins.noteDialog.placeholder')
-                "
-            />
-        </div>
+        <textarea
+            :id="textareaId"
+            v-model="note"
+            rows="4"
+            class="border-border bg-surface text-text placeholder:text-text-muted focus-visible:border-focus focus-visible:ring-focus/25 box-border min-h-32 w-full shrink-0 rounded-2xl border-2 px-4 py-3.5 text-lg leading-relaxed focus-visible:ring-2 sm:min-h-40 sm:px-5 sm:py-4 sm:text-xl"
+            :placeholder="
+                t('patient.dashboard.dailyCheckins.noteDialog.placeholder')
+            "
+        />
     </div>
 </template>

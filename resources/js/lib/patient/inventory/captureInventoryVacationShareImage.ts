@@ -1,7 +1,9 @@
 import { toBlob } from 'html-to-image';
 import { createApp, nextTick } from 'vue';
 import InventoryVacationShareSheet from '@/Components/Patient/Inventory/InventoryVacationShareSheet.vue';
+import { i18n } from '@/i18n';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
+import { INVENTORY_VACATION_SHARE_IMAGE_MIME } from '@/lib/patient/inventory/shareInventoryVacationImage';
 import { inventoryVacationShareMedicationSelector } from '@/lib/patient/inventory/inventoryVacationShareSelectors';
 
 const SHARE_IMAGE_WIDTH_PX = 840;
@@ -106,6 +108,7 @@ export async function captureInventoryVacationSharePage(
     document.body.appendChild(host);
 
     const app = createApp(InventoryVacationShareSheet, { payload });
+    app.use(i18n);
     app.mount(host);
 
     const restoreHostPosition = positionShareHostForCapture(host);
@@ -123,6 +126,8 @@ export async function captureInventoryVacationSharePage(
             pixelRatio: SHARE_IMAGE_PIXEL_RATIO,
             backgroundColor: resolveShareImageBackgroundColor(captureTarget),
             cacheBust: true,
+            type: INVENTORY_VACATION_SHARE_IMAGE_MIME,
+            quality: 0.92,
         });
 
         if (blob === null) {

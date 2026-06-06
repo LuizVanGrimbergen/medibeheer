@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { router, useForm } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
 import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
@@ -15,6 +15,7 @@ import {
 } from '@/Components/ui/dialog';
 import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
@@ -51,6 +52,9 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+usePatientShellDialogChromeSync(toRef(() => props.open));
+
 const {
     open: stockUpdateSuccessOpen,
     title: stockUpdateSuccessTitle,

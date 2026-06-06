@@ -6,6 +6,8 @@ export default {
     pharmacistOverview: {
         button: 'Actieve medicatie',
         title: 'Actieve medicatie',
+        metaDescription:
+            'Overzicht van uw actieve medicatie om aan uw apotheker te tonen in Medibeheer.',
         description: 'Toon dit scherm aan uw apotheker.',
         done: 'Gereed',
     },
@@ -14,7 +16,7 @@ export default {
         title: 'Medicatie verwijderen?',
         description:
             'Weet u zeker dat u “{name}” wilt verwijderen? Uw eerdere innames blijven bewaard.',
-        confirm: 'Verwijderen',
+        confirm: 'Ja, verwijderen',
         cancel: 'Annuleren',
     },
     empty: 'U heeft nog geen medicaties toegevoegd. Tik op de knop “Medicatie toevoegen” om te beginnen.',
@@ -25,6 +27,7 @@ export default {
     },
     cardIntakePeriodAria: 'Innameperiode van {start} tot {end}.',
     cardIntakePeriodRange: '{start} tot {end}',
+    cardHeaderIntakeTimesCount: '{count} keer',
     cardActionsAriaLabel: 'Acties voor deze medicatie',
     cardShowMore: 'Toon meer',
     cardShowLess: 'Toon minder',

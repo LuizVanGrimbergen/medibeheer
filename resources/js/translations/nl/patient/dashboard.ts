@@ -1,5 +1,7 @@
 export default {
     title: 'Home',
+    metaDescription:
+        'Dagelijkse check-in, medicatie vandaag innemen en uw overzicht in Medibeheer.',
     heading: 'Home',
     medicationSetup: {
         heading: 'Uw medicatie toevoegen',
@@ -18,12 +20,13 @@ export default {
         },
     },
     dailyCheckins: {
+        back: 'Terug',
+        stepsProgress: 'Stap {current} van {total}',
         title: 'Hoe voelt u zich vandaag?',
         description:
             'Tik op een smiley om aan te geven hoe u zich voelt vandaag.',
         symptoms: {
             title: 'Past één of meer van deze symptomen bij u vandaag? (optioneel)',
-            hint: 'Dit is optioneel. Als u klaar bent, tikt u op de knop hieronder om verder te gaan naar de notitie.',
             continue: 'Verder',
             cancel: 'Annuleren',
             options: {
@@ -41,11 +44,8 @@ export default {
         },
         noteDialog: {
             title: 'Notitie toevoegen (optioneel)',
-            description:
-                'Optioneel: voeg een korte notitie toe. U kunt dit later teruglezen.',
-            label: 'Notitie (optioneel)',
             placeholder:
-                'Bijvoorbeeld: een beetje hoofdpijn, of juist ik voel mij goed vandaag',
+                'Typ hier hoe u zich voelt vandaag.',
             cancel: 'Annuleren',
             confirm: 'Opslaan',
         },

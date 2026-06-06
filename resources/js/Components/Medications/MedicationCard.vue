@@ -341,13 +341,6 @@ const showCollapsedSupplyDaysSummary = computed(
         !isInactiveListItem.value,
 );
 
-const showCollapsedSupplyEstimateSummary = computed(
-    (): boolean =>
-        !props.showStock &&
-        primaryStock.value !== undefined &&
-        !isInactiveListItem.value,
-);
-
 const collapsedHeaderLine = computed((): string =>
     showCollapsedSupplyDaysSummary.value
         ? supplyEstimateLine.value
@@ -526,33 +519,6 @@ const stockProgressAriaLabel = computed((): string =>
                             {{ listStatusLabel }}
                         </p>
                     </div>
-                </div>
-
-                <div
-                    v-if="!isOpen && showCollapsedSupplyEstimateSummary"
-                    class="mt-3.5"
-                >
-                    <MedicationUrgencyProgressSection
-                        v-if="stockProgressPercent !== null"
-                        :tone="stockProgressTone"
-                        :progress-percent="stockProgressPercent"
-                        :status-line="supplyEstimateLine"
-                        :progress-aria-label="stockProgressAriaLabel"
-                        :critical-alert-label="
-                            t('patient.inventory.lowStockBadge')
-                        "
-                        :warning-alert-label="
-                            t('patient.inventory.warningStockIconAria')
-                        "
-                        :show-progress-bar="false"
-                    />
-
-                    <p
-                        v-else
-                        class="text-text-heading text-base leading-relaxed font-semibold sm:text-lg"
-                    >
-                        {{ supplyEstimateLine }}
-                    </p>
                 </div>
 
                 <div

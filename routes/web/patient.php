@@ -88,6 +88,9 @@ Route::middleware([
         Route::patch('prescriptions/{medication_prescription}', [PatientMedicationPrescriptionController::class, 'update'])
             ->name('prescriptions.update');
 
+        Route::delete('prescriptions/{medication_prescription}', [PatientMedicationPrescriptionController::class, 'destroy'])
+            ->name('prescriptions.destroy');
+
         /* Medication plan proposals */
         Route::get('medication-plans/{medication_plan_proposal}/review', ShowPatientMedicationPlanProposalReviewController::class)
             ->name('medication-plans.review');

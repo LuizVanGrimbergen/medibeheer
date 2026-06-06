@@ -1,4 +1,7 @@
+import type { PatientInventoryVacationExpiringPrescription } from '@/lib/patient/inventory/patientInventoryVacationExpiringPrescription';
+
 export type InventoryVacationShareImageItem = {
+    medicationId: number;
     name: string;
     primaryLabel: string;
     primaryValue: string | null;
@@ -18,6 +21,7 @@ export type InventoryVacationShareImagePayload = {
     returnLabel: string;
     returnDate: string;
     savedPackageHint: string | null;
+    expiringPrescriptions: PatientInventoryVacationExpiringPrescription[];
     totalLabel: string;
     listHeading: string;
     items: InventoryVacationShareImageItem[];

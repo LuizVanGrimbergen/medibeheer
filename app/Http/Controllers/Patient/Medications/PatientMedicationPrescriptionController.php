@@ -10,6 +10,7 @@ use App\Http\Requests\Patient\Prescriptions\UpdatePatientMedicationPrescriptionR
 use App\Models\Medication;
 use App\Models\MedicationPrescription;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -69,7 +70,24 @@ class PatientMedicationPrescriptionController extends Controller
                 : null;
         }
 
+        if (array_key_exists('prescription_expiry_date', $validated)) {
+            $updates['prescription_expiry_date'] = $validated['prescription_expiry_date'];
+        }
+
         $medicationPrescription->update($updates);
+
+        return redirect()->route('patient.prescriptions');
+    }
+
+    public function destroy(
+        Request $request,
+        MedicationPrescription $medicationPrescription,
+    ): RedirectResponse {
+        $this->authorizePatientProfile($request);
+
+        $this->authorize('delete', $medicationPrescription);
+
+        $medicationPrescription->delete();
 
         return redirect()->route('patient.prescriptions');
     }

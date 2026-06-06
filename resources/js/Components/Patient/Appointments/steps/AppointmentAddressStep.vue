@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { MapPin } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
@@ -83,14 +82,8 @@ defineExpose({ isVerifyingGeocode });
                     </Label>
                     <div
                         :id="`${idPrefix}-address-search`"
-                        class="patient-place-autocomplete-host relative w-full"
+                        class="patient-place-autocomplete-host w-full"
                     >
-                        <MapPin
-                            :size="20"
-                            :stroke-width="2"
-                            class="patient-place-autocomplete-leading-icon"
-                            aria-hidden="true"
-                        />
                         <div ref="addressSearchHostRef" class="w-full" />
                     </div>
 

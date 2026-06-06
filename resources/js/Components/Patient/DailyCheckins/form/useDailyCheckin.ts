@@ -89,6 +89,11 @@ export function useDailyCheckin(
         form.mood_score = mood;
     }
 
+    function clearMood(): void {
+        selectedMood.value = null;
+        form.mood_score = null;
+    }
+
     function submit(onSuccess: () => void): void {
         form.note = normalizeField(note.value);
         form.symptoms =
@@ -120,6 +125,7 @@ export function useDailyCheckin(
         resetNote,
         resetSymptoms,
         setMood,
+        clearMood,
         symptomChipClass,
         toggleSymptom,
         submit,

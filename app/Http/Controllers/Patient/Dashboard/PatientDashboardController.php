@@ -30,12 +30,12 @@ class PatientDashboardController extends Controller
 
         return Inertia::render('Patient/Dashboard', [
             'today_date' => $today->toDateString(),
-            'today_checkin' => Inertia::defer(fn () => $patient
+            'today_checkin' => $patient
                 ->dailyCheckins()
                 ->with('selectedSymptoms')
                 ->whereDate('checkin_date', $today->toDateString())
                 ->first()
-                ?->toDashboardPayload()),
+                ?->toDashboardPayload(),
             'today_medication_intakes' => Inertia::defer(
                 fn () => $this->scheduledIntakesQuery->forPatientOnDate($patient, $today),
             ),

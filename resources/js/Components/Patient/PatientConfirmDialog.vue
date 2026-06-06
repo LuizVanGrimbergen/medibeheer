@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
-import { computed, useId } from 'vue';
+import { computed, toRef, useId } from 'vue';
 import { Button } from '@/Components/ui/button';
 import { Dialog, DialogContent } from '@/Components/ui/dialog';
+import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import {
     patientActionSuccessSubtitleClass,
     patientActionSuccessTitleClass,
@@ -57,6 +58,8 @@ const emit = defineEmits<{
 
 const titleId = useId();
 const descriptionId = useId();
+
+usePatientShellDialogChromeSync(toRef(() => props.open));
 
 const iconWrapClass = computed(() =>
     props.iconTone === 'primary'

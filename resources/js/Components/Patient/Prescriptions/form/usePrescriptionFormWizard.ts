@@ -1,5 +1,5 @@
 import type { Ref } from 'vue';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
@@ -23,6 +23,7 @@ export function usePrescriptionFormWizard(options: {
     open: Ref<boolean>;
     form: PatientPrescriptionForm;
     selectedMedicationId: Ref<number | null>;
+    idPrefix: Ref<string>;
     quantityClientError: Ref<string>;
     medicationClientError: Ref<string>;
     expiryDatesClientError: Ref<string>;
@@ -51,6 +52,12 @@ export function usePrescriptionFormWizard(options: {
         () => options.form.errors,
         (errors) => {
             if (!options.open.value) {
+                return;
+            }
+
+            if (errors.quantity !== undefined) {
+                currentStep.value = 1;
+
                 return;
             }
 
@@ -138,7 +145,21 @@ export function usePrescriptionFormWizard(options: {
             return;
         }
 
-        if (!validateExpiryDatesStep()) {
+        if (currentStep.value === 2) {
+            if (!validateExpiryDatesStep()) {
+                return;
+            }
+
+            currentStep.value = 3;
+
+            void nextTick(() => {
+                document
+                    .getElementById(
+                        `${options.idPrefix.value}-create-summary-title`,
+                    )
+                    ?.focus({ preventScroll: true });
+            });
+
             return;
         }
 
@@ -156,9 +177,55 @@ export function usePrescriptionFormWizard(options: {
             return;
         }
 
-        options.expiryDatesClientError.value = '';
+        if (currentStep.value === 2) {
+            options.expiryDatesClientError.value = '';
+            options.form.clearErrors();
+            currentStep.value = 1;
+
+            return;
+        }
+
+        currentStep.value = 2;
+    }
+
+    function goToPrescriptionWizardStepFromSummary(
+        step: PrescriptionFormWizardStep,
+        focusElementIdSuffix?: string,
+    ): void {
+        if (
+            !options.open.value ||
+            options.form.processing ||
+            currentStep.value !== 3
+        ) {
+            return;
+        }
+
         options.form.clearErrors();
-        currentStep.value = 1;
+        currentStep.value = step;
+
+        void nextTick(() => {
+            if (
+                focusElementIdSuffix !== undefined &&
+                focusElementIdSuffix.length > 0
+            ) {
+                document
+                    .getElementById(
+                        `${options.idPrefix.value}-${focusElementIdSuffix}`,
+                    )
+                    ?.focus({ preventScroll: true });
+
+                return;
+            }
+
+            const defaultFocusSuffix =
+                step === 1 ? 'medication' : 'expiry-0';
+
+            document
+                .getElementById(
+                    `${options.idPrefix.value}-${defaultFocusSuffix}`,
+                )
+                ?.focus({ preventScroll: true });
+        });
     }
 
     return {
@@ -166,5 +233,6 @@ export function usePrescriptionFormWizard(options: {
         progressLabel,
         handleSubmit,
         handleBackOrCancel,
+        goToPrescriptionWizardStepFromSummary,
     };
 }

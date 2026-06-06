@@ -16,6 +16,10 @@ import MobileShellSettingsLink from '@/Components/MobileShellSettingsLink.vue';
 import type { FooterNavLinkRefs } from '@/composables/motion/useGsapFooterNavIndicator';
 import { useGsapFooterNavIndicator } from '@/composables/motion/useGsapFooterNavIndicator';
 import { usePatientNavigationAlerts } from '@/composables/patient/usePatientNavigationAlerts';
+import {
+    isPatientShellFooterHidden,
+    usePatientShellMainScrollReset,
+} from '@/composables/patient/usePatientShellDialogChrome';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
@@ -121,9 +125,12 @@ const activePatientNavRoute = computed(
 
 const patientNavigation = usePatientNavigationAlerts();
 
+const mainScrollRef = ref<HTMLElement | null>(null);
 const footerNavRef = ref<HTMLElement | null>(null);
 const footerNavIndicatorRef = ref<HTMLElement | null>(null);
 const footerNavLinkRefs: FooterNavLinkRefs = {};
+
+usePatientShellMainScrollReset(mainScrollRef);
 
 useGsapFooterNavIndicator(
     footerNavRef,
@@ -231,6 +238,7 @@ const footerLabelClass = computed(() =>
     <AuthenticatedLayout>
         <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div
+                ref="mainScrollRef"
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
                 <div
@@ -243,8 +251,10 @@ const footerLabelClass = computed(() =>
             </div>
 
             <nav
+                v-show="!isPatientShellFooterHidden"
                 class="border-border bg-surface z-40 shrink-0 border-t"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
+                :aria-hidden="isPatientShellFooterHidden"
             >
                 <div
                     ref="footerNavRef"

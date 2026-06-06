@@ -1,4 +1,5 @@
 import { formatInventoryVacationDateLabel } from '@/lib/patient/inventory/formatInventoryVacationDateLabel';
+import type { PatientInventoryVacationExpiringPrescription } from '@/lib/patient/inventory/patientInventoryVacationExpiringPrescription';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
 import type { PatientInventoryVacationSupplyResult } from '@/lib/patient/inventory/patientInventoryVacationSupply';
 import { medicationStockPackageCountForQuantity } from '@/lib/patient/medications/stock/medicationStockPackageCountForQuantity';
@@ -14,6 +15,7 @@ type BuildInventoryVacationShareImagePayloadInput = {
     departureLabel: string;
     returnLabel: string;
     savedPackageHint: string | null;
+    expiringPrescriptions: PatientInventoryVacationExpiringPrescription[];
     totalLabel: string;
     minimumBoxesLabel: string;
     liquidMinimumBoxesLabel: string;
@@ -42,6 +44,7 @@ export function buildInventoryVacationShareImagePayload(
         returnLabel: input.returnLabel,
         returnDate: formatInventoryVacationDateLabel(input.endsOn),
         savedPackageHint: input.savedPackageHint,
+        expiringPrescriptions: input.expiringPrescriptions,
         totalLabel: input.totalLabel,
         listHeading: input.listHeading,
         items: input.result.items.map((item) => {
@@ -88,6 +91,7 @@ export function buildInventoryVacationShareImagePayload(
             }
 
             return {
+                medicationId: item.medication_id,
                 name: item.name,
                 primaryLabel: isLiquid
                     ? input.liquidMinimumBoxesLabel

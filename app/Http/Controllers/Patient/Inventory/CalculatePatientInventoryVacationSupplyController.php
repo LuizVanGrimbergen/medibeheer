@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Inventory\CalculatePatientInventoryVacationSupplyRequest;
 use App\Services\Medications\MedicationVacationSupplyService;
+use App\Services\Medications\PatientCriticalPrescriptionsQuery;
 use Carbon\CarbonImmutable;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,6 +19,7 @@ final class CalculatePatientInventoryVacationSupplyController extends Controller
 
     public function __construct(
         private readonly MedicationVacationSupplyService $medicationVacationSupplyService,
+        private readonly PatientCriticalPrescriptionsQuery $criticalPrescriptionsQuery,
     ) {}
 
     public function __invoke(CalculatePatientInventoryVacationSupplyRequest $request): Response
@@ -36,6 +38,8 @@ final class CalculatePatientInventoryVacationSupplyController extends Controller
             'starts_on' => $validated['starts_on'],
             'ends_on' => $validated['ends_on'],
             'result' => $result,
+            'expiring_prescriptions' => $this->criticalPrescriptionsQuery
+                ->forPatientNavAlerts($patient),
         ]);
     }
 }

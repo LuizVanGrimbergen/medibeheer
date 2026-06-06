@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MedicationCard from '@/Components/Medications/MedicationCard.vue';
 import MedicationDetailsEditDialog from '@/Components/Patient/Medications/form/MedicationDetailsEditDialog.vue';
 import MedicationFormDialog from '@/Components/Patient/Medications/form/MedicationFormDialog.vue';
 import MedicationPageIntro from '@/Components/Patient/Medications/form/MedicationPageIntro.vue';
-import MedicationRemoveFromListDialog from '@/Components/Patient/Medications/MedicationRemoveFromListDialog.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
+import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
@@ -167,12 +168,29 @@ const {
             @submit="submitEditMedication"
         />
 
-        <MedicationRemoveFromListDialog
+        <PatientConfirmDialog
             v-if="deleteMedication !== null"
-            v-model:open="deleteDialogOpen"
-            :medication-name="deleteMedication.name"
+            :open="deleteDialogOpen"
+            :title="t('patient.medications.deleteConfirm.title')"
+            :description="
+                t('patient.medications.deleteConfirm.description', {
+                    name: deleteMedication.name,
+                })
+            "
+            :confirm-label="t('patient.medications.deleteConfirm.confirm')"
+            :cancel-label="t('patient.medications.deleteConfirm.cancel')"
             :processing="deleteProcessing"
-            @cancel="closeDeleteMedicationDialog"
+            :icon="Trash2"
+            icon-tone="danger"
+            cancel-first
+            cancel-tone="primary"
+            @update:open="
+                (open) => {
+                    if (!open) {
+                        closeDeleteMedicationDialog();
+                    }
+                }
+            "
             @confirm="confirmDeleteMedication"
         />
     </PatientLayout>
