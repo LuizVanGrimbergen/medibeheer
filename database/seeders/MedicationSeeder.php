@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationMealTiming;
+use App\Enums\MedicationPrescriptionPickupStatus;
 use App\Enums\MedicationType;
 use App\Models\Family;
 use App\Models\MedicationIntake;
@@ -41,7 +42,8 @@ class MedicationSeeder extends Seeder
         foreach ($this->demoMedications($today) as $demo) {
             $scheduleRaw = $demo['schedule'];
             $stock = $demo['stock'];
-            unset($demo['schedule'], $demo['stock']);
+            $prescription = $demo['prescription'] ?? null;
+            unset($demo['schedule'], $demo['stock'], $demo['prescription']);
 
             $medication = $patient->medications()->create(array_merge(
                 $demo,
@@ -64,6 +66,13 @@ class MedicationSeeder extends Seeder
                 'family_id' => $medication->family_id,
             ]));
 
+            if ($prescription !== null) {
+                $medication->prescriptions()->create(array_merge($prescription, [
+                    'patient_id' => $medication->patient_id,
+                    'family_id' => $medication->family_id,
+                ]));
+            }
+
             $createdSchedules[] = $schedule->load('weekdays');
         }
 
@@ -74,62 +83,110 @@ class MedicationSeeder extends Seeder
         }
     }
 
+    /**
+     * Realistisch medicatieprofiel voor de demo-patiënt. De vijf medicaties
+     * dekken samen elke combinatie die de app ondersteunt: alle
+     * medicatietypes (pil, injectie, zakjes, vloeistof), alle doseereenheden
+     * (stuk, milliliter, druppel), alle maaltijdtimings (voor/na/bij eten en
+     * los van eten), alle inname-frequenties (dagelijks, vaste weekdagen en
+     * om de zoveel dagen), één t/m drie innamemomenten per dag en
+     * voorschriften met uiteenlopende ophaalstatus en vervaldatum.
+     */
     private function demoMedications(Carbon $today): array
     {
         return [
             [
                 'name' => 'Levothyroxine',
-                'dose' => '75',
+                'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'stock_pieces_per_package' => 75,
+                'stock_pieces_per_package' => 100,
                 'strength' => '75 microgram',
-                'note' => 'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
+                'note' => 'Op nuchtere maag met water; minstens een half uur voor het ontbijt en niet samen met calcium- of ijzerpreparaten.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
                     'intake_weekdays' => null,
                     'times_per_day' => '1',
-                    'dose_quantity' => '75',
+                    'dose_quantity' => '1',
                     'dose_time' => '06:45',
                     'snooze_time' => '30',
                     'start_date' => $today->copy()->subYears(2)->toDateString(),
                     'end_date' => $today->copy()->addYear()->toDateString(),
                 ],
-                'stock' => ['current_stock' => '2250'],
+                'stock' => ['current_stock' => '84 stuks'],
+                'prescription' => [
+                    'prescription_expiry_date' => $today->copy()->addMonths(9)->toDateString(),
+                    'is_last_in_batch' => false,
+                    'pickup_status' => MedicationPrescriptionPickupStatus::PICKED_UP,
+                    'completed_at' => null,
+                ],
             ],
             [
                 'name' => 'Metformine',
-                'dose' => '500',
+                'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'stock_pieces_per_package' => 100,
-                'strength' => '500 mg',
-                'note' => 'Tijdens of direct na de lunch innemen om maag-darmklachten te beperken.',
+                'stock_pieces_per_package' => 60,
+                'strength' => '850 mg',
+                'note' => 'Direct na het ontbijt en het avondeten innemen om maag-darmklachten te beperken.',
                 'schedule' => [
-                    'meal_timing' => MedicationMealTiming::WITH_FOOD,
+                    'meal_timing' => MedicationMealTiming::AFTER_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
                     'intake_weekdays' => null,
-                    'times_per_day' => '1',
-                    'dose_quantity' => '500',
-                    'dose_time' => '12:30',
-                    'snooze_time' => '30',
+                    'times_per_day' => '2',
+                    'dose_quantity' => '1',
+                    'dose_time' => '08:00, 19:00',
+                    'snooze_time' => '30, 30',
                     'start_date' => $today->copy()->subYear()->toDateString(),
                     'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
-                'stock' => ['current_stock' => '5000'],
+                'stock' => ['current_stock' => '11 stuks'],
+                'prescription' => [
+                    'prescription_expiry_date' => $today->copy()->addDays(6)->toDateString(),
+                    'is_last_in_batch' => true,
+                    'pickup_status' => MedicationPrescriptionPickupStatus::PENDING,
+                    'completed_at' => null,
+                ],
+            ],
+            [
+                'name' => 'Methotrexaat injectie',
+                'dose' => '0,6',
+                'dose_unit' => MedicationDoseUnit::MILLILITER,
+                'type_medication' => MedicationType::INJECTION,
+                'stock_pieces_per_package' => 1,
+                'strength' => '25 mg per ml',
+                'note' => 'Wekelijkse onderhuidse injectie tegen reuma. Nooit dagelijks gebruiken; de dag erna foliumzuur innemen.',
+                'schedule' => [
+                    'meal_timing' => MedicationMealTiming::UNRELATED,
+                    'intake_frequency' => MedicationIntakeFrequency::WEEKDAYS,
+                    'intake_weekdays' => [4],
+                    'times_per_day' => '1',
+                    'dose_quantity' => '0,6',
+                    'dose_time' => '10:00',
+                    'snooze_time' => '30',
+                    'start_date' => $today->copy()->subMonths(8)->toDateString(),
+                    'end_date' => null,
+                ],
+                'stock' => ['current_stock' => '12 ml'],
+                'prescription' => [
+                    'prescription_expiry_date' => $today->copy()->addYear()->toDateString(),
+                    'is_last_in_batch' => false,
+                    'pickup_status' => MedicationPrescriptionPickupStatus::PICKED_UP,
+                    'completed_at' => null,
+                ],
             ],
             [
                 'name' => 'Magnesiumcitraat',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::SACHETS,
-                'stock_pieces_per_package' => 30,
-                'strength' => '375 mg per zakje',
-                'note' => 'Zakje oplossen in een glas water; bij het avondeten innemen.',
+                'stock_pieces_per_package' => 20,
+                'strength' => '300 mg per zakje',
+                'note' => 'Zakje oplossen in een half glas water en bij het avondeten innemen; om de dag gebruiken.',
                 'schedule' => [
                     'meal_timing' => MedicationMealTiming::WITH_FOOD,
-                    'intake_frequency' => MedicationIntakeFrequency::DAILY,
+                    'intake_frequency' => MedicationIntakeFrequency::everyNDaysValue(2),
                     'intake_weekdays' => null,
                     'times_per_day' => '1',
                     'dose_quantity' => '1',
@@ -138,49 +195,28 @@ class MedicationSeeder extends Seeder
                     'start_date' => $today->copy()->subMonths(2)->toDateString(),
                     'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
-                'stock' => ['current_stock' => '5'],
+                'stock' => ['current_stock' => '6 stuks'],
             ],
             [
-                'name' => 'Atorvastatine',
-                'dose' => '40',
-                'dose_unit' => MedicationDoseUnit::PIECE,
-                'type_medication' => MedicationType::PILL,
-                'stock_pieces_per_package' => 110,
-                'strength' => '40 mg',
-                'note' => '’s Avonds voor het slapengaan innemen. Meld onverklaarde spierpijn of donkere urine aan huisarts.',
-                'schedule' => [
-                    'meal_timing' => MedicationMealTiming::AFTER_FOOD,
-                    'intake_frequency' => MedicationIntakeFrequency::DAILY,
-                    'intake_weekdays' => null,
-                    'times_per_day' => '1',
-                    'dose_quantity' => '40',
-                    'dose_time' => '22:00',
-                    'snooze_time' => '30',
-                    'start_date' => $today->copy()->subYear()->toDateString(),
-                    'end_date' => $today->copy()->addYear()->toDateString(),
-                ],
-                'stock' => ['current_stock' => '440'],
-            ],
-            [
-                'name' => 'Ibuprofen suspensie',
-                'dose' => '5',
-                'dose_unit' => MedicationDoseUnit::MILLILITER,
+                'name' => 'Hyaluronzuur oogdruppels',
+                'dose' => '1',
+                'dose_unit' => MedicationDoseUnit::DROP,
                 'type_medication' => MedicationType::LIQUID,
-                'stock_pieces_per_package' => 100,
-                'strength' => '20 mg per ml',
-                'note' => 'Goed schudden voor gebruik. Meet de dosis af met de bijgeleverde maatbeker.',
+                'stock_pieces_per_package' => 300,
+                'strength' => '1 mg per druppel',
+                'note' => 'Eén druppel per oog tegen droge ogen. Flesje goed sluiten en binnen 6 maanden na openen gebruiken.',
                 'schedule' => [
-                    'meal_timing' => MedicationMealTiming::WITH_FOOD,
+                    'meal_timing' => MedicationMealTiming::UNRELATED,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
                     'intake_weekdays' => null,
                     'times_per_day' => '3',
-                    'dose_quantity' => '5',
+                    'dose_quantity' => '1',
                     'dose_time' => '08:00, 14:00, 20:00',
                     'snooze_time' => '30, 30, 30',
-                    'start_date' => $today->copy()->subMonths(6)->toDateString(),
+                    'start_date' => $today->copy()->subMonths(3)->toDateString(),
                     'end_date' => $today->copy()->addYear()->toDateString(),
                 ],
-                'stock' => ['current_stock' => '300'],
+                'stock' => ['current_stock' => '270 druppels'],
             ],
         ];
     }
