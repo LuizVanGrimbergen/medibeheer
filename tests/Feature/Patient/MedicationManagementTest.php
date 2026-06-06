@@ -4,6 +4,7 @@ use App\Enums\MedicationDoseUnit;
 use App\Enums\MedicationIntakeFrequency;
 use App\Enums\MedicationListStatus;
 use App\Enums\MedicationMealTiming;
+use App\Enums\MedicationPrescriptionPickupStatus;
 use App\Enums\MedicationType;
 use App\Models\Family;
 use App\Models\Medication;
@@ -659,17 +660,17 @@ test('medication seeder persists encrypted schedule and stock fields', function 
 
     $levothyroxine = $medications->firstWhere('name', 'Levothyroxine');
     expect($levothyroxine)->not->toBeNull();
-    expect($levothyroxine->dose)->toBe('75');
+    expect($levothyroxine->dose)->toBe('1');
     expect($levothyroxine->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($levothyroxine->note)->toBe(
-        'Op nuchtere maag met water; minstens een half uur voor ontbijt geen calcium- of ijzerpreparaten.',
-    );
+    expect($levothyroxine->type_medication)->toBe(MedicationType::PILL);
     expect($levothyroxine->family_id)->toBe($family->id);
 
     $schedule = $levothyroxine->schedules()->first();
     expect($schedule)->not->toBeNull();
     expect($schedule->times_per_day)->toBe('1');
     expect($schedule->dose_time)->toBe('06:45');
+    expect($schedule->meal_timing)->toBe(MedicationMealTiming::BEFORE_FOOD);
+    expect($schedule->intake_frequency)->toBe(MedicationIntakeFrequency::DAILY);
     expect($schedule->family_id)->toBe($family->id);
 
     $rawSchedule = DB::table('medication_schedules')->where('id', $schedule->id)->first();
@@ -678,35 +679,59 @@ test('medication seeder persists encrypted schedule and stock fields', function 
 
     $stock = $levothyroxine->stocks()->first();
     expect($stock)->not->toBeNull();
-    expect($stock->current_stock)->toBe('2250');
+    expect($stock->current_stock)->toBe('84 stuks');
     expect($stock->family_id)->toBe($family->id);
 
     $rawStock = DB::table('medication_stocks')->where('id', $stock->id)->first();
-    expect($rawStock->current_stock)->not->toBe('2250');
+    expect($rawStock->current_stock)->not->toBe('84 stuks');
+
+    $levoPrescription = $levothyroxine->prescriptions()->first();
+    expect($levoPrescription)->not->toBeNull();
+    expect($levoPrescription->pickup_status)->toBe(MedicationPrescriptionPickupStatus::PICKED_UP);
+    expect($levoPrescription->family_id)->toBe($family->id);
 
     $metformin = $medications->firstWhere('name', 'Metformine');
     expect($metformin)->not->toBeNull();
-    expect($metformin->dose)->toBe('500');
+    expect($metformin->dose)->toBe('1');
     expect($metformin->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($metformin->family_id)->toBe($family->id);
-    expect($metformin->schedules()->first()?->dose_time)->toBe('12:30');
-    expect($metformin->stocks()->first()?->current_stock)->toBe('5000');
+    expect($metformin->schedules()->first()?->times_per_day)->toBe('2');
+    expect($metformin->schedules()->first()?->dose_time)->toBe('08:00, 19:00');
+    expect($metformin->schedules()->first()?->meal_timing)->toBe(MedicationMealTiming::AFTER_FOOD);
+    expect($metformin->stocks()->first()?->current_stock)->toBe('11 stuks');
+
+    $metforminPrescription = $metformin->prescriptions()->first();
+    expect($metforminPrescription)->not->toBeNull();
+    expect($metforminPrescription->pickup_status)->toBe(MedicationPrescriptionPickupStatus::PENDING);
+    expect($metforminPrescription->is_last_in_batch)->toBeTrue();
+
+    $methotrexaat = $medications->firstWhere('name', 'Methotrexaat injectie');
+    expect($methotrexaat)->not->toBeNull();
+    expect($methotrexaat->dose_unit)->toBe(MedicationDoseUnit::MILLILITER);
+    expect($methotrexaat->type_medication)->toBe(MedicationType::INJECTION);
+    $methotrexaatSchedule = $methotrexaat->schedules()->first()?->load('weekdays');
+    expect($methotrexaatSchedule?->meal_timing)->toBe(MedicationMealTiming::UNRELATED);
+    expect($methotrexaatSchedule?->intake_frequency)->toBe(MedicationIntakeFrequency::WEEKDAYS);
+    expect($methotrexaatSchedule?->intake_weekdays)->toBe([4]);
+    expect($methotrexaat->stocks()->first()?->current_stock)->toBe('12 ml');
 
     $magnesium = $medications->firstWhere('name', 'Magnesiumcitraat');
     expect($magnesium)->not->toBeNull();
     expect($magnesium->dose_unit)->toBe(MedicationDoseUnit::PIECE);
+    expect($magnesium->type_medication)->toBe(MedicationType::SACHETS);
     expect($magnesium->schedules()->first()?->dose_time)->toBe('18:30');
-    expect($magnesium->stocks()->first()?->current_stock)->toBe('5');
+    expect($magnesium->schedules()->first()?->intake_frequency)->toBe(MedicationIntakeFrequency::everyNDaysValue(2));
+    expect($magnesium->stocks()->first()?->current_stock)->toBe('6 stuks');
+    expect($magnesium->prescriptions()->count())->toBe(0);
 
-    $atorvastatine = $medications->firstWhere('name', 'Atorvastatine');
-    expect($atorvastatine)->not->toBeNull();
-    expect($atorvastatine->schedules()->first()?->dose_time)->toBe('22:00');
-    expect($atorvastatine->stocks()->first()?->current_stock)->toBe('440');
-
-    $ibuprofen = $medications->firstWhere('name', 'Ibuprofen suspensie');
-    expect($ibuprofen)->not->toBeNull();
-    expect($ibuprofen->dose_unit)->toBe(MedicationDoseUnit::MILLILITER);
-    expect($ibuprofen->stocks()->first()?->current_stock)->toBe('300');
+    $oogdruppels = $medications->firstWhere('name', 'Hyaluronzuur oogdruppels');
+    expect($oogdruppels)->not->toBeNull();
+    expect($oogdruppels->dose_unit)->toBe(MedicationDoseUnit::DROP);
+    expect($oogdruppels->type_medication)->toBe(MedicationType::LIQUID);
+    expect($oogdruppels->strength)->toBe('1 mg per druppel');
+    expect($oogdruppels->schedules()->first()?->times_per_day)->toBe('3');
+    expect($oogdruppels->schedules()->first()?->dose_time)->toBe('08:00, 14:00, 20:00');
+    expect($oogdruppels->stocks()->first()?->current_stock)->toBe('270 druppels');
 });
 
 test('patients cannot store a medication with the unit dose unit', function () {

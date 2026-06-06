@@ -31,8 +31,13 @@ class DailyCheckinDemoSeeder extends Seeder
 
         $f = fake('nl_NL');
 
-        $start = Carbon::today()->subMonths(6)->startOfMonth();
-        $end = Carbon::today();
+        $today = Carbon::today();
+        $start = $today->copy()->subMonths(6)->startOfMonth();
+        $end = $today->copy()->subDay();
+
+        $patient->dailyCheckins()
+            ->whereDate('checkin_date', $today->toDateString())
+            ->delete();
 
         $created = 0;
 
