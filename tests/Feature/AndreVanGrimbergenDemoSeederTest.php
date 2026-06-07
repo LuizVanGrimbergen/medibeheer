@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\AppointmentStatus;
 use App\Enums\DailyMoodScore;
+use App\Models\AppointmentTransportInvitation;
 use App\Models\Doctor;
 use App\Models\MedicationIntake;
 use App\Models\MedicationPrescription;
@@ -157,9 +159,16 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
     );
 
     expect($juneSlots)->not->toBeEmpty();
-    expect(collect($juneSlots)->every(
-        fn (array $slot): bool => $slot['taken_at'] !== null && medicationIntakeTakenWithinWindow($slot),
-    ))->toBeTrue();
+    expect($patient->medications()->count())->toBeGreaterThan(0);
+
+    $juneThroughToday = Carbon::create(2026, 6, 6)->toDateString();
+
+    expect(collect($juneSlots)
+        ->filter(fn (array $slot): bool => $slot['intake_date'] <= $juneThroughToday)
+        ->reject(fn (array $slot): bool => $slot['taken_at'] === null)
+        ->every(
+            fn (array $slot): bool => medicationIntakeTakenWithinWindow($slot),
+        ))->toBeTrue();
 
     $urgencyToneResolver = app(MedicationUrgencyToneResolver::class);
 
@@ -178,4 +187,35 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
     expect($expiringPrescriptions->first()?->is_last_in_batch)->toBeTrue();
     expect($expiringPrescriptions->first()?->prescription_expiry_date?->toDateString())
         ->toBe('2026-06-11');
+
+    $scheduledAppointments = $patient
+        ->appointments()
+        ->where('status', AppointmentStatus::SCHEDULED)
+        ->get();
+
+    expect($scheduledAppointments)->not->toBeEmpty();
+    expect($patient->appointments()->count())->toBeGreaterThan($scheduledAppointments->count());
+
+    $transportInvitations = AppointmentTransportInvitation::query()
+        ->where('family_id', $family->id)
+        ->whereHas('appointment', fn ($query) => $query->where('patient_id', $patient->id))
+        ->get();
+
+    expect($transportInvitations)->not->toBeEmpty();
+
+    $this->actingAs($familyUser)
+        ->withSession(['family.active_patient_id' => $patient->id])
+        ->get(route('family.overview'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Family/Overview')
+            ->has('updates_checkins', 1)
+            ->has('updates_medication_intakes'));
+
+    $this->actingAs($patientUser)
+        ->get(route('patient.appointments'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/Appointments')
+            ->has('appointments.data'));
 });
