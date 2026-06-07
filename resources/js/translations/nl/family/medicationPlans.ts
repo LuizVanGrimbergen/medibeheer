@@ -1,6 +1,6 @@
 export default {
     title: 'Medicatieplannen',
-    intro: 'Stel een medicatieplan op en stuur het naar het e-mailadres van de patiënt.',
+    intro: 'Stel een medicatieplan op en stuur het naar het e-mailadres van de gebruiker.',
     create: 'Nieuw plan',
     createTitle: 'Medicatieplan opstellen',
     editTitle: 'Medicatieplan bewerken',
@@ -10,11 +10,11 @@ export default {
     empty: 'Nog geen medicatieplannen. Maak een concept aan om te beginnen.',
     unnamed: 'Medicatieplan',
     publishPage: {
-        title: 'Plan naar patiënt sturen',
-        hint: 'De patiënt ontvangt een e-mail met een link om het plan op de Familie-pagina te bekijken en te accepteren of te weigeren.',
-        emailLabel: 'E-mailadres patiënt',
-        emailPlaceholder: "patiënt{'@'}voorbeeld.nl",
-        emailRequired: 'Vul het e-mailadres van de patiënt in.',
+        title: 'Plan naar gebruiker sturen',
+        hint: 'De gebruiker ontvangt een e-mail met een link om het plan op de Familie-pagina te bekijken en te accepteren of te weigeren.',
+        emailLabel: 'E-mailadres gebruiker',
+        emailPlaceholder: "gebruiker{'@'}voorbeeld.nl",
+        emailRequired: 'Vul het e-mailadres van de gebruiker in.',
         emailInvalid: 'Vul een geldig e-mailadres in.',
         cancel: 'Annuleren',
         submit: 'Versturen',
@@ -32,7 +32,7 @@ export default {
     form: {
         save: 'Opslaan',
         cancel: 'Annuleren',
-        share: 'Delen met patiënt',
+        share: 'Delen met gebruiker',
         addAnotherMedication: 'Volgende medicatie toevoegen',
         publish: 'Plan versturen',
     },

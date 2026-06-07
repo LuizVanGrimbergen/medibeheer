@@ -6,5 +6,5 @@ export default {
     collapsedSummaryMany: '{count} updates',
     emptyToday: 'Geen updates vandaag.',
     notLinked:
-        'U ziet hier hoe het met de patiënt gaat zodra u bent gekoppeld. Gebruik uw uitnodigingscode op het overzicht.',
+        'U ziet hier hoe het met de gebruiker gaat zodra u bent gekoppeld. Gebruik uw uitnodigingscode op het overzicht.',
 };
