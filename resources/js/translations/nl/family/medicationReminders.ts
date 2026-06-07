@@ -1,15 +1,15 @@
 export default {
     settingsTitle: 'Meldingen',
     settingsLinkDescription:
-        'Meldingen aan- of uitzetten voor voorraad, recepten en afspraken van gekoppelde patiënten.',
+        'Meldingen aan- of uitzetten voor voorraad, recepten en afspraken van gekoppelde gebruikers.',
     settingsDescription:
-        'U krijgt meldingen wanneer de medicatievoorraad van een gekoppelde patiënt bijna op is, wanneer een recept bijna verloopt, en twee dagen en twee uur voor een geplande afspraak. Tik op een melding om direct naar de juiste pagina te gaan.',
+        'U krijgt meldingen wanneer de medicatievoorraad van een gekoppelde gebruiker bijna op is, wanneer een recept bijna verloopt, en twee dagen en twee uur voor een geplande afspraak. Tik op een melding om direct naar de juiste pagina te gaan.',
     settingsEnabledStatus: 'Meldingen staan aan.',
     settingsDisabledStatus: 'Meldingen staan uit.',
     disableButton: 'Meldingen uitzetten',
-    promptTitle: 'Meldingen voor gekoppelde patiënten',
+    promptTitle: 'Meldingen voor gekoppelde gebruikers',
     promptDescription:
-        'U krijgt meldingen bij lage voorraad, een bijna verlopen recept of een komende afspraak van een gekoppelde patiënt. Tik op een melding om direct naar de juiste pagina te gaan.',
+        'U krijgt meldingen bij lage voorraad, een bijna verlopen recept of een komende afspraak van een gekoppelde gebruiker. Tik op een melding om direct naar de juiste pagina te gaan.',
     installRequiredNote:
         'Op iPhone: zet Medibeheer eerst op uw beginscherm (zie de gele balk bovenaan). Open de app daarna via dat icoon, niet via Safari.',
     deniedDescription:

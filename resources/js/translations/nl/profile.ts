@@ -44,7 +44,7 @@ export default {
             auth_password_updated: 'Wachtwoord gewijzigd',
             user_profile_updated: 'Profiel bijgewerkt',
             user_account_deleted: 'Account verwijderd',
-            family_active_patient_switched: 'Actieve patiënt gewisseld',
+            family_active_patient_switched: 'Actieve gebruiker gewisseld',
             family_invitation_created: 'Familie-uitnodiging verstuurd',
             family_invitation_revoked: 'Familie-uitnodiging ingetrokken',
             family_invitation_accepted: 'Familie-uitnodiging geaccepteerd',

@@ -13,7 +13,7 @@ return [
     'flash' => [
         'sent' => 'De uitnodiging is verstuurd.',
         'revoked' => 'De uitnodiging is ingetrokken.',
-        'linked' => 'U bent gekoppeld aan het patiëntprofiel.',
+        'linked' => 'U bent gekoppeld aan het gebruikersprofiel.',
         'member_unlinked' => 'De koppeling met het familielid is verwijderd.',
         'mail_failed' => 'De uitnodiging kon niet worden verzonden. Controleer uw mailinstellingen (MAIL_MAILER, SMTP) of probeer het later opnieuw.',
     ],

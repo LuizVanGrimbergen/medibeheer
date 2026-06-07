@@ -1,6 +1,6 @@
 export default {
-    ariaLabel: 'Patient navigatie',
-    mobileFooterAriaLabel: 'Patient hoofdmenu',
+    ariaLabel: 'Gebruiker navigatie',
+    mobileFooterAriaLabel: 'Gebruiker hoofdmenu',
     home: 'Home',
     medications: 'Medicatie',
     prescriptions: 'Voorschrift',
