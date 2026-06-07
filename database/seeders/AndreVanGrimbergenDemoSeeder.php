@@ -2,12 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AppointmentStatus;
 use App\Enums\DailyCheckinSymptom;
 use App\Enums\DailyMoodScore;
 use App\Enums\MedicationPrescriptionPickupStatus;
 use App\Models\DailyCheckin;
 use App\Models\Doctor;
 use App\Models\Family;
+use App\Models\Medication;
 use App\Models\MedicationIntake;
 use App\Models\MedicationPrescription;
 use App\Models\MedicationSchedule;
@@ -79,6 +81,12 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
             ]);
         }
 
+        if ($patient->appointments()->doesntExist()) {
+            $this->call(AppointmentSeeder::class, false, [
+                'patient' => $patient,
+            ]);
+        }
+
         $mayStart = $this->demoMayStart();
         $mayEnd = $mayStart->copy()->endOfMonth();
         $juneStart = $this->demoJuneStart($mayStart);
@@ -98,7 +106,7 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
                 );
 
             $this->command->info(sprintf(
-                'Andre demo: %s (%s) gekoppeld aan familie %s (%s) en dokter %s (%s). Mei %d: 1 gemiste medicatie, juni %d: alles op tijd ingenomen, check-ins 2× ok / 1× slecht / overige goed. %s. Wachtwoord: password.',
+                'Andre demo: %s (%s) gekoppeld aan familie %s (%s) en dokter %s (%s). Mei %d: 1 gemiste medicatie, juni %d: alles op tijd ingenomen, check-ins 2× ok / 1× slecht / overige goed. %s. Afspraken: %d gepland, %d afgerond. Wachtwoord: password.',
                 $patientUser->name,
                 $patientUser->email,
                 $familyUser->name,
@@ -108,13 +116,19 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
                 $mayStart->year,
                 $juneStart->year,
                 $expiringPrescriptionSummary,
+                $patient->appointments()->where('status', AppointmentStatus::SCHEDULED)->count(),
+                $patient->appointments()->where('status', AppointmentStatus::DONE)->count(),
             ));
         }
     }
 
     private function seedExpiringPrescription(Patient $patient, Family $family): ?MedicationPrescription
     {
-        $medication = $patient->medications()->orderBy('id')->first();
+        $medications = $patient->medications()->orderBy('id')->get();
+
+        $medication = $medications->first(
+            fn (Medication $candidate): bool => $candidate->name === 'Metformine',
+        ) ?? $medications->first();
 
         if ($medication === null) {
             return null;
