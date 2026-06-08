@@ -5,6 +5,7 @@ use App\Http\Controllers\Family\Invitations\FamilyInvitationEntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Legal\ShowCookiePolicyController;
 use App\Http\Controllers\Legal\ShowPrivacyPolicyController;
+use App\Http\Controllers\Legal\ShowTermsOfServiceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Seo\ShowRobotsTxtController;
 use App\Http\Controllers\Seo\ShowSitemapController;
@@ -21,6 +22,7 @@ Route::get('/', HomeController::class)->name('home');
 
 Route::get('privacy', ShowPrivacyPolicyController::class)->name('legal.privacy');
 Route::get('cookies', ShowCookiePolicyController::class)->name('legal.cookies');
+Route::get('terms', ShowTermsOfServiceController::class)->name('legal.terms');
 
 Route::get('family/invitation', FamilyInvitationEntryController::class)
     ->middleware('throttle:invitation-entry')

@@ -50,7 +50,9 @@ class HandleInertiaRequests extends Middleware
             'legal' => [
                 'privacyUrl' => route('legal.privacy', absolute: false),
                 'cookiesUrl' => route('legal.cookies', absolute: false),
+                'termsUrl' => route('legal.terms', absolute: false),
                 'policyVersion' => config('privacy.policy_version'),
+                'termsVersion' => config('legal.terms_version'),
             ],
             'seo' => fn (): array => [
                 'indexable' => Seo::shouldIndex($request),

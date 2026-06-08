@@ -36,6 +36,7 @@ class RegisteredUserController extends Controller
             'selectedRole' => $resolveSelectedRole($request),
             'roleTokens' => UserRole::encryptedTransportTokens(),
             'privacyPolicyVersion' => config('privacy.policy_version'),
+            'termsVersion' => config('legal.terms_version'),
         ]);
     }
 
