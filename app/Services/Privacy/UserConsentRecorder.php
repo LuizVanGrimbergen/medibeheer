@@ -14,11 +14,17 @@ final class UserConsentRecorder
 {
     public function recordRegistrationConsents(User $user, Request $request): void
     {
-        $policyVersion = (string) config('privacy.policy_version');
+        $privacyPolicyVersion = (string) config('privacy.policy_version');
+        $termsVersion = (string) config('legal.terms_version');
         $acceptedAt = Carbon::now();
         $ipAddress = $request->ip();
 
         foreach (UserConsentType::cases() as $type) {
+            $policyVersion = match ($type) {
+                UserConsentType::TERMS_OF_SERVICE => $termsVersion,
+                default => $privacyPolicyVersion,
+            };
+
             UserConsent::query()->create([
                 'user_id' => $user->id,
                 'type' => $type,

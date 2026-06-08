@@ -93,7 +93,9 @@ export type FamilyDashboardProps = {
 export type LegalSharedProps = {
     privacyUrl: string;
     cookiesUrl: string;
+    termsUrl: string;
     policyVersion: string;
+    termsVersion: string;
 };
 
 type WebPushSharedProps = {

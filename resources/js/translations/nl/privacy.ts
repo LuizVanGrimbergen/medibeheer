@@ -5,10 +5,15 @@ export default {
     title: 'Privacybeleid',
     versionLabel: 'Versie {version}',
     back: 'Terug',
+    localeSwitcherLabel: 'Taal',
+    localeNl: 'Nederlands',
+    localeEn: 'English',
+    controllerAddressLabel: 'Adres: {address}.',
+    controllerKboLabel: 'KBO: {kbo}.',
     sections: {
         controller: {
             title: '1. Wie is verantwoordelijk?',
-            body: 'Medibeheer is verwerkingsverantwoordelijke voor de verwerking van persoonsgegevens via deze website en progressive web app (PWA). Voor vragen over privacy, een verzoek uitoefenen of een klacht: {contactEmail}.',
+            body: '{controllerName} is verwerkingsverantwoordelijke voor de verwerking van persoonsgegevens via deze website en progressive web app (PWA).{controllerDetails} Voor vragen over privacy, een verzoek uitoefenen of een klacht: {contactEmail}.',
         },
         data: {
             title: '2. Welke gegevens verwerken we?',
@@ -20,7 +25,7 @@ export default {
         },
         legalBasis: {
             title: '4. Op welke rechtsgrond (AVG)?',
-            body: 'Voor gezondheidsgegevens (bijzondere categorie, art. 9 AVG) vragen we uitdrukkelijke toestemming bij registratie. U kunt die later intrekken door uw account te verwijderen. Voor uw account, uitvoering van de overeenkomst, beveiliging en fraudepreventie baseren we ons op uitvoering van de overeenkomst en gerechtvaardigd belang. Waar pushmeldingen actief zijn, baseren we die op uw keuze om meldingen in te schakelen onder Instellingen.',
+            body: 'Wij verwerken persoonsgegevens conform de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de Belgische wet van 3 december 2017 tot oprichting van de Gegevensbeschermingsautoriteit. Voor gezondheidsgegevens (bijzondere categorie, art. 9 AVG) vragen we uitdrukkelijke toestemming bij registratie. U kunt die later intrekken door uw account te verwijderen. Voor uw account, uitvoering van de overeenkomst, beveiliging en fraudepreventie baseren we ons op uitvoering van de overeenkomst en gerechtvaardigd belang. Waar pushmeldingen actief zijn, baseren we die op uw keuze om meldingen in te schakelen onder Instellingen.',
         },
         sharing: {
             title: '5. Wie krijgt toegang tot uw gegevens?',
@@ -36,11 +41,11 @@ export default {
         },
         rights: {
             title: '8. Uw rechten',
-            body: 'U hebt recht op inzage, rectificatie, verwijdering, beperking, bezwaar en dataportabiliteit. In Instellingen kunt u uw gegevens exporteren (JSON) en uw account verwijderen. U kunt een klacht indienen bij de Gegevensbeschermingsautoriteit (België) of de Autoriteit Persoonsgegevens (Nederland).',
+            body: 'U hebt recht op inzage, rectificatie, verwijdering, beperking, bezwaar en dataportabiliteit. In Instellingen kunt u uw gegevens exporteren (JSON) en uw account verwijderen. U kunt een klacht indienen bij de Gegevensbeschermingsautoriteit (GBA, België, www.gegevensbeschermingsautoriteit.be) of de Autoriteit Persoonsgegevens (Nederland).',
         },
         processors: {
             title: '9. Verwerkers en doorgifte',
-            body: 'Hosting, e-mailverzending, realtime-berichten (bijv. voor live updates), push-diensten (Web Push / VAPID), en foutmonitoring in productie kunnen persoonsgegevens verwerken als verwerker. Met verwerkers sluiten we afspraken die de AVG vereist. Verwerking vindt plaats binnen de EU/EER, tenzij voor een specifieke dienst anders vermeld en passend beschermd.',
+            body: 'Hosting, e-mailverzending, realtime-berichten (bijv. voor live updates), push-diensten (Web Push / VAPID), foutmonitoring in productie en een AI-verwerker voor korte, automatisch gegenereerde check-inberichten kunnen persoonsgegevens verwerken als verwerker. Voor AI verwerken we alleen de door u ingevoerde check-incontext (stemming, symptomen, notitie) om één kort bericht te genereren; dat bericht wordt niet gebruikt voor medische beslissingen. Met verwerkers sluiten we afspraken die de AVG vereist. Verwerking vindt plaats binnen de EU/EER, tenzij voor een specifieke dienst anders vermeld en passend beschermd.',
         },
         changes: {
             title: '10. Wijzigingen',
@@ -99,5 +104,6 @@ export default {
         legalLinksTitle: 'Beleid',
         privacyLink: 'Privacybeleid',
         cookiesLink: 'Cookiebeleid',
+        termsLink: 'Gebruiksvoorwaarden',
     },
 };

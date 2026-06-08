@@ -89,4 +89,5 @@ export default {
     ctaRegister: 'Registreren',
     legalPrivacy: 'Privacybeleid',
     legalCookies: 'Cookiebeleid',
+    legalTerms: 'Gebruiksvoorwaarden',
 };

@@ -27,12 +27,14 @@ const form = useForm({
     password_confirmation: '',
     accepted_privacy_policy: false,
     accepted_health_data_processing: false,
+    accepted_terms_of_service: false,
 });
 
 const props = defineProps<{
     selectedRole?: RoleKey | null;
     roleTokens: RoleTokens;
     privacyPolicyVersion: string;
+    termsVersion: string;
 }>();
 
 const { t } = useI18n();
@@ -334,6 +336,54 @@ const submit = () => {
                     </div>
                     <InputError
                         :message="form.errors.accepted_privacy_policy"
+                    />
+
+                    <div
+                        class="border-border/70 bg-surface hover:bg-surface-hover focus-within:ring-focus/25 flex cursor-pointer items-start gap-4 rounded-2xl border-2 px-4 py-3 transition-colors focus-within:ring-2"
+                        @click="
+                            form.accepted_terms_of_service =
+                                !form.accepted_terms_of_service
+                        "
+                    >
+                        <Checkbox
+                            id="register-consent-terms"
+                            :model-value="form.accepted_terms_of_service"
+                            :disabled="form.processing"
+                            required
+                            class="mt-0.5 size-6 shrink-0"
+                            @click.stop
+                            @update:model-value="
+                                (value) => {
+                                    form.accepted_terms_of_service =
+                                        value === true;
+                                }
+                            "
+                        />
+                        <Label
+                            for="register-consent-terms"
+                            class="text-text min-w-0 cursor-pointer text-lg leading-relaxed font-medium wrap-break-word"
+                        >
+                            <span class="text-danger">*</span>
+                            {{ ' ' }}
+                            {{ t('legal.register.termsPrefix') }}
+                            <a
+                                :href="route('legal.terms')"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="text-primary font-semibold underline underline-offset-2 hover:opacity-80"
+                                @click.stop
+                            >
+                                {{ t('legal.register.termsLink') }}
+                            </a>
+                            {{
+                                t('legal.register.termsSuffix', {
+                                    version: props.termsVersion,
+                                })
+                            }}
+                        </Label>
+                    </div>
+                    <InputError
+                        :message="form.errors.accepted_terms_of_service"
                     />
 
                     <div
