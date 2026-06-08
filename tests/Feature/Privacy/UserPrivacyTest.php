@@ -22,6 +22,7 @@ function validRegistrationPayload(array $overrides = []): array
         'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
         'accepted_privacy_policy' => true,
         'accepted_health_data_processing' => true,
+        'accepted_terms_of_service' => true,
     ], $overrides);
 }
 
@@ -39,6 +40,13 @@ test('privacy and cookie policy pages can be rendered', function () {
     $this->get(route('legal.cookies'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page->component('Legal/Cookies'));
+
+    $this->get(route('legal.terms'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Legal/Terms')
+            ->has('controller')
+            ->has('documentLocale'));
 });
 
 test('registration stores user consents', function () {
@@ -49,7 +57,7 @@ test('registration stores user consents', function () {
     /** @var User $user */
     $user = auth()->user();
 
-    expect(UserConsent::query()->where('user_id', $user->id)->count())->toBe(2);
+    expect(UserConsent::query()->where('user_id', $user->id)->count())->toBe(3);
     expect(
         UserConsent::query()
             ->where('user_id', $user->id)
@@ -62,10 +70,15 @@ test('registration requires privacy consents', function () {
     $response = $this->post('/register', validRegistrationPayload([
         'accepted_privacy_policy' => false,
         'accepted_health_data_processing' => false,
+        'accepted_terms_of_service' => false,
     ]));
 
     $response
-        ->assertSessionHasErrors(['accepted_privacy_policy', 'accepted_health_data_processing']);
+        ->assertSessionHasErrors([
+            'accepted_privacy_policy',
+            'accepted_health_data_processing',
+            'accepted_terms_of_service',
+        ]);
     $this->assertGuest();
 });
 

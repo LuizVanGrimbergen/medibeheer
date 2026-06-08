@@ -2,7 +2,7 @@
 import { useI18n } from 'vue-i18n';
 import LegalDocumentLayout from '@/Components/Legal/LegalDocumentLayout.vue';
 
-defineProps<{
+const props = defineProps<{
     policyVersion: string;
     termsVersion: string;
     contactEmail: string;
@@ -22,29 +22,40 @@ defineProps<{
 const { t } = useI18n();
 
 const sectionKeys = [
-    'necessary',
-    'storage',
-    'push',
-    'publicSite',
-    'analytics',
+    'nature',
+    'notMedicalDevice',
+    'userResponsibility',
+    'noEmergency',
+    'medicalDisclaimer',
+    'ai',
+    'liability',
+    'riziv',
+    'applicableLaw',
+    'changes',
 ] as const;
+
+const sectionParams = () => ({
+    contactEmail: props.contactEmail,
+    controllerName: props.controller.name,
+});
 </script>
 
 <template>
     <LegalDocumentLayout
-        title-key="privacy.cookies.title"
-        meta-title-key="privacy.cookies.metaTitle"
-        meta-description-key="privacy.cookies.metaDescription"
-        :document-version="policyVersion"
+        title-key="legal.title"
+        meta-title-key="legal.metaTitle"
+        meta-description-key="legal.metaDescription"
+        :document-version="termsVersion"
+        version-label-key="legal.versionLabel"
         :document-locale="documentLocale"
-        locale-route-name="legal.cookies"
+        locale-route-name="legal.terms"
     >
         <section v-for="key in sectionKeys" :key="key">
             <h2 class="text-primary text-xl font-semibold">
-                {{ t(`privacy.cookies.sections.${key}.title`) }}
+                {{ t(`legal.sections.${key}.title`) }}
             </h2>
             <p class="text-text-muted mt-2">
-                {{ t(`privacy.cookies.sections.${key}.body`) }}
+                {{ t(`legal.sections.${key}.body`, sectionParams()) }}
             </p>
         </section>
     </LegalDocumentLayout>

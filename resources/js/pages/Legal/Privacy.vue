@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LegalDocumentLayout from '@/Components/Legal/LegalDocumentLayout.vue';
 
 const props = defineProps<{
     policyVersion: string;
+    termsVersion: string;
     contactEmail: string;
+    controller: {
+        name: string;
+        address: string | null;
+        kbo: string | null;
+    };
+    documentLocale: string;
     retention: {
         security_activity_log_days: number;
         data_activity_log_days: number;
@@ -28,9 +36,35 @@ const sectionKeys = [
     'changes',
 ] as const;
 
+const controllerDetails = computed((): string => {
+    const parts: string[] = [];
+
+    if (props.controller.address !== null) {
+        parts.push(
+            t('privacy.controllerAddressLabel', {
+                address: props.controller.address,
+            }),
+        );
+    }
+
+    if (props.controller.kbo !== null) {
+        parts.push(
+            t('privacy.controllerKboLabel', { kbo: props.controller.kbo }),
+        );
+    }
+
+    if (parts.length === 0) {
+        return '';
+    }
+
+    return ` ${parts.join(' ')}`;
+});
+
 const sectionParams = (key: (typeof sectionKeys)[number]) => {
     const shared = {
         contactEmail: props.contactEmail,
+        controllerName: props.controller.name,
+        controllerDetails: controllerDetails.value,
     };
 
     if (key === 'retention') {
@@ -51,7 +85,9 @@ const sectionParams = (key: (typeof sectionKeys)[number]) => {
         title-key="privacy.title"
         meta-title-key="privacy.metaTitle"
         meta-description-key="privacy.metaDescription"
-        :policy-version="policyVersion"
+        :document-version="policyVersion"
+        :document-locale="documentLocale"
+        locale-route-name="legal.privacy"
     >
         <section v-for="key in sectionKeys" :key="key">
             <h2 class="text-primary text-xl font-semibold">

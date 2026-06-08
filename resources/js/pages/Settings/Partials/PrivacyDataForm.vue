@@ -37,6 +37,16 @@ const page = usePage<PageProps>();
                         {{ t('privacy.settings.cookiesLink') }}
                     </a>
                 </li>
+                <li>
+                    <a
+                        :href="page.props.legal.termsUrl"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-primary font-semibold hover:opacity-80"
+                    >
+                        {{ t('privacy.settings.termsLink') }}
+                    </a>
+                </li>
             </ul>
         </div>
 

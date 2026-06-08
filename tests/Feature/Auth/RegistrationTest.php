@@ -18,6 +18,7 @@ function registrationPayload(array $overrides = []): array
         'password_confirmation' => 'Qw7!mR2#xP9@tL4$',
         'accepted_privacy_policy' => true,
         'accepted_health_data_processing' => true,
+        'accepted_terms_of_service' => true,
     ], $overrides);
 }
 

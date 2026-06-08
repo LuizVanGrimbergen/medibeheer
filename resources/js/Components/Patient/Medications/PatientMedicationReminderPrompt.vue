@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { Bell, BellOff, X } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
+import MedicalDisclaimer from '@/Components/Legal/MedicalDisclaimer.vue';
 import { Button } from '@/Components/ui/button';
 import { usePatientMedicationPushReminders } from '@/composables/patient/usePatientMedicationPushReminders';
 
@@ -122,6 +123,8 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
                 >
                     {{ t('patient.medicationReminders.enableButton') }}
                 </Button>
+
+                <MedicalDisclaimer message-key="legal.disclaimer.pushReminder" />
 
                 <p class="text-text-muted text-base leading-relaxed">
                     {{ t('patient.medicationReminders.dismissPromptHint') }}

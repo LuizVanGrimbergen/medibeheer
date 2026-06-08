@@ -117,6 +117,12 @@ const openByKey = ref<Record<HomeFeatureKey, boolean>>(
             >
                 {{ t('home.legalCookies') }}
             </Link>
+            <Link
+                :href="route('legal.terms')"
+                class="text-primary font-semibold hover:opacity-80"
+            >
+                {{ t('home.legalTerms') }}
+            </Link>
         </footer>
     </AuthPageContainer>
 </template>
