@@ -151,6 +151,44 @@ class Seo
         return $entries;
     }
 
+    /** @return array{heading: string, features_heading: string, features: list<array{title: string, summary: string}>}|null */
+    public static function crawlableHomeContent(): ?array
+    {
+        if (! request()->routeIs('home')) {
+            return null;
+        }
+
+        /** @var array{home?: array{heading?: string, features_heading?: string, features?: list<array{title: string, summary: string}>}} $crawlable */
+        $crawlable = config('seo.crawlable', []);
+
+        $home = $crawlable['home'] ?? null;
+
+        if (! is_array($home)) {
+            return null;
+        }
+
+        $heading = $home['heading'] ?? null;
+        $featuresHeading = $home['features_heading'] ?? null;
+        $features = $home['features'] ?? null;
+
+        if (
+            ! is_string($heading)
+            || $heading === ''
+            || ! is_string($featuresHeading)
+            || $featuresHeading === ''
+            || ! is_array($features)
+            || $features === []
+        ) {
+            return null;
+        }
+
+        return [
+            'heading' => $heading,
+            'features_heading' => $featuresHeading,
+            'features' => $features,
+        ];
+    }
+
     /** @return list<string> */
     public static function robotsDisallowPaths(): array
     {

@@ -33,6 +33,12 @@ class ShareSeoViewData
                     JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
                 ),
             );
+
+            $crawlableHomeContent = Seo::crawlableHomeContent();
+
+            if ($crawlableHomeContent !== null) {
+                View::share('crawlableHomeContent', $crawlableHomeContent);
+            }
         }
 
         return $next($request);

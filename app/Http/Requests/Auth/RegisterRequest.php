@@ -42,6 +42,7 @@ class RegisterRequest extends FormRequest
             'password_confirmation' => ['required', 'string'],
             'accepted_privacy_policy' => ['required', 'accepted'],
             'accepted_health_data_processing' => ['required', 'accepted'],
+            'accepted_terms_of_service' => ['required', 'accepted'],
         ];
     }
 
@@ -50,6 +51,7 @@ class RegisterRequest extends FormRequest
         return [
             'accepted_privacy_policy.accepted' => trans('privacy.consent.privacy_policy'),
             'accepted_health_data_processing.accepted' => trans('privacy.consent.health_data'),
+            'accepted_terms_of_service.accepted' => trans('privacy.consent.terms_of_service'),
         ];
     }
 

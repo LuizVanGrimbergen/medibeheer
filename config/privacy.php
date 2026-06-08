@@ -2,7 +2,7 @@
 
 return [
 
-    'policy_version' => env('PRIVACY_POLICY_VERSION', '2026-06-06'),
+    'policy_version' => env('PRIVACY_POLICY_VERSION', '2026-06-08'),
 
     'contact_email' => env('PRIVACY_CONTACT_EMAIL'),
 

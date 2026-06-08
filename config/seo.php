@@ -35,6 +35,10 @@ return [
             'title' => 'Cookiebeleid',
             'description' => 'Informatie over cookies, lokale opslag en push-instellingen in de Medibeheer webapp.',
         ],
+        'legal.terms' => [
+            'title' => 'Gebruiksvoorwaarden',
+            'description' => 'Lees de gebruiksvoorwaarden, medische disclaimer en aansprakelijkheidsbepalingen van Medibeheer.',
+        ],
     ],
 
     'locale' => env('SEO_LOCALE', 'nl_BE'),
@@ -48,6 +52,7 @@ return [
         'password.request',
         'legal.privacy',
         'legal.cookies',
+        'legal.terms',
     ],
 
     'sitemap_route_names' => [
@@ -57,6 +62,7 @@ return [
         'password.request',
         'legal.privacy',
         'legal.cookies',
+        'legal.terms',
     ],
 
     'sitemap_priorities' => [
@@ -66,6 +72,44 @@ return [
         'password.request' => ['changefreq' => 'yearly', 'priority' => '0.3'],
         'legal.privacy' => ['changefreq' => 'yearly', 'priority' => '0.4'],
         'legal.cookies' => ['changefreq' => 'yearly', 'priority' => '0.4'],
+        'legal.terms' => ['changefreq' => 'yearly', 'priority' => '0.4'],
+    ],
+
+    'crawlable' => [
+        'home' => [
+            'heading' => 'Medibeheer – medicatiebeheer voor patiënten, familie en zorgverleners',
+            'features_heading' => 'Wat doet Medibeheer?',
+            'features' => [
+                [
+                    'title' => 'Medicatie bijhouden',
+                    'summary' => 'Uw medicijnen en innameschema’s op één plek, met overzicht voor uw apotheker.',
+                ],
+                [
+                    'title' => 'Voorschriften beheren',
+                    'summary' => 'Vervaldatums en ophaalstatus bijhouden zodat u tijdig vernieuwt.',
+                ],
+                [
+                    'title' => 'Innames registreren',
+                    'summary' => 'Innames afvinken en optioneel herinneringen ontvangen op uw telefoon of tablet.',
+                ],
+                [
+                    'title' => 'Voorraad bewaken',
+                    'summary' => 'Per medicijn zien hoeveel u nog heeft, inclusief hulp bij vakantievoorraad.',
+                ],
+                [
+                    'title' => 'Afspraken',
+                    'summary' => 'Afspraken bijhuisarts, specialist of ziekenhuis bewaren; familie kan vervoer helpen.',
+                ],
+                [
+                    'title' => 'Medicatieplannen en samenwerking',
+                    'summary' => 'Familie of zorgverlener helpt mee, steeds met uw goedkeuring.',
+                ],
+                [
+                    'title' => 'Dagelijkse check-in',
+                    'summary' => 'Stemming en symptomen kort bijhouden voor uzelf en uw zorgteam.',
+                ],
+            ],
+        ],
     ],
 
     'robots_disallow_paths' => [

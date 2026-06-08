@@ -7,10 +7,10 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ShowPrivacyPolicyController extends Controller
+class ShowTermsOfServiceController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Inertia::render('Legal/Privacy', LegalPageProps::forInertia($request));
+        return Inertia::render('Legal/Terms', LegalPageProps::forInertia($request));
     }
 }

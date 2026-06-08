@@ -35,7 +35,8 @@ test('sitemap lists public marketing and auth pages', function () {
         ->toContain(route('login', absolute: true))
         ->toContain(route('register', absolute: true))
         ->toContain(route('legal.privacy', absolute: true))
-        ->toContain(route('legal.cookies', absolute: true));
+        ->toContain(route('legal.cookies', absolute: true))
+        ->toContain(route('legal.terms', absolute: true));
 });
 
 test('homepage is indexable for guests and renders the public landing page', function () {
@@ -64,6 +65,17 @@ test('homepage includes a server-rendered meta description for search engines', 
     $this->get('/')
         ->assertOk()
         ->assertSee('<meta name="description" content="'.e($description).'">', false);
+});
+
+test('homepage includes server-rendered crawlable content for search engines', function () {
+    /** @var TestCase $this */
+    $heading = config('seo.crawlable.home.heading');
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('<h1>'.e($heading).'</h1>', false)
+        ->assertSee('Medicatie bijhouden', false)
+        ->assertSee('<noscript>', false);
 });
 
 test('sitemap entries include changefreq and priority', function () {
