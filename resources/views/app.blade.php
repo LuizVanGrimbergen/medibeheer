@@ -60,6 +60,10 @@
 </head>
 
 <body class="min-h-dvh bg-slate-50 font-sans antialiased">
+    @isset($crawlableHomeContent)
+        @include('seo.crawlable-home')
+    @endisset
+
     @inertia
 </body>
 
