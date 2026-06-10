@@ -29,10 +29,10 @@ test('doctor patients page lists pending patient invitations for the doctor emai
     $response = $this->actingAs($doctorUser)->get(route('doctor.patients'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->component('Doctor/Patients/Index')
         ->has('incoming_invitations', 1)
-        ->where('incoming_invitations.0.patient_name', $patientUser->name));
+        ->where('incoming_invitations.0.patient_name', $patientUser->name)));
 });
 
 test('doctors can accept an incoming patient invitation from the patients page', function () {
@@ -99,9 +99,9 @@ test('doctor patients page omits invitations for patients already linked', funct
     $this->actingAs($doctorUser)
         ->get(route('doctor.patients'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->component('Doctor/Patients/Index')
-            ->has('incoming_invitations', 0));
+            ->has('incoming_invitations', 0)));
 });
 
 test('doctors cannot accept an invitation sent to another email address', function () {
