@@ -4,6 +4,10 @@ import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointment
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import { focusPlaceAutocompleteSearch } from '@/lib/google-maps/focusPlaceAutocompleteSearch';
 import {
+    attachPlaceAutocompleteMobileInputBehavior,
+    shouldAutoFocusPlaceAutocomplete,
+} from '@/lib/google-maps/placeAutocompleteInput';
+import {
     getGoogleMapsApiKey,
     importGoogleMapsPlacesLibrary,
 } from '@/lib/google-maps/loadGoogleMapsApi';
@@ -48,6 +52,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
     let inputIconHandle: ReturnType<
         typeof mountPlaceAutocompleteLucideInputIcon
     > | null = null;
+    let detachMobileInputBehavior: (() => void) | null = null;
 
     const syncSearchInputValue = (): void => {
         if (autocompleteElement === null) {
@@ -155,7 +160,12 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
                 host.replaceChildren(element);
                 autocompleteElement = element;
                 syncSearchInputValue();
-                scheduleFocusPlaceAutocompleteSearch(host);
+                detachMobileInputBehavior =
+                    attachPlaceAutocompleteMobileInputBehavior(host);
+
+                if (shouldAutoFocusPlaceAutocomplete()) {
+                    scheduleFocusPlaceAutocompleteSearch(host);
+                }
             } catch (error) {
                 isAvailable.value = false;
                 loadError.value =
@@ -175,6 +185,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
             );
         }
 
+        detachMobileInputBehavior?.();
         clearIconHandle?.unmount();
         inputIconHandle?.unmount();
         options.hostRef.value?.replaceChildren();
@@ -182,6 +193,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
         selectListener = null;
         clearIconHandle = null;
         inputIconHandle = null;
+        detachMobileInputBehavior = null;
     });
 
     return { isAvailable, loadError, placesVerifiedSnapshot };

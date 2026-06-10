@@ -40,6 +40,14 @@ const toggleLabel = computed((): string =>
             : `${props.labelsNamespace}.showDetails`,
     ),
 );
+
+const expandLabel = computed((): string =>
+    t(`${props.labelsNamespace}.listExpandHint`),
+);
+
+const collapseLabel = computed((): string =>
+    t(`${props.labelsNamespace}.listCollapseHint`),
+);
 </script>
 
 <template>
@@ -48,9 +56,12 @@ const toggleLabel = computed((): string =>
             v-model:open="open"
             :heading="props.heading"
             :toggle-label="toggleLabel"
+            :expand-label="expandLabel"
+            :collapse-label="collapseLabel"
+            toggle-variant="footer-button"
             :collapsed-summary="collapsedSummary"
             icon-wrapper-class="bg-primary/10 text-primary"
-            content-class="flex flex-col gap-4"
+            content-class="border-border flex flex-col border-t px-4 pb-4 pt-4 md:px-5 md:pb-5 md:pt-4"
         >
             <template #icon>
                 <Users aria-hidden="true" />

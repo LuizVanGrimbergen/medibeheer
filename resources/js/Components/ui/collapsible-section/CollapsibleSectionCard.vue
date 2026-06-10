@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ChevronDown } from 'lucide-vue-next';
+import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
 import {
     Collapsible,
     CollapsibleContent,
@@ -19,12 +20,18 @@ const props = withDefaults(
         collapsedSummary?: string;
         collapsedSummaryClass?: string;
         contentClass?: string;
+        toggleVariant?: 'header' | 'footer-button';
+        expandLabel?: string;
+        collapseLabel?: string;
     }>(),
     {
         contentClass:
             'border-t border-border px-4 pb-4 pt-4 md:px-5 md:pb-5 md:pt-4',
+        toggleVariant: 'header',
     },
 );
+
+const usesFooterButtonToggle = props.toggleVariant === 'footer-button';
 </script>
 
 <template>
@@ -32,10 +39,15 @@ const props = withDefaults(
         v-model:open="open"
         class="border-border bg-surface rounded-2xl border-2 shadow-sm"
     >
-        <CollapsibleTrigger as-child>
+        <CollapsibleTrigger v-if="!usesFooterButtonToggle" as-child>
             <button
                 type="button"
-                class="hover:bg-surface-2 flex w-full items-center gap-3 rounded-2xl px-4 py-4 text-left transition md:px-5 md:py-3.5"
+                :class="
+                    cn(
+                        'hover:bg-surface-2 flex w-full items-center gap-3 px-4 py-4 text-left transition md:px-5 md:py-3.5',
+                        open ? 'rounded-t-2xl' : 'rounded-2xl',
+                    )
+                "
             >
                 <div
                     :class="
@@ -94,10 +106,65 @@ const props = withDefaults(
             </button>
         </CollapsibleTrigger>
 
+        <div
+            v-else
+            class="flex w-full items-center gap-3 px-4 py-4 md:px-5 md:py-3.5"
+            :class="open ? 'rounded-t-2xl' : 'rounded-2xl'"
+        >
+            <div
+                :class="
+                    cn(
+                        'flex size-10 shrink-0 items-center justify-center rounded-full [&_svg]:size-5 [&_svg]:shrink-0 [&_svg]:stroke-[1.75]',
+                        props.iconWrapperClass,
+                    )
+                "
+                aria-hidden="true"
+            >
+                <slot name="icon" />
+            </div>
+
+            <div class="min-w-0 flex-1">
+                <h2 :class="mobileShellSectionSubHeadingClass">
+                    {{ props.heading }}
+                </h2>
+                <p
+                    v-if="
+                        props.subheading !== undefined && props.subheading !== ''
+                    "
+                    class="text-text-muted mt-0.5 text-sm"
+                >
+                    {{ props.subheading }}
+                </p>
+                <p
+                    v-if="
+                        !open &&
+                        props.collapsedSummary !== undefined &&
+                        props.collapsedSummary !== ''
+                    "
+                    :class="
+                        cn(
+                            'text-text-muted mt-0.5 text-sm',
+                            props.collapsedSummaryClass,
+                        )
+                    "
+                >
+                    {{ props.collapsedSummary }}
+                </p>
+            </div>
+        </div>
+
         <CollapsibleContent>
             <div :class="props.contentClass">
                 <slot />
             </div>
         </CollapsibleContent>
+
+        <PatientListCardDetailsToggle
+            v-if="usesFooterButtonToggle"
+            :mode="open ? 'collapse' : 'expand'"
+            :label="open ? (props.collapseLabel ?? '') : (props.expandLabel ?? '')"
+            :ariaLabel="props.toggleLabel"
+            wrapper-class="px-4 pb-4 md:px-5 md:pb-5"
+        />
     </Collapsible>
 </template>

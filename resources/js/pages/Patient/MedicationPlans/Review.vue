@@ -2,38 +2,38 @@
 import { Head, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { Button } from '@/Components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
+import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizardFooter.vue';
+import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
+import MobileShellPageWizard from '@/Components/shell/MobileShellPageWizard.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
+import { Card, CardContent } from '@/Components/ui/card';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
-import {
-    mobileShellActionDangerOutlineButtonClass,
-    mobileShellActionPrimaryButtonClass,
-} from '@/lib/shell/mobileShellDialogLayout';
 import type { PatientMedicationPlanReviewScreenProps } from '@/lib/patient/medicationPlans/patientMedicationPlanReviewScreenProps';
-import type { MedicationDoseUnitValue } from '@/lib/types';
-import { cn } from '@/lib/utils';
+import {
+    mobileShellPageFillClass,
+    mobileShellWizardCardClass,
+    mobileShellWizardCardInnerClass,
+    mobileShellWizardFormClass,
+    mobileShellWizardStepPanelClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 
 const props = defineProps<PatientMedicationPlanReviewScreenProps>();
 
 const { t } = useI18n();
 
-const doseUnitLabel = computed((): string | null => {
-    if (props.dose_unit === null || props.dose_unit.trim().length < 1) {
-        return null;
-    }
+const intro = computed((): string =>
+    t('patient.medicationPlans.review.intro', {
+        name:
+            props.family_member_name ||
+            t('patient.medicationPlans.review.unknownFamily'),
+    }),
+);
 
-    if (props.dose === null || props.dose.trim().length < 1) {
-        return props.dose_unit;
-    }
-
-    return medicationDoseUnitChipForAmount(
-        t,
-        props.dose,
-        props.dose_unit as MedicationDoseUnitValue,
-    );
-});
+const displayMedicationNames = computed((): string[] =>
+    props.medication_names.length > 0
+        ? props.medication_names
+        : [t('family.medicationPlans.unnamed')],
+);
 
 function accept(): void {
     router.post(route('patient.medication-plans.accept', props.proposal_id));
@@ -50,86 +50,69 @@ function decline(): void {
     </Head>
 
     <PatientLayout>
-        <PatientPageShell :title="t('patient.medicationPlans.review.title')">
-            <div>
-                <p class="text-text-muted text-sm leading-relaxed">
-                    {{
-                        t('patient.medicationPlans.review.intro', {
-                            name:
-                                props.family_member_name ||
-                                t(
-                                    'patient.medicationPlans.review.unknownFamily',
-                                ),
-                        })
-                    }}
-                </p>
-            </div>
+        <div :class="mobileShellPageFillClass">
+            <MobileShellPageWizard
+                :title="t('patient.medicationPlans.review.title')"
+                :description="intro"
+            >
+                <div :class="mobileShellWizardFormClass">
+                    <MobileShellWizardScrollBody :active="true">
+                        <div :class="mobileShellWizardStepPanelClass">
+                            <ul
+                                class="flex w-full min-w-0 flex-col gap-5"
+                                :aria-label="
+                                    t('patient.medicationPlans.review.title')
+                                "
+                            >
+                                <li
+                                    v-for="(name, index) in displayMedicationNames"
+                                    :key="index"
+                                    class="min-w-0"
+                                >
+                                    <Card :class="mobileShellWizardCardClass">
+                                        <CardContent class="p-0">
+                                            <div
+                                                :class="
+                                                    mobileShellWizardCardInnerClass
+                                                "
+                                            >
+                                                <p
+                                                    class="text-text-heading text-lg leading-snug font-bold sm:text-xl"
+                                                >
+                                                    {{ name }}
+                                                </p>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </li>
+                            </ul>
+                        </div>
 
-            <Card class="border-border rounded-2xl">
-                <CardHeader class="border-border border-b px-5 py-4">
-                    <CardTitle class="text-text-heading text-lg font-semibold">
-                        {{
-                            props.medication_name ??
-                            t('family.medicationPlans.unnamed')
-                        }}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent
-                    class="text-text flex flex-col gap-3 px-5 py-5 text-sm"
-                >
-                    <p v-if="props.dose">
-                        <span class="text-text-heading font-semibold"
-                            >{{
-                                t('patient.medicationPlans.review.dose')
-                            }}:</span
-                        >
-                        {{ props.dose }}
-                        <span v-if="doseUnitLabel"> ({{ doseUnitLabel }})</span>
-                    </p>
-                    <p v-if="props.strength">
-                        <span class="text-text-heading font-semibold"
-                            >{{
-                                t('patient.medicationPlans.review.strength')
-                            }}:</span
-                        >
-                        {{ props.strength }}
-                    </p>
-                    <p v-if="props.current_stock">
-                        <span class="text-text-heading font-semibold"
-                            >{{
-                                t('patient.medicationPlans.review.stock')
-                            }}:</span
-                        >
-                        {{ props.current_stock }}
-                    </p>
-                    <p v-if="props.note">
-                        <span class="text-text-heading font-semibold"
-                            >{{
-                                t('patient.medicationPlans.review.note')
-                            }}:</span
-                        >
-                        {{ props.note }}
-                    </p>
-                </CardContent>
-            </Card>
-
-            <div class="flex flex-col gap-3 sm:flex-row-reverse sm:gap-3">
-                <Button
-                    type="button"
-                    :class="cn(mobileShellActionPrimaryButtonClass)"
-                    @click="accept"
-                >
-                    {{ t('patient.medicationPlans.review.accept') }}
-                </Button>
-                <Button
-                    type="button"
-                    variant="outline"
-                    :class="cn(mobileShellActionDangerOutlineButtonClass)"
-                    @click="decline"
-                >
-                    {{ t('patient.medicationPlans.review.decline') }}
-                </Button>
-            </div>
-        </PatientPageShell>
+                        <template #footer>
+                            <PatientFormWizardFooter>
+                                <PatientFormWizardFooterButton
+                                    variant="primary"
+                                    @click="accept"
+                                >
+                                    {{
+                                        t('patient.medicationPlans.review.accept')
+                                    }}
+                                </PatientFormWizardFooterButton>
+                                <PatientFormWizardFooterButton
+                                    variant="danger"
+                                    @click="decline"
+                                >
+                                    {{
+                                        t(
+                                            'patient.medicationPlans.review.decline',
+                                        )
+                                    }}
+                                </PatientFormWizardFooterButton>
+                            </PatientFormWizardFooter>
+                        </template>
+                    </MobileShellWizardScrollBody>
+                </div>
+            </MobileShellPageWizard>
+        </div>
     </PatientLayout>
 </template>

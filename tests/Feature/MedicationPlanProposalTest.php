@@ -95,6 +95,32 @@ test('publish rejects an invalid patient email', function () {
     expect($proposal->fresh()->status)->toBe(MedicationPlanProposalStatus::DRAFT);
 });
 
+test('family link page hides revoked medication plan proposals', function () {
+    $familyUser = User::factory()->familyMember()->create();
+    $family = $familyUser->familyOrCreate();
+    $patientEmail = 'plan-revoke-'.uniqid('', true).'@example.com';
+
+    $proposal = MedicationPlanProposal::factory()
+        ->forFamily($family)
+        ->withMedicationItem()
+        ->published()
+        ->create([
+            'invited_patient_email' => $patientEmail,
+            'invited_patient_email_hash' => User::hashEmail($patientEmail),
+        ]);
+
+    $this->actingAs($familyUser)
+        ->post(route('family.medication-plans.revoke', $proposal))
+        ->assertRedirect(route('family.link'));
+
+    $this->actingAs($familyUser)
+        ->get(route('family.link'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Family/Link/Index')
+            ->has('proposals', 0));
+});
+
 test('family link page exposes patient email on published proposals', function () {
     $familyUser = User::factory()->familyMember()->create();
     $family = $familyUser->familyOrCreate();
@@ -214,7 +240,10 @@ test('patients can review and accept a published plan from the family page', fun
 
     $this->actingAs($patientUser)
         ->get(route('patient.medication-plans.review', $proposal))
-        ->assertOk();
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Patient/MedicationPlans/Review')
+            ->where('medication_names', ['Paracetamol']));
 
     $this->actingAs($patientUser)
         ->post(route('patient.medication-plans.accept', $proposal))

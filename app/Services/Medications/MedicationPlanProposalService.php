@@ -25,11 +25,6 @@ final class MedicationPlanProposalService
         return $this->draftService->createDraft($family, $validated);
     }
 
-    public function duplicateAsDraft(Family $family, MedicationPlanProposal $source): MedicationPlanProposal
-    {
-        return $this->draftService->duplicateAsDraft($family, $source);
-    }
-
     public function addDraftItem(MedicationPlanProposal $proposal, array $validated): MedicationPlanProposal
     {
         return $this->draftService->addDraftItem($proposal, $validated);

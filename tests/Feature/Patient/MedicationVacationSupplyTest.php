@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\Medications\MedicationVacationSupplyService;
 use Carbon\Carbon;
 use Database\Seeders\MedicationSeeder;
-use Database\Seeders\PatientWebPushDemoSeeder;
 
 beforeEach(function () {
     Carbon::setTestNow(Carbon::parse('2026-05-14 12:00:00', 'Europe/Amsterdam'));
@@ -221,7 +220,6 @@ it('demo seeders leave no medications skipped for a typical vacation window', fu
     $patient->families()->attach($family);
 
     (new MedicationSeeder)->run($patient, $family);
-    (new PatientWebPushDemoSeeder)->run($user);
 
     $result = app(MedicationVacationSupplyService::class)->buildPickupList(
         $patient,

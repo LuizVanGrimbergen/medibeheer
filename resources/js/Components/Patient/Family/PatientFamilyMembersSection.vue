@@ -83,6 +83,7 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
             <PatientFamilyCareTeamRowItem
                 v-for="inv in props.familyInvitations"
                 :key="inv.public_id"
+                layout="collapsible"
                 :title="inv.invited_email"
                 :subtitle="
                     t('patient.family.pendingOutgoingExpiresAt', {
@@ -109,6 +110,7 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
             <PatientFamilyCareTeamRowItem
                 v-for="member in props.linkedFamilyMembers"
                 :key="member.public_id"
+                layout="collapsible"
                 :title="member.name"
                 :action-label="t('patient.family.unlink')"
                 :confirm-title="t('patient.family.unlinkConfirmTitle')"

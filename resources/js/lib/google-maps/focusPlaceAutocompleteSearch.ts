@@ -1,20 +1,26 @@
+import {
+    configurePlaceAutocompleteInput,
+    getPlaceAutocompleteInput,
+    scrollPlaceAutocompleteHostIntoScrollParent,
+    shouldAutoFocusPlaceAutocomplete,
+} from '@/lib/google-maps/placeAutocompleteInput';
+
 export function focusPlaceAutocompleteSearch(
     host: HTMLElement | null,
 ): boolean {
-    const widget = host?.querySelector('gmp-place-autocomplete');
-
-    if (widget === null || widget === undefined) {
+    if (host === null || !shouldAutoFocusPlaceAutocomplete()) {
         return false;
     }
 
-    const input = widget.shadowRoot?.querySelector('input');
+    const input = getPlaceAutocompleteInput(host);
 
-    if (!(input instanceof HTMLInputElement)) {
+    if (input === null) {
         return false;
     }
 
-    input.focus({ preventScroll: false });
-    input.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    configurePlaceAutocompleteInput(input);
+    input.focus({ preventScroll: true });
+    scrollPlaceAutocompleteHostIntoScrollParent(host);
 
     return true;
 }

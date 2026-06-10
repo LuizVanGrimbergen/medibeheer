@@ -10,7 +10,6 @@ use App\Http\Controllers\Family\Dashboard\SwitchActivePatientController;
 use App\Http\Controllers\Family\Invitations\AcceptAppointmentTransportInvitationController;
 use App\Http\Controllers\Family\Invitations\AcceptIncomingFamilyInvitationController;
 use App\Http\Controllers\Family\Invitations\DeclineAppointmentTransportInvitationController;
-use App\Http\Controllers\Family\MedicationPlans\DuplicateFamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\FamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\PublishFamilyMedicationPlanProposalController;
 use App\Http\Controllers\Family\MedicationPlans\RevokeFamilyMedicationPlanProposalController;
@@ -60,8 +59,6 @@ Route::middleware([
             ->name('medication-plans.items.create');
         Route::post('medication-plans/{medication_plan_proposal}/items', [FamilyMedicationPlanProposalController::class, 'storeItem'])
             ->name('medication-plans.items.store');
-        Route::post('medication-plans/{medication_plan_proposal}/duplicate', DuplicateFamilyMedicationPlanProposalController::class)
-            ->name('medication-plans.duplicate');
         Route::get('medication-plans/{medication_plan_proposal}/publish', ShowPublishFamilyMedicationPlanProposalController::class)
             ->name('medication-plans.publish');
         Route::post('medication-plans/{medication_plan_proposal}/publish', PublishFamilyMedicationPlanProposalController::class)

@@ -120,6 +120,15 @@ gmp-place-autocomplete.patient-place-autocomplete::part(prediction-item-match) {
 }
 
 @media (width < 640px) {
+    .patient-place-autocomplete-host {
+        position: relative;
+        z-index: 1;
+    }
+
+    .patient-place-autocomplete-host:focus-within {
+        z-index: 40;
+    }
+
     gmp-place-autocomplete.patient-place-autocomplete {
         min-height: 4rem;
         font-size: 1.25rem;
@@ -130,5 +139,13 @@ gmp-place-autocomplete.patient-place-autocomplete::part(prediction-item-match) {
         min-height: 4rem;
         font-size: 1.25rem;
         line-height: 1.75rem;
+    }
+
+    gmp-place-autocomplete.patient-place-autocomplete::part(prediction-list) {
+        position: relative;
+        z-index: 41;
+        max-height: min(40vh, 16rem);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }

@@ -104,7 +104,7 @@ function unlinkPatient(patient: LinkedPatient): void {
             <PatientFamilyCareTeamRowItem
                 v-for="patient in filteredPatients"
                 :key="patient.public_id"
-                density="compact"
+                layout="collapsible"
                 :title="patient.name"
                 :action-label="t('doctor.patients.unlink')"
                 :confirm-title="t('doctor.patients.unlinkConfirmTitle')"
