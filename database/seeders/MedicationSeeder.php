@@ -24,7 +24,7 @@ class MedicationSeeder extends Seeder
 
     private const int MISSED_HISTORICAL_DOSE_PERCENT = 8;
 
-    public function run(?Patient $patient = null, ?Family $family = null): void
+    public function run(?Patient $patient = null, ?Family $family = null, bool $presentationProfile = false): void
     {
         if ($patient === null) {
             if ($this->command !== null) {
@@ -38,7 +38,7 @@ class MedicationSeeder extends Seeder
 
         $createdSchedules = [];
 
-        foreach ($this->demoMedications($today) as $demo) {
+        foreach ($this->demoMedications($today, $presentationProfile) as $demo) {
             $scheduleRaw = $demo['schedule'];
             $stock = $demo['stock'];
             $prescription = $demo['prescription'] ?? null;
@@ -66,49 +66,96 @@ class MedicationSeeder extends Seeder
         $this->seedIntakeHistory($patient, $createdSchedules);
 
         if ($this->command !== null) {
-            $this->command->info('MedicationSeeder finished: realistic demo medications created.');
+            $message = $presentationProfile
+                ? 'MedicationSeeder finished: presentation demo medications created (15:30 and 21:00).'
+                : 'MedicationSeeder finished: realistic demo medications created.';
+
+            $this->command->info($message);
         }
     }
 
     /**
-     * Realistisch medicatieprofiel voor de demo-patiënt. De vijf medicaties
-     * dekken samen elke combinatie die de app ondersteunt: alle
-     * medicatietypes (pil, injectie, zakjes, vloeistof), alle doseereenheden
-     * (stuk, milliliter, druppel), alle maaltijdtimings (voor/na/bij eten en
-     * los van eten), alle inname-frequenties (dagelijks, vaste weekdagen en
-     * om de zoveel dagen), één t/m drie innamemomenten per dag en
-     * voorschriften met uiteenlopende ophaalstatus en vervaldatum.
+     * @return list<array<string, mixed>>
      */
-    private function demoMedications(Carbon $today): array
+    private function demoMedications(Carbon $today, bool $presentationProfile = false): array
+    {
+        if ($presentationProfile) {
+            return $this->presentationDemoMedications($today);
+        }
+
+        return $this->standardDemoMedications($today);
+    }
+
+    /**
+     * Twee vaste innamemomenten voor live demo's (15:30 en 21:00).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function presentationDemoMedications(Carbon $today): array
     {
         return [
             [
-                'name' => 'Levothyroxine',
+                'name' => 'Metformine',
                 'dose' => '1',
                 'dose_unit' => MedicationDoseUnit::PIECE,
                 'type_medication' => MedicationType::PILL,
-                'stock_pieces_per_package' => 100,
-                'strength' => '75 microgram',
-                'note' => 'Op nuchtere maag met water; minstens een half uur voor het ontbijt en niet samen met calcium- of ijzerpreparaten.',
+                'stock_pieces_per_package' => 60,
+                'strength' => '850 mg',
+                'note' => 'Direct na het middageten innemen om maag-darmklachten te beperken.',
                 'schedule' => [
-                    'meal_timing' => MedicationMealTiming::BEFORE_FOOD,
+                    'meal_timing' => MedicationMealTiming::AFTER_FOOD,
                     'intake_frequency' => MedicationIntakeFrequency::DAILY,
                     'intake_weekdays' => null,
                     'times_per_day' => '1',
                     'dose_quantity' => '1',
-                    'dose_time' => '06:45',
+                    'dose_time' => '15:30',
                     'snooze_time' => '30',
-                    'start_date' => $today->copy()->subYears(2)->toDateString(),
-                    'end_date' => $today->copy()->addYear()->toDateString(),
+                    'start_date' => $today->copy()->subYear()->toDateString(),
+                    'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
-                'stock' => ['current_stock' => '84 stuks'],
+                'stock' => ['current_stock' => '11 stuks'],
                 'prescription' => [
-                    'prescription_expiry_date' => $today->copy()->addMonths(9)->toDateString(),
-                    'is_last_in_batch' => false,
-                    'pickup_status' => MedicationPrescriptionPickupStatus::PICKED_UP,
+                    'prescription_expiry_date' => $today->copy()->addDays(6)->toDateString(),
+                    'is_last_in_batch' => true,
+                    'pickup_status' => MedicationPrescriptionPickupStatus::PENDING,
                     'completed_at' => null,
                 ],
             ],
+            [
+                'name' => 'Magnesiumcitraat',
+                'dose' => '1',
+                'dose_unit' => MedicationDoseUnit::PIECE,
+                'type_medication' => MedicationType::SACHETS,
+                'stock_pieces_per_package' => 20,
+                'strength' => '300 mg per zakje',
+                'note' => 'Zakje oplossen in een half glas water en bij het avondeten innemen.',
+                'schedule' => [
+                    'meal_timing' => MedicationMealTiming::WITH_FOOD,
+                    'intake_frequency' => MedicationIntakeFrequency::DAILY,
+                    'intake_weekdays' => null,
+                    'times_per_day' => '1',
+                    'dose_quantity' => '1',
+                    'dose_time' => '21:00',
+                    'snooze_time' => '30',
+                    'start_date' => $today->copy()->subMonths(2)->toDateString(),
+                    'end_date' => $today->copy()->addYears(2)->toDateString(),
+                ],
+                'stock' => ['current_stock' => '6 stuks'],
+            ],
+        ];
+    }
+
+    /**
+     * Realistisch medicatieprofiel voor de demo-patiënt. Drie medicaties dekken
+     * de meest voorkomende combinaties: medicatietypes (pil, injectie, zakjes),
+     * doseereenheden (stuk, milliliter), maaltijdtimings (na/bij eten en los
+     * van eten), inname-frequenties (dagelijks, vaste weekdagen en om de
+     * zoveel dagen), één t/m drie innamemomenten per dag en voorschriften met
+     * uiteenlopende ophaalstatus en vervaldatum.
+     */
+    private function standardDemoMedications(Carbon $today): array
+    {
+        return [
             [
                 'name' => 'Metformine',
                 'dose' => '1',
@@ -183,27 +230,6 @@ class MedicationSeeder extends Seeder
                     'end_date' => $today->copy()->addYears(2)->toDateString(),
                 ],
                 'stock' => ['current_stock' => '6 stuks'],
-            ],
-            [
-                'name' => 'Hyaluronzuur oogdruppels',
-                'dose' => '1',
-                'dose_unit' => MedicationDoseUnit::DROP,
-                'type_medication' => MedicationType::LIQUID,
-                'stock_pieces_per_package' => 300,
-                'strength' => '1 mg per druppel',
-                'note' => 'Eén druppel per oog tegen droge ogen. Flesje goed sluiten en binnen 6 maanden na openen gebruiken.',
-                'schedule' => [
-                    'meal_timing' => MedicationMealTiming::UNRELATED,
-                    'intake_frequency' => MedicationIntakeFrequency::DAILY,
-                    'intake_weekdays' => null,
-                    'times_per_day' => '3',
-                    'dose_quantity' => '1',
-                    'dose_time' => '08:00, 14:00, 20:00',
-                    'snooze_time' => '30, 30, 30',
-                    'start_date' => $today->copy()->subMonths(3)->toDateString(),
-                    'end_date' => $today->copy()->addYear()->toDateString(),
-                ],
-                'stock' => ['current_stock' => '270 druppels'],
             ],
         ];
     }

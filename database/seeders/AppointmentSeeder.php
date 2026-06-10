@@ -72,7 +72,7 @@ class AppointmentSeeder extends Seeder
             $transportOutcome = null;
             $needsTransport = false;
 
-            $demoTransportSlot = $allFamilyIdsInt !== [] && $index <= 4;
+            $demoTransportSlot = $allFamilyIdsInt !== [] && $index <= 3;
 
             if ($demoTransportSlot) {
                 $startsAt = Carbon::today()
@@ -95,12 +95,9 @@ class AppointmentSeeder extends Seeder
                     $needsTransport = true;
                     $transportInviteFamilyIds = $allFamilyIdsInt;
                     $transportOutcome = 'declined';
-                } elseif ($index === 4) {
-                    $needsTransport = true;
-                    $transportInviteFamilyIds = $allFamilyIdsInt;
-                    $transportOutcome = 'pending';
                 } else {
                     $needsTransport = $f->boolean(45);
+                    $transportInviteFamilyIds = [];
                 }
             }
 
