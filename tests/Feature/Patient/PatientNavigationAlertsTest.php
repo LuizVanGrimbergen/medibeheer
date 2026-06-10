@@ -37,9 +37,9 @@ test('patient navigation shares critical inventory alert when supply is low', fu
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn (Assert $page) => $page
             ->where('patient_navigation.inventory', 'critical')
-            ->where('patient_navigation.prescriptions', null));
+            ->where('patient_navigation.prescriptions', null)));
 
     CarbonImmutable::setTestNow();
 });
@@ -55,7 +55,7 @@ test('patient navigation shares warning prescription alert when expiry is soon',
 
     $medication = Medication::factory()->for($patient)->create();
 
-    MedicationPrescription::factory()->for($patient)->for($medication)->create([
+    MedicationPrescription::factory()->forMedication($medication)->create([
         'prescription_expiry_date' => '2026-05-25',
         'completed_at' => null,
     ]);
@@ -63,9 +63,9 @@ test('patient navigation shares warning prescription alert when expiry is soon',
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn (Assert $page) => $page
             ->where('patient_navigation.inventory', null)
-            ->where('patient_navigation.prescriptions', 'warning'));
+            ->where('patient_navigation.prescriptions', 'warning')));
 
     CarbonImmutable::setTestNow();
 });
@@ -94,7 +94,7 @@ test('patient navigation has no alerts when supply and prescriptions are healthy
         'end_date' => null,
     ]);
 
-    MedicationPrescription::factory()->for($patient)->for($medication)->create([
+    MedicationPrescription::factory()->forMedication($medication)->create([
         'prescription_expiry_date' => '2026-12-31',
         'completed_at' => null,
     ]);
@@ -102,9 +102,9 @@ test('patient navigation has no alerts when supply and prescriptions are healthy
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn (Assert $page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn (Assert $page) => $page
             ->where('patient_navigation.inventory', null)
-            ->where('patient_navigation.prescriptions', null));
+            ->where('patient_navigation.prescriptions', null)));
 
     CarbonImmutable::setTestNow();
 });

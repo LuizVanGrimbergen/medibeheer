@@ -41,9 +41,12 @@ test('daily check-in uses the Europe Brussels calendar date when storing and on 
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->where('today_date', '2026-06-07')
-            ->where('today_checkin.mood_score', DailyMoodScore::GOOD->value));
+        ->assertInertia(fn ($page) => $page->where('today_date', '2026-06-07'));
+    $this->actingAs($user)
+        ->get(route('patient.dashboard'))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('today_checkin.mood_score', DailyMoodScore::GOOD->value)));
 
     CarbonImmutable::setTestNow();
 });

@@ -18,7 +18,7 @@ test('patient push success page shows medication name from server cache', functi
         ->get(route('patient.medication-push-mark.success'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('Patient/MedicationPushMarkSuccess')
+            ->component('Patient/Medications/PushMarkSuccess')
             ->where('medication_name', 'Paracetamol'));
 });
 
@@ -35,7 +35,7 @@ test('patient push success page accepts medication query when store is empty', f
         ->get(route('patient.medication-push-mark.success', ['medication' => 'Paracetamol']))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('Patient/MedicationPushMarkSuccess')
+            ->component('Patient/Medications/PushMarkSuccess')
             ->where('medication_name', 'Paracetamol'));
 });
 
@@ -61,7 +61,7 @@ test('patient dashboard shows pending push medication mark from server cache', f
         ->get(route('patient.dashboard'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('Patient/Dashboard')
+            ->component('Patient/Dashboard/Index')
             ->where('pending_push_medication_mark', 'Paracetamol'));
 });
 

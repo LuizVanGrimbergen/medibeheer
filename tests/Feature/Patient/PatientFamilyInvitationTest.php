@@ -200,10 +200,10 @@ test('patient family page lists invited email on pending family invitations', fu
     $this->actingAs($patientUser)
         ->get(route('patient.family'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Family')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Family/Index')
             ->has('family_invitations', 1)
-            ->where('family_invitations.0.invited_email', User::normalizeEmail($invitedEmail)));
+            ->where('family_invitations.0.invited_email', User::normalizeEmail($invitedEmail))));
 });
 
 test('patients can revoke a pending invitation', function () {

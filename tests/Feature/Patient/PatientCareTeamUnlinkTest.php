@@ -83,10 +83,10 @@ test('patient family page includes linked family members and doctors with unlink
     $this->actingAs($patientUser)
         ->get(route('patient.family'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Family')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Family/Index')
             ->has('linked_family_members', 1)
             ->where('linked_family_members.0.name', 'Linked Family')
             ->has('linked_doctors', 1)
-            ->where('linked_doctors.0.name', 'Linked Doctor'));
+            ->where('linked_doctors.0.name', 'Linked Doctor')));
 });
