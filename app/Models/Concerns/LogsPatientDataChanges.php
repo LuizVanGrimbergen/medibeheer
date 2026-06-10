@@ -37,10 +37,18 @@ trait LogsPatientDataChanges
 
     protected function patientDataActivityPatientId(): ?int
     {
-        if (! isset($this->patient_id)) {
-            return null;
+        if (isset($this->patient_id)) {
+            return (int) $this->getAttribute('patient_id');
         }
 
-        return (int) $this->getAttribute('patient_id');
+        if (method_exists($this, 'medication')) {
+            $this->loadMissing('medication');
+
+            $patientId = $this->medication?->patient_id;
+
+            return $patientId !== null ? (int) $patientId : null;
+        }
+
+        return null;
     }
 }

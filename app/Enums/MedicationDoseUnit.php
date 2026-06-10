@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum MedicationDoseUnit: string
+use App\Enums\Concerns\EncryptEnum;
+use Illuminate\Contracts\Database\Eloquent\Castable;
+
+enum MedicationDoseUnit: string implements Castable
 {
+    use EncryptEnum;
+
     case MILLILITER = 'milliliter';
     case PIECE = 'piece';
     case DROP = 'drop';

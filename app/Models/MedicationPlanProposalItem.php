@@ -13,6 +13,15 @@ class MedicationPlanProposalItem extends Model
 {
     use HasFactory;
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $item): void {
+            if ($item->dose_unit === null) {
+                $item->dose_unit = MedicationDoseUnit::PIECE;
+            }
+        });
+    }
+
     protected $fillable = [
         'medication_plan_proposal_id',
         'sort_order',
