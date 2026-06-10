@@ -1,7 +1,7 @@
-import type { MedicationPrescriptionListItem } from '@/lib/types';
+import type { MedicationPrescriptionItem } from '@/lib/types';
 
 function prescriptionExpirySortKey(
-    prescription: MedicationPrescriptionListItem,
+    prescription: MedicationPrescriptionItem,
 ): string | null {
     const trimmed = prescription.prescription_expiry_date?.trim() ?? '';
 
@@ -13,9 +13,9 @@ function prescriptionExpirySortKey(
 }
 
 /** Soonest expiry first; prescriptions without a date last (alphabetically by medication name). */
-export function compareMedicationPrescriptionListItems(
-    left: MedicationPrescriptionListItem,
-    right: MedicationPrescriptionListItem,
+export function compareMedicationPrescriptionItems(
+    left: MedicationPrescriptionItem,
+    right: MedicationPrescriptionItem,
 ): number {
     const leftKey = prescriptionExpirySortKey(left);
     const rightKey = prescriptionExpirySortKey(right);

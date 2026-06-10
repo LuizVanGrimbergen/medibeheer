@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
 import PrescriptionFormDialogFooter from '@/Components/Patient/Prescriptions/form/PrescriptionFormDialogFooter.vue';
 import PrescriptionCreateSummaryStep from '@/Components/Patient/Prescriptions/steps/PrescriptionCreateSummaryStep.vue';
 import PrescriptionDetailsStep from '@/Components/Patient/Prescriptions/steps/PrescriptionDetailsStep.vue';
@@ -15,17 +15,17 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
+import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import {
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellPageDescriptionClass,
-    patientShellPageHeaderClass,
-    patientShellPageTitleClass,
-    patientShellWizardCardClass,
-    patientShellWizardCardInnerClass,
-    patientShellWizardFormClass,
-    patientShellWizardStepPanelClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellDialogDescriptionClass,
+    mobileShellDialogHeaderClass,
+    mobileShellDialogTitleClass,
+    mobileShellWizardCardClass,
+    mobileShellWizardCardInnerClass,
+    mobileShellWizardFormClass,
+    mobileShellWizardStepPanelClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
@@ -74,22 +74,22 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     { progressLabelRef },
 );
 
-usePatientShellDialogChromeSync(open);
+useMobileShellDialogChromeSync(open);
 </script>
 
 <template>
     <Dialog v-model:open="open">
         <DialogContent
             :class="props.dialogContentClass"
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
+            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('md')"
         >
-            <DialogHeader :class="patientShellPageHeaderClass">
-                <DialogTitle :class="patientShellPageTitleClass">
+            <DialogHeader :class="mobileShellDialogHeaderClass">
+                <DialogTitle :class="mobileShellDialogTitleClass">
                     {{ t('patient.prescriptions.dialogTitle') }}
                 </DialogTitle>
                 <DialogDescription
                     ref="progressLabelRef"
-                    :class="patientShellPageDescriptionClass"
+                    :class="mobileShellDialogDescriptionClass"
                     aria-live="polite"
                 >
                     {{ progressLabel }}
@@ -98,17 +98,17 @@ usePatientShellDialogChromeSync(open);
 
             <form
                 :id="props.formId"
-                :class="patientShellWizardFormClass"
+                :class="mobileShellWizardFormClass"
                 novalidate
                 @submit.prevent="emit('submit')"
             >
-                <PatientShellWizardScrollBody
+                <MobileShellWizardScrollBody
                     :active="open"
                     :step-key="props.currentStep"
                 >
                     <div
                         ref="wizardStepPanelRef"
-                        :class="patientShellWizardStepPanelClass"
+                        :class="mobileShellWizardStepPanelClass"
                     >
                         <PrescriptionCreateSummaryStep
                             v-if="currentStep === 3"
@@ -123,10 +123,10 @@ usePatientShellDialogChromeSync(open);
 
                         <Card
                             v-else
-                            :class="patientShellWizardCardClass"
+                            :class="mobileShellWizardCardClass"
                         >
                             <CardContent class="p-0">
-                                <div :class="patientShellWizardCardInnerClass">
+                                <div :class="mobileShellWizardCardInnerClass">
                                     <PrescriptionDetailsStep
                                         v-if="currentStep === 1"
                                         :id-prefix="props.idPrefix"
@@ -166,7 +166,7 @@ usePatientShellDialogChromeSync(open);
                             @back="emit('back')"
                         />
                     </template>
-                </PatientShellWizardScrollBody>
+                </MobileShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

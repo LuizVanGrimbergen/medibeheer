@@ -2,14 +2,14 @@
 import MedicationPrescriptionExpiryControls from '@/Components/Patient/Prescriptions/MedicationPrescriptionExpiryControls.vue';
 import PrescriptionPickupControl from '@/Components/Patient/Prescriptions/PrescriptionPickupControl.vue';
 import type {
-    MedicationPrescriptionListItem,
+    MedicationPrescriptionItem,
     MedicationPrescriptionPickupStatusValue,
 } from '@/lib/types';
 
 withDefaults(
     defineProps<{
         prescription: Pick<
-            MedicationPrescriptionListItem,
+            MedicationPrescriptionItem,
             'id' | 'prescription_expiry_date' | 'pickup_status'
         >;
         showPickupControl?: boolean;

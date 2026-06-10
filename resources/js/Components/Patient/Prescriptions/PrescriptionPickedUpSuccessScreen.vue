@@ -3,7 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { Button } from '@/Components/ui/button';
-import { patientAppointmentFormPrimaryPairButtonClass } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { mobileShellFormPrimaryPairButtonClass } from '@/lib/shell/mobileShellActionButtonClasses';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -47,7 +47,7 @@ function goToNewAppointment(): void {
                     type="button"
                     variant="default"
                     size="lg"
-                    :class="patientAppointmentFormPrimaryPairButtonClass"
+                    :class="mobileShellFormPrimaryPairButtonClass"
                     @click="goToNewAppointment"
                 >
                     {{
