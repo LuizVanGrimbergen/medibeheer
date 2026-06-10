@@ -8,13 +8,13 @@ import { useGsapActionConfirm } from '@/composables/motion/useGsapActionConfirm'
 import { useGsapCheckmarkDraw } from '@/composables/motion/useGsapCheckmarkDraw';
 import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import {
-    patientActionSuccessSubtitleClass,
-    patientActionSuccessTitleAfterEyebrowClass,
-    patientActionSuccessTitleClass,
-    patientPageCardDetailLabelClass,
-    patientPageCardDetailsGroupClass,
-    patientPageCardDetailValueClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellActionSuccessSubtitleClass,
+    mobileShellActionSuccessTitleAfterEyebrowClass,
+    mobileShellActionSuccessTitleClass,
+    mobileShellPageCardDetailLabelClass,
+    mobileShellPageCardDetailsGroupClass,
+    mobileShellPageCardDetailValueClass,
+} from '@/lib/shell/mobileShellTypography';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -134,8 +134,8 @@ function dismiss(): void {
                     :id="titleId"
                     :class="
                         trimmedEyebrow !== null
-                            ? patientActionSuccessTitleAfterEyebrowClass
-                            : patientActionSuccessTitleClass
+                            ? mobileShellActionSuccessTitleAfterEyebrowClass
+                            : mobileShellActionSuccessTitleClass
                     "
                 >
                     {{ props.title }}
@@ -143,7 +143,7 @@ function dismiss(): void {
 
                 <p
                     v-if="trimmedSubtitle !== null"
-                    :class="patientActionSuccessSubtitleClass"
+                    :class="mobileShellActionSuccessSubtitleClass"
                 >
                     {{ trimmedSubtitle }}
                 </p>
@@ -158,7 +158,7 @@ function dismiss(): void {
                         >
                             <p
                                 v-if="trimmedMessage !== null"
-                                :class="patientPageCardDetailValueClass"
+                                :class="mobileShellPageCardDetailValueClass"
                             >
                                 {{ trimmedMessage }}
                             </p>
@@ -166,7 +166,7 @@ function dismiss(): void {
                             <div
                                 v-if="visibleDetails.length > 0"
                                 :class="[
-                                    patientPageCardDetailsGroupClass,
+                                    mobileShellPageCardDetailsGroupClass,
                                     trimmedMessage !== null ? 'mt-5' : null,
                                 ]"
                             >
@@ -175,10 +175,10 @@ function dismiss(): void {
                                     :key="`${detail.label}-${index}`"
                                     class="space-y-1.5"
                                 >
-                                    <p :class="patientPageCardDetailLabelClass">
+                                    <p :class="mobileShellPageCardDetailLabelClass">
                                         {{ detail.label }}
                                     </p>
-                                    <p :class="patientPageCardDetailValueClass">
+                                    <p :class="mobileShellPageCardDetailValueClass">
                                         {{ detail.value }}
                                     </p>
                                 </div>
