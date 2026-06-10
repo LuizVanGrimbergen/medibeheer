@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('public_id')->unique();
             $table->text('role');
+            $table->char('role_hash', 64);
             $table->text('name_encrypted');
             $table->text('email_encrypted');
             $table->char('email_hash', 64)->unique();
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index('role_hash');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
