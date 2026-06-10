@@ -200,7 +200,7 @@ final class CandidatesQuery
                     }
 
                     $patient->whereHas('user', function (Builder $user): void {
-                        $user->where('role', UserRole::PATIENT)
+                        $user->withRole(UserRole::PATIENT)
                             ->whereHas('pushSubscriptions', function (Builder $subscriptions): void {
                                 $subscriptions->where('endpoint', 'not like', '%push.example.test%');
                             });
