@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('family_id')->nullable()->constrained()->nullOnDelete();
             $table->text('doctor_type');
             $table->text('provider_name');
             $table->text('street');
@@ -21,12 +21,15 @@ return new class extends Migration
             $table->boolean('needs_transport')->default(false);
             $table->dateTime('starts_at');
             $table->text('notes')->nullable();
-            $table->string('status')->default('scheduled');
+            $table->text('status');
+            $table->char('status_index', 64);
             $table->text('doctor_visit_summary')->nullable();
             $table->text('cancellation_reason')->nullable();
             $table->timestamps();
 
             $table->index(['patient_id', 'starts_at']);
+            $table->index(['patient_id', 'status_index']);
+            $table->index('family_id');
         });
     }
 

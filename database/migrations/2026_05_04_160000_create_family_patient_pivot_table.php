@@ -15,6 +15,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['family_id', 'patient_id']);
+            $table->index('patient_id');
         });
     }
 
