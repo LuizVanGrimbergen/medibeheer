@@ -10,18 +10,10 @@ use App\Models\Medication;
 use App\Models\MedicationPrescription;
 use App\Models\Patient;
 use App\Support\InertiaPagination;
-use Illuminate\Database\Eloquent\Builder;
 
-final class PatientMedicationsScreenService
+final class PatientMedicationRegisterService
 {
     private const array MEDICATION_LIST_WITH = ['schedules.weekdays', 'stocks', 'prescription'];
-
-    public function buildProps(Patient $patient): array
-    {
-        return [
-            'active_medications' => $this->paginatedActiveMedications($patient),
-        ];
-    }
 
     /** @return array{data: list<array<string, mixed>>, meta: array<string, mixed>} */
     public function paginatedActiveMedications(Patient $patient): array
@@ -39,9 +31,14 @@ final class PatientMedicationsScreenService
     public function buildPrescriptionsProps(Patient $patient): array
     {
         return [
-            'prescriptions' => $this->paginatePrescriptions($patient),
+            'prescriptions' => $this->paginatedPrescriptions($patient),
             'medication_choices' => $this->activeMedicationChoicesFor($patient),
         ];
+    }
+
+    public function paginatedPrescriptions(Patient $patient): array
+    {
+        return $this->paginatePrescriptions($patient);
     }
 
     public function buildFamilyMedicationsProps(Patient $patient, int $page = 1): array
@@ -78,15 +75,13 @@ final class PatientMedicationsScreenService
 
     private function paginatePrescriptions(Patient $patient): array
     {
-        $patientId = $patient->getKey();
+        $activeMedicationIds = $patient->medications()
+            ->activeOnMedicationList()
+            ->select('medications.id');
 
         $paginator = MedicationPrescription::query()
-            ->where('patient_id', $patientId)
-            ->whereNull('completed_at', '=', null)
-            ->whereHas(
-                'medication',
-                fn (Builder $query) => $query->activeOnMedicationList(),
-            )
+            ->whereNull('completed_at', 'and', false)
+            ->whereIn('medication_id', $activeMedicationIds, 'and', false)
             ->with(['medication'])
             ->orderByRaw('prescription_expiry_date IS NULL')
             ->orderBy('prescription_expiry_date')
