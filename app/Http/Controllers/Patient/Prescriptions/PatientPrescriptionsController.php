@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Patient\Prescriptions;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
-use App\Services\Patient\PatientMedicationsScreenService;
+use App\Services\Patient\PatientMedicationRegisterService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,16 +14,20 @@ class PatientPrescriptionsController extends Controller
     use AuthorizesPatientProfile;
 
     public function __construct(
-        private readonly PatientMedicationsScreenService $patientMedicationsScreenService,
+        private readonly PatientMedicationRegisterService $patientMedicationRegisterService,
     ) {}
 
     public function __invoke(Request $request): Response
     {
         $patient = $this->authorizePatientProfile($request);
 
-        return Inertia::render(
-            'Patient/Prescriptions',
-            $this->patientMedicationsScreenService->buildPrescriptionsProps($patient),
-        );
+        return Inertia::render('Patient/Prescriptions/Index', [
+            'prescriptions' => Inertia::defer(
+                fn (): array => $this->patientMedicationRegisterService->paginatedPrescriptions($patient),
+            ),
+            'medication_choices' => Inertia::defer(
+                fn (): array => $this->patientMedicationRegisterService->activeMedicationChoicesFor($patient),
+            ),
+        ]);
     }
 }
