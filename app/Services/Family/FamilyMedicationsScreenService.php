@@ -7,7 +7,7 @@ namespace App\Services\Family;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Services\Medications\PatientScheduledIntakesQuery;
-use App\Services\Patient\PatientMedicationsScreenService;
+use App\Services\Patient\PatientMedicationRegisterService;
 use App\Support\Family\FamilyMedicationIntakeCalendarSlotPayload;
 use App\Support\InertiaPagination;
 use Illuminate\Http\Request;
@@ -15,32 +15,27 @@ use Illuminate\Http\Request;
 final class FamilyMedicationsScreenService
 {
     public function __construct(
-        private readonly PatientMedicationsScreenService $patientMedicationsScreenService,
+        private readonly PatientMedicationRegisterService $patientMedicationRegisterService,
         private readonly PatientScheduledIntakesQuery $scheduledIntakesQuery,
     ) {}
 
-    public function buildProps(Request $request, Patient $patient, string $calendarMonth): array
+    /** @return array{medications: array{data: list<array<string, mixed>>, meta: array<string, mixed>}} */
+    public function paginatedMedicationsFor(Request $request, Patient $patient): array
     {
-        $calendar = $this->scheduledIntakesQuery->monthCalendarDataForPatient($patient, $calendarMonth);
-
         $deepLinkMedicationId = $this->resolveDeepLinkMedicationId($request, $patient);
         $page = $this->resolvePage($request, $patient, $deepLinkMedicationId);
 
-        return [
-            ...$this->patientMedicationsScreenService->buildFamilyMedicationsProps($patient, $page),
-            'medication_calendar_month' => $calendarMonth,
-            'medication_calendar_days' => $calendar['days'],
-            'medication_calendar_slots' => FamilyMedicationIntakeCalendarSlotPayload::collect($calendar['slots']),
-        ];
+        return $this->patientMedicationRegisterService->buildFamilyMedicationsProps($patient, $page);
     }
 
-    public function emptyProps(string $calendarMonth): array
+    /** @return array{medication_calendar_days: list<array<string, mixed>>, medication_calendar_slots: list<array<string, mixed>>} */
+    public function calendarDataFor(Patient $patient, string $calendarMonth): array
     {
+        $calendar = $this->scheduledIntakesQuery->monthCalendarDataForPatient($patient, $calendarMonth);
+
         return [
-            'medications' => InertiaPagination::empty(),
-            'medication_calendar_month' => $calendarMonth,
-            'medication_calendar_days' => [],
-            'medication_calendar_slots' => [],
+            'medication_calendar_days' => $calendar['days'],
+            'medication_calendar_slots' => FamilyMedicationIntakeCalendarSlotPayload::collect($calendar['slots']),
         ];
     }
 
