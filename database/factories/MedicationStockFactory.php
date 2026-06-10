@@ -11,24 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MedicationStockFactory extends Factory
 {
-    public function configure(): static
-    {
-        return $this->afterMaking(function (MedicationStock $stock): void {
-            if ($stock->medication_id === null) {
-                return;
-            }
-
-            $medication = Medication::query()->find($stock->medication_id);
-
-            if ($medication === null) {
-                return;
-            }
-
-            $stock->patient_id = $medication->patient_id;
-            $stock->family_id = $medication->family_id;
-        });
-    }
-
     public function definition(): array
     {
         return [
@@ -41,8 +23,6 @@ class MedicationStockFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'medication_id' => $medication->id,
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
         ]);
     }
 }
