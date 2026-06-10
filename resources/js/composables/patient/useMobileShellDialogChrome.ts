@@ -5,53 +5,53 @@ import {
     onUnmounted,
     ref,
     watch,
-    type Ref,
 } from 'vue';
+import type { Ref } from 'vue';
 
-const patientShellDialogChromeOpenCount = ref(0);
-const patientShellPageChromeOpenCount = ref(0);
+const mobileShellDialogChromeOpenCount = ref(0);
+const mobileShellPageChromeOpenCount = ref(0);
 
 let navigationResetRegistered = false;
 
-/** True while a patient shell dialog or full-page wizard should hide the footer nav. */
-export const isPatientShellFooterHidden = computed(
+/** True while a mobile shell dialog or full-page wizard should hide the footer nav. */
+export const isMobileShellFooterHidden = computed(
     () =>
-        patientShellDialogChromeOpenCount.value > 0 ||
-        patientShellPageChromeOpenCount.value > 0,
+        mobileShellDialogChromeOpenCount.value > 0 ||
+        mobileShellPageChromeOpenCount.value > 0,
 );
 
-function setPatientShellDialogChromeOpen(open: boolean): void {
+function setMobileShellDialogChromeOpen(open: boolean): void {
     if (open) {
-        patientShellDialogChromeOpenCount.value += 1;
+        mobileShellDialogChromeOpenCount.value += 1;
 
         return;
     }
 
-    patientShellDialogChromeOpenCount.value = Math.max(
+    mobileShellDialogChromeOpenCount.value = Math.max(
         0,
-        patientShellDialogChromeOpenCount.value - 1,
+        mobileShellDialogChromeOpenCount.value - 1,
     );
 }
 
-function setPatientShellPageChromeOpen(open: boolean): void {
+function setMobileShellPageChromeOpen(open: boolean): void {
     if (open) {
-        patientShellPageChromeOpenCount.value += 1;
+        mobileShellPageChromeOpenCount.value += 1;
 
         return;
     }
 
-    patientShellPageChromeOpenCount.value = Math.max(
+    mobileShellPageChromeOpenCount.value = Math.max(
         0,
-        patientShellPageChromeOpenCount.value - 1,
+        mobileShellPageChromeOpenCount.value - 1,
     );
 }
 
 /** Clears stale dialog footer-hide state after Inertia page transitions. */
-export function resetPatientShellDialogChromeOpenCount(): void {
-    patientShellDialogChromeOpenCount.value = 0;
+export function resetMobileShellDialogChromeOpenCount(): void {
+    mobileShellDialogChromeOpenCount.value = 0;
 }
 
-function registerPatientShellChromeNavigationReset(): void {
+function registerMobileShellChromeNavigationReset(): void {
     if (navigationResetRegistered || globalThis.window === undefined) {
         return;
     }
@@ -59,14 +59,14 @@ function registerPatientShellChromeNavigationReset(): void {
     navigationResetRegistered = true;
 
     router.on('finish', () => {
-        resetPatientShellDialogChromeOpenCount();
+        resetMobileShellDialogChromeOpenCount();
     });
 }
 
-registerPatientShellChromeNavigationReset();
+registerMobileShellChromeNavigationReset();
 
-/** Keeps {@link isPatientShellFooterHidden} in sync for modal shell dialogs. */
-export function usePatientShellDialogChromeSync(open: Ref<boolean>): void {
+/** Keeps {@link isMobileShellFooterHidden} in sync for modal shell dialogs. */
+export function useMobileShellDialogChromeSync(open: Ref<boolean>): void {
     let contributed = false;
 
     watch(
@@ -79,7 +79,7 @@ export function usePatientShellDialogChromeSync(open: Ref<boolean>): void {
             if (isOpen) {
                 if (!contributed) {
                     contributed = true;
-                    setPatientShellDialogChromeOpen(true);
+                    setMobileShellDialogChromeOpen(true);
                 }
 
                 return;
@@ -87,7 +87,7 @@ export function usePatientShellDialogChromeSync(open: Ref<boolean>): void {
 
             if (contributed) {
                 contributed = false;
-                setPatientShellDialogChromeOpen(false);
+                setMobileShellDialogChromeOpen(false);
             }
         },
         { immediate: true },
@@ -99,12 +99,12 @@ export function usePatientShellDialogChromeSync(open: Ref<boolean>): void {
         }
 
         contributed = false;
-        setPatientShellDialogChromeOpen(false);
+        setMobileShellDialogChromeOpen(false);
     });
 }
 
 /** Resets the patient layout scroll column to the top on full Inertia visits. */
-export function usePatientShellMainScrollReset(
+export function useMobileShellMainScrollReset(
     scrollRef: Ref<HTMLElement | null>,
 ): void {
     const removeListener = router.on('start', (event) => {
@@ -121,7 +121,7 @@ export function usePatientShellMainScrollReset(
 }
 
 /** Hides the footer nav for the lifetime of a full-page shell wizard route. */
-export function usePatientShellPageChrome(): void {
+export function useMobileShellPageChrome(): void {
     let contributed = false;
 
     const show = (): void => {
@@ -130,7 +130,7 @@ export function usePatientShellPageChrome(): void {
         }
 
         contributed = true;
-        setPatientShellPageChromeOpen(true);
+        setMobileShellPageChromeOpen(true);
     };
 
     const hide = (): void => {
@@ -139,7 +139,7 @@ export function usePatientShellPageChrome(): void {
         }
 
         contributed = false;
-        setPatientShellPageChromeOpen(false);
+        setMobileShellPageChromeOpen(false);
     };
 
     show();

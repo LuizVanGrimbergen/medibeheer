@@ -1,5 +1,5 @@
-import { effectScope, ref } from 'vue';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { effectScope, ref } from 'vue';
 
 const finishHandlers: Array<() => void> = [];
 
@@ -21,7 +21,7 @@ vi.mock('@inertiajs/vue3', () => ({
     },
 }));
 
-describe('usePatientShellDialogChrome', () => {
+describe('useMobileShellDialogChrome', () => {
     beforeEach(() => {
         finishHandlers.length = 0;
         vi.resetModules();
@@ -32,7 +32,7 @@ describe('usePatientShellDialogChrome', () => {
     });
 
     async function loadModule() {
-        return import('@/composables/patient/usePatientShellDialogChrome');
+        return import('@/composables/patient/useMobileShellDialogChrome');
     }
 
     function runFinishHandlers(): void {
@@ -43,56 +43,56 @@ describe('usePatientShellDialogChrome', () => {
 
     it('keeps the footer hidden on full-page shell routes after Inertia finish', async () => {
         const {
-            isPatientShellFooterHidden,
-            usePatientShellPageChrome,
+            isMobileShellFooterHidden,
+            useMobileShellPageChrome,
         } = await loadModule();
 
         const scope = effectScope();
 
         scope.run(() => {
-            usePatientShellPageChrome();
+            useMobileShellPageChrome();
         });
 
-        expect(isPatientShellFooterHidden.value).toBe(true);
+        expect(isMobileShellFooterHidden.value).toBe(true);
 
         runFinishHandlers();
 
-        expect(isPatientShellFooterHidden.value).toBe(true);
+        expect(isMobileShellFooterHidden.value).toBe(true);
 
         scope.stop();
 
-        expect(isPatientShellFooterHidden.value).toBe(false);
+        expect(isMobileShellFooterHidden.value).toBe(false);
     });
 
     it('clears dialog footer-hide state on Inertia finish without affecting page routes', async () => {
         const {
-            isPatientShellFooterHidden,
-            resetPatientShellDialogChromeOpenCount,
-            usePatientShellDialogChromeSync,
-            usePatientShellPageChrome,
+            isMobileShellFooterHidden,
+            resetMobileShellDialogChromeOpenCount,
+            useMobileShellDialogChromeSync,
+            useMobileShellPageChrome,
         } = await loadModule();
 
         const pageScope = effectScope();
         pageScope.run(() => {
-            usePatientShellPageChrome();
+            useMobileShellPageChrome();
         });
 
         const dialogScope = effectScope();
         const open = ref(true);
 
         dialogScope.run(() => {
-            usePatientShellDialogChromeSync(open);
+            useMobileShellDialogChromeSync(open);
         });
 
-        expect(isPatientShellFooterHidden.value).toBe(true);
+        expect(isMobileShellFooterHidden.value).toBe(true);
 
-        resetPatientShellDialogChromeOpenCount();
+        resetMobileShellDialogChromeOpenCount();
 
-        expect(isPatientShellFooterHidden.value).toBe(true);
+        expect(isMobileShellFooterHidden.value).toBe(true);
 
         open.value = false;
 
-        expect(isPatientShellFooterHidden.value).toBe(true);
+        expect(isMobileShellFooterHidden.value).toBe(true);
 
         pageScope.stop();
         dialogScope.stop();
