@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { patientPageCardDetailsGroupClass } from '@/lib/patient/patientPageTypography';
+import { mobileShellPageCardDetailsGroupClass } from '@/lib/shell/mobileShellTypography';
 </script>
 
 <template>
-    <div :class="patientPageCardDetailsGroupClass">
+    <div :class="mobileShellPageCardDetailsGroupClass">
         <slot />
     </div>
 </template>

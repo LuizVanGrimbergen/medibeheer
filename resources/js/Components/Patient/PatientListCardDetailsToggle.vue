@@ -5,11 +5,11 @@ import { Button } from '@/Components/ui/button';
 import { CollapsibleTrigger } from '@/Components/ui/collapsible';
 import { scrollPatientListCardDetailsIntoView } from '@/lib/patient/patientListCardDetailsExpandScroll';
 import {
-    patientPageCardDetailsButtonClass,
-    patientPageCardDetailsChevronClass,
-    patientPageCardDetailsCollapseWrapperClass,
-    patientPageCardDetailsExpandWrapperClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellPageCardDetailsButtonClass,
+    mobileShellPageCardDetailsChevronClass,
+    mobileShellPageCardDetailsCollapseWrapperClass,
+    mobileShellPageCardDetailsExpandWrapperClass,
+} from '@/lib/shell/mobileShellTypography';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -43,8 +43,8 @@ async function onExpandClick(): Promise<void> {
         :class="
             cn(
                 props.mode === 'expand'
-                    ? patientPageCardDetailsExpandWrapperClass
-                    : patientPageCardDetailsCollapseWrapperClass,
+                    ? mobileShellPageCardDetailsExpandWrapperClass
+                    : mobileShellPageCardDetailsCollapseWrapperClass,
                 props.wrapperClass,
             )
         "
@@ -53,7 +53,7 @@ async function onExpandClick(): Promise<void> {
             <Button
                 type="button"
                 variant="outline"
-                :class="patientPageCardDetailsButtonClass"
+                :class="mobileShellPageCardDetailsButtonClass"
                 :aria-label="props.ariaLabel"
                 @click="onExpandClick"
             >
@@ -61,7 +61,7 @@ async function onExpandClick(): Promise<void> {
                 <ChevronDown
                     :class="
                         cn(
-                            patientPageCardDetailsChevronClass,
+                            mobileShellPageCardDetailsChevronClass,
                             props.mode === 'collapse' && 'rotate-180',
                         )
                     "

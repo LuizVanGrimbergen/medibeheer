@@ -6,15 +6,15 @@ import type { DailyCheckinWizardDialogStep } from '@/Components/Patient/DailyChe
 import { DAILY_CHECKIN_WIZARD_DIALOG_STEP_TOTAL } from '@/Components/Patient/DailyCheckins/form/DailyCheckinWizardDialogTypes';
 import DailyCheckinNoteStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinNoteStep.vue';
 import DailyCheckinSymptomsStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinSymptomsStep.vue';
-import PatientShellFormDialog from '@/Components/Patient/form/PatientShellFormDialog.vue';
-import PatientShellWizardCard from '@/Components/Patient/form/PatientShellWizardCard.vue';
+import MobileShellFormDialog from '@/Components/shell/MobileShellFormDialog.vue';
+import MobileShellWizardCard from '@/Components/shell/MobileShellWizardCard.vue';
 import { DialogDescription } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
 import {
-    patientShellDialogContentClass,
-    patientShellPageDescriptionClass,
-    patientShellWizardStepPanelClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellDialogContentClass,
+    mobileShellDialogDescriptionClass,
+    mobileShellWizardStepPanelClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { DailyCheckinSymptomValue, DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -41,7 +41,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const dialogContentClass = patientShellDialogContentClass('md');
+const dialogContentClass = mobileShellDialogContentClass('md');
 const progressLabelRef = ref<HTMLElement | null>(null);
 
 const dialogStepNumber = computed(() =>
@@ -85,7 +85,7 @@ const noteModel = computed({
 </script>
 
 <template>
-    <PatientShellFormDialog
+    <MobileShellFormDialog
         :open="props.open"
         :title="t('patient.dashboard.dailyCheckins.title')"
         form-id="patient-daily-checkin-wizard-form"
@@ -98,28 +98,28 @@ const noteModel = computed({
         <template v-if="showWizardProgress" #description>
             <DialogDescription
                 ref="progressLabelRef"
-                :class="patientShellPageDescriptionClass"
+                :class="mobileShellDialogDescriptionClass"
                 aria-live="polite"
             >
                 {{ progressLabel }}
             </DialogDescription>
         </template>
 
-        <div ref="wizardStepPanelRef" :class="patientShellWizardStepPanelClass">
-            <PatientShellWizardCard v-if="props.currentStep === 'symptoms'">
+        <div ref="wizardStepPanelRef" :class="mobileShellWizardStepPanelClass">
+            <MobileShellWizardCard v-if="props.currentStep === 'symptoms'">
                 <DailyCheckinSymptomsStep
                     :processing="props.processing"
                     :chip-class="props.chipClass"
                     @toggle="emit('toggleSymptom', $event)"
                 />
-            </PatientShellWizardCard>
+            </MobileShellWizardCard>
 
-            <PatientShellWizardCard v-if="props.currentStep === 'note'">
+            <MobileShellWizardCard v-if="props.currentStep === 'note'">
                 <DailyCheckinNoteStep
                     v-model="noteModel"
                     :textarea-id="props.textareaId"
                 />
-            </PatientShellWizardCard>
+            </MobileShellWizardCard>
         </div>
 
         <template #footer>
@@ -134,5 +134,5 @@ const noteModel = computed({
                 @submit="emit('submit')"
             />
         </template>
-    </PatientShellFormDialog>
+    </MobileShellFormDialog>
 </template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {
-    patientPageCardDetailIconWrapperClass,
-    patientPageCardDetailLabelClass,
-    patientPageCardDetailValueClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellPageCardDetailIconWrapperClass,
+    mobileShellPageCardDetailLabelClass,
+    mobileShellPageCardDetailValueClass,
+} from '@/lib/shell/mobileShellTypography';
 
 const props = withDefaults(
     defineProps<{
@@ -19,15 +19,15 @@ const props = withDefaults(
 
 <template>
     <div class="flex gap-4 sm:gap-5">
-        <div v-if="$slots.icon" :class="patientPageCardDetailIconWrapperClass">
+        <div v-if="$slots.icon" :class="mobileShellPageCardDetailIconWrapperClass">
             <slot name="icon" />
         </div>
         <div class="min-w-0 flex-1 space-y-1.5">
-            <p :class="patientPageCardDetailLabelClass">
+            <p :class="mobileShellPageCardDetailLabelClass">
                 {{ props.label }}
             </p>
             <slot v-if="props.rawValue" />
-            <p v-else :class="patientPageCardDetailValueClass">
+            <p v-else :class="mobileShellPageCardDetailValueClass">
                 <slot />
             </p>
         </div>

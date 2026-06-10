@@ -3,10 +3,10 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { Button, buttonVariants } from '@/Components/ui/button';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterOutlineButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterOutlineButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -28,14 +28,14 @@ const emit = defineEmits<{
 
 const buttonClass = computed((): string => {
     if (props.variant === 'primary') {
-        return patientFormWizardFooterPrimaryButtonClass;
+        return mobileShellFormWizardFooterPrimaryButtonClass;
     }
 
     if (props.variant === 'danger') {
-        return patientFormWizardFooterCancelButtonClass;
+        return mobileShellFormWizardFooterCancelButtonClass;
     }
 
-    return patientFormWizardFooterOutlineButtonClass;
+    return mobileShellFormWizardFooterOutlineButtonClass;
 });
 
 const buttonVariant = computed(() => {
