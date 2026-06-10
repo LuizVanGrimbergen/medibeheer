@@ -96,7 +96,6 @@ final class PatientWebPushDemoSeeder extends Seeder
         ]);
 
         $schedule = $medication->schedules()->create([
-            'patient_id' => $patient->id,
             'meal_timing' => MedicationMealTiming::UNRELATED,
             'intake_frequency' => MedicationIntakeFrequency::DAILY,
             'times_per_day' => '1',
@@ -119,8 +118,6 @@ final class PatientWebPushDemoSeeder extends Seeder
         }
 
         $medication->stocks()->create([
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
             'current_stock' => '30',
         ]);
     }

@@ -8,7 +8,6 @@ use App\Enums\DailyMoodScore;
 use App\Enums\MedicationPrescriptionPickupStatus;
 use App\Models\DailyCheckin;
 use App\Models\Doctor;
-use App\Models\Family;
 use App\Models\Medication;
 use App\Models\MedicationIntake;
 use App\Models\MedicationPrescription;
@@ -93,7 +92,7 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
 
         $this->seedMedicationIntakes($patient, $mayStart, $mayEnd);
         $this->seedDailyCheckins($patient, $mayStart, $mayEnd);
-        $expiringPrescription = $this->seedExpiringPrescription($patient, $family);
+        $expiringPrescription = $this->seedExpiringPrescription($patient);
         $this->linkToDemoDoctor($patient);
 
         if ($this->command !== null) {
@@ -116,13 +115,13 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
                 $mayStart->year,
                 $juneStart->year,
                 $expiringPrescriptionSummary,
-                $patient->appointments()->where('status', AppointmentStatus::SCHEDULED)->count(),
-                $patient->appointments()->where('status', AppointmentStatus::DONE)->count(),
+                $patient->appointments()->whereStatus(AppointmentStatus::SCHEDULED)->count(),
+                $patient->appointments()->whereStatus(AppointmentStatus::DONE)->count(),
             ));
         }
     }
 
-    private function seedExpiringPrescription(Patient $patient, Family $family): ?MedicationPrescription
+    private function seedExpiringPrescription(Patient $patient): ?MedicationPrescription
     {
         $medications = $patient->medications()->orderBy('id')->get();
 
@@ -136,11 +135,9 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
 
         $prescription = MedicationPrescription::query()->updateOrCreate(
             [
-                'patient_id' => $patient->id,
                 'medication_id' => $medication->id,
             ],
             [
-                'family_id' => $family->id,
                 'prescription_expiry_date' => Carbon::today()
                     ->addDays(self::EXPIRING_PRESCRIPTION_DAYS_FROM_TODAY)
                     ->toDateString(),
@@ -195,7 +192,7 @@ class AndreVanGrimbergenDemoSeeder extends Seeder
         $missedDate = $mayStart->copy()->day(self::MAY_MISSED_INTAKE_DAY)->toDateString();
 
         $schedules = MedicationSchedule::query()
-            ->where('patient_id', $patient->id)
+            ->whereHas('medication', fn ($query) => $query->where('patient_id', $patient->id))
             ->with('medication')
             ->get();
 
