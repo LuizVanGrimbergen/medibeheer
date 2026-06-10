@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Patient\Medications;
 
 use App\Http\Controllers\Controller;
 use App\Models\MedicationSchedule;
-use App\Models\Patient;
 use App\Services\Medications\RecordPatientMedicationIntakeService;
 use App\Support\Medications\PatientRecentPushMedicationMarkStore;
 use Illuminate\Http\RedirectResponse;
@@ -21,9 +20,13 @@ final class MarkPatientMedicationIntakeFromPushController extends Controller
         RecordPatientMedicationIntakeService $recordIntake,
         PatientRecentPushMedicationMarkStore $recentPushMarkStore,
     ): RedirectResponse|Response {
-        $medicationSchedule->loadMissing('medication');
+        $medicationSchedule->loadMissing('medication.patient');
 
-        $patient = Patient::query()->findOrFail($medicationSchedule->patient_id);
+        $patient = $medicationSchedule->medication?->patient;
+
+        if ($patient === null) {
+            abort(404);
+        }
 
         $doseTime = trim((string) $request->query('doseTime', ''));
         $medicationName = (string) $medicationSchedule->medication->name;

@@ -24,10 +24,7 @@ class PatientMedicationScheduleController extends Controller
         $validated = $request->validated();
         $weekdays = Arr::pull($validated, 'intake_weekdays');
 
-        $schedule = $medication->schedules()->create(array_merge($validated, [
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
-        ]));
+        $schedule = $medication->schedules()->create($validated);
 
         $schedule->syncIntakeWeekdays(is_array($weekdays) ? $weekdays : null);
 

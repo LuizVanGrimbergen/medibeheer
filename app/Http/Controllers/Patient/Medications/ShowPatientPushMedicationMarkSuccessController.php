@@ -29,7 +29,7 @@ final class ShowPatientPushMedicationMarkSuccessController extends Controller
             return redirect()->route('patient.dashboard');
         }
 
-        return Inertia::render('Patient/MedicationPushMarkSuccess', [
+        return Inertia::render('Patient/Medications/PushMarkSuccess', [
             'medication_name' => $medicationName,
         ]);
     }

@@ -21,10 +21,10 @@ class PatientMedicationStockController extends Controller
     {
         $this->authorizePatientProfile($request);
 
-        $medication->stocks()->create(array_merge($request->validated(), [
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
-        ]));
+        $medication->stocks()->updateOrCreate(
+            ['medication_id' => $medication->id],
+            $request->validated(),
+        );
 
         return redirect()->route('patient.medications');
     }
