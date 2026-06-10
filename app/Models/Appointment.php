@@ -6,6 +6,10 @@ use App\Enums\AppointmentStatus;
 use App\Enums\AppointmentTransportStatus;
 use App\Enums\DoctorType;
 use App\Models\Concerns\LogsPatientDataChanges;
+use App\Models\Concerns\MaintainsBlindIndexForEncryptedEnum;
+use App\Support\BlindIndex;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +23,7 @@ class Appointment extends Model
 
     use HasFactory;
     use LogsPatientDataChanges;
+    use MaintainsBlindIndexForEncryptedEnum;
 
     protected function patientDataActivityLogAttributes(): array
     {
@@ -31,6 +36,10 @@ class Appointment extends Model
             'status',
         ];
     }
+
+    protected $hidden = [
+        'status_index',
+    ];
 
     protected $fillable = [
         'patient_id',
@@ -47,6 +56,42 @@ class Appointment extends Model
         'cancellation_reason',
         'status',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $appointment): void {
+            if ($appointment->status === null) {
+                $appointment->status = AppointmentStatus::SCHEDULED;
+            }
+
+            $appointment->syncBlindIndexesForEncryptedEnums();
+        });
+    }
+
+    protected function blindIndexedEncryptedEnumAttributes(): array
+    {
+        return [
+            'status' => 'status_index',
+        ];
+    }
+
+    #[Scope]
+    protected function whereStatus(Builder $query, AppointmentStatus $status): void
+    {
+        $query->where('status_index', BlindIndex::forEnum($status));
+    }
+
+    /**
+     * @param  list<AppointmentStatus>  $statuses
+     */
+    #[Scope]
+    protected function whereStatusIn(Builder $query, array $statuses): void
+    {
+        $query->whereIn('status_index', array_map(
+            BlindIndex::forEnum(...),
+            $statuses,
+        ));
+    }
 
     protected function casts(): array
     {
