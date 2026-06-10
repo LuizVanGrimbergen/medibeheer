@@ -19,9 +19,12 @@ const props = withDefaults(
         confirmLabel: string;
         cancelLabel: string;
         density?: 'default' | 'compact';
+        /** Flat list row inside {@link CollapsibleSectionCard} (no nested card chrome). */
+        layout?: 'card' | 'collapsible';
     }>(),
     {
         density: 'default',
+        layout: 'card',
     },
 );
 
@@ -32,34 +35,54 @@ const emit = defineEmits<{
 const confirmOpen = ref(false);
 
 const isCompact = computed(() => props.density === 'compact');
+const isCollapsibleLayout = computed(() => props.layout === 'collapsible');
 
-const rowClass = computed(() =>
-    cn(
+const rowClass = computed(() => {
+    if (isCollapsibleLayout.value) {
+        return cn(
+            'flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between',
+            'border-border border-t pt-4 first:border-t-0 first:pt-0',
+        );
+    }
+
+    return cn(
         'flex flex-col bg-surface sm:flex-row sm:items-center sm:justify-between',
         isCompact.value
             ? 'gap-3 rounded-xl border border-border px-4 py-3 md:gap-4 md:px-4 md:py-3'
             : cn('gap-3', mobileShellPageSectionInnerRowClass),
-    ),
-);
+    );
+});
 
-const titleClass = computed(() =>
-    cn(
+const titleClass = computed(() => {
+    if (isCollapsibleLayout.value) {
+        return 'text-text-heading truncate text-base leading-snug font-semibold sm:text-lg';
+    }
+
+    return cn(
         'leading-snug text-text-heading',
         isCompact.value
             ? 'text-base font-semibold'
             : 'text-lg font-bold md:text-xl',
-    ),
-);
+    );
+});
 
 const subtitleClass = computed(() =>
-    cn('mt-1', mobileShellSectionBodyTextClass, isCompact.value && 'text-sm'),
+    cn(
+        'mt-1',
+        mobileShellSectionBodyTextClass,
+        (isCompact.value || isCollapsibleLayout.value) && 'text-sm',
+    ),
 );
 
 const buttonClass = computed(() =>
     cn(
         mobileShellSoftDangerActionButtonClass,
         'shrink-0 sm:w-auto sm:flex-none',
-        isCompact.value ? 'md:min-h-10 md:px-4 md:text-sm' : 'md:px-6',
+        (isCompact.value || isCollapsibleLayout.value) &&
+            'md:min-h-10 md:px-4 md:text-sm',
+        !isCompact.value &&
+            !isCollapsibleLayout.value &&
+            'md:px-6',
     ),
 );
 
@@ -76,7 +99,7 @@ function handleConfirm(): void {
 <template>
     <div :class="rowClass">
         <div class="min-w-0">
-            <p :class="[titleClass, 'break-all']">
+            <p :class="[titleClass, !isCollapsibleLayout && 'break-all']">
                 {{ props.title }}
             </p>
             <p

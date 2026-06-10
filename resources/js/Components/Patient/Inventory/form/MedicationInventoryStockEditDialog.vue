@@ -1,30 +1,23 @@
 <script setup lang="ts">
 import { router, useForm } from '@inertiajs/vue3';
-import { ref, toRef, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
+import MobileShellFormDialog from '@/Components/shell/MobileShellFormDialog.vue';
+import MobileShellWizardCard from '@/Components/shell/MobileShellWizardCard.vue';
 import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
-import { buttonVariants } from '@/Components/ui/button';
-import { Card, CardContent } from '@/Components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from '@/Components/ui/dialog';
+import { Button } from '@/Components/ui/button';
 import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
-import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import {
-    mobileShellDialogOverlayAboveAppChromeClass,
-    mobileShellWizardFormClass,
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
 } from '@/lib/shell/mobileShellDialogLayout';
 import type { MedicationStockItem } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
@@ -52,8 +45,6 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-
-useMobileShellDialogChromeSync(toRef(() => props.open));
 
 const {
     open: stockUpdateSuccessOpen,
@@ -154,12 +145,6 @@ function mergeAddIntoCurrentStockForSubmit(): boolean {
     return true;
 }
 
-const footerPrimaryButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
-
-const footerCancelButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl px-3 text-base font-semibold md:min-h-14 md:flex-1 md:px-4 lg:text-lg';
-
 function closeDialog(): void {
     emit('update:open', false);
 }
@@ -238,101 +223,55 @@ function submitStock(): void {
 </script>
 
 <template>
-    <Dialog :open="props.open" @update:open="emit('update:open', $event)">
-        <DialogContent
-            :class="props.dialogContentClass"
-            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('md')"
-        >
-            <DialogHeader
-                class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
-            >
-                <DialogTitle
-                    class="text-text-heading text-xl leading-tight font-bold md:text-2xl"
+    <MobileShellFormDialog
+        :open="props.open"
+        :title="t('patient.inventory.editStockDialogTitle')"
+        :form-id="props.formId"
+        :dialog-content-class="props.dialogContentClass"
+        @update:open="emit('update:open', $event)"
+        @submit="submitStock"
+        @cancel="closeDialog"
+    >
+        <div class="space-y-3 md:space-y-3">
+            <MobileShellWizardCard>
+                <MedicationStockBoxRefillCalculator
+                    v-model:amount-to-add="stockToAdd"
+                    :id-prefix="props.idPrefix"
+                    :dose-unit="props.doseUnit"
+                    :current-stock="serverCurrentStockAtOpen"
+                    :stock-progress-tone="props.stockProgressTone"
+                    :stock-pieces-per-package="props.stockPiecesPerPackage"
+                    :error-message="
+                        addStockError || form.errors.current_stock
+                    "
+                />
+            </MobileShellWizardCard>
+        </div>
+
+        <template #footer>
+            <div :class="mobileShellFormWizardFooterRowClass">
+                <Button
+                    type="button"
+                    variant="secondary"
+                    size="lg"
+                    :disabled="form.processing"
+                    :class="mobileShellFormWizardFooterCancelButtonClass"
+                    @click="closeDialog"
                 >
-                    {{ t('patient.inventory.editStockDialogTitle') }}
-                </DialogTitle>
-            </DialogHeader>
-
-            <form
-                :id="props.formId"
-                :class="mobileShellWizardFormClass"
-                novalidate
-                @submit.prevent="submitStock"
-            >
-                <MobileShellWizardScrollBody :active="props.open">
-                    <div class="space-y-3 md:space-y-3">
-                        <Card
-                            class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
-                        >
-                            <CardContent class="p-0">
-                                <div
-                                    class="bg-surface space-y-5 rounded-2xl px-4 py-4 md:space-y-6 md:rounded-3xl md:px-5 md:py-5 lg:px-7 lg:py-7"
-                                >
-                                    <MedicationStockBoxRefillCalculator
-                                        v-model:amount-to-add="stockToAdd"
-                                        :id-prefix="props.idPrefix"
-                                        :dose-unit="props.doseUnit"
-                                        :current-stock="
-                                            serverCurrentStockAtOpen
-                                        "
-                                        :stock-progress-tone="
-                                            props.stockProgressTone
-                                        "
-                                        :stock-pieces-per-package="
-                                            props.stockPiecesPerPackage
-                                        "
-                                        :error-message="
-                                            addStockError ||
-                                            form.errors.current_stock
-                                        "
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <template #footer>
-                        <div
-                            class="flex w-full min-w-0 flex-col gap-2 md:flex-row-reverse md:gap-3"
-                        >
-                            <button
-                                type="submit"
-                                :disabled="form.processing"
-                                :class="
-                                    cn(
-                                        buttonVariants({
-                                            variant: 'default',
-                                            size: 'lg',
-                                        }),
-                                        footerPrimaryButtonClass,
-                                    )
-                                "
-                            >
-                                {{ t('patient.medications.actions.save') }}
-                            </button>
-
-                            <button
-                                type="button"
-                                :disabled="form.processing"
-                                :class="
-                                    cn(
-                                        buttonVariants({
-                                            variant: 'outline',
-                                            size: 'lg',
-                                        }),
-                                        footerCancelButtonClass,
-                                    )
-                                "
-                                @click.stop.prevent="closeDialog"
-                            >
-                                {{ t('patient.medications.actions.cancel') }}
-                            </button>
-                        </div>
-                    </template>
-                </MobileShellWizardScrollBody>
-            </form>
-        </DialogContent>
-    </Dialog>
+                    {{ t('patient.medications.actions.cancel') }}
+                </Button>
+                <Button
+                    type="submit"
+                    variant="default"
+                    size="lg"
+                    :disabled="form.processing"
+                    :class="mobileShellFormWizardFooterPrimaryButtonClass"
+                >
+                    {{ t('patient.medications.actions.save') }}
+                </Button>
+            </div>
+        </template>
+    </MobileShellFormDialog>
 
     <PatientActionSuccessScreen
         v-model:open="stockUpdateSuccessOpen"

@@ -4,7 +4,6 @@ export default {
     create: 'Nieuw plan',
     createTitle: 'Medicatieplan opstellen',
     editTitle: 'Medicatieplan bewerken',
-    edit: 'Bewerken',
     publish: 'Publiceren',
     revoke: 'Verzoek intrekken',
     empty: 'Nog geen medicatieplannen. Maak een concept aan om te beginnen.',

@@ -74,19 +74,17 @@ final class MedicationPlanProposalPatientService
 
         $this->authorizePatientMayReview($user, $proposal);
 
-        $proposal->load(['items.schedule', 'family.user']);
-
-        $item = $proposal->items->first();
+        $proposal->load(['items', 'family.user']);
 
         return [
             'proposal_id' => $proposal->id,
             'family_member_name' => (string) ($proposal->family?->user?->name ?? ''),
-            'medication_name' => $item?->name,
-            'dose' => $item?->dose,
-            'dose_unit' => $item?->dose_unit?->value,
-            'strength' => $item?->strength,
-            'note' => $item?->note,
-            'current_stock' => $item?->current_stock,
+            'medication_names' => $proposal->items
+                ->sortBy('sort_order')
+                ->map(static fn ($item): ?string => $item->name)
+                ->filter(static fn (?string $name): bool => $name !== null && $name !== '')
+                ->values()
+                ->all(),
         ];
     }
 

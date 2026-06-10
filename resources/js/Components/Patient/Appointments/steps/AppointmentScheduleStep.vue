@@ -66,17 +66,29 @@ const minStartsAtTimeHm = computed(() => {
                         :class="
                             cn(
                                 mobileShellFormNativeDateTimeInputClass,
-                                form.errors.starts_at
+                                form.errors.starts_at_date ||
+                                    form.errors.starts_at
                                     ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "
-                        :aria-invalid="Boolean(form.errors.starts_at)"
-                        :aria-describedby="
-                            form.errors.starts_at
-                                ? `${idPrefix}-starts-at-error`
-                                : undefined
+                        :aria-invalid="
+                            Boolean(
+                                form.errors.starts_at_date ||
+                                    form.errors.starts_at,
+                            )
                         "
+                        :aria-describedby="
+                            form.errors.starts_at_date
+                                ? `${idPrefix}-starts-at-date-error`
+                                : form.errors.starts_at
+                                  ? `${idPrefix}-starts-at-error`
+                                  : undefined
+                        "
+                    />
+                    <InputError
+                        :id="`${idPrefix}-starts-at-date-error`"
+                        :message="form.errors.starts_at_date"
                     />
                 </div>
                 <div>
@@ -98,17 +110,29 @@ const minStartsAtTimeHm = computed(() => {
                         :class="
                             cn(
                                 mobileShellFormNativeDateTimeInputClass,
-                                form.errors.starts_at
+                                form.errors.starts_at_time ||
+                                    form.errors.starts_at
                                     ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "
-                        :aria-invalid="Boolean(form.errors.starts_at)"
-                        :aria-describedby="
-                            form.errors.starts_at
-                                ? `${idPrefix}-starts-at-error`
-                                : undefined
+                        :aria-invalid="
+                            Boolean(
+                                form.errors.starts_at_time ||
+                                    form.errors.starts_at,
+                            )
                         "
+                        :aria-describedby="
+                            form.errors.starts_at_time
+                                ? `${idPrefix}-starts-at-time-error`
+                                : form.errors.starts_at
+                                  ? `${idPrefix}-starts-at-error`
+                                  : undefined
+                        "
+                    />
+                    <InputError
+                        :id="`${idPrefix}-starts-at-time-error`"
+                        :message="form.errors.starts_at_time"
                     />
                 </div>
             </div>

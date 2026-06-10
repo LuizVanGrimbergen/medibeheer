@@ -2,8 +2,6 @@ export default {
     title: 'Artsen',
     inviteHeading: 'Arts uitnodigen',
     linkedHeading: 'Uw gekoppelde artsen',
-    inviteIntro:
-        'Vul het e-mailadres van uw arts in. Zij krijgen een e-mail en kunnen het verzoek op de Gebruikers-pagina accepteren.',
     emailLabel: 'E-mailadres arts',
     emailPlaceholder: "arts{'@'}voorbeeld.nl",
     emailRequired: 'Vul een e-mailadres in.',

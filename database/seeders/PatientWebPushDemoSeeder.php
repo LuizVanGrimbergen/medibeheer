@@ -4,14 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Enums\MedicationDoseUnit;
-use App\Enums\MedicationIntakeFrequency;
-use App\Enums\MedicationMealTiming;
-use App\Enums\MedicationType;
 use App\Models\Medication;
 use App\Models\Patient;
 use App\Models\User;
-use App\Support\Medications\MedicationIntakeClock;
 use Illuminate\Database\Seeder;
 
 final class PatientWebPushDemoSeeder extends Seeder
@@ -41,16 +36,13 @@ final class PatientWebPushDemoSeeder extends Seeder
         }
 
         $this->removeLegacyDemoPushSubscriptions($patientUser);
-
-        $this->seedDueNowReminderMedication($patient);
+        $this->removeLegacyDemoPushReminderMedications($patient);
 
         if ($this->command !== null) {
             $this->command->info(sprintf(
-                'Demo push: %s (%s) — medicatie "%s" dose-tijd %s. Schakel meldingen in via het dashboard.',
+                'Demo push: %s (%s) — schakel meldingen in via het dashboard.',
                 $patientUser->name,
                 $patientUser->email,
-                self::DEMO_PUSH_REMINDER_MEDICATION_NAME,
-                MedicationIntakeClock::now()->format('H:i'),
             ));
         }
     }
@@ -62,63 +54,11 @@ final class PatientWebPushDemoSeeder extends Seeder
             ->delete();
     }
 
-    private function seedDueNowReminderMedication(Patient $patient): void
+    private function removeLegacyDemoPushReminderMedications(Patient $patient): void
     {
-        $today = MedicationIntakeClock::today();
-        $doseTime = MedicationIntakeClock::now()->format('H:i');
-
-        $existing = $patient->medications()
-            ->where('name', self::DEMO_PUSH_REMINDER_MEDICATION_NAME)
-            ->first();
-
-        if ($existing !== null) {
-            $schedule = $existing->schedules()->first();
-
-            if ($schedule !== null) {
-                $schedule->update([
-                    'dose_time' => $doseTime,
-                    'snooze_time' => '30',
-                ]);
-            }
-
-            $this->ensureDemoPushMedicationStock($existing);
-
-            return;
-        }
-
-        $medication = $patient->medications()->create([
-            'name' => self::DEMO_PUSH_REMINDER_MEDICATION_NAME,
-            'dose' => '1',
-            'dose_unit' => MedicationDoseUnit::PIECE,
-            'type_medication' => MedicationType::PILL,
-            'stock_pieces_per_package' => 30,
-            'note' => 'Alleen voor lokaal testen van web push herinneringen.',
-        ]);
-
-        $schedule = $medication->schedules()->create([
-            'meal_timing' => MedicationMealTiming::UNRELATED,
-            'intake_frequency' => MedicationIntakeFrequency::DAILY,
-            'times_per_day' => '1',
-            'dose_quantity' => '1',
-            'dose_time' => $doseTime,
-            'snooze_time' => '30',
-            'start_date' => $today->toDateString(),
-            'end_date' => $today->copy()->addYear()->toDateString(),
-        ]);
-
-        $schedule->syncIntakeWeekdays(null);
-
-        $this->ensureDemoPushMedicationStock($medication);
-    }
-
-    private function ensureDemoPushMedicationStock(Medication $medication): void
-    {
-        if ($medication->stocks()->exists()) {
-            return;
-        }
-
-        $medication->stocks()->create([
-            'current_stock' => '30',
-        ]);
+        $patient->medications()
+            ->get()
+            ->filter(fn (Medication $medication): bool => $medication->name === self::DEMO_PUSH_REMINDER_MEDICATION_NAME)
+            ->each(fn (Medication $medication): bool => (bool) $medication->delete());
     }
 }

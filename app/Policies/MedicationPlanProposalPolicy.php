@@ -22,11 +22,6 @@ class MedicationPlanProposalPolicy
         return $proposal->status === MedicationPlanProposalStatus::DRAFT;
     }
 
-    public function duplicate(User $user, MedicationPlanProposal $proposal): bool
-    {
-        return $this->familyOwnsProposal($user, $proposal);
-    }
-
     public function publish(User $user, MedicationPlanProposal $proposal): bool
     {
         return $this->update($user, $proposal);

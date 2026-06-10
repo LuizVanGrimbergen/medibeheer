@@ -56,7 +56,7 @@ export default {
         addressGroupLegend: 'Adres',
         addressSearch: 'Adres zoeken',
         addressSearchOptional: 'Adres zoeken (optioneel)',
-        addressSearchPlaceholder: 'Typ straat, postcode of plaats…',
+        addressSearchPlaceholder: 'Voer het adres in',
         addressSearchUnavailable:
             'Adreszoeken is niet beschikbaar. Vul de velden hieronder handmatig in.',
         addressOverviewTitle: 'Gekozen adres',
