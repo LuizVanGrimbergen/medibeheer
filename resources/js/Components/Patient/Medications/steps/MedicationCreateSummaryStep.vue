@@ -21,7 +21,7 @@ import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/st
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import { medicationStrengthDisplayValue } from '@/lib/patient/medications/strength/medicationStrengthDisplayValue';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
-import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
+import { mobileShellFormLabelClass } from '@/lib/shell/mobileShellFormFieldClasses';
 import type {
     MedicationIntakeFrequencyValue,
     MedicationMealTimingValue,
@@ -172,7 +172,7 @@ const summaryTypeFocusSuffix = computed(() =>
 );
 
 const overviewSectionHeadingClass = cn(
-    patientFormLabelClass,
+    mobileShellFormLabelClass,
     'mb-3 text-lg text-text-heading md:mb-4 md:text-xl',
 );
 

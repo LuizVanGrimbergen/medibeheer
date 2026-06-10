@@ -8,10 +8,10 @@ import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { medicationStockDisplayDoseUnit } from '@/lib/patient/medications/stock/medicationStockDisplayDoseUnit';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -39,7 +39,7 @@ const stockDisplayDoseUnit = computed(() =>
     <div class="space-y-3 md:space-y-4">
         <div v-if="props.showStockFields" class="space-y-8">
             <fieldset>
-                <legend :class="cn(patientFormLabelClass, 'text-xl')">
+                <legend :class="cn(mobileShellFormLabelClass, 'text-xl')">
                     {{ t('patient.medications.fields.currentStock') }}
                     <span class="text-danger">*</span>
                 </legend>
@@ -64,7 +64,7 @@ const stockDisplayDoseUnit = computed(() =>
         <div>
             <Label
                 :for="`${props.idPrefix}-note`"
-                :class="cn(patientFormLabelClass, 'text-xl')"
+                :class="cn(mobileShellFormLabelClass, 'text-xl')"
             >
                 {{ t('patient.medications.fields.noteFormLabel') }}
             </Label>
@@ -78,10 +78,10 @@ const stockDisplayDoseUnit = computed(() =>
                 :placeholder="t('patient.medications.fields.notePlaceholder')"
                 :class="
                     cn(
-                        patientFormFieldInputClass,
+                        mobileShellFormFieldInputClass,
                         'mt-2 min-h-42 w-full resize-y py-4 text-lg leading-relaxed md:min-h-48 md:text-xl',
                         props.form.errors.note
-                            ? patientFormFieldInvalidClass
+                            ? mobileShellFormFieldInvalidClass
                             : null,
                     )
                 "

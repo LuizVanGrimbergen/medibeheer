@@ -1,6 +1,6 @@
 import type { MedicationCreateFormState } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { parseMedicationStrengthFromStored } from '@/lib/patient/medications/strength/parseMedicationStrengthFromStored';
-import type { MedicationListItem } from '@/lib/types';
+import type { MedicationRegisterItem } from '@/lib/types';
 import {
     buildMedicationScheduleDoseTimeSlots,
     buildMedicationScheduleSnoozeTimeSlots,
@@ -8,8 +8,8 @@ import {
 import { parseMedicationTimesPerDayCount } from '../validation/medicationFormValidationPrimitives';
 import { blankMedicationCreateForm } from './medicationCreateFormDefaults';
 
-export function medicationListItemToCreateFormState(
-    item: MedicationListItem,
+export function medicationRegisterItemToCreateFormState(
+    item: MedicationRegisterItem,
 ): MedicationCreateFormState {
     const base = blankMedicationCreateForm();
     const first = item.schedules[0];

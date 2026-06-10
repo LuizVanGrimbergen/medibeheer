@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, toRef, useSlots, watch } from 'vue';
-import PatientShellFormDialog from '@/Components/Patient/form/PatientShellFormDialog.vue';
+import MobileShellFormDialog from '@/Components/shell/MobileShellFormDialog.vue';
 import MedicationFormDialogFooter from '@/Components/Patient/Medications/form/MedicationFormDialogFooter.vue';
 import type {
     MedicationCreateFormWithErrors,
@@ -10,7 +10,7 @@ import MedicationFormWizardSteps from '@/Components/Patient/Medications/form/Med
 import { useMedicationFormWizard } from '@/Components/Patient/Medications/form/useMedicationFormWizard';
 import { DialogDescription } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { patientShellPageDescriptionClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellDialogDescriptionClass } from '@/lib/shell/mobileShellDialogLayout';
 
 const props = withDefaults(
     defineProps<{
@@ -112,7 +112,7 @@ function handleDialogCancel(): void {
 </script>
 
 <template>
-    <PatientShellFormDialog
+    <MobileShellFormDialog
         :open="props.open"
         :title="dialogTitle"
         :form-id="props.formId"
@@ -125,7 +125,7 @@ function handleDialogCancel(): void {
         <template v-if="showWizardProgress" #description>
             <DialogDescription
                 ref="progressLabelRef"
-                :class="patientShellPageDescriptionClass"
+                :class="mobileShellDialogDescriptionClass"
                 aria-live="polite"
             >
                 {{ medicationProgressLabel }}
@@ -158,5 +158,5 @@ function handleDialogCancel(): void {
                 @back="handleMedicationFormFooterBack"
             />
         </template>
-    </PatientShellFormDialog>
+    </MobileShellFormDialog>
 </template>

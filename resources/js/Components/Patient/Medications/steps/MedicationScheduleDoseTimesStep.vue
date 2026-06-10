@@ -12,12 +12,12 @@ import {
 } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormNativeDateTimeInputClass,
-    patientFormSelectBaseClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormNativeDateTimeInputClass,
+    mobileShellFormSelectBaseClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix } = defineProps<{
@@ -78,7 +78,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
     <fieldset class="mt-0 border-0 p-0">
         <legend
             :id="`${idPrefix}-schedule-dose-times-label`"
-            :class="cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')"
+            :class="cn(mobileShellFormLabelClass, 'float-none w-full px-0 text-xl')"
         >
             {{ t('patient.medications.fields.doseTime') }}
             <span class="text-danger">*</span>
@@ -96,7 +96,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
                 <div class="space-y-2">
                     <Label
                         :for="`${idPrefix}-schedule-dose-time-${index}`"
-                        :class="patientFormLabelClass"
+                        :class="mobileShellFormLabelClass"
                     >
                         {{ t('patient.medications.fields.doseTimeAt') }}
                         <span class="text-danger">*</span>
@@ -110,9 +110,9 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
                         autocomplete="off"
                         :class="
                             cn(
-                                patientFormNativeDateTimeInputClass,
+                                mobileShellFormNativeDateTimeInputClass,
                                 form.errors['schedule.dose_time']
-                                    ? patientFormFieldInvalidClass
+                                    ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -129,7 +129,7 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
                 <div class="space-y-2">
                     <Label
                         :for="`${idPrefix}-schedule-snooze-time-${index}`"
-                        :class="patientFormLabelClass"
+                        :class="mobileShellFormLabelClass"
                     >
                         {{ t('patient.medications.fields.snoozeTime') }}
                         <span class="text-danger">*</span>
@@ -142,8 +142,8 @@ watch(doseTimeSlotIndices, ensureSnoozeSlotsForVisibleIndices, {
                         "
                         :class="
                             cn(
-                                patientFormSelectBaseClass,
-                                patientFormSelectChevronStyle,
+                                mobileShellFormSelectBaseClass,
+                                mobileShellFormSelectChevronStyle,
                             )
                         "
                         :aria-invalid="

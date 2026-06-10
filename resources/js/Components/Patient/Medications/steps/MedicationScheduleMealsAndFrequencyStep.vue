@@ -16,11 +16,11 @@ import {
     parseEveryNDaysFrequency,
 } from '@/lib/patient/medications/schedule/medicationIntakeFrequencyDisplay';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormSelectBaseClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormSelectBaseClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { MedicationIntakeFrequencyValue } from '@/lib/types';
 import { MEDICATION_MEAL_TIMING_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -150,7 +150,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                     <div>
                         <p
                             :id="`${idPrefix}-schedule-meal-timing-label`"
-                            :class="cn(patientFormLabelClass, 'text-xl')"
+                            :class="cn(mobileShellFormLabelClass, 'text-xl')"
                         >
                             {{ t('patient.medications.fields.mealTiming') }}
                             <span class="text-danger">*</span>
@@ -222,7 +222,7 @@ const intakeFrequencyCustomDaysSelect = computed({
                     <div>
                         <p
                             :id="`${idPrefix}-schedule-intake-frequency-label`"
-                            :class="cn(patientFormLabelClass, 'text-xl')"
+                            :class="cn(mobileShellFormLabelClass, 'text-xl')"
                         >
                             {{
                                 t('patient.medications.fields.intakeFrequency')
@@ -318,13 +318,13 @@ const intakeFrequencyCustomDaysSelect = computed({
                                 "
                                 :class="
                                     cn(
-                                        patientFormSelectBaseClass,
+                                        mobileShellFormSelectBaseClass,
                                         hasIntakeFrequencyBlockError
-                                            ? patientFormFieldInvalidClass
+                                            ? mobileShellFormFieldInvalidClass
                                             : null,
                                     )
                                 "
-                                :style="patientFormSelectChevronStyle"
+                                :style="mobileShellFormSelectChevronStyle"
                                 :aria-invalid="hasIntakeFrequencyBlockError"
                                 :aria-describedby="
                                     [

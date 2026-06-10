@@ -4,9 +4,9 @@ import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
 import { filterDecimalAmountInput } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
 import {
-    patientFormLabelClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormLabelClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const amount = defineModel<string>('amount', { required: true });
@@ -96,7 +96,7 @@ function onAmountInput(event: Event): void {
 
 <template>
     <fieldset class="min-w-0 border-0 p-0">
-        <legend :class="cn(patientFormLabelClass, 'text-lg md:text-xl')">
+        <legend :class="cn(mobileShellFormLabelClass, 'text-lg md:text-xl')">
             {{ legend
             }}<span v-if="amountRequired || unitRequired" class="text-danger">
                 *</span
@@ -167,7 +167,7 @@ function onAmountInput(event: Event): void {
                     :name="unitName"
                     :aria-label="unitAriaLabel"
                     class="text-text-heading min-h-14 max-w-40 min-w-22 cursor-pointer touch-manipulation appearance-none border-0 bg-transparent bg-size-[1.25rem] bg-position-[right_0.75rem_center] bg-no-repeat py-3.5 pr-11 pl-3 text-base leading-normal font-semibold focus:outline-none focus-visible:outline-none"
-                    :style="patientFormSelectChevronStyle"
+                    :style="mobileShellFormSelectChevronStyle"
                     :required="unitRequired"
                     :aria-invalid="Boolean(unitError)"
                     :aria-required="unitRequired"

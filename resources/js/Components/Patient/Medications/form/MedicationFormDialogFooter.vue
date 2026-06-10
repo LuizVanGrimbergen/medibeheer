@@ -5,7 +5,7 @@ import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizard
 import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 import type { MedicationFormWizardStep } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { Button } from '@/Components/ui/button';
-import { patientFormWizardFooterCancelButtonClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellFormWizardFooterCancelButtonClass } from '@/lib/shell/mobileShellDialogLayout';
 
 const props = defineProps<{
     currentStep: MedicationFormWizardStep;
@@ -47,7 +47,7 @@ function handleBackClick(): void {
             variant="secondary"
             size="lg"
             :disabled="props.processing"
-            :class="patientFormWizardFooterCancelButtonClass"
+            :class="mobileShellFormWizardFooterCancelButtonClass"
             @click="handleCancelClick"
         >
             {{ t('patient.medications.actions.cancel') }}

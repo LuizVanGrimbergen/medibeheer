@@ -19,11 +19,11 @@ import {
     MEDICATION_SCHEDULE_DURATION_UI_PRESET_KEYS,
 } from '@/lib/patient/medications/schedule/medicationScheduleDurationPresets';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormLargeTouchFieldClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix } = defineProps<{
@@ -122,7 +122,7 @@ watch(
             <legend
                 :id="`${idPrefix}-schedule-duration-intake-period`"
                 :class="
-                    cn(patientFormLabelClass, 'float-none w-full px-0 text-xl')
+                    cn(mobileShellFormLabelClass, 'float-none w-full px-0 text-xl')
                 "
             >
                 {{ t('patient.medications.fields.intakePeriod') }}
@@ -193,7 +193,7 @@ watch(
                     <div>
                         <Label
                             :for="`${idPrefix}-schedule-start-date`"
-                            :class="cn(patientFormLabelClass, 'text-xl')"
+                            :class="cn(mobileShellFormLabelClass, 'text-xl')"
                         >
                             {{ t('patient.medications.fields.startDate') }}
                         </Label>
@@ -205,10 +205,10 @@ watch(
                             autocomplete="off"
                             :class="
                                 cn(
-                                    patientFormFieldInputClass,
-                                    patientFormLargeTouchFieldClass,
+                                    mobileShellFormFieldInputClass,
+                                    mobileShellFormLargeTouchFieldClass,
                                     form.errors['schedule.start_date']
-                                        ? patientFormFieldInvalidClass
+                                        ? mobileShellFormFieldInvalidClass
                                         : null,
                                 )
                             "
@@ -230,7 +230,7 @@ watch(
                     <div>
                         <Label
                             :for="`${idPrefix}-schedule-end-date`"
-                            :class="cn(patientFormLabelClass, 'text-xl')"
+                            :class="cn(mobileShellFormLabelClass, 'text-xl')"
                         >
                             {{ t('patient.medications.fields.endDate') }}
                         </Label>
@@ -242,10 +242,10 @@ watch(
                             autocomplete="off"
                             :class="
                                 cn(
-                                    patientFormFieldInputClass,
-                                    patientFormLargeTouchFieldClass,
+                                    mobileShellFormFieldInputClass,
+                                    mobileShellFormLargeTouchFieldClass,
                                     form.errors['schedule.end_date']
-                                        ? patientFormFieldInvalidClass
+                                        ? mobileShellFormFieldInvalidClass
                                         : null,
                                 )
                             "

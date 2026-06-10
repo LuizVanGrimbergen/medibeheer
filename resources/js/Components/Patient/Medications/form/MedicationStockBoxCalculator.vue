@@ -10,11 +10,11 @@ import {
 } from '@/lib/patient/inventory/medicationStockCurrentStockPanelClasses';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormLargeTouchFieldClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -215,7 +215,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="boxFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ stockCalculatorPrimaryLabel }}
                 </Label>
@@ -231,11 +231,11 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     :placeholder="stockCalculatorPrimaryPlaceholder"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
                             props.boxesError
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "
@@ -255,7 +255,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="piecesFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ stockCalculatorSecondaryLabel }}
                 </Label>
@@ -271,11 +271,11 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     :placeholder="stockCalculatorSecondaryPlaceholder"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
                             props.piecesError
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "
