@@ -66,7 +66,7 @@ defineExpose({ isVerifyingGeocode });
             <div class="space-y-5">
                 <div v-if="isAddressSearchAvailable">
                     <Label
-                        :for="`${idPrefix}-address-search`"
+                        :id="`${idPrefix}-address-search-label`"
                         :class="mobileShellFormLabelClass"
                     >
                         {{
