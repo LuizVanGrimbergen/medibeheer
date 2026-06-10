@@ -24,10 +24,10 @@ test('linked family members see patient medications on family medications', func
     $response = $this->actingAs($familyUser)->get(route('family.medications'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Medications')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Medications/Index')
         ->has('medications.data', 1)
-        ->where('medications.data.0.name', 'Paracetamol'));
+        ->where('medications.data.0.name', 'Paracetamol')));
 });
 
 test('linked family members see ended and removed medications with list status on family medications', function () {
@@ -56,14 +56,14 @@ test('linked family members see ended and removed medications with list status o
     $response = $this->actingAs($familyUser)->get(route('family.medications'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->has('medications.data', 3)
         ->where('medications.data.0.list_status', MedicationListStatus::REMOVED->value)
         ->where('medications.data.0.name', 'Verwijderd')
         ->where('medications.data.1.list_status', MedicationListStatus::ENDED->value)
         ->where('medications.data.1.name', 'Verlopen')
         ->where('medications.data.2.list_status', MedicationListStatus::ACTIVE->value)
-        ->where('medications.data.2.name', 'Actief'));
+        ->where('medications.data.2.name', 'Actief')));
 
     CarbonImmutable::setTestNow();
 });
@@ -100,8 +100,9 @@ test('linked family members see medication intake calendar data on family medica
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Family/Medications')
-        ->where('medication_calendar_month', '2026-05')
+        ->component('Family/Medications/Index')
+        ->where('medication_calendar_month', '2026-05'));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->where('medication_calendar_days.14.date', '2026-05-15')
         ->where('medication_calendar_days.14.status', 'complete')
         ->has('medication_calendar_slots', 31)
@@ -113,7 +114,7 @@ test('linked family members see medication intake calendar data on family medica
             return ! array_key_exists('note', $values)
                 && ! array_key_exists('stocks', $values)
                 && ! array_key_exists('supply_estimate_days', $values);
-        }));
+        })));
 
     CarbonImmutable::setTestNow();
 });
@@ -151,9 +152,9 @@ test('family members without a patient link see empty medications on family medi
     $response = $this->actingAs($familyUser)->get(route('family.medications'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Medications')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Medications/Index')
         ->has('medications.data', 0)
         ->has('medication_calendar_days', 0)
-        ->has('medication_calendar_slots', 0));
+        ->has('medication_calendar_slots', 0)));
 });

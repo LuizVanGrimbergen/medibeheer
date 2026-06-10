@@ -46,8 +46,8 @@ test('family overview lists upcoming appointments with pending transport invitat
     $response = $this->actingAs($familyUser)->get(route('family.overview'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Overview')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Overview/Index')
         ->has('pending_transport_appointments', 1)
         ->where('pending_transport_appointments.0.invitation_id', $invitation->id)
         ->where('pending_transport_appointments.0.patient_name', 'Sophie Maas')
@@ -66,7 +66,7 @@ test('family overview lists upcoming appointments with pending transport invitat
         ->where(
             'pending_transport_appointments.0.decline_url',
             route('family.transport-invitations.decline', $invitation, absolute: false),
-        ));
+        )));
 });
 
 test('family overview omits pending transport when another family already accepted', function () {
@@ -97,9 +97,9 @@ test('family overview omits pending transport when another family already accept
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('pending_transport_appointments', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('pending_transport_appointments', 0)));
 });
 
 test('family overview omits declined pending transport invitations', function () {
@@ -128,8 +128,8 @@ test('family overview omits declined pending transport invitations', function ()
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->has('pending_transport_appointments', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('pending_transport_appointments', 0)));
 });
 
 test('family overview omits past appointments with pending transport invitations', function () {
@@ -157,6 +157,6 @@ test('family overview omits past appointments with pending transport invitations
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->has('pending_transport_appointments', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('pending_transport_appointments', 0)));
 });

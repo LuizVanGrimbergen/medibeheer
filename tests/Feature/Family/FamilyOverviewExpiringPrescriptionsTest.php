@@ -33,8 +33,8 @@ test('family overview lists linked patients with expiring prescriptions', functi
     $response = $this->actingAs($familyUser)->get(route('family.overview'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Overview')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Overview/Index')
         ->has('expiring_prescription_patients', 1)
         ->where('expiring_prescription_patients.0.patient_name', 'Sophie Maas')
         ->has('expiring_prescription_patients.0.prescriptions', 1)
@@ -47,7 +47,7 @@ test('family overview lists linked patients with expiring prescriptions', functi
         ->where(
             'expiring_prescription_patients.0.medications_url',
             route('family.medications', ['medication' => $medication->id], absolute: false),
-        ));
+        )));
 });
 
 test('family overview exposes whether a prescription is the last in batch', function () {
@@ -69,9 +69,9 @@ test('family overview exposes whether a prescription is the last in batch', func
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->where('expiring_prescription_patients.0.prescriptions.0.is_last_in_batch', true));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->where('expiring_prescription_patients.0.prescriptions.0.is_last_in_batch', true)));
 });
 
 test('family overview omits patients when prescription expiry is only a warning', function () {
@@ -92,9 +92,9 @@ test('family overview omits patients when prescription expiry is only a warning'
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('expiring_prescription_patients', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('expiring_prescription_patients', 0)));
 });
 
 test('family overview omits patients when prescription expiry is not urgent', function () {
@@ -115,9 +115,9 @@ test('family overview omits patients when prescription expiry is not urgent', fu
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('expiring_prescription_patients', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('expiring_prescription_patients', 0)));
 });
 
 test('family overview omits expiring prescription patients without a patient link', function () {
@@ -126,7 +126,7 @@ test('family overview omits expiring prescription patients without a patient lin
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('expiring_prescription_patients', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('expiring_prescription_patients', 0)));
 });

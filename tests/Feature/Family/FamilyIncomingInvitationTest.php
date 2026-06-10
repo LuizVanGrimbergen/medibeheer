@@ -30,7 +30,7 @@ test('family link page lists pending patient invitations for the family member e
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Family/Link')
+        ->component('Family/Link/Index')
         ->has('incoming_invitations', 1)
         ->where('incoming_invitations.0.patient_name', $patientUser->name));
 });
@@ -146,7 +146,7 @@ test('family link page omits invitations for patients already linked', function 
         ->get(route('family.link'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Link')
+            ->component('Family/Link/Index')
             ->has('incoming_invitations', 0));
 });
 

@@ -44,10 +44,17 @@ test('family appointments opens the paginated page for a deep linked planned app
         ]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Appointments')
-            ->missing('highlighted_appointment_id')
+            ->component('Family/Appointments/Index')
+            ->missing('highlighted_appointment_id'));
+    $this->actingAs($familyUser)
+        ->get(route('family.appointments', [
+            'view' => 'planned',
+            'appointment' => $target->id,
+        ]))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->where('appointments.meta.current_page', 2)
-            ->where('appointments.data.1.id', $target->id));
+            ->where('appointments.data.1.id', $target->id)));
 });
 
 test('family appointments deep links to a planned appointment with pending transport invitation', function () {
@@ -79,9 +86,16 @@ test('family appointments deep links to a planned appointment with pending trans
         ]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Appointments')
-            ->missing('highlighted_appointment_id')
-            ->where('appointments.data.0.id', $target->id));
+            ->component('Family/Appointments/Index')
+            ->missing('highlighted_appointment_id'));
+    $this->actingAs($familyUser)
+        ->get(route('family.appointments', [
+            'view' => 'planned',
+            'appointment' => $target->id,
+        ]))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('appointments.data.0.id', $target->id)));
 });
 
 test('family appointments ignores invalid deep link appointment ids', function () {
@@ -98,7 +112,14 @@ test('family appointments ignores invalid deep link appointment ids', function (
         ]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Appointments')
-            ->missing('highlighted_appointment_id')
-            ->where('appointments.meta.current_page', 1));
+            ->component('Family/Appointments/Index')
+            ->missing('highlighted_appointment_id'));
+    $this->actingAs($familyUser)
+        ->get(route('family.appointments', [
+            'view' => 'planned',
+            'appointment' => 999_999,
+        ]))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('appointments.meta.current_page', 1)));
 });
