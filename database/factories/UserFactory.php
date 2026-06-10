@@ -15,6 +15,15 @@ class UserFactory extends Factory
 {
     protected static ?string $password;
 
+    public function configure(): static
+    {
+        return $this->afterMaking(function (User $user): void {
+            if ($user->role instanceof UserRole) {
+                $user->role_hash = User::hashRole($user->role);
+            }
+        });
+    }
+
     public function definition(): array
     {
         return [

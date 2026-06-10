@@ -27,8 +27,10 @@ class MedicationIntakeFactory extends Factory
 
     public function forSchedule(MedicationSchedule $schedule): static
     {
+        $schedule->loadMissing('medication');
+
         return $this->state(fn (array $attributes): array => [
-            'patient_id' => $schedule->patient_id,
+            'patient_id' => $schedule->medication->patient_id,
             'medication_id' => $schedule->medication_id,
             'medication_schedule_id' => $schedule->id,
         ]);
