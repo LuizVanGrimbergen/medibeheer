@@ -1,4 +1,4 @@
-import type { MedicationPrescriptionListItem, Paginated } from '@/lib/types';
+import type { MedicationPrescriptionItem, Paginated } from '@/lib/types';
 
 export type PatientPrescriptionMedicationChoice = {
     id: number;
@@ -7,6 +7,6 @@ export type PatientPrescriptionMedicationChoice = {
 };
 
 export type PatientPrescriptionsScreenProps = {
-    prescriptions: Paginated<MedicationPrescriptionListItem>;
-    medication_choices: PatientPrescriptionMedicationChoice[];
+    prescriptions?: Paginated<MedicationPrescriptionItem>;
+    medication_choices?: PatientPrescriptionMedicationChoice[];
 };

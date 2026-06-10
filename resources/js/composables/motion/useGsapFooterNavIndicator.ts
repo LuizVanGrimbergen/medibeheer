@@ -18,10 +18,12 @@ export function useGsapFooterNavIndicator(
     indicatorRef: Ref<HTMLElement | ComponentPublicInstance | null>,
     activeRoute: Ref<PatientFooterNavRouteName | undefined>,
     linkRefs: FooterNavLinkRefs,
+    enabled: Ref<boolean>,
 ): void {
     let tween: GsapTween | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let resizeFrameId: number | null = null;
+    let syncFrameId: number | null = null;
     let allowAnimation = false;
 
     const cancelResizeFrame = (): void => {
@@ -33,12 +35,21 @@ export function useGsapFooterNavIndicator(
         resizeFrameId = null;
     };
 
+    const cancelSyncFrame = (): void => {
+        if (syncFrameId === null) {
+            return;
+        }
+
+        globalThis.cancelAnimationFrame(syncFrameId);
+        syncFrameId = null;
+    };
+
     const scheduleSyncFromResize = (): void => {
         cancelResizeFrame();
 
         resizeFrameId = globalThis.requestAnimationFrame(() => {
             resizeFrameId = null;
-            void syncIndicator();
+            scheduleSyncIndicator(false);
         });
     };
 
@@ -67,8 +78,28 @@ export function useGsapFooterNavIndicator(
         };
     };
 
-    const syncIndicator = async (): Promise<void> => {
+    const hideIndicator = async (): Promise<void> => {
+        const indicator = resolveGsapTargetElement(indicatorRef.value);
+
+        if (indicator === null) {
+            return;
+        }
+
+        tween?.kill();
+        allowAnimation = false;
+
+        const gsap = await loadGsap();
+        gsap.set(indicator, { opacity: 0, x: 0, width: 0 });
+    };
+
+    const syncIndicator = async (animated: boolean): Promise<void> => {
         await nextTick();
+
+        if (!enabled.value) {
+            await hideIndicator();
+
+            return;
+        }
 
         const indicator = resolveGsapTargetElement(indicatorRef.value);
         const metrics = measureActiveLink();
@@ -80,8 +111,7 @@ export function useGsapFooterNavIndicator(
         tween?.kill();
 
         if (metrics === null) {
-            const gsap = await loadGsap();
-            gsap.set(indicator, { opacity: 0 });
+            await hideIndicator();
 
             return;
         }
@@ -89,7 +119,7 @@ export function useGsapFooterNavIndicator(
         tween = await animateFooterNavIndicator(
             indicator,
             metrics,
-            allowAnimation,
+            animated && allowAnimation,
         );
 
         if (!allowAnimation) {
@@ -97,16 +127,37 @@ export function useGsapFooterNavIndicator(
         }
     };
 
+    const scheduleSyncIndicator = (animated: boolean): void => {
+        cancelSyncFrame();
+
+        syncFrameId = globalThis.requestAnimationFrame(() => {
+            syncFrameId = null;
+            void syncIndicator(animated);
+        });
+    };
+
     watch(
         activeRoute,
         () => {
-            void syncIndicator();
+            scheduleSyncIndicator(true);
         },
         { flush: 'post' },
     );
 
+    watch(enabled, (isEnabled) => {
+        if (isEnabled) {
+            void loadGsap();
+        }
+
+        scheduleSyncIndicator(false);
+    });
+
     onMounted(() => {
-        void syncIndicator();
+        if (enabled.value) {
+            void loadGsap();
+        }
+
+        scheduleSyncIndicator(false);
 
         const container = resolveGsapTargetElement(containerRef.value);
 
@@ -115,12 +166,17 @@ export function useGsapFooterNavIndicator(
         }
 
         resizeObserver = new ResizeObserver(() => {
+            if (!enabled.value) {
+                return;
+            }
+
             scheduleSyncFromResize();
         });
         resizeObserver.observe(container);
     });
 
     onUnmounted(() => {
+        cancelSyncFrame();
         cancelResizeFrame();
         resizeObserver?.disconnect();
         resizeObserver = null;

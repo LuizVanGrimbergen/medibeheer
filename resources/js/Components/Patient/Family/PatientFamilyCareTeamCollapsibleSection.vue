@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
-import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
-import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
+import { mobileShellSectionBodyTextClass } from '@/lib/shell/mobileShellTypography';
 import { cn } from '@/lib/utils';
 
 const open = defineModel<boolean>('open', { required: true });
@@ -32,63 +32,38 @@ const collapsedSummary = computed((): string => {
 
     return props.collapsedMany.replace('{count}', String(props.count));
 });
+
+const toggleLabel = computed((): string =>
+    t(
+        open.value
+            ? `${props.labelsNamespace}.hideDetails`
+            : `${props.labelsNamespace}.showDetails`,
+    ),
+);
 </script>
 
 <template>
-    <div
-        :class="
-            cn(
-                'border-border bg-surface mt-8 rounded-2xl border-2 p-5 shadow-sm sm:p-6',
-                props.class,
-            )
-        "
-    >
-        <Collapsible v-model:open="open" :unmount-on-hide="false">
-            <h3
-                class="text-text-heading text-lg leading-snug font-bold md:text-xl"
-            >
-                {{ props.heading }}
-            </h3>
+    <div :class="cn('mt-8', props.class)">
+        <CollapsibleSectionCard
+            v-model:open="open"
+            :heading="props.heading"
+            :toggle-label="toggleLabel"
+            :collapsed-summary="collapsedSummary"
+            icon-wrapper-class="bg-primary/10 text-primary"
+            content-class="flex flex-col gap-4"
+        >
+            <template #icon>
+                <Users aria-hidden="true" />
+            </template>
+
             <p
-                v-if="!open"
-                :class="cn('mt-1', patientPageCardHeaderSummaryClass)"
+                v-if="props.intro !== undefined && props.intro !== ''"
+                :class="mobileShellSectionBodyTextClass"
             >
-                {{ collapsedSummary }}
+                {{ props.intro }}
             </p>
 
-            <CollapsibleContent>
-                <div
-                    class="border-border/70 mt-5 flex flex-col gap-4 border-t pt-5"
-                >
-                    <p
-                        v-if="props.intro !== undefined && props.intro !== ''"
-                        class="text-text-muted text-base leading-relaxed"
-                    >
-                        {{ props.intro }}
-                    </p>
-
-                    <slot />
-                </div>
-            </CollapsibleContent>
-
-            <PatientListCardDetailsToggle
-                :scroll-on-expand="false"
-                :mode="open ? 'collapse' : 'expand'"
-                :label="
-                    t(
-                        open
-                            ? `${props.labelsNamespace}.listCollapseHint`
-                            : `${props.labelsNamespace}.listExpandHint`,
-                    )
-                "
-                :ariaLabel="
-                    t(
-                        open
-                            ? `${props.labelsNamespace}.hideDetails`
-                            : `${props.labelsNamespace}.showDetails`,
-                    )
-                "
-            />
-        </Collapsible>
+            <slot />
+        </CollapsibleSectionCard>
     </div>
 </template>

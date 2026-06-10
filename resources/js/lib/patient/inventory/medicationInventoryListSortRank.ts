@@ -1,9 +1,9 @@
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
-import type { MedicationListItem } from '@/lib/types';
+import type { MedicationRegisterItem } from '@/lib/types';
 
 /** Lower rank sorts first: 0 critical, 1 warning, 2 safe, 3 missing tone (e.g. invalid stock). */
 export function medicationInventoryListSortRank(
-    medication: MedicationListItem,
+    medication: MedicationRegisterItem,
 ): number {
     const tone = medicationListVisualTone(medication);
 
@@ -22,7 +22,7 @@ export function medicationInventoryListSortRank(
     return 3;
 }
 
-function hasApproxSupplyDays(medication: MedicationListItem): boolean {
+function hasApproxSupplyDays(medication: MedicationRegisterItem): boolean {
     return (
         medication.supply_estimate_quality === 'approx' &&
         medication.supply_estimate_days !== null
@@ -31,8 +31,8 @@ function hasApproxSupplyDays(medication: MedicationListItem): boolean {
 
 /** Sort by remaining supply days (ascending), then visual tone, then name. Unknown estimates last. */
 export function compareMedicationInventoryListItems(
-    a: MedicationListItem,
-    b: MedicationListItem,
+    a: MedicationRegisterItem,
+    b: MedicationRegisterItem,
 ): number {
     const aHas = hasApproxSupplyDays(a);
     const bHas = hasApproxSupplyDays(b);

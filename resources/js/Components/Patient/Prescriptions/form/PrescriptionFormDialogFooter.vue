@@ -3,10 +3,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
 
 const props = defineProps<{
@@ -44,14 +44,14 @@ function handleSecondaryClick(): void {
 </script>
 
 <template>
-    <div :class="patientFormWizardFooterRowClass">
+    <div :class="mobileShellFormWizardFooterRowClass">
         <Button
             v-if="currentStep === 1"
             type="button"
             variant="secondary"
             size="lg"
             :disabled="processing"
-            :class="patientFormWizardFooterCancelButtonClass"
+            :class="mobileShellFormWizardFooterCancelButtonClass"
             @click.stop.prevent="handleSecondaryClick"
         >
             {{ t('patient.medications.actions.cancel') }}
@@ -74,7 +74,7 @@ function handleSecondaryClick(): void {
             variant="default"
             size="lg"
             :disabled="processing"
-            :class="patientFormWizardFooterPrimaryButtonClass"
+            :class="mobileShellFormWizardFooterPrimaryButtonClass"
         >
             {{ primaryLabel }}
         </Button>

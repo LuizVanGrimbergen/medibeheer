@@ -25,12 +25,15 @@ final class ShowPatientAppointmentCompletePageController extends Controller
         $this->authorize('update', $appointment);
 
         $followUpOutcome = $request->session()->pull('appointment_follow_up_outcome');
+        $showScheduleNextPrompt = $request->boolean('schedule_next')
+            || $followUpOutcome === 'done';
 
-        if (
-            $appointment->status === AppointmentStatus::DONE
-            && $followUpOutcome === 'done'
-        ) {
-            return $this->renderOutcomePage($appointment, showScheduleNextPrompt: true);
+        if ($appointment->status === AppointmentStatus::DONE) {
+            if ($showScheduleNextPrompt) {
+                return $this->renderOutcomePage($appointment, showScheduleNextPrompt: true);
+            }
+
+            return redirect()->route('patient.appointments');
         }
 
         if ($appointment->status !== AppointmentStatus::SCHEDULED) {

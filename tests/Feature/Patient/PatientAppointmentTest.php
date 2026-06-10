@@ -17,13 +17,14 @@ test('patients see appointments on the appointments page', function () {
     $response = $this->actingAs($user)->get(route('patient.appointments'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Appointments');
+    assertInertiaRootComponent($response, 'Patient/Appointments/Index');
     $response->assertInertia(fn ($page) => $page
-        ->has('appointments.data', 2)
-        ->where('appointments.meta.total', 2)
         ->where('appointment_view', 'planned')
         ->where('appointment_tab_totals.planned', 2)
         ->where('appointment_tab_totals.completed', 0));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->has('appointments.data', 2)
+        ->where('appointments.meta.total', 2)));
 });
 
 test('patient appointments index paginates scheduled appointments', function () {
@@ -38,20 +39,25 @@ test('patient appointments index paginates scheduled appointments', function () 
     $this->actingAs($user)->get(route('patient.appointments'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('appointments.data', 10)
-            ->where('appointments.meta.current_page', 1)
-            ->where('appointments.meta.last_page', 2)
-            ->where('appointments.meta.total', 12)
             ->where('appointment_view', 'planned')
             ->where('appointment_tab_totals.planned', 12)
             ->where('appointment_tab_totals.completed', 0));
+    $this->actingAs($user)->get(route('patient.appointments'))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('appointments.data', 10)
+            ->where('appointments.meta.current_page', 1)
+            ->where('appointments.meta.last_page', 2)
+            ->where('appointments.meta.total', 12)));
 
     $this->actingAs($user)->get(route('patient.appointments', ['page' => 2]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(fn ($page) => $page->where('appointment_view', 'planned'));
+    $this->actingAs($user)->get(route('patient.appointments', ['page' => 2]))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('appointments.data', 2)
-            ->where('appointments.meta.current_page', 2)
-            ->where('appointment_view', 'planned'));
+            ->where('appointments.meta.current_page', 2)));
 });
 
 test('patient appointments opens the paginated page for a deep linked planned appointment', function () {
@@ -74,10 +80,10 @@ test('patient appointments opens the paginated page for a deep linked planned ap
     $this->actingAs($user)
         ->get(route('patient.appointments', ['appointment' => $target->id]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Appointments')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Appointments/Index')
             ->where('appointments.meta.current_page', 2)
-            ->where('appointments.data.1.id', $target->id));
+            ->where('appointments.data.1.id', $target->id)));
 });
 
 test('patient appointments ignores invalid deep link appointment ids', function () {
@@ -92,9 +98,9 @@ test('patient appointments ignores invalid deep link appointment ids', function 
     $this->actingAs($user)
         ->get(route('patient.appointments', ['appointment' => 999_999]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Appointments')
-            ->where('appointments.meta.current_page', 1));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Appointments/Index')
+            ->where('appointments.meta.current_page', 1)));
 });
 
 test('patient appointments ignores deep link for completed appointments', function () {
@@ -110,10 +116,10 @@ test('patient appointments ignores deep link for completed appointments', functi
     $this->actingAs($user)
         ->get(route('patient.appointments', ['appointment' => $completed->id]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Appointments')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Appointments/Index')
             ->where('appointments.meta.current_page', 1)
-            ->where('appointments.data', []));
+            ->where('appointments.data', [])));
 });
 
 test('patients can create an appointment', function () {
@@ -137,13 +143,9 @@ test('patients can create an appointment', function () {
 
     $response->assertRedirect(route('patient.appointments'));
 
-    $this->assertDatabaseHas('appointments', [
-        'patient_id' => $patient->id,
-        'status' => AppointmentStatus::SCHEDULED->value,
-    ]);
-
     $appointment = Appointment::query()->where('patient_id', $patient->id)->first();
     expect($appointment)->not->toBeNull();
+    expect($appointment->status)->toBe(AppointmentStatus::SCHEDULED);
     expect($appointment->doctor_type)->toBe(DoctorType::GENERAL_PRACTITIONER);
     expect($appointment->provider_name)->toBe('City Clinic');
     expect($appointment->street)->toBe('Main Street');
@@ -540,10 +542,16 @@ test('patients who save a completed appointment from the outcome flow see the sc
             'status' => AppointmentStatus::DONE->value,
             'doctor_visit_summary' => null,
         ],
-    )->assertRedirect(route('patient.appointments.complete', $appointment));
+    )->assertRedirect(route('patient.appointments.complete', [
+        'appointment' => $appointment,
+        'schedule_next' => 1,
+    ]));
 
     $this->actingAs($user)
-        ->get(route('patient.appointments.complete', $appointment))
+        ->get(route('patient.appointments.complete', [
+            'appointment' => $appointment,
+            'schedule_next' => 1,
+        ]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Patient/Appointments/Complete')
@@ -563,10 +571,16 @@ test('patients who save a cancellation from the outcome flow see the schedule-ne
             'status' => AppointmentStatus::CANCELLED->value,
             'cancellation_reason' => null,
         ],
-    )->assertRedirect(route('patient.appointments.cancel', $appointment));
+    )->assertRedirect(route('patient.appointments.cancel', [
+        'appointment' => $appointment,
+        'schedule_next' => 1,
+    ]));
 
     $this->actingAs($user)
-        ->get(route('patient.appointments.cancel', $appointment))
+        ->get(route('patient.appointments.cancel', [
+            'appointment' => $appointment,
+            'schedule_next' => 1,
+        ]))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Patient/Appointments/Cancel')
@@ -679,11 +693,15 @@ test('patient appointments index ignores completed view query', function () {
         ->get(route('patient.appointments', ['view' => 'completed']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->has('appointments.data', 1)
-            ->where('appointments.meta.total', 1)
             ->where('appointment_view', 'planned')
             ->where('appointment_tab_totals.planned', 1)
             ->where('appointment_tab_totals.completed', 2));
+    $this->actingAs($user)
+        ->get(route('patient.appointments', ['view' => 'completed']))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('appointments.data', 1)
+            ->where('appointments.meta.total', 1)));
 });
 
 test('patients cannot update another patients appointment', function () {

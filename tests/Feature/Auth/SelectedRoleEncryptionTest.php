@@ -29,7 +29,7 @@ test('login page resolves selected role from encrypted query parameter', functio
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Auth/Login')
+        ->component('Auth/Login/Index')
         ->where('selectedRole', 'doctor')
         ->has('roleTokens.patient')
         ->has('roleTokens.doctor')
@@ -41,7 +41,7 @@ test('register page ignores plain role query parameter', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Auth/Register')
+        ->component('Auth/Register/Index')
         ->where('selectedRole', null));
 });
 

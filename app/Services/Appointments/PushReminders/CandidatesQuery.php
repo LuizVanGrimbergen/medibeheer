@@ -91,6 +91,6 @@ final class CandidatesQuery
     private function scheduledAppointmentsQuery(): Builder
     {
         return Appointment::query()
-            ->where('status', AppointmentStatus::SCHEDULED);
+            ->whereStatus(AppointmentStatus::SCHEDULED);
     }
 }

@@ -13,7 +13,6 @@ class MedicationFactory extends Factory
     {
         return [
             'patient_id' => Patient::factory(),
-            'family_id' => null,
             'name' => fake()->words(3, true),
             'dose' => fake()->randomElement(['500 mg', '1 tablet', '10 ml', '2 druppels']),
             'dose_unit' => fake()->randomElement(MedicationDoseUnit::cases()),

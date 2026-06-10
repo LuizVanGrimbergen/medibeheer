@@ -6,9 +6,9 @@ import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizard
 import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 import { Button } from '@/Components/ui/button';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterOutlineButtonClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterOutlineButtonClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 
 const props = defineProps<{
     currentStep: DailyCheckinWizardDialogStep;
@@ -43,7 +43,7 @@ const primaryLabel = computed(() => {
             variant="secondary"
             size="lg"
             :disabled="props.processing"
-            :class="patientFormWizardFooterCancelButtonClass"
+            :class="mobileShellFormWizardFooterCancelButtonClass"
             @click="emit('cancel')"
         >
             {{
@@ -59,7 +59,7 @@ const primaryLabel = computed(() => {
             variant="outline"
             size="lg"
             :disabled="props.processing"
-            :class="patientFormWizardFooterOutlineButtonClass"
+            :class="mobileShellFormWizardFooterOutlineButtonClass"
             @click="emit('back')"
         >
             {{ t('patient.dashboard.dailyCheckins.back') }}

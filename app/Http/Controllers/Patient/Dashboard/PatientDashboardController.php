@@ -28,20 +28,22 @@ class PatientDashboardController extends Controller
 
         $today = MedicationIntakeClock::today();
 
-        return Inertia::render('Patient/Dashboard', [
+        return Inertia::render('Patient/Dashboard/Index', [
             'today_date' => $today->toDateString(),
-            'today_checkin' => $patient
-                ->dailyCheckins()
-                ->with('selectedSymptoms')
-                ->whereDate('checkin_date', $today->toDateString())
-                ->first()
-                ?->toDashboardPayload(),
-            'today_medication_intakes' => Inertia::defer(
-                fn () => $this->scheduledIntakesQuery->forPatientOnDate($patient, $today),
-            ),
             'pending_push_medication_mark' => $this->recentPushMarkStore->peek($patient->id),
             'has_medications' => $patient->medications()->exists(),
             'can_create_medication' => $user->can('create', Medication::class),
+            'today_checkin' => Inertia::defer(
+                fn () => $patient
+                    ->dailyCheckins()
+                    ->with('selectedSymptoms')
+                    ->whereDate('checkin_date', $today->toDateString())
+                    ->first()
+                    ?->toDashboardPayload(),
+            ),
+            'today_medication_intakes' => Inertia::defer(
+                fn () => $this->scheduledIntakesQuery->forPatientOnDate($patient, $today),
+            ),
         ]);
     }
 }

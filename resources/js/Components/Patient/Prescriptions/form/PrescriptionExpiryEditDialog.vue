@@ -2,26 +2,26 @@
 import { useForm } from '@inertiajs/vue3';
 import { computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientShellFormDialog from '@/Components/Patient/form/PatientShellFormDialog.vue';
+import MobileShellFormDialog from '@/Components/shell/MobileShellFormDialog.vue';
 import { Button } from '@/Components/ui/button';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormNativeDateTimeInputClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormNativeDateTimeInputClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-} from '@/lib/patient/patientShellDialogLayout';
-import type { MedicationPrescriptionListItem } from '@/lib/types';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
+} from '@/lib/shell/mobileShellDialogLayout';
+import type { MedicationPrescriptionItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
     open: boolean;
-    prescription: MedicationPrescriptionListItem;
+    prescription: MedicationPrescriptionItem;
     formId: string;
     idPrefix: string;
     dialogContentClass: string;
@@ -82,7 +82,7 @@ function submit(): void {
 </script>
 
 <template>
-    <PatientShellFormDialog
+    <MobileShellFormDialog
         :open="props.open"
         :title="t('patient.prescriptions.dialogEditTitle')"
         :form-id="props.formId"
@@ -94,7 +94,7 @@ function submit(): void {
         <div class="min-w-0 space-y-2">
             <Label
                 :for="`${props.idPrefix}-expiry-date`"
-                :class="patientFormLabelClass"
+                :class="mobileShellFormLabelClass"
             >
                 {{ expiryDateLabel }}
                 <span class="text-danger"> *</span>
@@ -107,9 +107,9 @@ function submit(): void {
                 required
                 :class="
                     cn(
-                        patientFormNativeDateTimeInputClass,
+                        mobileShellFormNativeDateTimeInputClass,
                         form.errors.prescription_expiry_date &&
-                            patientFormFieldInvalidClass,
+                            mobileShellFormFieldInvalidClass,
                     )
                 "
             />
@@ -121,13 +121,13 @@ function submit(): void {
         </div>
 
         <template #footer>
-            <div :class="patientFormWizardFooterRowClass">
+            <div :class="mobileShellFormWizardFooterRowClass">
                 <Button
                     type="button"
                     variant="secondary"
                     size="lg"
                     :disabled="form.processing"
-                    :class="patientFormWizardFooterCancelButtonClass"
+                    :class="mobileShellFormWizardFooterCancelButtonClass"
                     @click="close"
                 >
                     {{ t('patient.prescriptions.actions.cancel') }}
@@ -137,11 +137,11 @@ function submit(): void {
                     variant="default"
                     size="lg"
                     :disabled="form.processing"
-                    :class="patientFormWizardFooterPrimaryButtonClass"
+                    :class="mobileShellFormWizardFooterPrimaryButtonClass"
                 >
                     {{ t('patient.prescriptions.actions.save') }}
                 </Button>
             </div>
         </template>
-    </PatientShellFormDialog>
+    </MobileShellFormDialog>
 </template>

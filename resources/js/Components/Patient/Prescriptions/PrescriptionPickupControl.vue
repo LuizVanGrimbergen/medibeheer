@@ -3,7 +3,7 @@ import { PackageCheck } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { patientPageIntroButtonClass } from '@/lib/patient/patientPageTypography';
+import { mobileShellPageIntroButtonClass } from '@/lib/shell/mobileShellTypography';
 import type { MedicationPrescriptionPickupStatusValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -19,7 +19,7 @@ const { t } = useI18n();
 
 const isPickedUp = computed((): boolean => props.pickupStatus === 'picked_up');
 
-const markButtonClass = patientPageIntroButtonClass;
+const markButtonClass = mobileShellPageIntroButtonClass;
 
 function markPickedUp(): void {
     if (props.disabled || isPickedUp.value) {

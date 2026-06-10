@@ -16,11 +16,8 @@ export default {
     actionRequiredHeading: 'Actie nodig',
     actionRequiredIntro:
         'Een familielid heeft een medicatieplan voor u klaargezet. Bekijk het en kies wat u wilt doen.',
-    pendingMedicationPlansHeading: 'Medicatieplannen van familie',
-    pendingMedicationPlansIntro:
-        'Een familielid heeft een medicatieplan naar u gestuurd. U kunt het hier bekijken, accepteren of weigeren.',
-    pendingMedicationPlansEmpty:
-        'Er zijn geen medicatieplannen om te accepteren.',
+    medicationPlansHeading: 'Medicatieplannen van familie',
+    medicationPlansEmpty: 'Er zijn nog geen medicatieplannen van familie.',
     pendingMedicationPlansFrom: 'Van {name}',
     pendingMedicationPlansReview: 'Bekijken',
     pendingMedicationPlansAccept: 'Accepteren',

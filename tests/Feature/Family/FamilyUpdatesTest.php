@@ -28,10 +28,10 @@ test('linked family members see daily check-ins on overview updates', function (
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
             ->has('updates_checkins', 1)
-            ->where('updates_checkins.0.mood_score', DailyMoodScore::BAD->value));
+            ->where('updates_checkins.0.mood_score', DailyMoodScore::BAD->value)));
 });
 
 test('family overview updates only includes check-ins from today', function () {
@@ -59,9 +59,9 @@ test('family overview updates only includes check-ins from today', function () {
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('updates_checkins', 1)
-            ->where('updates_checkins.0.checkin_date', '2026-05-19'));
+            ->where('updates_checkins.0.checkin_date', '2026-05-19')));
 });
 
 test('linked family members may subscribe to patient family updates channel', function () {
@@ -114,11 +114,11 @@ test('linked family members see taken medication intakes on overview updates', f
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
             ->has('updates_medication_intakes', 1)
             ->where('updates_medication_intakes.0.name', 'Paracetamol')
-            ->where('updates_medication_intakes.0.intake_date', '2026-05-19'));
+            ->where('updates_medication_intakes.0.intake_date', '2026-05-19')));
 
     CarbonImmutable::setTestNow();
 });
@@ -168,9 +168,9 @@ test('family overview updates only includes medication intakes from today', func
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('updates_medication_intakes', 1)
-            ->where('updates_medication_intakes.0.intake_date', '2026-05-19'));
+            ->where('updates_medication_intakes.0.intake_date', '2026-05-19')));
 
     CarbonImmutable::setTestNow();
 });

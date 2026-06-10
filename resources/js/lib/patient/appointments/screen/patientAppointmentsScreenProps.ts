@@ -3,8 +3,8 @@ import type { Paginated, Appointment as PatientAppointment } from '@/lib/types';
 export type PatientAppointmentView = 'planned';
 
 export type PatientAppointmentsScreenProps = {
-    appointments: Paginated<PatientAppointment>;
-    linked_families: {
+    appointments?: Paginated<PatientAppointment>;
+    linked_families?: {
         id: number;
         name: string;
     }[];

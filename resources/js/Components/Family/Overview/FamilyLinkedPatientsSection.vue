@@ -2,7 +2,7 @@
 import { Check, Users } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import { useFamilyActivePatientSwitch } from '@/composables/family/useFamilyActivePatientSwitch';
 import type { FamilyDashboardProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -72,7 +72,7 @@ function selectPatient(switchUrl: string, isActive: boolean): void {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-if="hasPatients"
         v-model:open="isOpen"
         :heading="t(props.headingKey)"
@@ -121,5 +121,5 @@ function selectPatient(switchUrl: string, isActive: boolean): void {
                 </button>
             </li>
         </ul>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

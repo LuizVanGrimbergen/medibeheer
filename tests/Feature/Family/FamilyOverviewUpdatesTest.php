@@ -27,11 +27,11 @@ test('family overview includes today check-ins for the active patient', function
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
             ->has('updates_checkins', 1)
             ->where('updates_checkins.0.mood_score', DailyMoodScore::BAD->value)
-            ->where('updates_checkins.0.patient_name', $patientUser->name));
+            ->where('updates_checkins.0.patient_name', $patientUser->name)));
 });
 
 test('family overview omits check-ins from other days on updates props', function () {
@@ -59,9 +59,9 @@ test('family overview omits check-ins from other days on updates props', functio
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('updates_checkins', 1)
-            ->where('updates_checkins.0.checkin_date', '2026-05-19'));
+            ->where('updates_checkins.0.checkin_date', '2026-05-19')));
 });
 
 test('family overview includes today taken medication intakes for the active patient', function () {
@@ -100,10 +100,10 @@ test('family overview includes today taken medication intakes for the active pat
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('updates_medication_intakes', 1)
             ->where('updates_medication_intakes.0.name', 'Paracetamol')
-            ->where('updates_medication_intakes.0.intake_date', '2026-05-19'));
+            ->where('updates_medication_intakes.0.intake_date', '2026-05-19')));
 
     CarbonImmutable::setTestNow();
 });
@@ -113,7 +113,7 @@ test('family overview exposes empty updates when no patient is linked', function
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->where('updates_checkins', [])
-            ->where('updates_medication_intakes', []));
+            ->where('updates_medication_intakes', [])));
 });

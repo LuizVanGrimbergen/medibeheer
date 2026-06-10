@@ -58,7 +58,7 @@ final class MedicationPlanProposalPatientService
         }
 
         return MedicationPlanProposal::query()
-            ->where('status', MedicationPlanProposalStatus::ACCEPTED)
+            ->whereStatus(MedicationPlanProposalStatus::ACCEPTED)
             ->where('patient_id', $user->patient->id)
             ->with(['items', 'family.user'])
             ->orderByDesc('accepted_at')

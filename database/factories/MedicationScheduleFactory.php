@@ -16,20 +16,7 @@ class MedicationScheduleFactory extends Factory
 {
     public function configure(): static
     {
-        return $this->afterMaking(function (MedicationSchedule $schedule): void {
-            if ($schedule->medication_id === null) {
-                return;
-            }
-
-            $medication = Medication::query()->find($schedule->medication_id);
-
-            if ($medication === null) {
-                return;
-            }
-
-            $schedule->patient_id = $medication->patient_id;
-            $schedule->family_id = $medication->family_id;
-        })->afterCreating(function (MedicationSchedule $schedule): void {
+        return $this->afterCreating(function (MedicationSchedule $schedule): void {
             if ($schedule->intake_frequency !== MedicationIntakeFrequency::WEEKDAYS) {
                 return;
             }
@@ -63,8 +50,6 @@ class MedicationScheduleFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'medication_id' => $medication->id,
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
         ]);
     }
 }

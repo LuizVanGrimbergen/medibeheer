@@ -11,6 +11,6 @@ class ShowPrivacyPolicyController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Inertia::render('Legal/Privacy', LegalPageProps::forInertia($request));
+        return Inertia::render('Legal/Privacy/Index', LegalPageProps::forInertia($request));
     }
 }

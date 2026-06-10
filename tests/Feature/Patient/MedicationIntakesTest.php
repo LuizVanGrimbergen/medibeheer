@@ -51,26 +51,25 @@ test('patient dashboard includes today medication intake slots', function () {
     $response = $this->actingAs($user)->get(route('patient.dashboard'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Dashboard')
-        ->loadDeferredProps(fn ($page) => $page
-            ->has('today_medication_intakes', 2)
-            ->where('today_medication_intakes.0.name', 'Paracetamol')
-            ->where('today_medication_intakes.0.dose_time', '08:00')
-            ->where('today_medication_intakes.0.snooze_minutes', 30)
-            ->where('today_medication_intakes.0.intake_window_state', 'past')
-            ->where('today_medication_intakes.0.day_period', 'morning')
-            ->where('today_medication_intakes.0.meal_timing', MedicationMealTiming::UNRELATED->value)
-            ->where('today_medication_intakes.0.intake_frequency', MedicationIntakeFrequency::DAILY)
-            ->where('today_medication_intakes.0.intake_weekdays', null)
-            ->where('today_medication_intakes.0.note', 'Met water innemen.')
-            ->where('today_medication_intakes.0.strength', null)
-            ->where('today_medication_intakes.0.schedule_start_date', '2026-05-01')
-            ->where('today_medication_intakes.0.schedule_end_date', '2026-12-31')
-            ->where('today_medication_intakes.0.schedule_dose_times', ['08:00', '20:00'])
-            ->where('today_medication_intakes.0.taken_at', null)
-            ->where('today_medication_intakes.1.dose_time', '20:00')
-            ->where('today_medication_intakes.1.day_period', 'evening')));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Patient/Dashboard/Index')
+        ->has('today_medication_intakes', 2)
+        ->where('today_medication_intakes.0.name', 'Paracetamol')
+        ->where('today_medication_intakes.0.dose_time', '08:00')
+        ->where('today_medication_intakes.0.snooze_minutes', 30)
+        ->where('today_medication_intakes.0.intake_window_state', 'past')
+        ->where('today_medication_intakes.0.day_period', 'morning')
+        ->where('today_medication_intakes.0.meal_timing', MedicationMealTiming::UNRELATED->value)
+        ->where('today_medication_intakes.0.intake_frequency', MedicationIntakeFrequency::DAILY)
+        ->where('today_medication_intakes.0.intake_weekdays', null)
+        ->where('today_medication_intakes.0.note', 'Met water innemen.')
+        ->where('today_medication_intakes.0.strength', null)
+        ->where('today_medication_intakes.0.schedule_start_date', '2026-05-01')
+        ->where('today_medication_intakes.0.schedule_end_date', '2026-12-31')
+        ->where('today_medication_intakes.0.schedule_dose_times', ['08:00', '20:00'])
+        ->where('today_medication_intakes.0.taken_at', null)
+        ->where('today_medication_intakes.1.dose_time', '20:00')
+        ->where('today_medication_intakes.1.day_period', 'evening')));
 
     CarbonImmutable::setTestNow();
 });
@@ -336,9 +335,8 @@ test('weekday-only medications are omitted on non-scheduled days', function () {
 
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
-        ->assertInertia(fn ($page) => $page->loadDeferredProps(
-            fn ($page) => $page->has('today_medication_intakes', 0),
-        ));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('today_medication_intakes', 0)));
 
     CarbonImmutable::setTestNow();
 });

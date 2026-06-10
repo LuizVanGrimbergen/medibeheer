@@ -2,7 +2,7 @@
 import { Car } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import FamilyTransportAppointmentCard from '@/Components/Family/Overview/FamilyTransportAppointmentCard.vue';
 import {
     acceptTransport,
@@ -34,7 +34,7 @@ const collapsedSummary = computed(() => {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-if="hasAppointments"
         v-model:open="isOpen"
         :heading="t('family.overview.transportPendingHeading')"
@@ -63,5 +63,5 @@ const collapsedSummary = computed(() => {
                 />
             </li>
         </ul>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

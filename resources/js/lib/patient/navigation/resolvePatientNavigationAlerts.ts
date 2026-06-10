@@ -5,8 +5,8 @@ import {
     worstPrescriptionNavAlertFromPrescriptions,
 } from '@/lib/patient/navigation/patientNavigationAlertTone';
 import type {
-    MedicationListItem,
-    MedicationPrescriptionListItem,
+    MedicationRegisterItem,
+    MedicationPrescriptionItem,
     PageProps,
     Paginated,
 } from '@/lib/types';
@@ -21,15 +21,15 @@ function isPaginated<T>(value: unknown): value is Paginated<T> {
 
 function medicationListsFromPageProps(
     pageProps: PageProps,
-): MedicationListItem[][] {
-    const lists: MedicationListItem[][] = [];
+): MedicationRegisterItem[][] {
+    const lists: MedicationRegisterItem[][] = [];
     const record = pageProps as PageProps & Record<string, unknown>;
 
-    if (isPaginated<MedicationListItem>(record.medications)) {
+    if (isPaginated<MedicationRegisterItem>(record.medications)) {
         lists.push(record.medications.data);
     }
 
-    if (isPaginated<MedicationListItem>(record.active_medications)) {
+    if (isPaginated<MedicationRegisterItem>(record.active_medications)) {
         lists.push(record.active_medications.data);
     }
 
@@ -38,10 +38,10 @@ function medicationListsFromPageProps(
 
 function prescriptionsFromPageProps(
     pageProps: PageProps,
-): MedicationPrescriptionListItem[] {
+): MedicationPrescriptionItem[] {
     const record = pageProps as PageProps & Record<string, unknown>;
 
-    if (!isPaginated<MedicationPrescriptionListItem>(record.prescriptions)) {
+    if (!isPaginated<MedicationPrescriptionItem>(record.prescriptions)) {
         return [];
     }
 

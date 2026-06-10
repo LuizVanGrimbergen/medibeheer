@@ -3,7 +3,7 @@ import { FileText } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
-import MedicationUrgentPrescriptionStatusCard from '@/Components/Medications/MedicationUrgentPrescriptionStatusCard.vue';
+import MedicationUrgentPrescriptionStatusCard from '@/Components/shared/medications/MedicationUrgentPrescriptionStatusCard.vue';
 import type { DoctorPatientUrgentPrescription } from '@/lib/doctor/patients/doctorPatientUrgentPrescription';
 
 const props = defineProps<{

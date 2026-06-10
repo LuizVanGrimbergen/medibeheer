@@ -1,18 +1,18 @@
 <script setup lang="ts">
 /* eslint-disable vue/no-mutating-props */
 import { useI18n } from 'vue-i18n';
-import { resolveAppointmentDoctorTypeLabel } from '@/Components/Appointments/useAppointmentDisplay';
+import { resolveAppointmentDoctorTypeLabel } from '@/Components/shared/appointments/useAppointmentDisplay';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormSelectBaseClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormSelectBaseClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { AppointmentDoctorType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -43,7 +43,7 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
             <div>
                 <Label
                     :for="`${idPrefix}-doctor-type`"
-                    :class="patientFormLabelClass"
+                    :class="mobileShellFormLabelClass"
                 >
                     {{ t('patient.appointments.fields.doctorType') }}
                     <span class="text-danger">*</span>
@@ -54,13 +54,13 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     aria-required="true"
                     :class="
                         cn(
-                            patientFormSelectBaseClass,
+                            mobileShellFormSelectBaseClass,
                             form.errors.doctor_type
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "
-                    :style="patientFormSelectChevronStyle"
+                    :style="mobileShellFormSelectChevronStyle"
                     :aria-invalid="Boolean(form.errors.doctor_type)"
                     :aria-describedby="
                         form.errors.doctor_type
@@ -92,7 +92,7 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
             <div>
                 <Label
                     :for="`${idPrefix}-provider-name`"
-                    :class="patientFormLabelClass"
+                    :class="mobileShellFormLabelClass"
                 >
                     {{ t('patient.appointments.fields.providerName') }}
                 </Label>
@@ -103,9 +103,9 @@ function doctorTypeLabel(type: AppointmentDoctorType): string {
                     autocomplete="organization"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
+                            mobileShellFormFieldInputClass,
                             form.errors.provider_name
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "

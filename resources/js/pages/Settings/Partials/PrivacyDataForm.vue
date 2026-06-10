@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { Download } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import { Button } from '@/Components/ui/button';
-import { patientFormWizardFooterCancelButtonClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellFormWizardFooterCancelButtonClass } from '@/lib/shell/mobileShellDialogLayout';
 import type { PageProps } from '@/lib/types';
 
 const { t } = useI18n();
@@ -74,7 +74,7 @@ const page = usePage<PageProps>();
                 variant="secondary"
                 size="lg"
                 class="mt-4"
-                :class="patientFormWizardFooterCancelButtonClass"
+                :class="mobileShellFormWizardFooterCancelButtonClass"
             >
                 <Link :href="route('settings.edit', { section: 'delete' })">
                     {{ t('profile.delete.action') }}

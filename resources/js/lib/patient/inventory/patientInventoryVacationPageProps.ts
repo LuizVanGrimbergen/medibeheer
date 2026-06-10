@@ -5,5 +5,5 @@ export type PatientInventoryVacationPageProps = {
     starts_on: string;
     ends_on: string;
     result: PatientInventoryVacationSupplyResult | null;
-    expiring_prescriptions: PatientInventoryVacationExpiringPrescription[];
+    expiring_prescriptions?: PatientInventoryVacationExpiringPrescription[];
 };

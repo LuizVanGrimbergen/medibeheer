@@ -32,19 +32,19 @@ test('privacy and cookie policy pages can be rendered', function () {
     $this->get(route('legal.privacy'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Legal/Privacy')
+            ->component('Legal/Privacy/Index')
             ->has('contactEmail')
             ->where('contactEmail', $contactEmail)
             ->has('retention'));
 
     $this->get(route('legal.cookies'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('Legal/Cookies'));
+        ->assertInertia(fn ($page) => $page->component('Legal/Cookies/Index'));
 
     $this->get(route('legal.terms'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Legal/Terms')
+            ->component('Legal/Terms/Index')
             ->has('controller')
             ->has('documentLocale'));
 });
@@ -61,7 +61,7 @@ test('registration stores user consents', function () {
     expect(
         UserConsent::query()
             ->where('user_id', $user->id)
-            ->where('type', UserConsentType::PRIVACY_POLICY)
+            ->whereType(UserConsentType::PRIVACY_POLICY)
             ->exists(),
     )->toBeTrue();
 });

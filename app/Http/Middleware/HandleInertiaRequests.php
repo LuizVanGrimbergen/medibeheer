@@ -7,6 +7,7 @@ use App\Support\FamilyDashboardState;
 use App\Support\PatientNavigationState;
 use App\Support\Seo;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -65,7 +66,9 @@ class HandleInertiaRequests extends Middleware
         ];
 
         if ($user instanceof User && $user->isFamilyMember() && $request->routeIs('family.*')) {
-            $shared['family'] = fn (): array => FamilyDashboardState::inertiaPayload($request);
+            $shared['family'] = Inertia::defer(
+                fn (): array => FamilyDashboardState::inertiaPayload($request),
+            );
         }
 
         if ($user instanceof User && ($user->isPatient() || $user->isFamilyMember())) {
@@ -80,7 +83,9 @@ class HandleInertiaRequests extends Middleware
         }
 
         if ($user instanceof User && $user->isPatient()) {
-            $shared['patient_navigation'] = fn (): array => PatientNavigationState::inertiaPayload($request);
+            $shared['patient_navigation'] = Inertia::defer(
+                fn (): array => PatientNavigationState::inertiaPayload($request),
+            );
         }
 
         return $shared;

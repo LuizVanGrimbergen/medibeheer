@@ -15,8 +15,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->text('weekday');
             $table->timestamps();
-
-            $table->index('medication_schedule_id');
         });
     }
 

@@ -16,11 +16,11 @@ import { MEDICATION_STRENGTH_UNIT_OPTIONS } from '@/lib/patient/medications/opti
 import { defaultDoseUnitForMedicationType } from '@/lib/patient/medications/options/medicationTypeDefaultDoseUnit';
 import { MEDICATION_TYPE_OPTIONS } from '@/lib/patient/medications/options/medicationTypeIcons';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormLargeTouchFieldClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { MedicationTypeValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -134,7 +134,7 @@ function defaultStrengthUnitForMedicationType(
         <div>
             <Label
                 :for="`${idPrefix}-name`"
-                :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
+                :class="cn(mobileShellFormLabelClass, 'text-lg md:text-xl')"
             >
                 {{ t('patient.medications.fields.name') }}
                 <span class="text-danger">*</span>
@@ -149,10 +149,10 @@ function defaultStrengthUnitForMedicationType(
                 :placeholder="t('patient.medications.fields.namePlaceholder')"
                 :class="
                     cn(
-                        patientFormFieldInputClass,
-                        patientFormLargeTouchFieldClass,
+                        mobileShellFormFieldInputClass,
+                        mobileShellFormLargeTouchFieldClass,
                         'md:min-h-14 md:py-3! md:text-lg! md:leading-normal!',
-                        form.errors.name ? patientFormFieldInvalidClass : null,
+                        form.errors.name ? mobileShellFormFieldInvalidClass : null,
                     )
                 "
                 :aria-invalid="Boolean(form.errors.name)"
@@ -169,7 +169,7 @@ function defaultStrengthUnitForMedicationType(
         <div class="w-full min-w-0">
             <p
                 :id="`${idPrefix}-type-label`"
-                :class="cn(patientFormLabelClass, 'text-lg md:text-xl')"
+                :class="cn(mobileShellFormLabelClass, 'text-lg md:text-xl')"
             >
                 {{ t('patient.medications.fields.type') }}
                 <span class="text-danger">*</span>

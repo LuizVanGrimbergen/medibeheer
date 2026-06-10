@@ -20,9 +20,9 @@ test('patient dashboard includes today check-in when one exists for today', func
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->where('today_checkin.mood_score', 'good')
-            ->etc());
+            ->etc()));
 });
 
 test('patient dashboard has no today check-in payload before first check-in', function () {
@@ -31,7 +31,7 @@ test('patient dashboard has no today check-in payload before first check-in', fu
     $this->actingAs($user)
         ->get(route('patient.dashboard'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('today_checkin', null));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page->where('today_checkin', null)));
 });
 
 test('verified patients can visit the patient dashboard', function () {

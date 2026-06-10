@@ -30,10 +30,14 @@ class DoctorPatientsController extends Controller
         }
 
         return Inertia::render('Doctor/Patients/Index', [
-            'patients' => $this->linkedPatientsService->listForDoctor($doctor),
-            'incoming_invitations' => IncomingDoctorInvitationResource::collection(
-                $this->doctorInvitationService->pendingIncomingForDoctor($request->user()),
-            )->resolve(),
+            'patients' => Inertia::defer(
+                fn (): array => $this->linkedPatientsService->listForDoctor($doctor),
+            ),
+            'incoming_invitations' => Inertia::defer(
+                fn (): array => IncomingDoctorInvitationResource::collection(
+                    $this->doctorInvitationService->pendingIncomingForDoctor($request->user()),
+                )->resolve(),
+            ),
         ]);
     }
 }

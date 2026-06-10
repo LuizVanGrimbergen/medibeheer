@@ -39,8 +39,8 @@ test('family overview lists linked patients with critical medication stock', fun
     $response = $this->actingAs($familyUser)->get(route('family.overview'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Overview')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Overview/Index')
         ->has('low_stock_patients', 1)
         ->where('low_stock_patients.0.patient_name', 'Sophie Maas')
         ->has('low_stock_patients.0.medications', 1)
@@ -49,7 +49,7 @@ test('family overview lists linked patients with critical medication stock', fun
         ->where(
             'low_stock_patients.0.medications_url',
             route('family.medications', ['medication' => $medication->id], absolute: false),
-        ));
+        )));
 });
 
 test('family overview omits patients when medication stock is not critical', function () {
@@ -74,9 +74,9 @@ test('family overview omits patients when medication stock is not critical', fun
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('low_stock_patients', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('low_stock_patients', 0)));
 });
 
 test('family overview omits low stock patients without a patient link', function () {
@@ -85,7 +85,7 @@ test('family overview omits low stock patients without a patient link', function
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('low_stock_patients', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('low_stock_patients', 0)));
 });

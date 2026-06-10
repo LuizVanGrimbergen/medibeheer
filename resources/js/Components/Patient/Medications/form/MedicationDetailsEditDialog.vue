@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
 import type { MedicationCreateFormWithErrors } from '@/Components/Patient/Medications/form/MedicationFormTypes';
 import { useMedicationEditDialog } from '@/Components/Patient/Medications/form/useMedicationEditDialog';
 import MedicationCreateSummaryStep from '@/Components/Patient/Medications/steps/MedicationCreateSummaryStep.vue';
@@ -21,11 +21,11 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
+import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import {
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellWizardFormClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellWizardFormClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 
 const props = defineProps<{
     open: boolean;
@@ -64,7 +64,7 @@ const secondaryButtonClass =
 const isOpen = toRef(() => props.open);
 const progressLabelRef = ref<HTMLElement | null>(null);
 
-usePatientShellDialogChromeSync(isOpen);
+useMobileShellDialogChromeSync(isOpen);
 
 const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     editingStep,
@@ -77,7 +77,7 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     <Dialog :open="props.open" @update:open="emit('update:open', $event)">
         <DialogContent
             :class="props.dialogContentClass"
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
+            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('md')"
         >
             <DialogHeader
                 class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
@@ -108,11 +108,11 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
 
             <form
                 :id="props.formId"
-                :class="patientShellWizardFormClass"
+                :class="mobileShellWizardFormClass"
                 novalidate
                 @submit.prevent="handleSubmit"
             >
-                <PatientShellWizardScrollBody
+                <MobileShellWizardScrollBody
                     :active="props.open"
                     :step-key="editingStep"
                 >
@@ -199,7 +199,7 @@ const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
                             </Button>
                         </div>
                     </template>
-                </PatientShellWizardScrollBody>
+                </MobileShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

@@ -3,7 +3,7 @@ import { Pencil } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
-import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
+import { mobileShellFormLabelClass } from '@/lib/shell/mobileShellFormFieldClasses';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { PrescriptionFormWizardStep } from '@/lib/patient/prescriptions/prescriptionFormWizardTypes';
@@ -42,7 +42,7 @@ const summaryValueClass =
     'min-w-0 flex-1 text-base font-semibold leading-snug text-text-heading sm:text-end md:text-lg';
 
 const overviewSectionHeadingClass = cn(
-    patientFormLabelClass,
+    mobileShellFormLabelClass,
     'mb-3 text-lg text-text-heading md:mb-4 md:text-xl',
 );
 

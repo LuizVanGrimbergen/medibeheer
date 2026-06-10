@@ -34,7 +34,6 @@ class MedicationSeeder extends Seeder
             return;
         }
 
-        $familyId = $family?->id;
         $today = Carbon::now()->startOfDay();
 
         $createdSchedules = [];
@@ -45,32 +44,20 @@ class MedicationSeeder extends Seeder
             $prescription = $demo['prescription'] ?? null;
             unset($demo['schedule'], $demo['stock'], $demo['prescription']);
 
-            $medication = $patient->medications()->create(array_merge(
-                $demo,
-                $familyId !== null ? ['family_id' => $familyId] : [],
-            ));
+            $medication = $patient->medications()->create($demo);
 
             $normalized = MedicationScheduleIntakeWeekdays::normalizeNestedSchedule($scheduleRaw);
             $normalized = MedicationScheduleDoseTimeFields::normalizeNestedSchedule($normalized);
             $weekdayList = $normalized['intake_weekdays'];
             $scheduleAttrs = Arr::except($normalized, ['intake_weekdays']);
 
-            $schedule = $medication->schedules()->create(array_merge($scheduleAttrs, [
-                'patient_id' => $medication->patient_id,
-                'family_id' => $medication->family_id,
-            ]));
+            $schedule = $medication->schedules()->create($scheduleAttrs);
             $schedule->syncIntakeWeekdays($weekdayList);
 
-            $medication->stocks()->create(array_merge($stock, [
-                'patient_id' => $medication->patient_id,
-                'family_id' => $medication->family_id,
-            ]));
+            $medication->stocks()->create($stock);
 
             if ($prescription !== null) {
-                $medication->prescriptions()->create(array_merge($prescription, [
-                    'patient_id' => $medication->patient_id,
-                    'family_id' => $medication->family_id,
-                ]));
+                $medication->prescriptions()->create($prescription);
             }
 
             $createdSchedules[] = $schedule->load('weekdays');

@@ -2,10 +2,10 @@
 import { Pencil, Trash2 } from 'lucide-vue-next';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import {
-    patientPageCardToolbarButtonClass,
-    patientPageCardToolbarClass,
-    patientPageCardToolbarIconClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellPageCardToolbarButtonClass,
+    mobileShellPageCardToolbarClass,
+    mobileShellPageCardToolbarIconClass,
+} from '@/lib/shell/mobileShellTypography';
 
 defineProps<{
     ariaLabel: string;
@@ -23,30 +23,30 @@ const emit = defineEmits<{
 
 <template>
     <div
-        :class="patientPageCardToolbarClass"
+        :class="mobileShellPageCardToolbarClass"
         role="toolbar"
         :aria-label="ariaLabel"
     >
         <IconActionButton
             v-if="showEdit"
-            :class="patientPageCardToolbarButtonClass"
+            :class="mobileShellPageCardToolbarButtonClass"
             :ariaLabel="editAriaLabel"
             @click="emit('edit')"
         >
             <Pencil
-                :class="patientPageCardToolbarIconClass"
+                :class="mobileShellPageCardToolbarIconClass"
                 aria-hidden="true"
             />
         </IconActionButton>
         <IconActionButton
             v-if="showDelete"
-            :class="patientPageCardToolbarButtonClass"
+            :class="mobileShellPageCardToolbarButtonClass"
             tone="danger"
             :ariaLabel="deleteAriaLabel"
             @click="emit('delete')"
         >
             <Trash2
-                :class="patientPageCardToolbarIconClass"
+                :class="mobileShellPageCardToolbarIconClass"
                 aria-hidden="true"
             />
         </IconActionButton>

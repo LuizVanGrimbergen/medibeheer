@@ -1,7 +1,7 @@
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneFromDaysRemaining } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import type {
-    MedicationListItem,
+    MedicationRegisterItem,
     MedicationSupplyEstimateQuality,
 } from '@/lib/types';
 
@@ -31,7 +31,7 @@ export function medicationVisualToneFromContext(
 }
 
 export function medicationListVisualTone(
-    medication: MedicationListItem,
+    medication: MedicationRegisterItem,
 ): MedicationStockProgressTone | null {
     if (medication.list_status !== 'active') {
         return null;

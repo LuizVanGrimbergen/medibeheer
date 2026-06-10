@@ -2,7 +2,7 @@
 import { Bell } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import FamilyUpdatesDayContent from '@/Components/Family/Updates/FamilyUpdatesDayContent.vue';
 import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/history/medicationIntakeHistoryTypes';
 import type { DailyCheckin } from '@/lib/types';
@@ -45,7 +45,7 @@ const collapsedSummary = computed((): string => {
 
 <template>
     <div id="family-overview-updates">
-        <FamilyOverviewCollapsibleSection
+        <CollapsibleSectionCard
             v-model:open="isOpen"
             :heading="t('family.updates.sectionHeading')"
             :toggle-label="t('family.overview.updatesToggle')"
@@ -60,6 +60,6 @@ const collapsedSummary = computed((): string => {
                 :checkins="props.checkins"
                 :medication-intakes="props.medicationIntakes"
             />
-        </FamilyOverviewCollapsibleSection>
+        </CollapsibleSectionCard>
     </div>
 </template>

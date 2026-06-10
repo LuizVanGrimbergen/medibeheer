@@ -4,7 +4,7 @@ import { AlertTriangle, Check, Clock, Package, Scale } from 'lucide-vue-next';
 import type { ComponentPublicInstance } from 'vue';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
+import MedicationListCardLead from '@/Components/shared/medications/MedicationListCardLead.vue';
 import PatientListCardDetailsGroup from '@/Components/Patient/PatientListCardDetailsGroup.vue';
 import PatientListCardDetailsGroupItem from '@/Components/Patient/PatientListCardDetailsGroupItem.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
@@ -16,7 +16,7 @@ import { Label } from '@/Components/ui/label';
 import { useGsapAttentionPulse } from '@/composables/motion/useGsapAttentionPulse';
 import { useSuccessFlashTrigger } from '@/composables/motion/useSuccessFlashTrigger';
 import { medicationVisualToneFromContext } from '@/lib/patient/inventory/medicationListVisualTone';
-import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
+import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import {
     medicationIntakeDoseLine,
     medicationIntakeNotePreview,
@@ -27,11 +27,11 @@ import {
     currentMedicationIntakeTimeHHmm,
 } from '@/lib/patient/medications/intake/medicationIntakeWindow';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormNativeDateTimeInputClass,
-} from '@/lib/patient/patientFormFieldClasses';
-import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormNativeDateTimeInputClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
+import { mobileShellPageCardHeaderSummaryClass } from '@/lib/shell/mobileShellTypography';
 import type {
     MedicationTypeValue,
     TodayMedicationIntakeSlot,
@@ -123,7 +123,7 @@ const stockProgressTone = computed(() =>
 const isCriticalSupply = computed(() => stockProgressTone.value === 'critical');
 
 const intakeCardToneClasses = computed(() =>
-    medicationListVisualToneClasses(stockProgressTone.value),
+    medicationUrgencyToneClasses(stockProgressTone.value),
 );
 
 const showCriticalSupplyAlert = computed(() => isCriticalSupply.value);
@@ -257,7 +257,7 @@ function confirmCustomTakenTime(): void {
                     :class="showCriticalSupplyAlert ? 'pr-8 sm:pr-10' : null"
                 >
                     <template v-if="!isOpen" #subtitle>
-                        <p :class="patientPageCardHeaderSummaryClass">
+                        <p :class="mobileShellPageCardHeaderSummaryClass">
                             {{ headerSummary }}
                         </p>
                     </template>
@@ -335,7 +335,7 @@ function confirmCustomTakenTime(): void {
                     >
                         <Label
                             :for="`intake-custom-time-${intakeSlot.medication_schedule_id}-${intakeSlot.dose_time}`"
-                            :class="patientFormLabelClass"
+                            :class="mobileShellFormLabelClass"
                         >
                             {{
                                 t(
@@ -351,9 +351,9 @@ function confirmCustomTakenTime(): void {
                             autocomplete="off"
                             :class="
                                 cn(
-                                    patientFormNativeDateTimeInputClass,
+                                    mobileShellFormNativeDateTimeInputClass,
                                     intakeFormError
-                                        ? patientFormFieldInvalidClass
+                                        ? mobileShellFormFieldInvalidClass
                                         : null,
                                 )
                             "

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -18,7 +18,7 @@ const props = withDefaults(
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         class="scroll-mt-20"
         v-model:open="open"
         :heading="props.heading"
@@ -33,5 +33,5 @@ const props = withDefaults(
         </template>
 
         <slot />
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

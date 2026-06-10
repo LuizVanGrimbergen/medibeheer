@@ -2,7 +2,7 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
 import MedicationStockBoxRefillCalculator from '@/Components/Patient/Inventory/form/MedicationStockBoxRefillCalculator.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { buttonVariants } from '@/Components/ui/button';
@@ -15,15 +15,15 @@ import {
 } from '@/Components/ui/dialog';
 import type { PatientActionSuccessDetail } from '@/composables/patient/usePatientActionSuccessScreen';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
-import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
+import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import type { MedicationStockProgressTone } from '@/lib/patient/inventory/medicationListVisualTone';
 import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/stock/formatMedicationStockDisplayAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import {
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellWizardFormClass,
-} from '@/lib/patient/patientShellDialogLayout';
-import type { MedicationStockListItem } from '@/lib/types';
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellWizardFormClass,
+} from '@/lib/shell/mobileShellDialogLayout';
+import type { MedicationStockItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -32,7 +32,7 @@ const props = withDefaults(
         medicationId: number;
         medicationName: string;
         doseUnit: string | null;
-        stock: MedicationStockListItem;
+        stock: MedicationStockItem;
         stockProgressTone?: MedicationStockProgressTone | null;
         stockPiecesPerPackage?: number | null;
         formId: string;
@@ -53,7 +53,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-usePatientShellDialogChromeSync(toRef(() => props.open));
+useMobileShellDialogChromeSync(toRef(() => props.open));
 
 const {
     open: stockUpdateSuccessOpen,
@@ -241,7 +241,7 @@ function submitStock(): void {
     <Dialog :open="props.open" @update:open="emit('update:open', $event)">
         <DialogContent
             :class="props.dialogContentClass"
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
+            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('md')"
         >
             <DialogHeader
                 class="shrink-0 space-y-1.5 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1 sm:pt-0 md:space-y-1"
@@ -255,11 +255,11 @@ function submitStock(): void {
 
             <form
                 :id="props.formId"
-                :class="patientShellWizardFormClass"
+                :class="mobileShellWizardFormClass"
                 novalidate
                 @submit.prevent="submitStock"
             >
-                <PatientShellWizardScrollBody :active="props.open">
+                <MobileShellWizardScrollBody :active="props.open">
                     <div class="space-y-3 md:space-y-3">
                         <Card
                             class="border-border/80 bg-surface text-text rounded-2xl border shadow-md shadow-black/[0.04] md:rounded-3xl"
@@ -329,7 +329,7 @@ function submitStock(): void {
                             </button>
                         </div>
                     </template>
-                </PatientShellWizardScrollBody>
+                </MobileShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

@@ -30,11 +30,11 @@ test('verified doctors can visit the doctor patients index', function () {
     $response = $this->actingAs($user)->get(route('doctor.patients'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->component('Doctor/Patients/Index')
         ->has('patients')
         ->has('incoming_invitations')
-    );
+    ));
 });
 
 test('patients cannot visit the doctor dashboard', function () {
@@ -109,8 +109,8 @@ test('doctors can view a linked patient overview with calendar data on the dashb
     ]));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Doctor/Dashboard')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Doctor/Dashboard/Index')
         ->has('patient_overview', fn ($overview) => $overview
             ->where('selected_patient.public_id', $linkedPatient->user->public_id)
             ->where('selected_patient.name', $linkedPatient->user->name)
@@ -123,7 +123,7 @@ test('doctors can view a linked patient overview with calendar data on the dashb
             ->has('wellbeing_checkins.meta')
             ->has('urgent_prescriptions')
         )
-    );
+    ));
 });
 
 test('doctor patient overview lists critical expiring prescriptions', function () {
@@ -147,7 +147,7 @@ test('doctor patient overview lists critical expiring prescriptions', function (
     ]));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->has('patient_overview.urgent_prescriptions', 1)
         ->where(
             'patient_overview.urgent_prescriptions.0.medication_name',
@@ -155,7 +155,7 @@ test('doctor patient overview lists critical expiring prescriptions', function (
         )
         ->where('patient_overview.urgent_prescriptions.0.days_remaining', 5)
         ->where('patient_overview.urgent_prescriptions.0.is_last_in_batch', false)
-    );
+    ));
 });
 
 test('doctor patient overview omits prescriptions that are only a warning', function () {
@@ -177,9 +177,9 @@ test('doctor patient overview omits prescriptions that are only a warning', func
     ]));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->has('patient_overview.urgent_prescriptions', 0)
-    );
+    ));
 });
 
 test('doctor patient overview exposes the same wellbeing check-in list as family', function () {
@@ -207,11 +207,11 @@ test('doctor patient overview exposes the same wellbeing check-in list as family
     ]));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->has('patient_overview.wellbeing_checkins.data', 2)
         ->where('patient_overview.wellbeing_checkins.data.0.mood_score', DailyMoodScore::GOOD->value)
         ->where('patient_overview.wellbeing_checkins.data.1.mood_score', DailyMoodScore::BAD->value)
-    );
+    ));
 });
 
 test('doctors cannot view an unlinked patient overview on the dashboard', function () {
@@ -223,10 +223,10 @@ test('doctors cannot view an unlinked patient overview on the dashboard', functi
     ]));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Doctor/Dashboard')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Doctor/Dashboard/Index')
         ->where('patient_overview', null)
-    );
+    ));
 });
 
 test('doctor patients route redirects patient overview queries to the dashboard', function () {

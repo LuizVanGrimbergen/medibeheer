@@ -4,12 +4,12 @@ import type { Composer } from 'vue-i18n';
 import { createInventoryVacationShareFiles } from '@/lib/patient/inventory/createInventoryVacationShareFiles';
 import { inventoryVacationShareFilename } from '@/lib/patient/inventory/inventoryVacationShareFilename';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
-import { inventoryVacationPlannedShareImageCount } from '@/lib/patient/inventory/splitInventoryVacationShareImagePayloads';
 import {
     canShareVacationImagesFromBrowser,
     shareOrDownloadInventoryVacationShareFiles,
     shareVacationImageFile,
 } from '@/lib/patient/inventory/shareInventoryVacationImage';
+import { inventoryVacationPlannedShareImageCount } from '@/lib/patient/inventory/splitInventoryVacationShareImagePayloads';
 
 type UseInventoryVacationShareToPhotosOptions = {
     shareImagePayload: ComputedRef<InventoryVacationShareImagePayload | null>;

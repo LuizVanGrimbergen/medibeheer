@@ -7,7 +7,7 @@ use App\Http\Controllers\Patient\Concerns\AuthorizesPatientProfile;
 use App\Http\Requests\Patient\Medications\StoreMedicationRequest;
 use App\Http\Requests\Patient\Medications\UpdateMedicationRequest;
 use App\Models\Medication;
-use App\Services\Patient\PatientMedicationsScreenService;
+use App\Services\Patient\PatientMedicationRegisterService;
 use App\Support\MedicationScheduleIntakeWeekdays;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,22 +21,19 @@ class PatientMedicationController extends Controller
     use AuthorizesPatientProfile;
 
     public function __construct(
-        private readonly PatientMedicationsScreenService $patientMedicationsScreenService,
+        private readonly PatientMedicationRegisterService $patientMedicationRegisterService,
     ) {}
 
     public function index(Request $request): Response
     {
         $patient = $this->authorizePatientProfile($request);
 
-        return Inertia::render(
-            'Patient/Medications',
-            [
-                'active_medications' => Inertia::defer(
-                    fn (): array => $this->patientMedicationsScreenService->paginatedActiveMedications($patient),
-                ),
-                'can_create_medication' => $request->user()?->can('create', Medication::class) ?? false,
-            ],
-        );
+        return Inertia::render('Patient/Medications/Index', [
+            'can_create_medication' => $request->user()?->can('create', Medication::class) ?? false,
+            'active_medications' => Inertia::defer(
+                fn (): array => $this->patientMedicationRegisterService->paginatedActiveMedications($patient),
+            ),
+        ]);
     }
 
     public function store(StoreMedicationRequest $request): RedirectResponse
@@ -61,22 +58,13 @@ class PatientMedicationController extends Controller
             $intakeWeekdays,
             $stockCurrent,
         ): void {
-            $medication = $patient->medications()->create([
-                ...$medicationAttributes,
-                'family_id' => $patient->defaultMedicationFamilyId(),
-            ]);
+            $medication = $patient->medications()->create($medicationAttributes);
 
-            $createdSchedule = $medication->schedules()->create([
-                ...$scheduleAttributes,
-                'patient_id' => $medication->patient_id,
-                'family_id' => $medication->family_id,
-            ]);
+            $createdSchedule = $medication->schedules()->create($scheduleAttributes);
             $createdSchedule->syncIntakeWeekdays($intakeWeekdays);
 
             $medication->stocks()->create([
                 'current_stock' => $stockCurrent,
-                'patient_id' => $medication->patient_id,
-                'family_id' => $medication->family_id,
             ]);
         });
 
@@ -85,7 +73,7 @@ class PatientMedicationController extends Controller
 
     public function update(UpdateMedicationRequest $request, Medication $medication): RedirectResponse
     {
-        $patient = $this->authorizePatientProfile($request);
+        $this->authorizePatientProfile($request);
 
         $validated = $request->validated();
 
@@ -99,17 +87,10 @@ class PatientMedicationController extends Controller
             'stock_pieces_per_package',
         ]);
 
-        DB::transaction(function () use ($medication, $validated, $medicationPayload, $patient): void {
+        DB::transaction(function () use ($medication, $validated, $medicationPayload): void {
             if ($medicationPayload !== []) {
-                $medication->fill([
-                    ...$medicationPayload,
-                    'family_id' => $patient->defaultMedicationFamilyId(),
-                ])->save();
+                $medication->fill($medicationPayload)->save();
 
-                $medication->stocks()->update([
-                    'family_id' => $medication->family_id,
-                    'patient_id' => $medication->patient_id,
-                ]);
             }
 
             if (isset($validated['schedule'])) {
@@ -142,8 +123,6 @@ class PatientMedicationController extends Controller
                 if ($stock !== null) {
                     $stock->fill([
                         'current_stock' => $validated['current_stock'],
-                        'family_id' => $medication->family_id,
-                        'patient_id' => $medication->patient_id,
                     ])->save();
                 }
             }

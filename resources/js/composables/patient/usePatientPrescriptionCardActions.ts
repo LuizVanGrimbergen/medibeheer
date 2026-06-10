@@ -1,21 +1,21 @@
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import type { MedicationPrescriptionListItem } from '@/lib/types';
+import type { MedicationPrescriptionItem } from '@/lib/types';
 
 export function usePatientPrescriptionCardActions() {
     const editDialogOpen = ref(false);
-    const prescriptionPendingEdit = ref<MedicationPrescriptionListItem | null>(
+    const prescriptionPendingEdit = ref<MedicationPrescriptionItem | null>(
         null,
     );
 
     const deleteDialogOpen = ref(false);
-    const prescriptionPendingDelete = ref<MedicationPrescriptionListItem | null>(
+    const prescriptionPendingDelete = ref<MedicationPrescriptionItem | null>(
         null,
     );
     const deleteProcessing = ref(false);
 
     function openEditPrescriptionDialog(
-        prescription: MedicationPrescriptionListItem,
+        prescription: MedicationPrescriptionItem,
     ): void {
         prescriptionPendingEdit.value = prescription;
         editDialogOpen.value = true;
@@ -27,7 +27,7 @@ export function usePatientPrescriptionCardActions() {
     }
 
     function openDeletePrescriptionDialog(
-        prescription: MedicationPrescriptionListItem,
+        prescription: MedicationPrescriptionItem,
     ): void {
         prescriptionPendingDelete.value = prescription;
         deleteDialogOpen.value = true;

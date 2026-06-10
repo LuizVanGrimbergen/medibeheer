@@ -3,12 +3,12 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePrescriptionFormWizard } from '@/Components/Patient/Prescriptions/form/usePrescriptionFormWizard';
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
-import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellDialogContentClass } from '@/lib/shell/mobileShellDialogLayout';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 
-const prescriptionFormDialogLayoutClass = patientShellDialogContentClass('md');
-const addPrescriptionFormIdPrefix = 'patient-add-prescription';
+const prescriptionFormDialogLayoutClass = mobileShellDialogContentClass('md');
+const prescriptionFormIdPrefix = 'patient-prescription-form';
 
 const PRESCRIPTION_QUANTITY_MIN = 1;
 const PRESCRIPTION_QUANTITY_MAX = 24;
@@ -44,7 +44,7 @@ export function usePatientPrescriptionsPage(
     const addSuccessScreen = usePatientActionSuccessScreen();
     const pickupSuccessScreen = usePatientActionSuccessScreen();
     const pickupSuccessIsLastPrescription = ref(false);
-    const addDialogOpen = ref(false);
+    const prescriptionFormDialogOpen = ref(false);
     const selectedMedicationId = ref<number | null>(null);
     const quantityClientError = ref('');
     const medicationClientError = ref('');
@@ -55,7 +55,9 @@ export function usePatientPrescriptionsPage(
         prescription_expiry_dates: [],
     });
 
-    const canAddPrescription = computed(() => medicationChoices().length > 0);
+    const canOpenPrescriptionForm = computed(
+        () => medicationChoices().length > 0,
+    );
 
     watch(
         () => form.quantity,
@@ -79,7 +81,7 @@ export function usePatientPrescriptionsPage(
         },
     );
 
-    watch(addDialogOpen, (open) => {
+    watch(prescriptionFormDialogOpen, (open) => {
         if (!open) {
             form.clearErrors();
             quantityClientError.value = '';
@@ -88,7 +90,7 @@ export function usePatientPrescriptionsPage(
         }
     });
 
-    function openAddPrescriptionDialog(): void {
+    function openPrescriptionFormDialog(): void {
         selectedMedicationId.value = null;
         quantityClientError.value = '';
         medicationClientError.value = '';
@@ -99,14 +101,14 @@ export function usePatientPrescriptionsPage(
         });
         form.reset();
         form.clearErrors();
-        addDialogOpen.value = true;
+        prescriptionFormDialogOpen.value = true;
     }
 
-    function closeAddPrescriptionDialog(): void {
-        addDialogOpen.value = false;
+    function closePrescriptionFormDialog(): void {
+        prescriptionFormDialogOpen.value = false;
     }
 
-    function submitAddPrescription(): void {
+    function submitPrescriptionForm(): void {
         if (form.quantity === null) {
             return;
         }
@@ -132,7 +134,7 @@ export function usePatientPrescriptionsPage(
             {
                 preserveScroll: true,
                 onSuccess: () => {
-                    closeAddPrescriptionDialog();
+                    closePrescriptionFormDialog();
                     addSuccessScreen.show({
                         title: t(
                             'patient.actionSuccess.prescriptions.created.title',
@@ -140,7 +142,7 @@ export function usePatientPrescriptionsPage(
                     });
                 },
                 onError: () => {
-                    addDialogOpen.value = true;
+                    prescriptionFormDialogOpen.value = true;
                 },
             },
         );
@@ -153,15 +155,15 @@ export function usePatientPrescriptionsPage(
         handleBackOrCancel: handlePrescriptionDialogBackOrCancel,
         goToPrescriptionWizardStepFromSummary,
     } = usePrescriptionFormWizard({
-        open: addDialogOpen,
+        open: prescriptionFormDialogOpen,
         form,
         selectedMedicationId,
-        idPrefix: ref(addPrescriptionFormIdPrefix),
+        idPrefix: ref(prescriptionFormIdPrefix),
         quantityClientError,
         medicationClientError,
         expiryDatesClientError,
-        onSubmit: submitAddPrescription,
-        onCancel: closeAddPrescriptionDialog,
+        onSubmit: submitPrescriptionForm,
+        onCancel: closePrescriptionFormDialog,
     });
 
     function showPrescriptionPickedUpSuccess(isLastInBatch: boolean): void {
@@ -178,17 +180,17 @@ export function usePatientPrescriptionsPage(
         pickupSuccessOpen: pickupSuccessScreen.open,
         pickupSuccessIsLastPrescription,
         showPrescriptionPickedUpSuccess,
-        addDialogOpen,
+        prescriptionFormDialogOpen,
         selectedMedicationId,
         quantityClientError,
         medicationClientError,
         expiryDatesClientError,
-        canAddPrescription,
+        canOpenPrescriptionForm,
         form,
         currentStep,
         progressLabel,
-        openAddPrescriptionDialog,
-        closeAddPrescriptionDialog,
+        openPrescriptionFormDialog,
+        closePrescriptionFormDialog,
         handlePrescriptionDialogSubmit,
         handlePrescriptionDialogBackOrCancel,
         goToPrescriptionWizardStepFromSummary,

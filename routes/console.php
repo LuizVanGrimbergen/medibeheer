@@ -43,20 +43,9 @@ Schedule::command('appointment:send-two-hour-reminders')
 
 /*
 |--------------------------------------------------------------------------
-| Manual / diagnostic commands (app/Console/Commands)
+| Manual commands (app/Console/Commands)
 |--------------------------------------------------------------------------
 |
-| patient:open-daily-checkin-window           — daily check-in UI window (00:01 Brussels; no push)
-| patient:send-test-push-notification       — immediate test push
-| patient:preview-medication-due-reminders  — slots due this minute
-| patient:diagnose-medication-push-reminders — VAPID, subscription, schedule debug
-| medication:preview-low-stock-reminders         — list critical supply + recipients
-| medication:send-low-stock-reminders              — seven-day supply web push (patient + family)
-| medication:preview-prescription-expiry-reminders — list expiring prescriptions + recipients
-| medication:send-prescription-expiry-reminders    — seven-day prescription expiry push
-| appointment:preview-two-day-reminders            — list appointments two calendar days out + recipients
-| appointment:send-two-day-reminders               — two calendar days before appointment push
-| appointment:preview-two-hour-reminders           — list appointments starting in two hours + recipients
-| appointment:send-two-hour-reminders              — two hours before appointment push
+| patient:open-daily-checkin-window — daily check-in UI window (00:01 Brussels; also scheduled)
 |
 */

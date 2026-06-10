@@ -61,7 +61,6 @@ final class PatientCriticalPrescriptionsQuery
             ->select('medications.id');
 
         $prescriptions = MedicationPrescription::query()
-            ->where('patient_id', '=', $patient->id)
             ->whereNull('completed_at', 'and', false)
             ->whereIn('medication_id', $activeMedicationIds, 'and', false)
             ->with(['medication:id,name'])

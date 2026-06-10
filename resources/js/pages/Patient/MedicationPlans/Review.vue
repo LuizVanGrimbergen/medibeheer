@@ -7,27 +7,17 @@ import { Button } from '@/Components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/ui/card';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
+import {
+    mobileShellActionDangerOutlineButtonClass,
+    mobileShellActionPrimaryButtonClass,
+} from '@/lib/shell/mobileShellDialogLayout';
+import type { PatientMedicationPlanReviewScreenProps } from '@/lib/patient/medicationPlans/patientMedicationPlanReviewScreenProps';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-const props = defineProps<{
-    proposal_id: number;
-    family_member_name: string;
-    medication_name: string | null;
-    dose: string | null;
-    dose_unit: string | null;
-    strength: string | null;
-    note: string | null;
-    current_stock: string | null;
-}>();
+const props = defineProps<PatientMedicationPlanReviewScreenProps>();
 
 const { t } = useI18n();
-
-const actionPrimaryButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation gap-2.5 rounded-2xl px-3 text-base font-semibold sm:w-auto sm:flex-1 md:min-h-14 md:px-4 lg:text-lg';
-
-const actionDangerOutlineButtonClass =
-    'min-h-12 min-w-0 w-full touch-manipulation rounded-2xl border-2 border-danger/40 bg-danger/10 px-3 text-base font-semibold text-danger hover:border-danger hover:bg-danger/20 hover:text-danger sm:w-auto sm:flex-1 md:min-h-14 md:px-4 lg:text-lg';
 
 const doseUnitLabel = computed((): string | null => {
     if (props.dose_unit === null || props.dose_unit.trim().length < 1) {
@@ -126,7 +116,7 @@ function decline(): void {
             <div class="flex flex-col gap-3 sm:flex-row-reverse sm:gap-3">
                 <Button
                     type="button"
-                    :class="cn(actionPrimaryButtonClass)"
+                    :class="cn(mobileShellActionPrimaryButtonClass)"
                     @click="accept"
                 >
                     {{ t('patient.medicationPlans.review.accept') }}
@@ -134,7 +124,7 @@ function decline(): void {
                 <Button
                     type="button"
                     variant="outline"
-                    :class="cn(actionDangerOutlineButtonClass)"
+                    :class="cn(mobileShellActionDangerOutlineButtonClass)"
                     @click="decline"
                 >
                     {{ t('patient.medicationPlans.review.decline') }}

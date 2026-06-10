@@ -32,8 +32,6 @@ class PatientMedicationPrescriptionController extends Controller
 
             foreach ($prescriptionExpiryDates as $index => $prescriptionExpiryDate) {
                 $medication->prescriptions()->create([
-                    'patient_id' => $medication->patient_id,
-                    'family_id' => $medication->family_id,
                     'prescription_expiry_date' => $prescriptionExpiryDate,
                     'is_last_in_batch' => $index === $lastIndex,
                     'pickup_status' => MedicationPrescriptionPickupStatus::PENDING,

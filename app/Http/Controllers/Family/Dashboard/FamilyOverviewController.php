@@ -34,17 +34,39 @@ class FamilyOverviewController extends Controller
 
         $activePatient = FamilyDashboardState::activePatient($request);
 
-        $updatesProps = $activePatient !== null
-            ? $this->updatesScreenService->buildProps($activePatient)
-            : $this->updatesScreenService->emptyProps();
+        $updatesProps = null;
 
-        return Inertia::render('Family/Overview', [
-            'low_stock_patients' => $this->lowStockPatientsOverviewService->forFamily($family),
-            'expiring_prescription_patients' => $this->expiringPrescriptionPatientsOverviewService->forFamily($family),
-            'updates_checkins' => $updatesProps['updates_checkins'],
-            'updates_medication_intakes' => $updatesProps['updates_medication_intakes'],
-            'pending_transport_appointments' => $this->pendingTransportAppointmentsOverviewService->forFamily($family),
-            'accepted_transport_appointments' => $this->acceptedTransportAppointmentsOverviewService->forFamily($family),
+        return Inertia::render('Family/Overview/Index', [
+            'low_stock_patients' => Inertia::defer(
+                fn (): array => $this->lowStockPatientsOverviewService->forFamily($family),
+            ),
+            'expiring_prescription_patients' => Inertia::defer(
+                fn (): array => $this->expiringPrescriptionPatientsOverviewService->forFamily($family),
+            ),
+            'updates_checkins' => Inertia::defer(
+                function () use ($activePatient, &$updatesProps): array {
+                    $updatesProps ??= $activePatient !== null
+                        ? $this->updatesScreenService->buildProps($activePatient)
+                        : $this->updatesScreenService->emptyProps();
+
+                    return $updatesProps['updates_checkins'];
+                },
+            ),
+            'updates_medication_intakes' => Inertia::defer(
+                function () use ($activePatient, &$updatesProps): array {
+                    $updatesProps ??= $activePatient !== null
+                        ? $this->updatesScreenService->buildProps($activePatient)
+                        : $this->updatesScreenService->emptyProps();
+
+                    return $updatesProps['updates_medication_intakes'];
+                },
+            ),
+            'pending_transport_appointments' => Inertia::defer(
+                fn (): array => $this->pendingTransportAppointmentsOverviewService->forFamily($family),
+            ),
+            'accepted_transport_appointments' => Inertia::defer(
+                fn (): array => $this->acceptedTransportAppointmentsOverviewService->forFamily($family),
+            ),
         ]);
     }
 }

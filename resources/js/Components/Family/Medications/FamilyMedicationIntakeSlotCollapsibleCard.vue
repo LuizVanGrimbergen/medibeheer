@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MedicationIntakeSlotStatusCard from '@/Components/Medications/MedicationIntakeSlotStatusCard.vue';
+import MedicationIntakeSlotStatusCard from '@/Components/shared/medications/MedicationIntakeSlotStatusCard.vue';
 import type { FamilyMedicationIntakeCalendarSlot } from '@/lib/family/medications/familyMedicationIntakeCalendarSlot';
 
 defineProps<{

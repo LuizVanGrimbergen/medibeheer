@@ -12,24 +12,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class MedicationPrescriptionFactory extends Factory
 {
-    public function configure(): static
-    {
-        return $this->afterMaking(function (MedicationPrescription $prescription): void {
-            if ($prescription->medication_id === null) {
-                return;
-            }
-
-            $medication = Medication::query()->find($prescription->medication_id);
-
-            if ($medication === null) {
-                return;
-            }
-
-            $prescription->patient_id = $medication->patient_id;
-            $prescription->family_id = $medication->family_id;
-        });
-    }
-
     public function definition(): array
     {
         return [
@@ -43,8 +25,6 @@ class MedicationPrescriptionFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'medication_id' => $medication->id,
-            'patient_id' => $medication->patient_id,
-            'family_id' => $medication->family_id,
         ]);
     }
 

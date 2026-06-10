@@ -140,7 +140,7 @@ test('patient dashboard exposes flashed encouragement on the success screen', fu
         ->get(route('patient.dashboard'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Patient/Dashboard')
+            ->component('Patient/Dashboard/Index')
             ->where('flash.daily_checkin_mood', DailyMoodScore::OK->value)
             ->where(
                 'flash.daily_checkin_encouragement',

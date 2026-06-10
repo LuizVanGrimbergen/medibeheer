@@ -8,7 +8,7 @@ import { useAppointmentAddressPlaceAutocomplete } from '@/composables/google-map
 import { useAppointmentAddressLiveValidation } from '@/composables/patient/useAppointmentAddressLiveValidation';
 import { isAppointmentAddressValidationRequired } from '@/lib/patient/appointments/appointmentAddressValidation';
 import { isAppointmentAddressComplete } from '@/lib/patient/appointments/isAppointmentAddressComplete';
-import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
+import { mobileShellFormLabelClass } from '@/lib/shell/mobileShellFormFieldClasses';
 
 const { form, idPrefix } = defineProps<{
     form: AppointmentFormWithErrors;
@@ -67,7 +67,7 @@ defineExpose({ isVerifyingGeocode });
                 <div v-if="isAddressSearchAvailable">
                     <Label
                         :for="`${idPrefix}-address-search`"
-                        :class="patientFormLabelClass"
+                        :class="mobileShellFormLabelClass"
                     >
                         {{
                             isAddressRequired

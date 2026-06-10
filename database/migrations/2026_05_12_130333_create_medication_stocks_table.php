@@ -10,15 +10,13 @@ return new class extends Migration
     {
         Schema::create('medication_stocks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('medication_id')->constrained()->cascadeOnDelete();
             $table->text('current_stock');
             $table->timestamps();
             $table->softDeletes();
 
+            $table->unique('medication_id');
             $table->index(['medication_id', 'deleted_at']);
-            $table->index(['patient_id', 'deleted_at']);
         });
     }
 

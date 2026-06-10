@@ -7,9 +7,9 @@ import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
 import {
-    patientFormFieldInvalidClass,
-    patientFormNativeDateTimeInputClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormNativeDateTimeInputClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix, startsAtDateInputMinIso } = defineProps<{
@@ -65,9 +65,9 @@ const minStartsAtTimeHm = computed(() => {
                         autocomplete="off"
                         :class="
                             cn(
-                                patientFormNativeDateTimeInputClass,
+                                mobileShellFormNativeDateTimeInputClass,
                                 form.errors.starts_at
-                                    ? patientFormFieldInvalidClass
+                                    ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -97,9 +97,9 @@ const minStartsAtTimeHm = computed(() => {
                         autocomplete="off"
                         :class="
                             cn(
-                                patientFormNativeDateTimeInputClass,
+                                mobileShellFormNativeDateTimeInputClass,
                                 form.errors.starts_at
-                                    ? patientFormFieldInvalidClass
+                                    ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "

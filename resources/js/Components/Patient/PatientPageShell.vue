@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {
-    patientPageIntroClass,
-    patientPageTitleClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellPageIntroClass,
+    mobileShellPageTitleClass,
+} from '@/lib/shell/mobileShellTypography';
+import { mobileShellPageContentClass } from '@/lib/shell/mobileShellLayout';
 
 withDefaults(
     defineProps<{
@@ -18,12 +19,12 @@ withDefaults(
 </script>
 
 <template>
-    <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:gap-5">
+    <div :class="mobileShellPageContentClass">
         <header v-if="showVisibleTitle || intro !== ''" class="space-y-3">
-            <h1 :class="showVisibleTitle ? patientPageTitleClass : 'sr-only'">
+            <h1 :class="showVisibleTitle ? mobileShellPageTitleClass : 'sr-only'">
                 {{ title }}
             </h1>
-            <p v-if="intro !== ''" :class="patientPageIntroClass">
+            <p v-if="intro !== ''" :class="mobileShellPageIntroClass">
                 {{ intro }}
             </p>
         </header>

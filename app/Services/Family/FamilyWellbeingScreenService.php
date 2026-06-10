@@ -16,6 +16,15 @@ final class FamilyWellbeingScreenService
 
     public function buildProps(string $calendarMonth, Patient $patient): array
     {
+        return [
+            'wellbeing_calendar_month' => $calendarMonth,
+            ...$this->checkinDataFor($calendarMonth, $patient),
+        ];
+    }
+
+    /** @return array{wellbeing_calendar_checkins: list<array<string, mixed>>, wellbeing_checkins: array{data: list<array<string, mixed>>, meta: array<string, mixed>}} */
+    public function checkinDataFor(string $calendarMonth, Patient $patient): array
+    {
         $monthStart = CarbonImmutable::createFromFormat('Y-m', $calendarMonth)->startOfMonth();
         $monthEnd = $monthStart->endOfMonth();
 
@@ -34,7 +43,6 @@ final class FamilyWellbeingScreenService
             ->all();
 
         return [
-            'wellbeing_calendar_month' => $calendarMonth,
             'wellbeing_calendar_checkins' => $calendarCheckinsPayload,
             'wellbeing_checkins' => $this->checkinList->paginatedForPatient($patient),
         ];

@@ -28,18 +28,18 @@ final class CalculatePatientInventoryVacationSupplyController extends Controller
 
         $validated = $request->validated();
 
-        $result = $this->medicationVacationSupplyService->buildPickupList(
-            $patient,
-            CarbonImmutable::parse($validated['starts_on'])->startOfDay(),
-            CarbonImmutable::parse($validated['ends_on'])->startOfDay(),
-        );
+        $startsOn = CarbonImmutable::parse($validated['starts_on'])->startOfDay();
+        $endsOn = CarbonImmutable::parse($validated['ends_on'])->startOfDay();
 
         return Inertia::render('Patient/Inventory/Vacation', [
             'starts_on' => $validated['starts_on'],
             'ends_on' => $validated['ends_on'],
-            'result' => $result,
-            'expiring_prescriptions' => $this->criticalPrescriptionsQuery
-                ->forPatientNavAlerts($patient),
+            'result' => $this->medicationVacationSupplyService->buildPickupList(
+                $patient,
+                $startsOn,
+                $endsOn,
+            ),
+            'expiring_prescriptions' => $this->criticalPrescriptionsQuery->forPatientNavAlerts($patient),
         ]);
     }
 }

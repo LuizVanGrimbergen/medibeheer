@@ -2,13 +2,13 @@
 import { Pencil } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import { useAppointmentDisplay } from '@/Components/shared/appointments/useAppointmentDisplay';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
 import { IconActionButton } from '@/Components/ui/icon-action-button';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import { isAppointmentAddressProvided } from '@/lib/patient/appointments/appointmentAddressValidation';
 import type { AppointmentFormStepId } from '@/lib/patient/appointments/form-wizard/appointmentFormStepGuards';
-import { patientFormLabelClass } from '@/lib/patient/patientFormFieldClasses';
+import { mobileShellFormLabelClass } from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
@@ -42,7 +42,7 @@ const summaryValueClass =
     'min-w-0 flex-1 text-base font-semibold leading-snug text-text-heading sm:text-end md:text-lg';
 
 const overviewSectionHeadingClass = cn(
-    patientFormLabelClass,
+    mobileShellFormLabelClass,
     'mb-3 text-lg text-text-heading md:mb-4 md:text-xl',
 );
 

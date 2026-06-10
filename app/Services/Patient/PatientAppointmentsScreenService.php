@@ -13,18 +13,28 @@ use Illuminate\Http\Request;
 
 final class PatientAppointmentsScreenService
 {
-    public function buildProps(Patient $patient, Request $request): array
+    /** @return array{planned: int, completed: int} */
+    public function tabTotalsFor(Patient $patient): array
     {
         $plannedTotal = $patient->appointments()
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->count();
         $completedTotal = $patient->appointments()
-            ->whereIn('status', [
+            ->whereStatusIn([
                 AppointmentStatus::DONE,
                 AppointmentStatus::CANCELLED,
             ])
             ->count();
 
+        return [
+            'planned' => $plannedTotal,
+            'completed' => $completedTotal,
+        ];
+    }
+
+    /** @return array{data: list<array<string, mixed>>, meta: array<string, mixed>} */
+    public function paginatedAppointmentsFor(Patient $patient, Request $request): array
+    {
         $deepLinkAppointmentId = $this->resolveDeepLinkAppointmentId($request, $patient);
 
         $page = $this->resolvePage($request, $patient, $deepLinkAppointmentId);
@@ -45,34 +55,32 @@ final class PatientAppointmentsScreenService
             ->withExists([
                 'transportInvitations as has_pending_transport_invitation' => fn ($q) => $q->pending(),
             ])
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->orderBy('starts_at');
 
         $paginator = $query
             ->paginate(InertiaPagination::PER_PAGE, ['*'], 'page', $page)
             ->withQueryString();
 
-        return [
-            'appointments' => InertiaPagination::payload(
-                $paginator,
-                PatientAppointmentResource::collectForInertia($paginator->getCollection()),
-            ),
-            'appointment_view' => 'planned',
-            'appointment_tab_totals' => [
-                'planned' => $plannedTotal,
-                'completed' => $completedTotal,
-            ],
-            'linked_families' => $patient->families()
-                ->with('user')
-                ->orderBy('id')
-                ->get()
-                ->map(fn ($family) => [
-                    'id' => (int) $family->id,
-                    'name' => (string) ($family->user?->name ?? 'Familielid'),
-                ])
-                ->values()
-                ->all(),
-        ];
+        return InertiaPagination::payload(
+            $paginator,
+            PatientAppointmentResource::collectForInertia($paginator->getCollection()),
+        );
+    }
+
+    /** @return list<array{id: int, name: string}> */
+    public function linkedFamiliesFor(Patient $patient): array
+    {
+        return $patient->families()
+            ->with('user')
+            ->orderBy('id')
+            ->get()
+            ->map(fn ($family) => [
+                'id' => (int) $family->id,
+                'name' => (string) ($family->user?->name ?? 'Familielid'),
+            ])
+            ->values()
+            ->all();
     }
 
     private function resolveDeepLinkAppointmentId(Request $request, Patient $patient): ?int
@@ -88,7 +96,7 @@ final class PatientAppointmentsScreenService
         $exists = Appointment::query()
             ->whereKey($appointmentId)
             ->where('patient_id', $patient->id)
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->exists();
 
         return $exists ? $appointmentId : null;
@@ -110,7 +118,7 @@ final class PatientAppointmentsScreenService
         }
 
         $earlierCount = $patient->appointments()
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->where('starts_at', '<', $appointment->starts_at)
             ->count('*');
 

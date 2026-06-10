@@ -18,6 +18,6 @@ class HomeController extends Controller
             return redirect()->to($user->defaultAuthenticatedHomeUrl());
         }
 
-        return Inertia::render('Guest/Home');
+        return Inertia::render('Guest/Home/Index');
     }
 }

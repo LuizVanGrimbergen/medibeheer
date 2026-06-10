@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
-import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
+import { useAppointmentDisplay } from '@/Components/shared/appointments/useAppointmentDisplay';
+import MedicationListCardLead from '@/Components/shared/medications/MedicationListCardLead.vue';
 import { medicationIntakeDoseLine } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
-import { patientPageCardHeaderSummaryClass } from '@/lib/patient/patientPageTypography';
+import { mobileShellPageCardHeaderSummaryClass } from '@/lib/shell/mobileShellTypography';
 import type {
     MedicationTypeValue,
     TodayMedicationIntakeSlot,
@@ -52,7 +52,7 @@ const rowAriaLabel = computed(() =>
             :show-type-label="false"
         >
             <template v-if="summaryLine !== null" #subtitle>
-                <p :class="patientPageCardHeaderSummaryClass">
+                <p :class="mobileShellPageCardHeaderSummaryClass">
                     {{ summaryLine }}
                 </p>
             </template>

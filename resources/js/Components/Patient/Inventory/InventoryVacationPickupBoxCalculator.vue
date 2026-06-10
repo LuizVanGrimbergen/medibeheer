@@ -12,10 +12,10 @@ import { formatMedicationStockDisplayAmount } from '@/lib/patient/medications/st
 import { medicationStockPackageCountForQuantity } from '@/lib/patient/medications/stock/medicationStockPackageCountForQuantity';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import {
-    patientFormFieldInputClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormLabelClass,
+    mobileShellFormLargeTouchFieldClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -200,7 +200,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="boxFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ primaryLabel }}
                 </Label>
@@ -216,8 +216,8 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     :readonly="hasSavedPiecesPerPackage"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
                             hasSavedPiecesPerPackage
                                 ? 'cursor-default opacity-90'
@@ -231,7 +231,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="piecesFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ secondaryLabel }}
                 </Label>
@@ -247,8 +247,8 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     :readonly="hasSavedPiecesPerPackage"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
                             hasSavedPiecesPerPackage
                                 ? 'cursor-default opacity-90'

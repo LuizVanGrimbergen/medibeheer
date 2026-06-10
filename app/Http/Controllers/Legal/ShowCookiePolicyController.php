@@ -11,6 +11,6 @@ class ShowCookiePolicyController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Inertia::render('Legal/Cookies', LegalPageProps::forInertia($request));
+        return Inertia::render('Legal/Cookies/Index', LegalPageProps::forInertia($request));
     }
 }

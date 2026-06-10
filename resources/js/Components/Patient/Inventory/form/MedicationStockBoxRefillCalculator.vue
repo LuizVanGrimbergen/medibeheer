@@ -12,11 +12,11 @@ import {
 import { medicationDoseUnitChipForAmount } from '@/lib/patient/medications/options/medicationDoseUnitChipForAmount';
 import { parseMedicationStockNumericValue } from '@/lib/patient/medications/stock/parseMedicationStockNumericValue';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormLargeTouchFieldClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormLargeTouchFieldClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { MedicationDoseUnitValue } from '@/lib/types';
 import { MEDICATION_DOSE_UNIT_VALUES } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -224,7 +224,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="boxFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ t('patient.inventory.addStockBoxesLabel') }}
                 </Label>
@@ -241,10 +241,10 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     "
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            errorMessage ? patientFormFieldInvalidClass : null,
+                            errorMessage ? mobileShellFormFieldInvalidClass : null,
                         )
                     "
                     :aria-invalid="Boolean(errorMessage)"
@@ -256,7 +256,7 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
             <div>
                 <Label
                     :for="piecesFieldId"
-                    :class="cn(patientFormLabelClass, 'text-base sm:text-lg')"
+                    :class="cn(mobileShellFormLabelClass, 'text-base sm:text-lg')"
                 >
                     {{ t('patient.inventory.addStockPiecesPerBoxLabel') }}
                 </Label>
@@ -273,10 +273,10 @@ function handleNumberInput(event: Event, target: 'boxes' | 'pieces'): void {
                     "
                     :class="
                         cn(
-                            patientFormFieldInputClass,
-                            patientFormLargeTouchFieldClass,
+                            mobileShellFormFieldInputClass,
+                            mobileShellFormLargeTouchFieldClass,
                             'mt-2 text-center text-2xl font-bold tabular-nums',
-                            errorMessage ? patientFormFieldInvalidClass : null,
+                            errorMessage ? mobileShellFormFieldInvalidClass : null,
                         )
                     "
                     :aria-invalid="Boolean(errorMessage)"

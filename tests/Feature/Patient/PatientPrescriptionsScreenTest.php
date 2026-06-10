@@ -20,16 +20,16 @@ test('patient prescriptions inertia page includes paginated prescriptions with m
     $response = $this->actingAs($user)->get(route('patient.prescriptions'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Prescriptions');
-    $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Prescriptions')
+    assertInertiaRootComponent($response, 'Patient/Prescriptions/Index');
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Patient/Prescriptions/Index')
         ->has('prescriptions.data', 1)
         ->where('prescriptions.data.0.medication.id', $medication->id)
         ->where('prescriptions.data.0.prescription_expiry_date', '2026-12-31')
         ->where('prescriptions.data.0.pickup_status', 'pending')
         ->has('prescriptions.meta')
         ->has('medication_choices', 1)
-        ->where('medication_choices.0.id', $medication->id));
+        ->where('medication_choices.0.id', $medication->id)));
 });
 
 test('multiple prescriptions for the same medication appear as separate items', function () {
@@ -54,14 +54,14 @@ test('multiple prescriptions for the same medication appear as separate items', 
     $response = $this->actingAs($user)->get(route('patient.prescriptions'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
         ->has('prescriptions.data', 3)
         ->where('prescriptions.data.0.prescription_expiry_date', '2026-06-02')
         ->where('prescriptions.data.1.prescription_expiry_date', '2026-06-16')
         ->where('prescriptions.data.2.prescription_expiry_date', '2026-06-30')
         ->where('prescriptions.data.0.medication.id', $medication->id)
         ->where('prescriptions.data.1.medication.id', $medication->id)
-        ->where('prescriptions.data.2.medication.id', $medication->id));
+        ->where('prescriptions.data.2.medication.id', $medication->id)));
 });
 
 test('patients can store multiple prescriptions for a medication', function () {
@@ -147,9 +147,9 @@ test('patients can mark a prescription as completed and it disappears from the l
 
     $this->actingAs($user)
         ->get(route('patient.prescriptions'))
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('prescriptions.data', 1)
-            ->where('prescriptions.data.0.prescription_expiry_date', '2026-06-30'));
+            ->where('prescriptions.data.0.prescription_expiry_date', '2026-06-30')));
 });
 
 test('completed prescriptions are excluded from the prescriptions list', function () {
@@ -167,8 +167,8 @@ test('completed prescriptions are excluded from the prescriptions list', functio
 
     $this->actingAs($user)
         ->get(route('patient.prescriptions'))
-        ->assertInertia(fn ($page) => $page
-            ->where('prescriptions.meta.total', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('prescriptions.meta.total', 0)));
 });
 
 test('patients can update prescription pickup status', function () {
@@ -194,8 +194,8 @@ test('patients can update prescription pickup status', function () {
 
     $this->actingAs($user)
         ->get(route('patient.prescriptions'))
-        ->assertInertia(fn ($page) => $page
-            ->where('prescriptions.meta.total', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('prescriptions.meta.total', 0)));
 
     $this->actingAs($user)->patch(
         route('patient.prescriptions.update', $prescription),
@@ -207,9 +207,9 @@ test('patients can update prescription pickup status', function () {
 
     $this->actingAs($user)
         ->get(route('patient.prescriptions'))
-        ->assertInertia(fn ($page) => $page
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('prescriptions.data', 1)
-            ->where('prescriptions.data.0.pickup_status', 'pending'));
+            ->where('prescriptions.data.0.pickup_status', 'pending')));
 });
 
 test('patients can update a prescription expiry date', function () {
@@ -259,8 +259,8 @@ test('patients can delete a prescription', function () {
 
     $this->actingAs($user)
         ->get(route('patient.prescriptions'))
-        ->assertInertia(fn ($page) => $page
-            ->where('prescriptions.meta.total', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('prescriptions.meta.total', 0)));
 });
 
 test('patients cannot delete another patients prescription', function () {

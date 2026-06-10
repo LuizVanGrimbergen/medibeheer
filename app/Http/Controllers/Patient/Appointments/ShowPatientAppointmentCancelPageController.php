@@ -25,12 +25,15 @@ final class ShowPatientAppointmentCancelPageController extends Controller
         $this->authorize('update', $appointment);
 
         $followUpOutcome = $request->session()->pull('appointment_follow_up_outcome');
+        $showScheduleNextPrompt = $request->boolean('schedule_next')
+            || $followUpOutcome === 'cancelled';
 
-        if (
-            $appointment->status === AppointmentStatus::CANCELLED
-            && $followUpOutcome === 'cancelled'
-        ) {
-            return $this->renderOutcomePage($appointment, showScheduleNextPrompt: true);
+        if ($appointment->status === AppointmentStatus::CANCELLED) {
+            if ($showScheduleNextPrompt) {
+                return $this->renderOutcomePage($appointment, showScheduleNextPrompt: true);
+            }
+
+            return redirect()->route('patient.appointments');
         }
 
         if ($appointment->status !== AppointmentStatus::SCHEDULED) {

@@ -118,11 +118,15 @@ test('verified patients can visit the patient family page with doctors section',
         ->get(route('patient.family'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Patient/Family')
-            ->has('family_invitations')
-            ->has('doctor_invitations')
+            ->component('Patient/Family/Index')
             ->where('family_invitation_store_url', route('patient.family.invitations.store', absolute: false))
             ->where('doctor_invitation_store_url', route('patient.doctors.invitations.store', absolute: false)));
+    $this->actingAs($user)
+        ->get(route('patient.family'))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('family_invitations')
+            ->has('doctor_invitations')));
 });
 
 test('patient doctors route redirects to family doctors section', function () {

@@ -26,42 +26,53 @@ class PatientFamilyController extends Controller
     public function __invoke(Request $request): Response
     {
         $patient = $this->authorizePatientProfile($request);
+        $user = $request->user();
 
-        $pendingInvitations = $patient->familyInvitations()
-            ->pending()
-            ->orderByDesc('created_at')
-            ->get();
-
-        $pendingMedicationPlans = $this->medicationPlanProposalService
-            ->pendingIncomingForPatient($request->user());
-
-        $acceptedMedicationPlans = $this->medicationPlanProposalService
-            ->acceptedForPatient($request->user());
-
-        $pendingDoctorInvitations = $patient->doctorInvitations()
-            ->pending()
-            ->orderByDesc('created_at')
-            ->get();
-
-        $linkedDoctors = $patient->doctors()
-            ->with('user')
-            ->orderBy('doctors.id')
-            ->get();
-
-        $linkedFamilyMembers = $patient->families()
-            ->with('user')
-            ->orderBy('families.id')
-            ->get();
-
-        return Inertia::render('Patient/Family', [
-            'family_invitations' => FamilyInvitationResource::collection($pendingInvitations)->resolve(),
-            'pending_medication_plans' => PatientPendingMedicationPlanProposalResource::collection($pendingMedicationPlans)->resolve(),
-            'accepted_medication_plans' => PatientAcceptedMedicationPlanProposalResource::collection($acceptedMedicationPlans)->resolve(),
+        return Inertia::render('Patient/Family/Index', [
             'family_invitation_store_url' => route('patient.family.invitations.store', absolute: false),
-            'doctor_invitations' => DoctorInvitationResource::collection($pendingDoctorInvitations)->resolve(),
-            'linked_doctors' => LinkedDoctorResource::collection($linkedDoctors)->resolve(),
-            'linked_family_members' => LinkedFamilyMemberResource::collection($linkedFamilyMembers)->resolve(),
             'doctor_invitation_store_url' => route('patient.doctors.invitations.store', absolute: false),
+            'family_invitations' => Inertia::defer(
+                fn (): array => FamilyInvitationResource::collection(
+                    $patient->familyInvitations()
+                        ->pending()
+                        ->orderByDesc('created_at')
+                        ->get(),
+                )->resolve(),
+            ),
+            'pending_medication_plans' => Inertia::defer(
+                fn (): array => PatientPendingMedicationPlanProposalResource::collection(
+                    $this->medicationPlanProposalService->pendingIncomingForPatient($user),
+                )->resolve(),
+            ),
+            'accepted_medication_plans' => Inertia::defer(
+                fn (): array => PatientAcceptedMedicationPlanProposalResource::collection(
+                    $this->medicationPlanProposalService->acceptedForPatient($user),
+                )->resolve(),
+            ),
+            'doctor_invitations' => Inertia::defer(
+                fn (): array => DoctorInvitationResource::collection(
+                    $patient->doctorInvitations()
+                        ->pending()
+                        ->orderByDesc('created_at')
+                        ->get(),
+                )->resolve(),
+            ),
+            'linked_doctors' => Inertia::defer(
+                fn (): array => LinkedDoctorResource::collection(
+                    $patient->doctors()
+                        ->with('user')
+                        ->orderBy('doctors.id')
+                        ->get(),
+                )->resolve(),
+            ),
+            'linked_family_members' => Inertia::defer(
+                fn (): array => LinkedFamilyMemberResource::collection(
+                    $patient->families()
+                        ->with('user')
+                        ->orderBy('families.id')
+                        ->get(),
+                )->resolve(),
+            ),
         ]);
     }
 }

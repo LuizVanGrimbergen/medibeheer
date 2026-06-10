@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { patientFormWizardFooterRowClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellFormWizardFooterRowClass } from '@/lib/shell/mobileShellDialogLayout';
 </script>
 
 <template>
-    <div :class="patientFormWizardFooterRowClass">
+    <div :class="mobileShellFormWizardFooterRowClass">
         <slot />
     </div>
 </template>

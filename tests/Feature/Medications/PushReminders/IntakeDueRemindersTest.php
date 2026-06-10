@@ -146,18 +146,6 @@ test('medication due reminder is not sent after the dose time minute has passed'
     CarbonImmutable::setTestNow();
 });
 
-test('test push notification command sends immediately to subscribed patient', function () {
-    Notification::fake();
-
-    [$user] = seedPatientMedicationDueReminderScenario();
-
-    Artisan::call('patient:send-test-push-notification', ['user' => $user->id]);
-
-    Notification::assertSentTo($user, DueNotification::class);
-
-    CarbonImmutable::setTestNow();
-});
-
 test('medication due reminder command skips intakes already taken', function () {
     Notification::fake();
 

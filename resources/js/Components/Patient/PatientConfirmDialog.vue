@@ -1,27 +1,32 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
-import { computed, toRef, useId } from 'vue';
+import { computed, toRef } from 'vue';
 import { Button } from '@/Components/ui/button';
-import { Dialog, DialogContent } from '@/Components/ui/dialog';
-import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
 import {
-    patientActionSuccessSubtitleClass,
-    patientActionSuccessTitleClass,
-} from '@/lib/patient/patientPageTypography';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+} from '@/Components/ui/dialog';
+import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import {
-    patientConfirmDialogContentClass,
-    patientConfirmDialogIconClass,
-    patientConfirmDialogIconWrapClass,
-    patientConfirmDialogIconWrapDangerClass,
-    patientConfirmDialogIconWrapPrimaryClass,
-    patientConfirmDialogMessageClass,
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterOutlineButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellWizardFooterClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellActionSuccessSubtitleClass,
+    mobileShellActionSuccessTitleClass,
+} from '@/lib/shell/mobileShellTypography';
+import {
+    mobileShellConfirmDialogContentClass,
+    mobileShellConfirmDialogIconClass,
+    mobileShellConfirmDialogIconWrapClass,
+    mobileShellConfirmDialogIconWrapDangerClass,
+    mobileShellConfirmDialogIconWrapPrimaryClass,
+    mobileShellConfirmDialogMessageClass,
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterOutlineButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellWizardFooterClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -56,21 +61,18 @@ const emit = defineEmits<{
     confirm: [];
 }>();
 
-const titleId = useId();
-const descriptionId = useId();
-
-usePatientShellDialogChromeSync(toRef(() => props.open));
+useMobileShellDialogChromeSync(toRef(() => props.open));
 
 const iconWrapClass = computed(() =>
     props.iconTone === 'primary'
-        ? patientConfirmDialogIconWrapPrimaryClass
-        : patientConfirmDialogIconWrapDangerClass,
+        ? mobileShellConfirmDialogIconWrapPrimaryClass
+        : mobileShellConfirmDialogIconWrapDangerClass,
 );
 
 const confirmButtonClass = computed(() =>
     props.confirmTone === 'primary'
-        ? patientFormWizardFooterPrimaryButtonClass
-        : patientFormWizardFooterCancelButtonClass,
+        ? mobileShellFormWizardFooterPrimaryButtonClass
+        : mobileShellFormWizardFooterCancelButtonClass,
 );
 
 const confirmButtonVariant = computed(() =>
@@ -80,13 +82,13 @@ const confirmButtonVariant = computed(() =>
 const footerRowClass = computed(() =>
     props.cancelFirst
         ? 'flex w-full min-w-0 flex-col gap-2 md:flex-row md:gap-3'
-        : patientFormWizardFooterRowClass,
+        : mobileShellFormWizardFooterRowClass,
 );
 
 const cancelButtonClass = computed(() =>
     props.cancelTone === 'primary'
-        ? patientFormWizardFooterPrimaryButtonClass
-        : patientFormWizardFooterOutlineButtonClass,
+        ? mobileShellFormWizardFooterPrimaryButtonClass
+        : mobileShellFormWizardFooterOutlineButtonClass,
 );
 
 const cancelButtonVariant = computed(() =>
@@ -106,41 +108,38 @@ function confirm(): void {
     <Dialog :open="open" @update:open="(value) => emit('update:open', value)">
         <DialogContent
             :class="
-                cn(patientConfirmDialogContentClass, 'flex min-h-0 flex-col')
+                cn(mobileShellConfirmDialogContentClass, 'flex min-h-0 flex-col')
             "
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('md')"
-            :aria-describedby="descriptionId"
-            :aria-labelledby="titleId"
+            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('md')"
         >
-            <div :class="patientConfirmDialogMessageClass">
+            <div :class="mobileShellConfirmDialogMessageClass">
                 <div
                     v-if="props.icon !== undefined"
                     :class="
-                        cn(patientConfirmDialogIconWrapClass, iconWrapClass)
+                        cn(mobileShellConfirmDialogIconWrapClass, iconWrapClass)
                     "
                 >
                     <component
                         :is="props.icon"
-                        :class="patientConfirmDialogIconClass"
+                        :class="mobileShellConfirmDialogIconClass"
                         aria-hidden="true"
                         :stroke-width="2"
                     />
                 </div>
-                <h1 :id="titleId" :class="patientActionSuccessTitleClass">
+                <DialogTitle :class="mobileShellActionSuccessTitleClass">
                     {{ title }}
-                </h1>
-                <p
-                    :id="descriptionId"
-                    :class="patientActionSuccessSubtitleClass"
+                </DialogTitle>
+                <DialogDescription
+                    :class="mobileShellActionSuccessSubtitleClass"
                 >
                     {{ description }}
-                </p>
+                </DialogDescription>
             </div>
 
             <div
                 :class="[
                     footerRowClass,
-                    patientShellWizardFooterClass,
+                    mobileShellWizardFooterClass,
                     'mt-auto shrink-0',
                 ]"
             >

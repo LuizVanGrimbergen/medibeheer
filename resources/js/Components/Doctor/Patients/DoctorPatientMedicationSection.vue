@@ -4,7 +4,7 @@ import { computed, ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorCollapsibleSection from '@/Components/Doctor/Patients/DoctorCollapsibleSection.vue';
 import HistorySelectedDaySection from '@/Components/History/HistorySelectedDaySection.vue';
-import MedicationIntakeSlotStatusCard from '@/Components/Medications/MedicationIntakeSlotStatusCard.vue';
+import MedicationIntakeSlotStatusCard from '@/Components/shared/medications/MedicationIntakeSlotStatusCard.vue';
 import MedicationIntakeMonthCalendar from '@/Components/Patient/Medications/MedicationIntakeMonthCalendar.vue';
 import { useHistoryMonthCalendarGrid } from '@/composables/history/useHistoryMonthCalendarGrid';
 import { useHistorySelectedDay } from '@/composables/history/useHistorySelectedDay';

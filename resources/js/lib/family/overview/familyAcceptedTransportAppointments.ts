@@ -20,10 +20,10 @@ import type { MedicationIntakeHistorySlot } from '@/lib/patient/medications/hist
 import type { DailyCheckin } from '@/lib/types';
 
 export type FamilyOverviewScreenProps = {
-    low_stock_patients: FamilyLowStockPatient[];
-    expiring_prescription_patients: FamilyExpiringPrescriptionPatient[];
-    updates_checkins: DailyCheckin[];
-    updates_medication_intakes: MedicationIntakeHistorySlot[];
-    pending_transport_appointments: FamilyPendingTransportAppointment[];
-    accepted_transport_appointments: FamilyAcceptedTransportAppointment[];
+    low_stock_patients?: FamilyLowStockPatient[];
+    expiring_prescription_patients?: FamilyExpiringPrescriptionPatient[];
+    updates_checkins?: DailyCheckin[];
+    updates_medication_intakes?: MedicationIntakeHistorySlot[];
+    pending_transport_appointments?: FamilyPendingTransportAppointment[];
+    accepted_transport_appointments?: FamilyAcceptedTransportAppointment[];
 };

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->uuid('public_id')->unique();
             $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
             $table->text('invited_email');
-            $table->string('invited_email_hash');
+            $table->char('invited_email_hash', 64);
             $table->timestamp('expires_at');
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('revoked_at')->nullable();

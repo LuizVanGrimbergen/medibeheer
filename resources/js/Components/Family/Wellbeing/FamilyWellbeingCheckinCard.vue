@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import FamilyWellbeingCheckinDetailsContent from '@/Components/Family/Wellbeing/FamilyWellbeingCheckinDetailsContent.vue';
 import { MoodIconBadge } from '@/Components/ui/mood-icon';
 import type { DailyCheckin } from '@/lib/types';
@@ -97,7 +97,7 @@ const collapsedSummary = computed((): string => {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-if="useCollapsible"
         v-model:open="isOpen"
         :heading="cardHeading"
@@ -112,7 +112,7 @@ const collapsedSummary = computed((): string => {
         </template>
 
         <FamilyWellbeingCheckinDetailsContent :checkin="checkin" />
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 
     <div
         v-else

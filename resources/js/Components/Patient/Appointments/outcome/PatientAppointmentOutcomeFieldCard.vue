@@ -3,14 +3,14 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import {
-    patientShellWizardCardClass,
-    patientShellWizardCardInnerClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellWizardCardClass,
+    mobileShellWizardCardInnerClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
@@ -26,11 +26,11 @@ const errorId = `${props.id}-error`;
 </script>
 
 <template>
-    <Card :class="patientShellWizardCardClass">
+    <Card :class="mobileShellWizardCardClass">
         <CardContent class="p-0">
-            <div :class="patientShellWizardCardInnerClass">
+            <div :class="mobileShellWizardCardInnerClass">
                 <div class="space-y-2">
-                    <Label :for="id" :class="patientFormLabelClass">
+                    <Label :for="id" :class="mobileShellFormLabelClass">
                         {{ label }}
                     </Label>
                     <textarea
@@ -39,9 +39,9 @@ const errorId = `${props.id}-error`;
                         rows="6"
                         :class="
                             cn(
-                                patientFormFieldInputClass,
+                                mobileShellFormFieldInputClass,
                                 'min-h-42 w-full resize-y py-4 text-lg leading-relaxed md:min-h-48 md:text-xl',
-                                error ? patientFormFieldInvalidClass : null,
+                                error ? mobileShellFormFieldInvalidClass : null,
                             )
                         "
                         :placeholder="placeholder"

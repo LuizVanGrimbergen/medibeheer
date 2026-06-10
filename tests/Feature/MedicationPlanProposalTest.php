@@ -113,7 +113,7 @@ test('family link page exposes patient email on published proposals', function (
         ->get(route('family.link'))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Link')
+            ->component('Family/Link/Index')
             ->has('proposals', 1)
             ->where('proposals.0.patient_email', $patientEmail));
 });
@@ -157,10 +157,10 @@ test('patients see pending medication plans on the family page when emailed', fu
     $this->actingAs($patientUser)
         ->get(route('patient.family'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Family')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Family/Index')
             ->has('pending_medication_plans', 1)
-            ->where('pending_medication_plans.0.family_member_name', $familyUser->name));
+            ->where('pending_medication_plans.0.family_member_name', $familyUser->name)));
 });
 
 test('patients can accept a published plan from the family page list', function () {

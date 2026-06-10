@@ -1,22 +1,27 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DoctorIncomingPatientInvitationsSection from '@/Components/Doctor/Patients/DoctorIncomingPatientInvitationsSection.vue';
 import DoctorLinkedPatientsSection from '@/Components/Doctor/Patients/DoctorLinkedPatientsSection.vue';
+import ListCardSkeleton from '@/Components/ui/skeleton/ListCardSkeleton.vue';
 import DoctorLayout from '@/Layouts/DoctorLayout.vue';
+import { areAnyDeferredInertiaPropsLoading } from '@/lib/inertia/isDeferredInertiaPropLoading';
 import type { IncomingDoctorInvitation, LinkedPatient } from '@/lib/types';
 
-withDefaults(
-    defineProps<{
-        patients: LinkedPatient[];
-        incoming_invitations?: IncomingDoctorInvitation[];
-    }>(),
-    {
-        incoming_invitations: () => [],
-    },
-);
+const props = defineProps<{
+    patients?: LinkedPatient[];
+    incoming_invitations?: IncomingDoctorInvitation[];
+}>();
 
 const { t } = useI18n();
+
+const isPatientsLoading = computed(() =>
+    areAnyDeferredInertiaPropsLoading(
+        props.patients,
+        props.incoming_invitations,
+    ),
+);
 </script>
 
 <template>
@@ -30,11 +35,17 @@ const { t } = useI18n();
                 {{ t('doctor.patients.heading') }}
             </h1>
 
-            <DoctorLinkedPatientsSection :patients="patients" />
+            <ListCardSkeleton v-if="isPatientsLoading" />
 
-            <DoctorIncomingPatientInvitationsSection
-                :invitations="incoming_invitations"
-            />
+            <template v-else>
+                <DoctorLinkedPatientsSection
+                    :patients="props.patients ?? []"
+                />
+
+                <DoctorIncomingPatientInvitationsSection
+                    :invitations="props.incoming_invitations ?? []"
+                />
+            </template>
         </div>
     </DoctorLayout>
 </template>

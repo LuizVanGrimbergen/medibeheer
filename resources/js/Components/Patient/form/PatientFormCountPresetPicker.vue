@@ -8,11 +8,11 @@ import {
     patientFormCountCustomOptions,
 } from '@/lib/patient/form/patientFormCountPresetConstants';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormSelectBaseClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormSelectBaseClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const count = defineModel<number | null>({ required: true });
@@ -158,7 +158,7 @@ watch(count, (value) => {
     <div>
         <span
             :id="`${idPrefix}-count-label`"
-            :class="cn(patientFormLabelClass, 'text-xl')"
+            :class="cn(mobileShellFormLabelClass, 'text-xl')"
         >
             {{ label }}
             <span v-if="required" class="text-danger"> *</span>
@@ -209,11 +209,11 @@ watch(count, (value) => {
                 :aria-label="customSelectAriaLabel"
                 :class="
                     cn(
-                        patientFormSelectBaseClass,
-                        errorMessage ? patientFormFieldInvalidClass : null,
+                        mobileShellFormSelectBaseClass,
+                        errorMessage ? mobileShellFormFieldInvalidClass : null,
                     )
                 "
-                :style="patientFormSelectChevronStyle"
+                :style="mobileShellFormSelectChevronStyle"
                 :aria-invalid="Boolean(errorMessage)"
                 :aria-describedby="
                     errorMessage ? `${idPrefix}-count-error` : undefined

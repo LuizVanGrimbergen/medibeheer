@@ -4,10 +4,10 @@ import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormNativeDateTimeInputClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormNativeDateTimeInputClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const model = defineModel<string>({ required: true });
@@ -26,7 +26,7 @@ const isEmpty = computed(() => model.value.trim() === '');
 
 <template>
     <div>
-        <Label :for="id" :class="cn(patientFormLabelClass, 'text-xl')">
+        <Label :for="id" :class="cn(mobileShellFormLabelClass, 'text-xl')">
             {{ label }} <span class="text-danger">*</span>
         </Label>
 
@@ -50,9 +50,9 @@ const isEmpty = computed(() => model.value.trim() === '');
                 :placeholder="t('patient.inventory.vacationDateFormatHint')"
                 :class="
                     cn(
-                        patientFormNativeDateTimeInputClass,
+                        mobileShellFormNativeDateTimeInputClass,
                         isEmpty ? 'text-transparent' : null,
-                        error ? patientFormFieldInvalidClass : null,
+                        error ? mobileShellFormFieldInvalidClass : null,
                     )
                 "
                 :aria-invalid="Boolean(error)"

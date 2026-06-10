@@ -25,12 +25,16 @@ class DoctorDashboardController extends Controller
     {
         $doctor = $this->authorizeDoctorProfile($request);
 
-        return Inertia::render('Doctor/Dashboard', [
-            'patients' => $this->linkedPatientsService->listForDoctor($doctor),
-            'patient_overview' => $this->resolveDoctorPatientOverview(
-                $doctor,
-                $request,
-                $this->patientOverviewScreenService,
+        return Inertia::render('Doctor/Dashboard/Index', [
+            'patients' => Inertia::defer(
+                fn (): array => $this->linkedPatientsService->listForDoctor($doctor),
+            ),
+            'patient_overview' => Inertia::defer(
+                fn (): ?array => $this->resolveDoctorPatientOverview(
+                    $doctor,
+                    $request,
+                    $this->patientOverviewScreenService,
+                ),
             ),
         ]);
     }

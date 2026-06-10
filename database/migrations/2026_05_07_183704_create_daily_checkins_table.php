@@ -18,7 +18,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['patient_id', 'checkin_date']);
-            $table->index(['patient_id', 'checkin_date']);
         });
     }
 

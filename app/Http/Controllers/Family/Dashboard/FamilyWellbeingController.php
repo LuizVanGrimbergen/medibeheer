@@ -26,18 +26,32 @@ final class FamilyWellbeingController extends Controller
         $calendarMonth = CalendarMonth::fromRequest($request);
         $patient = FamilyDashboardState::activePatient($request);
 
-        if ($patient === null) {
-            return Inertia::render(
-                'Family/Wellbeing',
-                $screen->emptyProps($calendarMonth),
-            );
+        if ($patient !== null) {
+            $this->authorize('view', $patient);
         }
 
-        $this->authorize('view', $patient);
+        $checkinData = null;
 
-        return Inertia::render(
-            'Family/Wellbeing',
-            $screen->buildProps($calendarMonth, $patient),
-        );
+        return Inertia::render('Family/Wellbeing/Index', [
+            'wellbeing_calendar_month' => $calendarMonth,
+            'wellbeing_calendar_checkins' => Inertia::defer(
+                function () use ($screen, $calendarMonth, $patient, &$checkinData): array {
+                    $checkinData ??= $patient === null
+                        ? $screen->emptyProps($calendarMonth)
+                        : $screen->checkinDataFor($calendarMonth, $patient);
+
+                    return $checkinData['wellbeing_calendar_checkins'];
+                },
+            ),
+            'wellbeing_checkins' => Inertia::defer(
+                function () use ($screen, $calendarMonth, $patient, &$checkinData): array {
+                    $checkinData ??= $patient === null
+                        ? $screen->emptyProps($calendarMonth)
+                        : $screen->checkinDataFor($calendarMonth, $patient);
+
+                    return $checkinData['wellbeing_checkins'];
+                },
+            ),
+        ]);
     }
 }

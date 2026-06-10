@@ -5,7 +5,7 @@ import { Button } from '@/Components/ui/button';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellFormWizardFooterPrimaryButtonClass } from '@/lib/shell/mobileShellDialogLayout';
 import type { PageProps } from '@/lib/types';
 
 const props = defineProps<{
@@ -128,7 +128,7 @@ const form = useForm({
                 <Button
                     type="submit"
                     size="lg"
-                    :class="patientFormWizardFooterPrimaryButtonClass"
+                    :class="mobileShellFormWizardFooterPrimaryButtonClass"
                     :disabled="form.processing"
                 >
                     {{ t('profile.information.save') }}

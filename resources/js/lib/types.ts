@@ -313,7 +313,7 @@ export const MEDICATION_INTAKE_FREQUENCY_VALUES = [
 export type MedicationIntakeFrequencyValue =
     (typeof MEDICATION_INTAKE_FREQUENCY_VALUES)[number];
 
-export type MedicationScheduleListItem = {
+export type MedicationScheduleItem = {
     meal_timing: MedicationMealTimingValue;
     intake_frequency: MedicationIntakeFrequencyValue;
     intake_weekdays: number[] | null;
@@ -324,7 +324,7 @@ export type MedicationScheduleListItem = {
     end_date: string | null;
 };
 
-export type MedicationStockListItem = {
+export type MedicationStockItem = {
     id: number;
     current_stock: string;
 };
@@ -344,7 +344,7 @@ export type TodayMedicationIntakeDayPeriodValue =
     (typeof TODAY_MEDICATION_INTAKE_DAY_PERIOD_VALUES)[number];
 
 export type TodayMedicationIntakeStockItem = Pick<
-    MedicationStockListItem,
+    MedicationStockItem,
     'current_stock'
 >;
 
@@ -375,7 +375,7 @@ export type TodayMedicationIntakeSlot = {
     supply_estimate_quality: MedicationSupplyEstimateQuality;
 };
 
-export type MedicationListItem = {
+export type MedicationRegisterItem = {
     id: number;
     list_status: MedicationListStatusValue;
     name: string;
@@ -386,13 +386,13 @@ export type MedicationListItem = {
     note: string | null;
     prescription_expiry_date: string | null;
     stock_pieces_per_package: number | null;
-    schedules: MedicationScheduleListItem[];
-    stocks: MedicationStockListItem[];
+    schedules: MedicationScheduleItem[];
+    stocks: MedicationStockItem[];
     supply_estimate_days: number | null;
     supply_estimate_quality: MedicationSupplyEstimateQuality;
 };
 
-export type MedicationPrescriptionListItem = {
+export type MedicationPrescriptionItem = {
     id: number;
     medication_id: number;
     prescription_expiry_date: string | null;
@@ -406,21 +406,6 @@ export type MedicationPrescriptionListItem = {
 };
 
 export type MedicationPrescriptionPickupStatusValue = 'pending' | 'picked_up';
-
-export type MedicationPrescriptionGroupPrescriptionItem = {
-    id: number;
-    prescription_expiry_date: string | null;
-    pickup_status: MedicationPrescriptionPickupStatusValue;
-};
-
-export type MedicationPrescriptionGroupListItem = {
-    medication: {
-        id: number;
-        name: string;
-        type_medication: MedicationTypeValue;
-    };
-    prescriptions: MedicationPrescriptionGroupPrescriptionItem[];
-};
 
 export type Appointment = {
     id: number;

@@ -9,14 +9,14 @@ import {
 import { patientAppointmentToEditFormState } from '@/lib/patient/appointments/form-wizard/patientAppointmentToEditFormState';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
-import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellDialogContentClass } from '@/lib/shell/mobileShellDialogLayout';
 import type {
     AppointmentDoctorType,
     AppointmentStatusValue,
     Appointment as PatientAppointment,
 } from '@/lib/types';
 
-const appointmentFormDialogLayoutClass = patientShellDialogContentClass('sm');
+const appointmentFormDialogLayoutClass = mobileShellDialogContentClass('sm');
 
 export function usePatientAppointmentFormDialogs(
     props: Pick<
@@ -61,7 +61,7 @@ export function usePatientAppointmentFormDialogs(
             starts_at_time: '',
             notes: '',
             needs_transport: false,
-            transport_family_ids: props.linked_families.map((f) => f.id),
+            transport_family_ids: (props.linked_families ?? []).map((f) => f.id),
             status: 'scheduled',
         };
     }
@@ -153,7 +153,7 @@ export function usePatientAppointmentFormDialogs(
             editForm,
             patientAppointmentToEditFormState(
                 appointment,
-                props.linked_families,
+                props.linked_families ?? [],
             ),
         );
         void nextTick(() => {

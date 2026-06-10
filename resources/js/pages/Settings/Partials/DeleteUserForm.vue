@@ -12,12 +12,12 @@ import {
 } from '@/Components/ui/dialog';
 import { PasswordConfirmField } from '@/Components/ui/password-confirm-field';
 import {
-    patientConfirmDialogContentClass,
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellWizardFooterClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellConfirmDialogContentClass,
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellWizardFooterClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import { cn } from '@/lib/utils';
 
 const confirmingUserDeletion = ref(false);
@@ -73,7 +73,7 @@ const closeModal = () => {
             type="button"
             variant="secondary"
             size="lg"
-            :class="patientFormWizardFooterCancelButtonClass"
+            :class="mobileShellFormWizardFooterCancelButtonClass"
             @click="confirmUserDeletion"
         >
             {{ t('profile.delete.action') }}
@@ -86,12 +86,12 @@ const closeModal = () => {
             <DialogContent
                 :class="
                     cn(
-                        patientConfirmDialogContentClass,
+                        mobileShellConfirmDialogContentClass,
                         'flex min-h-0 flex-col',
                     )
                 "
                 :overlay-class="
-                    patientShellDialogOverlayAboveAppChromeClass('md')
+                    mobileShellDialogOverlayAboveAppChromeClass('md')
                 "
             >
                 <DialogHeader class="shrink-0 text-left">
@@ -120,7 +120,7 @@ const closeModal = () => {
                 <div
                     :class="[
                         'flex w-full min-w-0 flex-col gap-2 md:flex-row md:gap-3',
-                        patientShellWizardFooterClass,
+                        mobileShellWizardFooterClass,
                         'mt-auto shrink-0',
                     ]"
                 >
@@ -128,7 +128,7 @@ const closeModal = () => {
                         type="button"
                         variant="default"
                         size="lg"
-                        :class="patientFormWizardFooterPrimaryButtonClass"
+                        :class="mobileShellFormWizardFooterPrimaryButtonClass"
                         :disabled="form.processing"
                         @click="closeModal"
                     >
@@ -139,7 +139,7 @@ const closeModal = () => {
                         type="button"
                         variant="secondary"
                         size="lg"
-                        :class="patientFormWizardFooterCancelButtonClass"
+                        :class="mobileShellFormWizardFooterCancelButtonClass"
                         :disabled="form.processing"
                         @click="deleteUser"
                     >

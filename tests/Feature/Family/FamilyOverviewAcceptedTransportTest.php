@@ -39,8 +39,8 @@ test('family overview lists upcoming appointments with accepted transport for th
     $response = $this->actingAs($familyUser)->get(route('family.overview'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Overview')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Overview/Index')
         ->has('accepted_transport_appointments', 1)
         ->where('accepted_transport_appointments.0.patient_name', 'Sophie Maas')
         ->where('accepted_transport_appointments.0.provider_name', 'Huisartsenpost Meedhuizen')
@@ -51,7 +51,7 @@ test('family overview lists upcoming appointments with accepted transport for th
         ->where(
             'accepted_transport_appointments.0.appointments_url',
             route('family.appointments', ['view' => 'planned', 'appointment' => $appointment->id], absolute: false),
-        ));
+        )));
 });
 
 test('family overview omits transport accepted by another family', function () {
@@ -73,9 +73,9 @@ test('family overview omits transport accepted by another family', function () {
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
-            ->has('accepted_transport_appointments', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
+            ->has('accepted_transport_appointments', 0)));
 });
 
 test('family overview omits past appointments with accepted transport', function () {
@@ -97,6 +97,6 @@ test('family overview omits past appointments with accepted transport', function
     $this->actingAs($familyUser)
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->has('accepted_transport_appointments', 0));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->has('accepted_transport_appointments', 0)));
 });

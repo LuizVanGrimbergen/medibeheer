@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\LogsPatientDataChanges;
+use App\Models\Concerns\ResolvesPatientIdFromMedication;
 use App\Services\Audit\ActivityLogName;
 use App\Support\Medications\PushReminders\LowStock\ReminderCache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,13 +16,12 @@ class MedicationStock extends Model
 {
     use HasFactory;
     use LogsPatientDataChanges;
+    use ResolvesPatientIdFromMedication;
     use SoftDeletes;
 
     protected function patientDataActivityLogAttributes(): array
     {
         return [
-            'patient_id',
-            'family_id',
             'medication_id',
             'deleted_at',
         ];
@@ -32,8 +32,6 @@ class MedicationStock extends Model
     /**************************************/
 
     protected $fillable = [
-        'patient_id',
-        'family_id',
         'medication_id',
         'current_stock',
     ];
@@ -48,16 +46,6 @@ class MedicationStock extends Model
     /**************************************/
     /*           Relationships */
     /**************************************/
-
-    public function patient(): BelongsTo
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
-    public function family(): BelongsTo
-    {
-        return $this->belongsTo(Family::class);
-    }
 
     public function medication(): BelongsTo
     {
@@ -83,7 +71,7 @@ class MedicationStock extends Model
                 ->causedBy($causer)
                 ->performedOn($stock)
                 ->withProperties([
-                    'patient_id' => $stock->patient_id,
+                    'patient_id' => $stock->patientDataActivityPatientId(),
                     'medication_id' => $stock->medication_id,
                     'stock_changed' => true,
                 ])

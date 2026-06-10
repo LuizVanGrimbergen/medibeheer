@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationListCardLead from '@/Components/Medications/MedicationListCardLead.vue';
-import MedicationUrgencyProgressSection from '@/Components/Medications/MedicationUrgencyProgressSection.vue';
+import MedicationListCardLead from '@/Components/shared/medications/MedicationListCardLead.vue';
+import MedicationUrgencyProgressSection from '@/Components/shared/medications/MedicationUrgencyProgressSection.vue';
 import PatientListCardActionsToolbar from '@/Components/Patient/PatientListCardActionsToolbar.vue';
 import PatientListCardDetailsToggle from '@/Components/Patient/PatientListCardDetailsToggle.vue';
-import MedicationPrescriptionListItemSection from '@/Components/Patient/Prescriptions/MedicationPrescriptionListItem.vue';
+import MedicationPrescriptionControlsSection from '@/Components/Patient/Prescriptions/MedicationPrescriptionControlsSection.vue';
 import PrescriptionLastAppointmentTag from '@/Components/Patient/Prescriptions/PrescriptionLastAppointmentTag.vue';
 import PrescriptionPickupControl from '@/Components/Patient/Prescriptions/PrescriptionPickupControl.vue';
 import { Card, CardContent } from '@/Components/ui/card';
@@ -13,22 +13,18 @@ import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { usePatientPrescriptionCompleteActions } from '@/composables/patient/usePatientPrescriptionCompleteActions';
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
-import {
-    prescriptionShowsExpandedPickupControl,
-    prescriptionShowsPrimaryPickupAction,
-} from '@/lib/patient/prescriptions/prescriptionCollapsedPickupVisibility';
+import { mobileShellPageCardHeaderWithActionsClass } from '@/lib/shell/mobileShellTypography';
 import { prescriptionExpiryStatusLine } from '@/lib/patient/prescriptions/prescriptionExpiryStatusLine';
 import { prescriptionExpiryUrgencyContext } from '@/lib/patient/prescriptions/prescriptionExpiryUrgency';
-import { patientPageCardHeaderWithActionsClass } from '@/lib/patient/patientPageTypography';
 import type {
-    MedicationPrescriptionListItem,
+    MedicationPrescriptionItem,
     MedicationPrescriptionPickupStatusValue,
     MedicationTypeValue,
 } from '@/lib/types';
 
 const props = withDefaults(
     defineProps<{
-        prescription: MedicationPrescriptionListItem;
+        prescription: MedicationPrescriptionItem;
         onPickedUp?: (isLastInBatch: boolean) => void;
         showActions?: boolean;
     }>(),
@@ -85,10 +81,6 @@ const expiryProgressAriaLabel = computed((): string => {
     });
 });
 
-const showPrimaryPickupAction = prescriptionShowsPrimaryPickupAction();
-
-const showExpandedPickupControl = prescriptionShowsExpandedPickupControl();
-
 const isPickupUpdateDisabled = computed(() =>
     isPrescriptionUpdateInFlight(props.prescription.id),
 );
@@ -131,7 +123,7 @@ function onPickupStatusUpdate(
                     class="space-y-3.5"
                     :class="
                         props.showActions
-                            ? patientPageCardHeaderWithActionsClass
+                            ? mobileShellPageCardHeaderWithActionsClass
                             : null
                     "
                 >
@@ -167,7 +159,6 @@ function onPickupStatusUpdate(
                             :warning-alert-label="
                                 t('patient.prescriptions.expiryWarningAria')
                             "
-                            :show-progress-bar="false"
                         />
 
                         <p
@@ -180,16 +171,15 @@ function onPickupStatusUpdate(
                 </div>
 
                 <PrescriptionPickupControl
-                    v-if="showPrimaryPickupAction"
                     :pickup-status="prescription.pickup_status"
                     :disabled="isPickupUpdateDisabled"
                     @update:pickup-status="onPickupStatusUpdate"
                 />
 
                 <CollapsibleContent>
-                    <MedicationPrescriptionListItemSection
+                    <MedicationPrescriptionControlsSection
                         :prescription="prescription"
-                        :show-pickup-control="showExpandedPickupControl"
+                        :show-pickup-control="false"
                         :is-pickup-update-disabled="isPickupUpdateDisabled"
                         class="border-border/70 border-t pt-5"
                         @update:pickup-status="onPickupStatusUpdate"

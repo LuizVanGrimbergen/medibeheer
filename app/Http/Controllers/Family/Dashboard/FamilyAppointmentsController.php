@@ -17,14 +17,19 @@ class FamilyAppointmentsController extends Controller
     public function __invoke(Request $request, FamilyAppointmentsScreenService $screen): Response
     {
         $family = $this->authorizeFamilyProfile($request);
+        $activePatientId = FamilyDashboardState::activePatientId($request);
+        $shellProps = $screen->buildProps($request, $family, $activePatientId);
 
-        return Inertia::render(
-            'Family/Appointments',
-            $screen->buildProps(
-                $request,
-                $family,
-                FamilyDashboardState::activePatientId($request),
+        return Inertia::render('Family/Appointments/Index', [
+            'appointment_view' => $shellProps['appointment_view'],
+            'appointment_tab_totals' => $shellProps['appointment_tab_totals'],
+            'appointments' => Inertia::defer(
+                fn (): array => $screen->paginatedAppointmentsFor(
+                    $request,
+                    $family,
+                    $activePatientId,
+                ),
             ),
-        );
+        ]);
     }
 }

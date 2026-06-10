@@ -10,11 +10,7 @@ return new class extends Migration
     {
         Schema::create('medication_plan_proposal_item_schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('medication_plan_proposal_item_id');
-            $table->foreign('medication_plan_proposal_item_id', 'mpp_item_schedules_item_id_foreign')
-                ->references('id')
-                ->on('medication_plan_proposal_items')
-                ->cascadeOnDelete();
+            $table->foreignId('medication_plan_proposal_item_id')->constrained('medication_plan_proposal_items', 'id', 'mpp_item_schedules_item_id_fk')->cascadeOnDelete();
             $table->text('meal_timing');
             $table->text('intake_frequency');
             $table->text('times_per_day');

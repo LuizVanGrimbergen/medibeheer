@@ -5,10 +5,10 @@ import { useI18n } from 'vue-i18n';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormNativeDateTimeInputClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormNativeDateTimeInputClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import { cn } from '@/lib/utils';
 
@@ -60,7 +60,7 @@ function expiryDateFieldLabel(index: number): string {
         >
             <Label
                 :for="`${idPrefix}-expiry-${index - 1}`"
-                :class="patientFormLabelClass"
+                :class="mobileShellFormLabelClass"
             >
                 {{ expiryDateFieldLabel(index) }}
                 <span class="text-danger"> *</span>
@@ -73,10 +73,10 @@ function expiryDateFieldLabel(index: number): string {
                 required
                 :class="
                     cn(
-                        patientFormNativeDateTimeInputClass,
+                        mobileShellFormNativeDateTimeInputClass,
                         (expiryDatesErrorMessage ||
                             expiryDateFieldError(index - 1)) &&
-                            patientFormFieldInvalidClass,
+                            mobileShellFormFieldInvalidClass,
                     )
                 "
             />

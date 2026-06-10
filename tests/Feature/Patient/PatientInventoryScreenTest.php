@@ -17,13 +17,13 @@ test('patient inventory inertia page includes paginated medications with stocks'
     $response = $this->actingAs($user)->get(route('patient.inventory'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Inventory');
-    $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Inventory')
+    assertInertiaRootComponent($response, 'Patient/Inventory/Index');
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Patient/Inventory/Index')
         ->has('medications.data', 1)
         ->has('medications.data.0.stocks', 1)
         ->where('medications.data.0.supply_estimate_quality', 'unknown')
-        ->has('medications.meta'));
+        ->has('medications.meta')));
 });
 
 test('patients updating medication stock from inventory return to inventory', function () {

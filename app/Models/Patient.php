@@ -77,14 +77,4 @@ class Patient extends Model
     /*              Scopes */
     /**************************************/
 
-    /**************************************/
-    /*              Helpers */
-    /**************************************/
-
-    public function defaultMedicationFamilyId(): ?int
-    {
-        $id = $this->families()->orderBy('families.id')->value('families.id');
-
-        return $id !== null ? (int) $id : null;
-    }
 }

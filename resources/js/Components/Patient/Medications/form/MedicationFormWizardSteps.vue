@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PatientShellWizardCard from '@/Components/Patient/form/PatientShellWizardCard.vue';
+import MobileShellWizardCard from '@/Components/shell/MobileShellWizardCard.vue';
 import type {
     MedicationCreateFormWithErrors,
     MedicationFormWizardStep,
@@ -11,7 +11,7 @@ import MedicationScheduleDoseTimesStep from '@/Components/Patient/Medications/st
 import MedicationScheduleDurationStep from '@/Components/Patient/Medications/steps/MedicationScheduleDurationStep.vue';
 import MedicationScheduleMealsAndFrequencyStep from '@/Components/Patient/Medications/steps/MedicationScheduleMealsAndFrequencyStep.vue';
 import MedicationScheduleTimesPerDayStep from '@/Components/Patient/Medications/steps/MedicationScheduleTimesPerDayStep.vue';
-import { patientShellWizardStepPanelClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellWizardStepPanelClass } from '@/lib/shell/mobileShellDialogLayout';
 
 defineProps<{
     currentStep: MedicationFormWizardStep;
@@ -33,7 +33,7 @@ const noopGoToWizardStep: (
 </script>
 
 <template>
-    <div :class="patientShellWizardStepPanelClass">
+    <div :class="mobileShellWizardStepPanelClass">
         <MedicationScheduleMealsAndFrequencyStep
             v-if="currentStep === 2"
             :form="form"
@@ -45,7 +45,7 @@ const noopGoToWizardStep: (
             :id-prefix="idPrefix"
             :go-to-wizard-step="goToWizardStepFromSummary ?? noopGoToWizardStep"
         />
-        <PatientShellWizardCard v-else>
+        <MobileShellWizardCard v-else>
             <MedicationDetailsStep
                 v-if="currentStep === 1"
                 :form="form"
@@ -72,6 +72,6 @@ const noopGoToWizardStep: (
                 :id-prefix="idPrefix"
                 :show-stock-fields="showStockFields ?? true"
             />
-        </PatientShellWizardCard>
+        </MobileShellWizardCard>
     </div>
 </template>

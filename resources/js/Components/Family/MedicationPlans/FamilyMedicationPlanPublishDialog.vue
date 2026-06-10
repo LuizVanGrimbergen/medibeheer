@@ -4,18 +4,18 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizardFooter.vue';
 import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
-import PatientShellFormDialog from '@/Components/Patient/form/PatientShellFormDialog.vue';
-import PatientShellWizardCard from '@/Components/Patient/form/PatientShellWizardCard.vue';
+import MobileShellFormDialog from '@/Components/shell/MobileShellFormDialog.vue';
+import MobileShellWizardCard from '@/Components/shell/MobileShellWizardCard.vue';
 import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
-import { usePatientShellDialogLayout } from '@/composables/patient/usePatientShellDialogLayout';
+import { useMobileShellDialogLayout } from '@/composables/patient/useMobileShellDialogLayout';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
-import { patientShellWizardStepPanelClass } from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
+import { mobileShellWizardStepPanelClass } from '@/lib/shell/mobileShellDialogLayout';
 import { cn } from '@/lib/utils';
 
 const props = defineProps<{
@@ -32,7 +32,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
-const { dialogContentClass } = usePatientShellDialogLayout('md');
+const { dialogContentClass } = useMobileShellDialogLayout('md');
 
 const open = ref(true);
 
@@ -42,7 +42,7 @@ function onCancel(): void {
 </script>
 
 <template>
-    <PatientShellFormDialog
+    <MobileShellFormDialog
         :open="open"
         :title="t('family.medicationPlans.publishPage.title')"
         :form-id="props.formId"
@@ -52,8 +52,8 @@ function onCancel(): void {
         @submit="emit('submit')"
         @cancel="onCancel"
     >
-        <div :class="patientShellWizardStepPanelClass">
-            <PatientShellWizardCard>
+        <div :class="mobileShellWizardStepPanelClass">
+            <MobileShellWizardCard>
                 <p class="text-text-muted text-sm leading-relaxed md:text-base">
                     {{ t('family.medicationPlans.publishPage.hint') }}
                 </p>
@@ -61,7 +61,7 @@ function onCancel(): void {
                 <div class="flex flex-col gap-2">
                     <Label
                         for="medication-plan-patient-email"
-                        :class="patientFormLabelClass"
+                        :class="mobileShellFormLabelClass"
                     >
                         {{ t('family.medicationPlans.publishPage.emailLabel') }}
                     </Label>
@@ -73,9 +73,9 @@ function onCancel(): void {
                         inputmode="email"
                         :class="
                             cn(
-                                patientFormFieldInputClass,
+                                mobileShellFormFieldInputClass,
                                 emailError
-                                    ? patientFormFieldInvalidClass
+                                    ? mobileShellFormFieldInvalidClass
                                     : null,
                             )
                         "
@@ -91,7 +91,7 @@ function onCancel(): void {
                     />
                     <InputError class="mt-1" :message="emailError" />
                 </div>
-            </PatientShellWizardCard>
+            </MobileShellWizardCard>
         </div>
 
         <template #footer>
@@ -111,5 +111,5 @@ function onCancel(): void {
                 </PatientFormWizardFooterButton>
             </PatientFormWizardFooter>
         </template>
-    </PatientShellFormDialog>
+    </MobileShellFormDialog>
 </template>

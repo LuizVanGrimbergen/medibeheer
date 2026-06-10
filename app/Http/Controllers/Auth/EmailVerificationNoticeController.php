@@ -27,6 +27,6 @@ class EmailVerificationNoticeController extends Controller
 
         return $authenticatedUser->hasVerifiedEmail()
             ? redirect()->intended($authenticatedUser->defaultAuthenticatedHomeUrl())
-            : Inertia::render('Auth/VerifyEmail', ['status' => session('status')]);
+            : Inertia::render('Auth/VerifyEmail/Index', ['status' => session('status')]);
     }
 }

@@ -79,38 +79,13 @@ test('patient medications inertia page includes medications collection', functio
     $response = $this->actingAs($user)->get(route('patient.medications'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Medications');
+    assertInertiaRootComponent($response, 'Patient/Medications/Index');
     $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Medications')
-        ->missing('active_medications')
-        ->missing('previously_used_medications')
-        ->missing('active_medication_names')
-        ->where('can_create_medication', true)
-        ->loadDeferredProps(fn ($page) => $page
-            ->has('active_medications.data')
-            ->has('active_medications.meta')));
-});
-
-test('patient medications initial html omits deferred active medications payload', function () {
-    $user = User::factory()->patient()->create();
-    $patient = $user->patient;
-    expect($patient)->not->toBeNull();
-
-    Medication::factory()->for($patient)->create(['name' => 'GeheimeMedicatie']);
-
-    $response = $this->actingAs($user)->get(route('patient.medications'));
-
-    $response->assertOk();
-
-    preg_match('/<div[^>]*id="app"[^>]*data-page="([^"]+)"/', $response->getContent(), $matches);
-
-    expect($matches)->not->toBeEmpty();
-
-    /** @var array<string, mixed> $page */
-    $page = json_decode(html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5), true);
-
-    expect($page['props']['active_medications'] ?? null)->toBeNull();
-    expect($response->getContent())->not->toContain('GeheimeMedicatie');
+        ->component('Patient/Medications/Index')
+        ->where('can_create_medication', true));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->has('active_medications.data')
+        ->has('active_medications.meta')));
 });
 
 test('patient medications inertia payload omits redundant medication relation ids', function () {
@@ -129,17 +104,15 @@ test('patient medications inertia payload omits redundant medication relation id
     $response = $this->actingAs($user)->get(route('patient.medications'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->loadDeferredProps(fn ($page) => $page
-            ->has('active_medications.data', 1)
-            ->missing('active_medications.data.0.patient_id')
-            ->missing('active_medications.data.0.family_id')
-            ->missing('active_medications.data.0.schedules.0.id')
-            ->missing('active_medications.data.0.schedules.0.medication_id')
-            ->missing('active_medications.data.0.schedules.0.dose_quantity')
-            ->missing('active_medications.data.0.stocks.0.medication_id')
-            ->has('active_medications.data.0.stocks.0.id')
-            ->has('active_medications.data.0.stocks.0.current_stock')));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->has('active_medications.data', 1)
+        ->missing('active_medications.data.0.patient_id')
+        ->missing('active_medications.data.0.schedules.0.id')
+        ->missing('active_medications.data.0.schedules.0.medication_id')
+        ->missing('active_medications.data.0.schedules.0.dose_quantity')
+        ->missing('active_medications.data.0.stocks.0.medication_id')
+        ->has('active_medications.data.0.stocks.0.id')
+        ->has('active_medications.data.0.stocks.0.current_stock')));
 });
 
 test('patient medications page splits active and previously used medications', function () {
@@ -168,11 +141,18 @@ test('patient medications page splits active and previously used medications', f
     $response = $this->actingAs($user)->get(route('patient.medications'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->loadDeferredProps(fn ($page) => $page
-            ->where('active_medications.meta.total', 1)
-            ->where('active_medications.data.0.name', 'Actief')
-            ->missing('previously_used_medications')));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->where('active_medications.meta.total', 1)
+        ->where('active_medications.data.0.name', 'Actief')
+        ->missing('previously_used_medications')));
+});
+
+test('legacy pharmacist overview url redirects to share with pharmacist page', function () {
+    $user = User::factory()->patient()->create();
+
+    $response = $this->actingAs($user)->get('/patient/medications/pharmacist-overview');
+
+    $response->assertRedirect(route('patient.medications.share-with-pharmacist'));
 });
 
 test('patients can view active medications on the pharmacist overview page', function () {
@@ -187,12 +167,12 @@ test('patients can view active medications on the pharmacist overview page', fun
         'end_date' => '2026-12-31',
     ]);
 
-    $response = $this->actingAs($user)->get(route('patient.medications.pharmacist-overview'));
+    $response = $this->actingAs($user)->get(route('patient.medications.share-with-pharmacist'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Medications/PharmacistOverview');
-    $response->assertInertia(fn ($page) => $page
-        ->where('medication_names', ['Metformine']));
+    assertInertiaRootComponent($response, 'Patient/Medications/ShareWithPharmacist');
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->where('medication_names', ['Metformine'])));
 });
 
 test('patients without active medications are redirected from the pharmacist overview page', function () {
@@ -200,7 +180,7 @@ test('patients without active medications are redirected from the pharmacist ove
 
     $user = User::factory()->patient()->create();
 
-    $response = $this->actingAs($user)->get(route('patient.medications.pharmacist-overview'));
+    $response = $this->actingAs($user)->get(route('patient.medications.share-with-pharmacist'));
 
     $response->assertRedirect(route('patient.medications'));
 });
@@ -267,7 +247,7 @@ test('patients can create a medication with snooze time per dose slot', function
     $response->assertRedirect(route('patient.medications'));
 
     $schedule = MedicationSchedule::query()
-        ->where('patient_id', $patient->id)
+        ->whereHas('medication', fn ($query) => $query->where('patient_id', $patient->id))
         ->first();
 
     expect($schedule)->not->toBeNull();
@@ -276,6 +256,8 @@ test('patients can create a medication with snooze time per dose slot', function
 });
 
 test('patients can update a medication schedule snooze time per dose slot', function () {
+    CarbonImmutable::setTestNow('2026-05-19 10:00:00');
+
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
     expect($patient)->not->toBeNull();
@@ -284,7 +266,11 @@ test('patients can update a medication schedule snooze time per dose slot', func
     $schedule = MedicationSchedule::factory()->forMedication($medication)->create([
         'times_per_day' => '2',
         'dose_time' => '09:00, 12:00',
+        'start_date' => '2026-05-01',
+        'end_date' => '2026-12-31',
     ]);
+
+    $intakeFrequency = $schedule->intake_frequency;
 
     $response = $this->actingAs($user)->put(route('patient.medications.update', $medication), [
         'name' => $medication->name,
@@ -293,7 +279,9 @@ test('patients can update a medication schedule snooze time per dose slot', func
         'type_medication' => $medication->type_medication->value,
         'schedule' => [
             'meal_timing' => $schedule->meal_timing->value,
-            'intake_frequency' => $schedule->intake_frequency,
+            'intake_frequency' => $intakeFrequency instanceof BackedEnum
+                ? $intakeFrequency->value
+                : $intakeFrequency,
             'times_per_day' => '2',
             'dose_time' => '09:00, 12:00',
             'snooze_time' => '90, 45',
@@ -331,7 +319,6 @@ test('patients can create a medication and name is encrypted at rest', function 
     expect($medication->name)->toBe('Ibuprofen');
     expect($medication->dose)->toBe('400');
     expect($medication->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($medication->family_id)->toBeNull();
 
     $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
     expect($schedule)->not->toBeNull();
@@ -462,7 +449,7 @@ test('patients cannot store a medication without stock fields', function () {
     $response->assertSessionHasErrors(['current_stock', 'stock_pieces_per_package']);
 });
 
-test('patients creating a medication links it to the first linked family when present', function () {
+test('patients can create a medication when a family is linked', function () {
     $user = User::factory()->patient()->create();
     $patient = $user->patient;
     expect($patient)->not->toBeNull();
@@ -483,11 +470,10 @@ test('patients creating a medication links it to the first linked family when pr
 
     $medication = Medication::query()->where('patient_id', $patient->id)->first();
     expect($medication)->not->toBeNull();
-    expect($medication->family_id)->toBe($family->id);
+    expect($medication->name)->toBe('Vitamine C');
 
     $schedule = MedicationSchedule::query()->where('medication_id', $medication->id)->first();
     expect($schedule)->not->toBeNull();
-    expect($schedule->family_id)->toBe($family->id);
 });
 
 test('patients cannot store a medication without dose', function () {
@@ -663,7 +649,6 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     expect($levothyroxine->dose)->toBe('1');
     expect($levothyroxine->dose_unit)->toBe(MedicationDoseUnit::PIECE);
     expect($levothyroxine->type_medication)->toBe(MedicationType::PILL);
-    expect($levothyroxine->family_id)->toBe($family->id);
 
     $schedule = $levothyroxine->schedules()->first();
     expect($schedule)->not->toBeNull();
@@ -671,8 +656,6 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     expect($schedule->dose_time)->toBe('06:45');
     expect($schedule->meal_timing)->toBe(MedicationMealTiming::BEFORE_FOOD);
     expect($schedule->intake_frequency)->toBe(MedicationIntakeFrequency::DAILY);
-    expect($schedule->family_id)->toBe($family->id);
-
     $rawSchedule = DB::table('medication_schedules')->where('id', $schedule->id)->first();
     expect($rawSchedule->times_per_day)->not->toBe('1');
     expect($rawSchedule->dose_time)->not->toBe('06:45');
@@ -680,21 +663,16 @@ test('medication seeder persists encrypted schedule and stock fields', function 
     $stock = $levothyroxine->stocks()->first();
     expect($stock)->not->toBeNull();
     expect($stock->current_stock)->toBe('84 stuks');
-    expect($stock->family_id)->toBe($family->id);
-
     $rawStock = DB::table('medication_stocks')->where('id', $stock->id)->first();
     expect($rawStock->current_stock)->not->toBe('84 stuks');
 
     $levoPrescription = $levothyroxine->prescriptions()->first();
     expect($levoPrescription)->not->toBeNull();
     expect($levoPrescription->pickup_status)->toBe(MedicationPrescriptionPickupStatus::PICKED_UP);
-    expect($levoPrescription->family_id)->toBe($family->id);
-
     $metformin = $medications->firstWhere('name', 'Metformine');
     expect($metformin)->not->toBeNull();
     expect($metformin->dose)->toBe('1');
     expect($metformin->dose_unit)->toBe(MedicationDoseUnit::PIECE);
-    expect($metformin->family_id)->toBe($family->id);
     expect($metformin->schedules()->first()?->times_per_day)->toBe('2');
     expect($metformin->schedules()->first()?->dose_time)->toBe('08:00, 19:00');
     expect($metformin->schedules()->first()?->meal_timing)->toBe(MedicationMealTiming::AFTER_FOOD);

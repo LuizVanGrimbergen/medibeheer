@@ -6,11 +6,11 @@ import PatientFormCountPresetPicker from '@/Components/Patient/form/PatientFormC
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-    patientFormSelectBaseClass,
-    patientFormSelectChevronStyle,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+    mobileShellFormSelectBaseClass,
+    mobileShellFormSelectChevronStyle,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import type { PatientPrescriptionForm } from '@/lib/patient/prescriptions/patientPrescriptionFormTypes';
 import type { PatientPrescriptionMedicationChoice } from '@/lib/patient/prescriptions/patientPrescriptionsScreenProps';
 import type { MedicationTypeValue } from '@/lib/types';
@@ -73,7 +73,7 @@ function prescriptionQuantityOptionLabel(value: number): string {
         <div class="min-w-0 space-y-2">
             <Label
                 :for="`${idPrefix}-medication`"
-                :class="patientFormLabelClass"
+                :class="mobileShellFormLabelClass"
             >
                 {{ t('patient.prescriptions.medicationLabel') }}
                 <span class="text-danger"> *</span>
@@ -83,11 +83,11 @@ function prescriptionQuantityOptionLabel(value: number): string {
                 v-model="selectedMedicationId"
                 :class="
                     cn(
-                        patientFormSelectBaseClass,
-                        medicationSelectInvalid && patientFormFieldInvalidClass,
+                        mobileShellFormSelectBaseClass,
+                        medicationSelectInvalid && mobileShellFormFieldInvalidClass,
                     )
                 "
-                :style="patientFormSelectChevronStyle"
+                :style="mobileShellFormSelectChevronStyle"
                 required
             >
                 <option :value="null" disabled>

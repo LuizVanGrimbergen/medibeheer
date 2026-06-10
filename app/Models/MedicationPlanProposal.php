@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\MedicationPlanProposalStatus;
+use App\Models\Concerns\MaintainsBlindIndexForEncryptedEnum;
+use App\Support\BlindIndex;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +15,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class MedicationPlanProposal extends Model
 {
     use HasFactory;
+    use MaintainsBlindIndexForEncryptedEnum;
+
+    protected $hidden = [
+        'status_index',
+    ];
 
     protected $fillable = [
         'patient_id',
@@ -27,6 +34,30 @@ class MedicationPlanProposal extends Model
         'declined_at',
         'revoked_at',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $proposal): void {
+            if ($proposal->status === null) {
+                $proposal->status = MedicationPlanProposalStatus::DRAFT;
+            }
+
+            $proposal->syncBlindIndexesForEncryptedEnums();
+        });
+    }
+
+    protected function blindIndexedEncryptedEnumAttributes(): array
+    {
+        return [
+            'status' => 'status_index',
+        ];
+    }
+
+    #[Scope]
+    protected function whereStatus(Builder $query, MedicationPlanProposalStatus $status): void
+    {
+        $query->where('status_index', BlindIndex::forEnum($status));
+    }
 
     protected function casts(): array
     {
@@ -104,7 +135,7 @@ class MedicationPlanProposal extends Model
     protected function redeemable(Builder $query): Builder
     {
         return $query
-            ->where('status', MedicationPlanProposalStatus::PUBLISHED)
+            ->whereStatus(MedicationPlanProposalStatus::PUBLISHED)
             ->whereNull('accepted_at')
             ->whereNull('declined_at')
             ->whereNull('revoked_at')

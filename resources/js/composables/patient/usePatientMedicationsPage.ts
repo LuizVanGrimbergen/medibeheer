@@ -5,14 +5,14 @@ import type { MedicationCreateFormState } from '@/Components/Patient/Medications
 import { usePatientActionSuccessScreen } from '@/composables/patient/usePatientActionSuccessScreen';
 import { blankMedicationCreateForm } from '@/lib/patient/medications/create-form/medicationCreateFormDefaults';
 import { medicationCreateFormStateToRequestPayload } from '@/lib/patient/medications/create-form/medicationCreateFormToRequestPayload';
-import { medicationListItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationListItemToCreateFormState';
+import { medicationRegisterItemToCreateFormState } from '@/lib/patient/medications/create-form/medicationRegisterItemToCreateFormState';
 import { MEDICATION_SCHEDULE_DEFAULT_SNOOZE_MINUTES } from '@/lib/patient/medications/schedule/medicationScheduleDoseTimes';
 import type { PatientMedicationsScreenProps } from '@/lib/patient/medications/screen/patientMedicationsScreenProps';
 import { parseMedicationTimesPerDayCount } from '@/lib/patient/medications/validation/medicationFormValidationPrimitives';
-import { patientShellDialogContentClass } from '@/lib/patient/patientShellDialogLayout';
-import type { MedicationListItem } from '@/lib/types';
+import { mobileShellDialogContentClass } from '@/lib/shell/mobileShellDialogLayout';
+import type { MedicationRegisterItem } from '@/lib/types';
 
-const medicationFormDialogLayoutClass = patientShellDialogContentClass('md');
+const medicationFormDialogLayoutClass = mobileShellDialogContentClass('md');
 
 function attachMedicationScheduleTimeSlotWatcher(
     form: ReturnType<typeof useForm<MedicationCreateFormState>>,
@@ -100,7 +100,7 @@ export function usePatientMedicationsPage(
     const editDialogOpen = ref(false);
     const editMedicationId = ref<number | null>(null);
     const deleteDialogOpen = ref(false);
-    const deleteMedication = ref<MedicationListItem | null>(null);
+    const deleteMedication = ref<MedicationRegisterItem | null>(null);
     const deleteProcessing = ref(false);
     function resetCreateDialogToFreshDefaults(): void {
         createForm.defaults(blankMedicationCreateForm());
@@ -164,9 +164,9 @@ export function usePatientMedicationsPage(
         globalThis.history.replaceState({}, '', nextUrl);
     });
 
-    function openEditMedication(medication: MedicationListItem): void {
+    function openEditMedication(medication: MedicationRegisterItem): void {
         editMedicationId.value = medication.id;
-        editForm.defaults(medicationListItemToCreateFormState(medication));
+        editForm.defaults(medicationRegisterItemToCreateFormState(medication));
         editForm.reset();
         editForm.clearErrors();
         editDialogOpen.value = true;
@@ -216,7 +216,7 @@ export function usePatientMedicationsPage(
             });
     }
 
-    function openDeleteMedicationDialog(medication: MedicationListItem): void {
+    function openDeleteMedicationDialog(medication: MedicationRegisterItem): void {
         deleteMedication.value = medication;
         deleteDialogOpen.value = true;
     }

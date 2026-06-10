@@ -4,7 +4,7 @@ import DailyCheckinWizardDialog from '@/Components/Patient/DailyCheckins/form/Da
 import type { DailyCheckinWizardDialogStep } from '@/Components/Patient/DailyCheckins/form/DailyCheckinWizardDialogTypes';
 import { useDailyCheckin } from '@/Components/Patient/DailyCheckins/form/useDailyCheckin';
 import DailyCheckinMoodStep from '@/Components/Patient/DailyCheckins/steps/DailyCheckinMoodStep.vue';
-import PatientShellWizardCard from '@/Components/Patient/form/PatientShellWizardCard.vue';
+import MobileShellWizardCard from '@/Components/shell/MobileShellWizardCard.vue';
 import type { DailyCheckin, DailyMoodScoreValue } from '@/lib/types';
 
 const props = defineProps<{
@@ -118,13 +118,13 @@ watch(
 
 <template>
     <div class="space-y-3 sm:space-y-4">
-        <PatientShellWizardCard v-if="!dialogOpen">
+        <MobileShellWizardCard v-if="!dialogOpen">
             <DailyCheckinMoodStep
                 :model-value="selectedMood"
                 :disabled="form.processing"
                 @update:model-value="startCheckin"
             />
-        </PatientShellWizardCard>
+        </MobileShellWizardCard>
 
         <DailyCheckinWizardDialog
             :open="dialogOpen"

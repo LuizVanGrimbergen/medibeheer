@@ -25,7 +25,6 @@ class Medication extends Model
     {
         return [
             'patient_id',
-            'family_id',
             'dose_unit',
             'type_medication',
             'deleted_at',
@@ -38,7 +37,6 @@ class Medication extends Model
 
     protected $fillable = [
         'patient_id',
-        'family_id',
         'name',
         'dose',
         'dose_unit',
@@ -47,6 +45,15 @@ class Medication extends Model
         'note',
         'stock_pieces_per_package',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $medication): void {
+            if ($medication->dose_unit === null) {
+                $medication->dose_unit = MedicationDoseUnit::PIECE;
+            }
+        });
+    }
 
     protected function casts(): array
     {
@@ -69,11 +76,6 @@ class Medication extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
-    }
-
-    public function family(): BelongsTo
-    {
-        return $this->belongsTo(Family::class);
     }
 
     public function schedules(): HasMany

@@ -23,11 +23,11 @@ test('family medications opens the paginated page for a deep linked medication',
     $this->actingAs($familyUser)
         ->get(route('family.medications', ['medication' => $target->id]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Medications')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Medications/Index')
             ->where('medications.meta.current_page', 2)
             ->where('medications.data.1.id', $target->id)
-            ->where('medications.data.1.name', 'Magnesiumcitraat'));
+            ->where('medications.data.1.name', 'Magnesiumcitraat')));
 });
 
 test('family medications ignores invalid deep link medication ids', function () {
@@ -42,7 +42,7 @@ test('family medications ignores invalid deep link medication ids', function () 
     $this->actingAs($familyUser)
         ->get(route('family.medications', ['medication' => 999_999]))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Medications')
-            ->where('medications.meta.current_page', 1));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Medications/Index')
+            ->where('medications.meta.current_page', 1)));
 });

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MedicationMealTiming;
 use App\Models\Concerns\LogsPatientDataChanges;
+use App\Models\Concerns\ResolvesPatientIdFromMedication;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,13 +16,12 @@ class MedicationSchedule extends Model
 {
     use HasFactory;
     use LogsPatientDataChanges;
+    use ResolvesPatientIdFromMedication;
     use SoftDeletes;
 
     protected function patientDataActivityLogAttributes(): array
     {
         return [
-            'patient_id',
-            'family_id',
             'medication_id',
             'meal_timing',
             'start_date',
@@ -35,8 +35,6 @@ class MedicationSchedule extends Model
     /**************************************/
 
     protected $fillable = [
-        'patient_id',
-        'family_id',
         'medication_id',
         'meal_timing',
         'intake_frequency',
@@ -110,16 +108,6 @@ class MedicationSchedule extends Model
     /**************************************/
     /*           Relationships */
     /**************************************/
-
-    public function patient(): BelongsTo
-    {
-        return $this->belongsTo(Patient::class);
-    }
-
-    public function family(): BelongsTo
-    {
-        return $this->belongsTo(Family::class);
-    }
 
     public function medication(): BelongsTo
     {

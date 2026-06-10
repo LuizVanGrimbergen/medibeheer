@@ -29,8 +29,8 @@ export type FamilyAppointment = Pick<
 };
 
 export type FamilyAppointmentsScreenProps = {
-    family: FamilyDashboardProps;
-    appointments: Paginated<FamilyAppointment>;
+    family?: FamilyDashboardProps;
+    appointments?: Paginated<FamilyAppointment>;
     appointment_view: FamilyAppointmentView;
     appointment_tab_totals: { planned: number; completed: number };
 };

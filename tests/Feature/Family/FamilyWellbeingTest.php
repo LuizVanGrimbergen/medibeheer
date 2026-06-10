@@ -22,11 +22,11 @@ test('linked family members see wellbeing check-ins on wellbeing', function () {
     $response = $this->actingAs($familyUser)->get(route('family.wellbeing'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Wellbeing')
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Wellbeing/Index')
         ->has('wellbeing_checkins.data', 1)
         ->where('wellbeing_checkins.data.0.mood_score', DailyMoodScore::OK->value)
-        ->where('wellbeing_checkins.data.0.note', 'Even uitgerust.'));
+        ->where('wellbeing_checkins.data.0.note', 'Even uitgerust.')));
 });
 
 test('family members without a patient link see empty wellbeing data on wellbeing', function () {
@@ -35,9 +35,9 @@ test('family members without a patient link see empty wellbeing data on wellbein
     $response = $this->actingAs($familyUser)->get(route('family.wellbeing'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('Family/Wellbeing')
-        ->has('wellbeing_checkins.data', 0));
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+        ->component('Family/Wellbeing/Index')
+        ->has('wellbeing_checkins.data', 0)));
 });
 
 test('linked family members can visit family wellbeing', function () {
@@ -50,7 +50,7 @@ test('linked family members can visit family wellbeing', function () {
     $response = $this->actingAs($familyUser)->get(route('family.wellbeing'));
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page->component('Family/Wellbeing'));
+    $response->assertInertia(fn ($page) => $page->component('Family/Wellbeing/Index'));
 });
 
 test('shared family props expose active patient today mood for footer nav', function () {
@@ -69,8 +69,8 @@ test('shared family props expose active patient today mood for footer nav', func
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->where('family.active_patient_today_mood', DailyMoodScore::GOOD->value));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('family.active_patient_today_mood', DailyMoodScore::GOOD->value)));
 });
 
 test('shared family props expose bad mood when check-in is bad', function () {
@@ -89,8 +89,8 @@ test('shared family props expose bad mood when check-in is bad', function () {
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->where('family.active_patient_today_mood', DailyMoodScore::BAD->value));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('family.active_patient_today_mood', DailyMoodScore::BAD->value)));
 });
 
 test('family wellbeing calendar only loads check-ins for the requested month', function () {
@@ -119,11 +119,14 @@ test('family wellbeing calendar only loads check-ins for the requested month', f
     $this->actingAs($familyUser)->get(route('family.wellbeing', ['calendar_month' => '2026-05']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Family/Wellbeing')
-            ->where('wellbeing_calendar_month', '2026-05')
+            ->component('Family/Wellbeing/Index')
+            ->where('wellbeing_calendar_month', '2026-05'));
+    $this->actingAs($familyUser)->get(route('family.wellbeing', ['calendar_month' => '2026-05']))
+        ->assertOk()
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
             ->has('wellbeing_calendar_checkins', 1)
             ->where('wellbeing_calendar_checkins.0.checkin_date', '2026-05-10')
-            ->where('wellbeing_calendar_checkins.0.mood_score', DailyMoodScore::BAD->value));
+            ->where('wellbeing_calendar_checkins.0.mood_score', DailyMoodScore::BAD->value)));
 });
 
 test('shared family props use null today mood when there is no check-in today', function () {
@@ -135,6 +138,6 @@ test('shared family props use null today mood when there is no check-in today', 
 
     $this->actingAs($familyUser)->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->where('family.active_patient_today_mood', null));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->where('family.active_patient_today_mood', null)));
 });

@@ -2,40 +2,22 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from 'lucide-vue-next';
 import { CalendarDays, LayoutGrid, Link2, Pill, Smile } from 'lucide-vue-next';
-import type { ComputedRef } from 'vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MobileShellSettingsLink from '@/Components/MobileShellSettingsLink.vue';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import {
+    mobileShellFooterNavClass,
+    mobileShellScrollContentClass,
+} from '@/lib/shell/mobileShellLayout';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
 type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
 
 const { t } = useI18n();
 const page = usePage<PageWithFamily>();
-const { smAndUp, lgAndUp } = useTailwindBreakpoints();
-
-function horizontalPaddingX(
-    atLg: string,
-    atSm: string,
-    base: string,
-): ComputedRef<string> {
-    return computed(() => {
-        if (lgAndUp.value) {
-            return atLg;
-        }
-
-        if (smAndUp.value) {
-            return atSm;
-        }
-
-        return base;
-    });
-}
-
-const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
-const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
+const { smAndUp } = useTailwindBreakpoints();
 
 type FamilyNavItem = {
     routeName:
@@ -187,10 +169,7 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
             <div
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
-                <div
-                    class="relative mx-auto w-full max-w-7xl pt-4 pb-4 md:pt-6"
-                    :class="shellPaddingX"
-                >
+                <div :class="mobileShellScrollContentClass">
                     <MobileShellSettingsLink />
                     <slot />
                 </div>
@@ -200,10 +179,7 @@ function wellbeingNavUsesDetailedAria(item: FamilyNavItem): boolean {
                 class="border-border bg-surface z-40 shrink-0 border-t"
                 :aria-label="t('family.navigation.mobileFooterAriaLabel')"
             >
-                <div
-                    class="mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
-                    :class="footerPaddingX"
-                >
+                <div :class="mobileShellFooterNavClass">
                     <Link
                         v-for="item in visibleFamilyNavItems"
                         :key="item.routeName"

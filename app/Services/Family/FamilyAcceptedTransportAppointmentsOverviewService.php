@@ -32,7 +32,7 @@ final class FamilyAcceptedTransportAppointmentsOverviewService
             ->whereIn('patient_id', $patientIds, 'and', false)
             ->where('family_id', $family->id)
             ->where('needs_transport', true)
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->where('starts_at', '>=', $now)
             ->with(['patient.user'])
             ->orderBy('starts_at')

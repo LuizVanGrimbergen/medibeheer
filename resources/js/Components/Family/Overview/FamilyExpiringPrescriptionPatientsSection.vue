@@ -4,7 +4,7 @@ import { FileText } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyExpiringPrescriptionPatientCard from '@/Components/Family/Overview/FamilyExpiringPrescriptionPatientCard.vue';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import type { FamilyExpiringPrescriptionPatient } from '@/lib/family/overview/familyExpiringPrescriptionPatients';
 
 const props = defineProps<{
@@ -40,7 +40,7 @@ function openPatientMedications(
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-if="hasPatients"
         v-model:open="isOpen"
         :heading="t('family.overview.prescriptionsHeading')"
@@ -60,5 +60,5 @@ function openPatientMedications(
                 />
             </li>
         </ul>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>
