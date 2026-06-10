@@ -11,13 +11,14 @@ return new class extends Migration
         Schema::create('user_consents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('type');
+            $table->text('type');
+            $table->char('type_index', 64);
             $table->string('policy_version');
             $table->timestamp('accepted_at');
             $table->string('ip_address', 45)->nullable();
             $table->timestamps();
 
-            $table->index(['user_id', 'type']);
+            $table->unique(['user_id', 'type_index', 'policy_version']);
         });
     }
 
