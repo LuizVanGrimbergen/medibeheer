@@ -12,7 +12,7 @@ import { mountPlaceAutocompleteLucideInputIcon } from '@/lib/google-maps/mountPl
 import { parseGooglePlaceAddressComponents } from '@/lib/google-maps/parseGooglePlaceAddressComponents';
 import { looseInertiaForm } from '@/lib/inertia/looseInertiaForm';
 import { isAppointmentAddressComplete } from '@/lib/patient/appointments/isAppointmentAddressComplete';
-import { patientFormPlaceAutocompleteClass } from '@/lib/patient/patientFormFieldClasses';
+import { mobileShellFormPlaceAutocompleteClass } from '@/lib/shell/mobileShellFormFieldClasses';
 
 function scheduleFocusPlaceAutocompleteSearch(host: HTMLElement | null): void {
     if (focusPlaceAutocompleteSearch(host)) {
@@ -97,7 +97,7 @@ export function useAppointmentAddressPlaceAutocomplete(options: {
                     includedRegionCodes: ['be'],
                 });
 
-                element.className = `${patientFormPlaceAutocompleteClass} w-full`;
+                element.className = `${mobileShellFormPlaceAutocompleteClass} w-full`;
                 element.setAttribute('no-input-icon', '');
                 element.requestedLanguage = 'nl';
                 element.requestedRegion = 'be';
