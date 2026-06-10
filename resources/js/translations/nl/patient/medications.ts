@@ -3,7 +3,7 @@ export default {
     metaDescription:
         'Overzicht van uw medicatie in Medibeheer. Voeg medicaties toe en beheer later inname en voorraad.',
     newMedication: 'Medicatie toevoegen',
-    pharmacistOverview: {
+    shareWithPharmacist: {
         button: 'Actieve medicatie',
         title: 'Actieve medicatie',
         metaDescription:
