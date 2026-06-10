@@ -31,11 +31,31 @@ final class FamilyAppointmentsScreenService
         }
 
         $baseQuery = Appointment::query()->where('patient_id', $patientId);
-        $plannedTotal = (clone $baseQuery)->where('status', AppointmentStatus::SCHEDULED)->count('*');
-        $completedTotal = (clone $baseQuery)->whereIn('status', [
+        $plannedTotal = (clone $baseQuery)->whereStatus(AppointmentStatus::SCHEDULED)->count('*');
+        $completedTotal = (clone $baseQuery)->whereStatusIn([
             AppointmentStatus::DONE,
             AppointmentStatus::CANCELLED,
-        ], 'and', false)->count('*');
+        ])->count('*');
+
+        return [
+            'appointments' => $this->paginatedAppointmentsFor($request, $family, $activePatientId),
+            'appointment_view' => $view,
+            'appointment_tab_totals' => [
+                'planned' => $plannedTotal,
+                'completed' => $completedTotal,
+            ],
+        ];
+    }
+
+    /** @return array{data: list<array<string, mixed>>, meta: array<string, mixed>} */
+    public function paginatedAppointmentsFor(Request $request, Family $family, ?int $activePatientId): array
+    {
+        if ($activePatientId === null) {
+            return InertiaPagination::empty();
+        }
+
+        $view = $this->normalizedView($request);
+        $patientId = $activePatientId;
 
         $query = Appointment::query()
             ->where('patient_id', $patientId)
@@ -46,16 +66,16 @@ final class FamilyAppointmentsScreenService
 
         if ($view === 'planned') {
             $query
-                ->where('status', AppointmentStatus::SCHEDULED)
+                ->whereStatus(AppointmentStatus::SCHEDULED)
                 ->orderBy('starts_at');
         }
 
         if ($view === 'completed') {
             $query
-                ->whereIn('status', [
+                ->whereStatusIn([
                     AppointmentStatus::DONE,
                     AppointmentStatus::CANCELLED,
-                ], 'and', false)
+                ])
                 ->orderByDesc('starts_at');
         }
 
@@ -77,17 +97,10 @@ final class FamilyAppointmentsScreenService
             ->paginate(InertiaPagination::PER_PAGE, ['*'], 'page', $page)
             ->withQueryString();
 
-        return [
-            'appointments' => InertiaPagination::payload(
-                $paginator,
-                FamilyAppointmentResource::collectForInertia($paginator->items(), $family),
-            ),
-            'appointment_view' => $view,
-            'appointment_tab_totals' => [
-                'planned' => $plannedTotal,
-                'completed' => $completedTotal,
-            ],
-        ];
+        return InertiaPagination::payload(
+            $paginator,
+            FamilyAppointmentResource::collectForInertia($paginator->items(), $family),
+        );
     }
 
     private function normalizedView(Request $request): string
@@ -126,7 +139,7 @@ final class FamilyAppointmentsScreenService
         $appointment = Appointment::query()
             ->whereKey($appointmentId)
             ->where('patient_id', $patientId)
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->first();
 
         if ($appointment === null) {
@@ -172,7 +185,7 @@ final class FamilyAppointmentsScreenService
 
         $earlierCount = Appointment::query()
             ->where('patient_id', $patientId)
-            ->where('status', AppointmentStatus::SCHEDULED)
+            ->whereStatus(AppointmentStatus::SCHEDULED)
             ->where('starts_at', '<', $appointment->starts_at)
             ->count('*');
 

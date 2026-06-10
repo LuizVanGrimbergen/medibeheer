@@ -104,7 +104,6 @@ final class MedicationUrgencyToneResolver
             ->select('medications.id');
 
         $prescriptions = MedicationPrescription::query()
-            ->where('patient_id', '=', $patient->id)
             ->whereNull('completed_at', 'and', false)
             ->whereIn('medication_id', $activeMedicationIds, 'and', false)
             ->get(['id', 'prescription_expiry_date']);
