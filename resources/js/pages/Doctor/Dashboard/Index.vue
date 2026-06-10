@@ -5,23 +5,32 @@ import { useI18n } from 'vue-i18n';
 import DoctorPatientContextHeader from '@/Components/Doctor/Patients/DoctorPatientContextHeader.vue';
 import DoctorPatientOverviewSection from '@/Components/Doctor/Patients/DoctorPatientOverviewSection.vue';
 import DoctorPatientSearch from '@/Components/Doctor/Patients/DoctorPatientSearch.vue';
+import ListCardSkeleton from '@/Components/ui/skeleton/ListCardSkeleton.vue';
 import DoctorLayout from '@/Layouts/DoctorLayout.vue';
 import type { DoctorPatientOverviewScreenProps } from '@/lib/doctor/patients/doctorPatientOverviewScreenProps';
+import { isDeferredInertiaPropLoading } from '@/lib/inertia/isDeferredInertiaPropLoading';
 import { cn } from '@/lib/utils';
 
-const props = withDefaults(
-    defineProps<{
-        patients: { public_id: string; name: string }[];
-        patient_overview?: DoctorPatientOverviewScreenProps | null;
-    }>(),
-    {
-        patient_overview: null,
-    },
-);
+const props = defineProps<{
+    patients?: { public_id: string; name: string }[];
+    patient_overview?: DoctorPatientOverviewScreenProps | null;
+}>();
 
 const { t } = useI18n();
 
-const hasPatientOverview = computed(() => props.patient_overview !== null);
+const isPatientsLoading = computed(() =>
+    isDeferredInertiaPropLoading(props.patients),
+);
+
+const isPatientOverviewLoading = computed(() =>
+    isDeferredInertiaPropLoading(props.patient_overview),
+);
+
+const hasPatientOverview = computed(
+    () =>
+        props.patient_overview !== null &&
+        props.patient_overview !== undefined,
+);
 const patientSearchExpanded = ref(false);
 
 watch(
@@ -46,23 +55,31 @@ watch(
                 )
             "
         >
+            <ListCardSkeleton v-if="isPatientsLoading" />
+
             <DoctorPatientSearch
-                v-if="!hasPatientOverview || patientSearchExpanded"
+                v-else-if="!hasPatientOverview || patientSearchExpanded"
                 v-model:expanded="patientSearchExpanded"
-                :patients="props.patients"
+                :patients="props.patients ?? []"
                 :selected-patient-public-id="
                     props.patient_overview?.selected_patient.public_id ?? null
                 "
                 :autofocus="!hasPatientOverview || patientSearchExpanded"
             />
 
-            <template v-if="props.patient_overview !== null">
+            <ListCardSkeleton v-if="isPatientOverviewLoading" />
+
+            <template v-else-if="hasPatientOverview">
                 <DoctorPatientContextHeader
-                    :patient-name="props.patient_overview.selected_patient.name"
+                    :patient-name="
+                        props.patient_overview!.selected_patient.name
+                    "
                     @switch-patient="patientSearchExpanded = true"
                 />
 
-                <DoctorPatientOverviewSection v-bind="props.patient_overview" />
+                <DoctorPatientOverviewSection
+                    v-bind="props.patient_overview!"
+                />
             </template>
         </div>
     </DoctorLayout>

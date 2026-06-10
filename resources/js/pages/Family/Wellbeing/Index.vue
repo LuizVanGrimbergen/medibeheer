@@ -1,18 +1,20 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyWellbeingScreen from '@/Components/Family/Wellbeing/FamilyWellbeingScreen.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyWellbeingScreenProps } from '@/lib/family/wellbeing/familyWellbeingScreenProps';
-import type { FamilyDashboardProps } from '@/lib/types';
+import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
-const props = defineProps<
-    FamilyWellbeingScreenProps & {
-        family: FamilyDashboardProps;
-    }
->();
+type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
+
+const props = defineProps<Omit<FamilyWellbeingScreenProps, 'family'>>();
 
 const { t } = useI18n();
+const page = usePage<PageWithFamily>();
+
+const family = computed(() => page.props.family);
 </script>
 
 <template>
@@ -21,6 +23,6 @@ const { t } = useI18n();
     </Head>
 
     <FamilyLayout>
-        <FamilyWellbeingScreen v-bind="props" />
+        <FamilyWellbeingScreen v-bind="props" :family="family" />
     </FamilyLayout>
 </template>

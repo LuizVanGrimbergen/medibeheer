@@ -2,12 +2,13 @@
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
-import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
+import AppointmentCard from '@/Components/shared/appointments/AppointmentCard.vue';
+import AppointmentPairActionButtons from '@/Components/shared/appointments/AppointmentPairActionButtons.vue';
 import FamilyPageShell from '@/Components/Family/FamilyPageShell.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { SegmentedToggle } from '@/Components/ui/segmented-toggle';
+import ListCardSkeleton from '@/Components/ui/skeleton/ListCardSkeleton.vue';
 import {
     acceptTransport,
     declineTransport,
@@ -15,19 +16,33 @@ import {
 } from '@/composables/family/useFamilyAppointmentsActions';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import type { FamilyAppointmentsScreenProps } from '@/lib/family/appointments/familyAppointmentsScreenProps';
-import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
+import { readNumericScreenQueryParam } from '@/lib/inertia/readNumericScreenQueryParam';
+import { isDeferredInertiaPropLoading } from '@/lib/inertia/isDeferredInertiaPropLoading';
+import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
-const props = defineProps<FamilyAppointmentsScreenProps>();
+type PageWithFamily = PageProps & { family?: FamilyDashboardProps };
+
+const props = defineProps<Omit<FamilyAppointmentsScreenProps, 'family'>>();
 
 const { t } = useI18n();
-const page = usePage();
+const page = usePage<PageWithFamily>();
+
+const family = computed(() => page.props.family);
+
+const isAppointmentsLoading = computed(() =>
+    isDeferredInertiaPropLoading(props.appointments),
+);
+
+const appointmentItems = computed(() => props.appointments?.data ?? []);
+
+const appointmentsMeta = computed(() => props.appointments?.meta);
 
 const paginationQuery = computed((): Record<string, string | number> => {
     const query: Record<string, string | number> = {
         view: props.appointment_view,
     };
 
-    const appointment = readFamilyScreenQueryParam('appointment', page.url);
+    const appointment = readNumericScreenQueryParam('appointment', page.url);
 
     if (appointment !== null) {
         query.appointment = appointment;
@@ -41,7 +56,7 @@ function onAppointmentViewUpdate(next: string): void {
 }
 
 function scrollToDeepLinkedAppointment(): void {
-    const appointmentId = readFamilyScreenQueryParam('appointment', page.url);
+    const appointmentId = readNumericScreenQueryParam('appointment', page.url);
 
     if (appointmentId === null) {
         return;
@@ -49,7 +64,11 @@ function scrollToDeepLinkedAppointment(): void {
 
     const id = Number(appointmentId);
 
-    if (!props.appointments.data.some((appointment) => appointment.id === id)) {
+    if (
+        !props.appointments?.data.some(
+            (appointment) => appointment.id === id,
+        )
+    ) {
         return;
     }
 
@@ -61,7 +80,7 @@ function scrollToDeepLinkedAppointment(): void {
 }
 
 watch(
-    () => [page.url, props.appointments.data] as const,
+    () => [page.url, props.appointments?.data] as const,
     () => {
         scrollToDeepLinkedAppointment();
     },
@@ -77,10 +96,10 @@ watch(
     <FamilyLayout>
         <FamilyPageShell
             :title="t('family.appointments.heading')"
-            :family="props.family"
-            :show-active-patient="props.family.has_linked_patient"
+            :family="family"
+            :show-active-patient="family?.has_linked_patient ?? false"
         >
-            <div v-if="props.family.has_linked_patient">
+            <div v-if="family?.has_linked_patient">
                 <SegmentedToggle
                     :model-value="props.appointment_view"
                     :options="[
@@ -100,14 +119,19 @@ watch(
             </div>
 
             <p
-                v-if="!props.family.has_linked_patient"
+                v-if="!family?.has_linked_patient"
                 class="text-text-muted max-w-prose text-sm leading-relaxed"
             >
                 {{ t('family.appointments.notLinked') }}
             </p>
 
+            <ListCardSkeleton
+                v-else-if="isAppointmentsLoading"
+                :aria-busy="true"
+            />
+
             <Card
-                v-else-if="props.appointments.data.length === 0"
+                v-else-if="appointmentItems.length === 0"
                 class="border-border"
             >
                 <CardContent class="text-text-muted py-10 text-sm">
@@ -121,7 +145,7 @@ watch(
 
             <div v-else class="space-y-4">
                 <div
-                    v-for="appointment in props.appointments.data"
+                    v-for="appointment in appointmentItems"
                     :key="appointment.id"
                     class="space-y-3"
                 >
@@ -211,9 +235,12 @@ watch(
                 </div>
 
                 <NumberedPagination
-                    v-if="props.appointments.meta.last_page > 1"
+                    v-if="
+                        appointmentsMeta !== undefined &&
+                        appointmentsMeta.last_page > 1
+                    "
                     route-name="family.appointments"
-                    :meta="props.appointments.meta"
+                    :meta="appointmentsMeta"
                     :query="paginationQuery"
                 />
             </div>

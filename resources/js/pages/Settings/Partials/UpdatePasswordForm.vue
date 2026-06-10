@@ -7,7 +7,7 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { PasswordRequirementsCard } from '@/Components/ui/password-requirements-card';
-import { patientFormWizardFooterPrimaryButtonClass } from '@/lib/patient/patientShellDialogLayout';
+import { mobileShellFormWizardFooterPrimaryButtonClass } from '@/lib/shell/mobileShellDialogLayout';
 
 const passwordInput = ref<HTMLInputElement | null>(null);
 const currentPasswordInput = ref<HTMLInputElement | null>(null);
@@ -133,7 +133,7 @@ const updatePassword = () => {
                 <Button
                     type="submit"
                     size="lg"
-                    :class="patientFormWizardFooterPrimaryButtonClass"
+                    :class="mobileShellFormWizardFooterPrimaryButtonClass"
                     :disabled="form.processing"
                 >
                     {{ t('profile.password.save') }}

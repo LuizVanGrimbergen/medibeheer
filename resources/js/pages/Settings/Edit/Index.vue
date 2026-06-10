@@ -8,18 +8,18 @@ import { Button } from '@/Components/ui/button';
 import { SettingsWidgetLink } from '@/Components/ui/settings-widget-link';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-    patientShellWizardFooterClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
+    mobileShellWizardFooterClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { PageProps, SecurityActivityPaginator } from '@/lib/types';
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import PatientMedicationRemindersForm from './Partials/PatientMedicationRemindersForm.vue';
-import PrivacyDataForm from './Partials/PrivacyDataForm.vue';
-import SecurityActivityLog from './Partials/SecurityActivityLog.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import DeleteUserForm from '../Partials/DeleteUserForm.vue';
+import PatientMedicationRemindersForm from '../Partials/PatientMedicationRemindersForm.vue';
+import PrivacyDataForm from '../Partials/PrivacyDataForm.vue';
+import SecurityActivityLog from '../Partials/SecurityActivityLog.vue';
+import UpdatePasswordForm from '../Partials/UpdatePasswordForm.vue';
+import UpdateProfileInformationForm from '../Partials/UpdateProfileInformationForm.vue';
 
 type SettingsSection =
     | 'information'
@@ -300,15 +300,15 @@ function confirmLogout(): void {
                         </div>
                     </div>
 
-                    <div :class="patientShellWizardFooterClass">
-                        <div :class="patientFormWizardFooterRowClass">
+                    <div :class="mobileShellWizardFooterClass">
+                        <div :class="mobileShellFormWizardFooterRowClass">
                             <Button
                                 v-if="showSettingsBackButton"
                                 as-child
                                 variant="default"
                                 size="lg"
                                 :class="
-                                    patientFormWizardFooterPrimaryButtonClass
+                                    mobileShellFormWizardFooterPrimaryButtonClass
                                 "
                             >
                                 <Link :href="settingsBackHref">
@@ -320,7 +320,7 @@ function confirmLogout(): void {
                                 variant="secondary"
                                 size="lg"
                                 :class="
-                                    patientFormWizardFooterCancelButtonClass
+                                    mobileShellFormWizardFooterCancelButtonClass
                                 "
                                 @click="openLogoutConfirm"
                             >

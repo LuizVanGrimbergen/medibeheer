@@ -9,13 +9,13 @@ import FamilyExpiringPrescriptionPatientsSection from '@/Components/Family/Overv
 import FamilyLowStockPatientsSection from '@/Components/Family/Overview/FamilyLowStockPatientsSection.vue';
 import FamilyOverviewUpdatesSection from '@/Components/Family/Overview/FamilyOverviewUpdatesSection.vue';
 import FamilyPendingTransportAppointmentsSection from '@/Components/Family/Overview/FamilyPendingTransportAppointmentsSection.vue';
+import ListCardSkeleton from '@/Components/ui/skeleton/ListCardSkeleton.vue';
 import FamilyLayout from '@/Layouts/FamilyLayout.vue';
 import { ensureLaravelEchoIsConfigured } from '@/lib/configureLaravelEcho';
 import type { FamilyOverviewScreenProps } from '@/lib/family/overview/familyAcceptedTransportAppointments';
-import {
-    familyOverviewUpdatesOpenQuery,
-    readFamilyScreenQueryFlag,
-} from '@/lib/family/readFamilyScreenQueryParam';
+import { familyOverviewUpdatesOpenQuery } from '@/lib/family/familyOverviewDeepLinkQuery';
+import { readScreenQueryFlag } from '@/lib/inertia/readNumericScreenQueryParam';
+import { areAnyDeferredInertiaPropsLoading } from '@/lib/inertia/isDeferredInertiaPropLoading';
 import type { FamilyDashboardProps, PageProps } from '@/lib/types';
 
 const FamilyUpdatesEchoListener = defineAsyncComponent(
@@ -33,7 +33,7 @@ const family = computed(() => page.props.family);
 
 const echoReady = ref(false);
 
-const openUpdatesFromDeepLink = readFamilyScreenQueryFlag(
+const openUpdatesFromDeepLink = readScreenQueryFlag(
     familyOverviewUpdatesOpenQuery.name,
     familyOverviewUpdatesOpenQuery.value,
     page.url,
@@ -69,6 +69,17 @@ onMounted(async () => {
 const activePatientId = computed(
     (): number | null => family.value?.active_patient_id ?? null,
 );
+
+const isOverviewLoading = computed(() =>
+    areAnyDeferredInertiaPropsLoading(
+        props.low_stock_patients,
+        props.expiring_prescription_patients,
+        props.updates_checkins,
+        props.updates_medication_intakes,
+        props.pending_transport_appointments,
+        props.accepted_transport_appointments,
+    ),
+);
 </script>
 
 <template>
@@ -90,28 +101,34 @@ const activePatientId = computed(
         <FamilyPageShell :title="t('family.overview.heading')" :family="family">
             <FamilyMedicationReminderPrompt />
 
-            <FamilyLowStockPatientsSection
-                :patients="props.low_stock_patients"
-            />
+            <ListCardSkeleton v-if="isOverviewLoading" />
 
-            <FamilyExpiringPrescriptionPatientsSection
-                :patients="props.expiring_prescription_patients"
-            />
+            <template v-else>
+                <FamilyLowStockPatientsSection
+                    :patients="props.low_stock_patients ?? []"
+                />
 
-            <FamilyPendingTransportAppointmentsSection
-                :appointments="props.pending_transport_appointments"
-            />
+                <FamilyExpiringPrescriptionPatientsSection
+                    :patients="props.expiring_prescription_patients ?? []"
+                />
 
-            <FamilyAcceptedTransportAppointmentsSection
-                :appointments="props.accepted_transport_appointments"
-            />
+                <FamilyPendingTransportAppointmentsSection
+                    :appointments="props.pending_transport_appointments ?? []"
+                />
 
-            <FamilyOverviewUpdatesSection
-                v-if="family?.has_linked_patient"
-                :checkins="props.updates_checkins"
-                :medication-intakes="props.updates_medication_intakes"
-                :default-open="openUpdatesFromDeepLink"
-            />
+                <FamilyAcceptedTransportAppointmentsSection
+                    :appointments="
+                        props.accepted_transport_appointments ?? []
+                    "
+                />
+
+                <FamilyOverviewUpdatesSection
+                    v-if="family?.has_linked_patient"
+                    :checkins="props.updates_checkins ?? []"
+                    :medication-intakes="props.updates_medication_intakes ?? []"
+                    :default-open="openUpdatesFromDeepLink"
+                />
+            </template>
         </FamilyPageShell>
     </FamilyLayout>
 </template>
