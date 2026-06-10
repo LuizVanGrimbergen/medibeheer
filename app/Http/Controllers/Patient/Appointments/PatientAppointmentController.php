@@ -28,13 +28,17 @@ class PatientAppointmentController extends Controller
     {
         $patient = $this->authorizePatientProfile($request);
 
-        return Inertia::render(
-            'Patient/Appointments',
-            [
-                ...$this->patientAppointmentsScreenService->buildProps($patient, $request),
-                'open_create_dialog' => $request->boolean('open_create'),
-            ],
-        );
+        return Inertia::render('Patient/Appointments/Index', [
+            'appointment_view' => 'planned',
+            'appointment_tab_totals' => $this->patientAppointmentsScreenService->tabTotalsFor($patient),
+            'open_create_dialog' => $request->boolean('open_create'),
+            'appointments' => Inertia::defer(
+                fn (): array => $this->patientAppointmentsScreenService->paginatedAppointmentsFor($patient, $request),
+            ),
+            'linked_families' => Inertia::defer(
+                fn (): array => $this->patientAppointmentsScreenService->linkedFamiliesFor($patient),
+            ),
+        ]);
     }
 
     public function store(StoreAppointmentRequest $request): RedirectResponse
@@ -98,9 +102,10 @@ class PatientAppointmentController extends Controller
                 ? 'patient.appointments.complete'
                 : 'patient.appointments.cancel';
 
-            return redirect()
-                ->route($outcomePageRoute, ['appointment' => $appointment])
-                ->with('appointment_follow_up_outcome', $followUp);
+            return redirect()->route($outcomePageRoute, [
+                'appointment' => $appointment,
+                'schedule_next' => 1,
+            ])->with('appointment_follow_up_outcome', $followUp);
         }
 
         return redirect()->route('patient.appointments');
