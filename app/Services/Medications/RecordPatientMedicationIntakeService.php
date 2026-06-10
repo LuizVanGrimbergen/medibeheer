@@ -27,7 +27,9 @@ final class RecordPatientMedicationIntakeService
         bool $allowOutsideIntakeWindow = false,
         ?CarbonImmutable $takenAt = null,
     ): MedicationIntake {
-        if ($schedule->patient_id !== $patient->id) {
+        $schedule->loadMissing('medication');
+
+        if ($schedule->medication?->patient_id !== $patient->id) {
             throw ValidationException::withMessages([
                 'medication_schedule_id' => trans('validation.exists', [
                     'attribute' => 'medication_schedule_id',
