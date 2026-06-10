@@ -31,7 +31,6 @@ final class ImportMedicationPlanProposalToPatient
                 'type_medication' => $item->type_medication,
                 'strength' => $item->strength,
                 'note' => $item->note,
-                'family_id' => $proposal->family_id,
             ]);
 
             $createdSchedule = $medication->schedules()->create([
@@ -43,15 +42,11 @@ final class ImportMedicationPlanProposalToPatient
                 'snooze_time' => $schedule->snooze_time,
                 'start_date' => $schedule->start_date,
                 'end_date' => $schedule->end_date,
-                'patient_id' => $patient->id,
-                'family_id' => $proposal->family_id,
             ]);
             $createdSchedule->syncIntakeWeekdays($intakeWeekdays);
 
             $medication->stocks()->create([
                 'current_stock' => $item->current_stock,
-                'patient_id' => $patient->id,
-                'family_id' => $proposal->family_id,
             ]);
         }
     }
