@@ -2,8 +2,8 @@ import { medicationListVisualTone } from '@/lib/patient/inventory/medicationList
 import type { MedicationUrgencyTone } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
 import { prescriptionExpiryUrgencyContext } from '@/lib/patient/prescriptions/prescriptionExpiryUrgency';
 import type {
-    MedicationListItem,
-    MedicationPrescriptionListItem,
+    MedicationRegisterItem,
+    MedicationPrescriptionItem,
     PatientNavigationAlertTone,
 } from '@/lib/types';
 
@@ -55,7 +55,7 @@ function moreUrgentUrgencyTone(
 }
 
 export function worstInventoryNavAlertFromMedications(
-    medications: readonly MedicationListItem[],
+    medications: readonly MedicationRegisterItem[],
 ): PatientNavigationAlertTone | null {
     let worst: MedicationUrgencyTone | null = null;
 
@@ -73,7 +73,7 @@ export function worstInventoryNavAlertFromMedications(
 }
 
 export function worstPrescriptionNavAlertFromPrescriptions(
-    prescriptions: readonly MedicationPrescriptionListItem[],
+    prescriptions: readonly MedicationPrescriptionItem[],
 ): PatientNavigationAlertTone | null {
     let worst: MedicationUrgencyTone | null = null;
 
