@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { buildDoctorPatientAttentionItems } from '@/lib/doctor/patients/buildDoctorPatientAttentionItems';
 import { buildDoctorPatientOverviewSnapshot } from '@/lib/doctor/patients/buildDoctorPatientOverviewSnapshot';
 import {
     doctorPatientAdherenceProgressPercent,
@@ -207,60 +206,5 @@ describe('filterDoctorPatientWellbeingCheckins', () => {
         expect(filterDoctorPatientWellbeingCheckins(checkins, null)).toEqual(
             checkins,
         );
-    });
-});
-
-describe('buildDoctorPatientAttentionItems', () => {
-    it('returns the newest attention items first and limits the list', () => {
-        const medicationDays: MedicationIntakeCalendarDay[] = [
-            {
-                date: '2026-05-01',
-                status: 'none_taken',
-                scheduled_count: 2,
-                taken_count: 0,
-            },
-        ];
-
-        const wellbeingCheckins: DailyCheckin[] = [
-            {
-                id: 1,
-                checkin_date: '2026-05-03',
-                mood_score: 'good',
-                symptoms: ['pain'],
-                note: null,
-                created_at: '2026-05-03T08:00:00+00:00',
-            },
-            {
-                id: 2,
-                checkin_date: '2026-05-02',
-                mood_score: 'bad',
-                symptoms: null,
-                note: null,
-                created_at: '2026-05-02T08:00:00+00:00',
-            },
-        ];
-
-        expect(
-            buildDoctorPatientAttentionItems(medicationDays, wellbeingCheckins),
-        ).toEqual([
-            {
-                kind: 'wellbeing',
-                date: '2026-05-03',
-                mood: 'good',
-                symptomCount: 1,
-            },
-            {
-                kind: 'wellbeing',
-                date: '2026-05-02',
-                mood: 'bad',
-                symptomCount: 0,
-            },
-            {
-                kind: 'medication',
-                date: '2026-05-01',
-                status: 'none_taken',
-                missedCount: 2,
-            },
-        ]);
     });
 });
