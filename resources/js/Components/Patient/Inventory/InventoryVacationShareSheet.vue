@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
 import InventoryVacationExpiringPrescriptionsSection from '@/Components/Patient/Inventory/InventoryVacationExpiringPrescriptionsSection.vue';
+import InventoryVacationMetricBox from '@/Components/Patient/Inventory/InventoryVacationMetricBox.vue';
 import InventoryVacationShareMedicationPickup from '@/Components/Patient/Inventory/InventoryVacationShareMedicationPickup.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
@@ -11,9 +11,9 @@ import {
     inventoryVacationShareMetricGridClass,
 } from '@/lib/patient/inventory/inventoryVacationUiClasses';
 import {
-    patientPageSectionTitleClass,
-    patientPageTitleClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellPageSectionTitleClass,
+    mobileShellPageTitleClass,
+} from '@/lib/shell/mobileShellTypography';
 
 defineProps<{
     payload: InventoryVacationShareImagePayload;
@@ -24,7 +24,7 @@ defineProps<{
     <div class="bg-bg text-text box-border w-[840px] space-y-5 p-10">
         <header class="space-y-2">
             <div class="flex flex-wrap items-start justify-between gap-3">
-                <h1 :class="patientPageTitleClass">
+                <h1 :class="mobileShellPageTitleClass">
                     {{ payload.title }}
                 </h1>
                 <p
@@ -41,7 +41,7 @@ defineProps<{
                 <div
                     class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1"
                 >
-                    <h2 :class="patientPageSectionTitleClass">
+                    <h2 :class="mobileShellPageSectionTitleClass">
                         {{ payload.periodHeading }}
                     </h2>
                     <p
@@ -87,7 +87,7 @@ defineProps<{
         />
 
         <section v-if="payload.items.length > 0" class="space-y-4">
-            <h2 :class="patientPageSectionTitleClass">
+            <h2 :class="mobileShellPageSectionTitleClass">
                 {{ payload.listHeading }}
             </h2>
 

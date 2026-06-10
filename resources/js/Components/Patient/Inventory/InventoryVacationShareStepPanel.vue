@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Images } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
-import PatientShellWizardFooterCard from '@/Components/Patient/form/PatientShellWizardFooterCard.vue';
+import MobileShellWizardFooterCard from '@/Components/shell/MobileShellWizardFooterCard.vue';
 import { Button } from '@/Components/ui/button';
 import { INVENTORY_VACATION_MEDICATIONS_PER_SHARE_PAGE } from '@/lib/patient/inventory/splitInventoryVacationShareImagePayloads';
 import {
-    patientFormWizardFooterPrimaryButtonClass,
-    patientShellPageDescriptionClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellDialogDescriptionClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 
 defineProps<{
     stepCurrent: number;
@@ -23,10 +23,10 @@ const { t } = useI18n();
 </script>
 
 <template>
-    <PatientShellWizardFooterCard>
+    <MobileShellWizardFooterCard>
         <div class="flex flex-col gap-3 sm:gap-4">
             <div class="space-y-1.5">
-                <p :class="patientShellPageDescriptionClass">
+                <p :class="mobileShellDialogDescriptionClass">
                     {{
                         t('patient.inventory.vacationShareStepPrompt', {
                             current: String(stepCurrent),
@@ -55,7 +55,7 @@ const { t } = useI18n();
                 type="button"
                 variant="default"
                 size="lg"
-                :class="patientFormWizardFooterPrimaryButtonClass"
+                :class="mobileShellFormWizardFooterPrimaryButtonClass"
                 :aria-label="
                     t('patient.inventory.vacationShareStepButton', {
                         current: String(stepCurrent),
@@ -75,5 +75,5 @@ const { t } = useI18n();
                 </span>
             </Button>
         </div>
-    </PatientShellWizardFooterCard>
+    </MobileShellWizardFooterCard>
 </template>

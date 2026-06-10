@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MedicationUrgentPrescriptionStatusCard from '@/Components/Medications/MedicationUrgentPrescriptionStatusCard.vue';
+import MedicationUrgentPrescriptionStatusCard from '@/Components/shared/medications/MedicationUrgentPrescriptionStatusCard.vue';
 import type { PatientInventoryVacationExpiringPrescription } from '@/lib/patient/inventory/patientInventoryVacationExpiringPrescription';
 
 defineProps<{

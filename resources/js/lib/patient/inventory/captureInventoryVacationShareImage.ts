@@ -3,8 +3,8 @@ import { createApp, nextTick } from 'vue';
 import InventoryVacationShareSheet from '@/Components/Patient/Inventory/InventoryVacationShareSheet.vue';
 import { i18n } from '@/i18n';
 import type { InventoryVacationShareImagePayload } from '@/lib/patient/inventory/inventoryVacationShareImageTypes';
-import { INVENTORY_VACATION_SHARE_IMAGE_MIME } from '@/lib/patient/inventory/shareInventoryVacationImage';
 import { inventoryVacationShareMedicationSelector } from '@/lib/patient/inventory/inventoryVacationShareSelectors';
+import { INVENTORY_VACATION_SHARE_IMAGE_MIME } from '@/lib/patient/inventory/shareInventoryVacationImage';
 
 const SHARE_IMAGE_WIDTH_PX = 840;
 const SHARE_IMAGE_PIXEL_RATIO = 2;
