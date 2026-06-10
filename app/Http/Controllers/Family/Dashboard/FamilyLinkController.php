@@ -24,7 +24,7 @@ class FamilyLinkController extends Controller
     {
         $family = $this->authorizeFamilyProfile($request);
 
-        return Inertia::render('Family/Link', [
+        return Inertia::render('Family/Link/Index', [
             ...$this->medicationPlanProposalsScreenService->indexProps($family),
             'incoming_invitations' => IncomingFamilyInvitationResource::collection(
                 $this->familyInvitationService->pendingIncomingForFamilyMember($request->user()),
