@@ -106,7 +106,7 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
 
     $occursOnDate = new MedicationScheduleOccursOnDate;
     $schedules = MedicationSchedule::query()
-        ->where('patient_id', $patient->id)
+        ->whereHas('medication', fn ($query) => $query->where('patient_id', $patient->id))
         ->get();
 
     $scheduledDosesInMay = 0;
@@ -173,7 +173,7 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
     $urgencyToneResolver = app(MedicationUrgencyToneResolver::class);
 
     $expiringPrescriptions = MedicationPrescription::query()
-        ->where('patient_id', $patient->id)
+        ->whereHas('medication', fn ($query) => $query->where('patient_id', $patient->id))
         ->whereNull('completed_at')
         ->get()
         ->filter(function (MedicationPrescription $prescription) use ($urgencyToneResolver): bool {
@@ -190,7 +190,7 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
 
     $scheduledAppointments = $patient
         ->appointments()
-        ->where('status', AppointmentStatus::SCHEDULED)
+        ->whereStatus(AppointmentStatus::SCHEDULED)
         ->get();
 
     expect($scheduledAppointments)->not->toBeEmpty();
@@ -207,15 +207,15 @@ test('andre van grimbergen demo seeder links patient to marc maas with may demo 
         ->withSession(['family.active_patient_id' => $patient->id])
         ->get(route('family.overview'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Family/Overview')
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Family/Overview/Index')
             ->has('updates_checkins', 1)
-            ->has('updates_medication_intakes'));
+            ->has('updates_medication_intakes')));
 
     $this->actingAs($patientUser)
         ->get(route('patient.appointments'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Patient/Appointments')
-            ->has('appointments.data'));
+        ->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page
+            ->component('Patient/Appointments/Index')
+            ->has('appointments.data')));
 });

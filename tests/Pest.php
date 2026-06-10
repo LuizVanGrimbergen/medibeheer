@@ -4,6 +4,7 @@ use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
+use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
 
 pest()->extend(TestCase::class)
@@ -34,4 +35,12 @@ function assertInertiaRootComponent(TestResponse $response, string $component): 
 
     expect($page)->toBeArray();
     expect($page['component'] ?? null)->toBe($component);
+}
+
+/**
+ * @param  callable(AssertableInertia): void  $assertions
+ */
+function loadAllDeferredInertiaProps(callable $assertions): Closure
+{
+    return fn ($page) => $page->loadDeferredProps($assertions);
 }
