@@ -3,7 +3,7 @@ import { router } from '@inertiajs/vue3';
 import { UserPlus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import { Button } from '@/Components/ui/button';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
 import type { IncomingCareTeamInvitation } from '@/lib/types';
@@ -37,7 +37,7 @@ function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-model:open="isOpen"
         :heading="t('family.link.incomingInvitationsHeading')"
         :toggle-label="t('family.link.incomingInvitationsToggle')"
@@ -88,5 +88,5 @@ function acceptInvitation(invitation: IncomingCareTeamInvitation): void {
         <p v-else class="text-text-muted text-sm leading-relaxed">
             {{ t('family.link.incomingInvitationsEmpty') }}
         </p>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

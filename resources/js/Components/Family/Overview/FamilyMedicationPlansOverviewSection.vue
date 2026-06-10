@@ -4,7 +4,7 @@ import { ClipboardList, Plus } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyMedicationPlanProposalCard from '@/Components/Family/Overview/FamilyMedicationPlanProposalCard.vue';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import { Button } from '@/Components/ui/button';
 import type { FamilyMedicationPlanProposalSummary } from '@/lib/family/medicationPlans/familyMedicationPlanProposalSummary';
 
@@ -32,7 +32,7 @@ const collapsedSummary = computed((): string => {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-model:open="isOpen"
         :heading="t('family.overview.medicationPlansHeading')"
         :toggle-label="t('family.overview.medicationPlansToggle')"
@@ -73,5 +73,5 @@ const collapsedSummary = computed((): string => {
                 </Link>
             </Button>
         </div>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

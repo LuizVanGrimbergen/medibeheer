@@ -4,7 +4,7 @@ import { AlertTriangle } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import FamilyLowStockPatientCard from '@/Components/Family/Overview/FamilyLowStockPatientCard.vue';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
 import type { FamilyLowStockPatient } from '@/lib/family/overview/familyLowStockPatients';
 
 const props = defineProps<{
@@ -38,7 +38,7 @@ function openPatientMedications(patient: FamilyLowStockPatient): void {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-if="hasPatients"
         v-model:open="isOpen"
         :heading="t('family.overview.lowStockHeading')"
@@ -58,5 +58,5 @@ function openPatientMedications(patient: FamilyLowStockPatient): void {
                 />
             </li>
         </ul>
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>

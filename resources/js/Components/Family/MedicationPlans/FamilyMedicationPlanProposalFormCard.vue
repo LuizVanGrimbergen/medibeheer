@@ -6,7 +6,7 @@ import type {
     MedicationCreateFormWithErrors,
     MedicationFormWizardStep,
 } from '@/Components/Patient/Medications/form/MedicationFormTypes';
-import { usePatientShellDialogLayout } from '@/composables/patient/usePatientShellDialogLayout';
+import { useMobileShellDialogLayout } from '@/composables/patient/useMobileShellDialogLayout';
 
 const props = defineProps<{
     title: string;
@@ -28,7 +28,7 @@ defineEmits<{
 }>();
 
 const open = ref(true);
-const { dialogContentClass } = usePatientShellDialogLayout('md');
+const { dialogContentClass } = useMobileShellDialogLayout('md');
 
 const showSummaryActions = computed(
     () =>

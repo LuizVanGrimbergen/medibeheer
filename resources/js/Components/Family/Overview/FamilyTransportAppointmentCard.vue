@@ -2,9 +2,9 @@
 import { Calendar, Clock, MapPin } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import AppointmentGoogleMapsIconLink from '@/Components/Appointments/AppointmentGoogleMapsIconLink.vue';
-import AppointmentPairActionButtons from '@/Components/Appointments/AppointmentPairActionButtons.vue';
-import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import AppointmentGoogleMapsIconLink from '@/Components/shared/appointments/AppointmentGoogleMapsIconLink.vue';
+import AppointmentPairActionButtons from '@/Components/shared/appointments/AppointmentPairActionButtons.vue';
+import { useAppointmentDisplay } from '@/Components/shared/appointments/useAppointmentDisplay';
 import { Card, CardContent } from '@/Components/ui/card';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { FamilyAcceptedTransportAppointment } from '@/lib/family/overview/familyAcceptedTransportAppointments';

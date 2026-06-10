@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import FamilyLinkedPatientsSection from '@/Components/Family/Overview/FamilyLinkedPatientsSection.vue';
+import { mobileShellPageContentClass } from '@/lib/shell/mobileShellLayout';
 import type { FamilyDashboardProps } from '@/lib/types';
 
 const props = defineProps<{
@@ -29,7 +30,7 @@ const shouldShowLinkedPatients = computed((): boolean => {
 </script>
 
 <template>
-    <div class="mx-auto flex w-full max-w-2xl flex-col gap-6 md:gap-5">
+    <div :class="mobileShellPageContentClass">
         <h1 class="sr-only">
             {{ title }}
         </h1>

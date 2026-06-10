@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import FamilyOverviewCollapsibleSection from '@/Components/Family/Overview/FamilyOverviewCollapsibleSection.vue';
-import MedicationCard from '@/Components/Medications/MedicationCard.vue';
-import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import CollapsibleSectionCard from '@/Components/ui/collapsible-section/CollapsibleSectionCard.vue';
+import MedicationCard from '@/Components/Patient/Medications/MedicationCard.vue';
+import MedicationTypeLeadIcon from '@/Components/shared/medications/MedicationTypeLeadIcon.vue';
 import { medicationListVisualTone } from '@/lib/patient/inventory/medicationListVisualTone';
-import { medicationListVisualToneClasses } from '@/lib/patient/inventory/medicationListVisualToneClasses';
+import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import { medicationSupplyEstimateLine } from '@/lib/patient/inventory/medicationSupplyEstimateLine';
 import { medicationCardHeaderSummary } from '@/lib/patient/medications/display/medicationIntakeSlotDisplay';
 import { medicationUrgencyShowsAlertRow } from '@/lib/patient/medications/urgency/medicationUrgencyTone';
-import type { MedicationListItem } from '@/lib/types';
+import type { MedicationRegisterItem } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
-        medication: MedicationListItem;
+        medication: MedicationRegisterItem;
         defaultOpen?: boolean;
     }>(),
     {
@@ -31,7 +31,7 @@ const stockProgressTone = computed(() =>
 );
 
 const medicationVisualToneClasses = computed(() =>
-    medicationListVisualToneClasses(stockProgressTone.value),
+    medicationUrgencyToneClasses(stockProgressTone.value),
 );
 
 const iconWrapperClass = computed((): string =>
@@ -108,7 +108,7 @@ const collapsedSummary = computed((): string => {
 </script>
 
 <template>
-    <FamilyOverviewCollapsibleSection
+    <CollapsibleSectionCard
         v-model:open="isOpen"
         :heading="medication.name"
         :toggle-label="t('family.medications.registerToggle')"
@@ -131,5 +131,5 @@ const collapsedSummary = computed((): string => {
             list-status-ended-label-key="family.medications.listStatus.ended"
             list-status-removed-label-key="family.medications.listStatus.removed"
         />
-    </FamilyOverviewCollapsibleSection>
+    </CollapsibleSectionCard>
 </template>
