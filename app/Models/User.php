@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Models\Concerns\MaintainsBlindIndexForEncryptedEnum;
 use App\Notifications\Auth\ResetPasswordNotification;
 use App\Notifications\Auth\VerifyEmailNotification;
 use App\Observers\UserObserver;
+use App\Support\BlindIndex;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory;
     use HasPushSubscriptions;
+    use MaintainsBlindIndexForEncryptedEnum;
     use Notifiable;
 
     /**************************************/
@@ -41,6 +46,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name_encrypted',
         'email_encrypted',
         'email_hash',
+        'role_hash',
     ];
 
     protected $attributes = [
@@ -53,7 +59,27 @@ class User extends Authenticatable implements MustVerifyEmail
             if ($user->role === null) {
                 $user->role = UserRole::PATIENT;
             }
+
+            $user->syncBlindIndexesForEncryptedEnums();
         });
+    }
+
+    protected function blindIndexedEncryptedEnumAttributes(): array
+    {
+        return [
+            'role' => 'role_hash',
+        ];
+    }
+
+    public static function hashRole(UserRole $role): string
+    {
+        return BlindIndex::forEnum($role);
+    }
+
+    #[Scope]
+    protected function withRole(Builder $query, UserRole $role): void
+    {
+        $query->where('role_hash', static::hashRole($role));
     }
 
     protected function casts(): array
