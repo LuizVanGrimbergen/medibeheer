@@ -266,9 +266,24 @@ const footerLabelClass = computed(() =>
         <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <div
                 ref="mainScrollRef"
-                class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
+                :class="
+                    cn(
+                        'h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overscroll-y-contain',
+                        isMobileShellFooterHidden
+                            ? 'overflow-hidden'
+                            : 'overflow-y-auto',
+                    )
+                "
             >
-                <div :class="mobileShellScrollContentClass">
+                <div
+                    :class="
+                        cn(
+                            mobileShellScrollContentClass,
+                            isMobileShellFooterHidden &&
+                                'flex h-full min-h-0 flex-col pb-0',
+                        )
+                    "
+                >
                     <MobileShellSettingsLink />
                     <slot />
                 </div>
