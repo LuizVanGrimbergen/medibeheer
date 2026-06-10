@@ -8,6 +8,7 @@ use App\Enums\MedicationPlanProposalStatus;
 use App\Models\Family;
 use App\Models\MedicationPlanProposal;
 use App\Models\MedicationPlanProposalItemSchedule;
+use App\Support\BlindIndex;
 use Carbon\CarbonInterface;
 
 final class FamilyMedicationPlanProposalsScreenService
@@ -16,6 +17,7 @@ final class FamilyMedicationPlanProposalsScreenService
     {
         $proposals = MedicationPlanProposal::query()
             ->where('family_id', $family->id)
+            ->where('status_index', '!=', BlindIndex::forEnum(MedicationPlanProposalStatus::REVOKED))
             ->with(['items', 'patient.user'])
             ->orderByDesc('updated_at')
             ->get();
@@ -73,11 +75,7 @@ final class FamilyMedicationPlanProposalsScreenService
             'patient_name' => $patientName !== null ? (string) $patientName : null,
             'medication_name' => $firstItem?->name,
             'updated_at' => $proposal->updated_at?->toISOString(),
-            'can_edit' => $proposal->status === MedicationPlanProposalStatus::DRAFT,
-            'can_duplicate' => $proposal->status === MedicationPlanProposalStatus::ACCEPTED,
             'can_revoke' => $proposal->isRedeemable(),
-            'edit_url' => route('family.medication-plans.edit', $proposal, absolute: false),
-            'duplicate_url' => route('family.medication-plans.duplicate', $proposal, absolute: false),
             'revoke_url' => route('family.medication-plans.revoke', $proposal, absolute: false),
         ];
     }
