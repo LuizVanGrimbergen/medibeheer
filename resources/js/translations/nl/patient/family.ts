@@ -26,6 +26,9 @@ export default {
     acceptedMedicationPlansIntro:
         'Deze medicatieplannen hebt u geaccepteerd. Ze staan nu in uw medicatielijst.',
     acceptedMedicationPlansBy: 'Door {name}',
+    acceptedMedicationPlansCollapsedOne: '1 geaccepteerd medicatieplan',
+    acceptedMedicationPlansCollapsedMany:
+        '{count} geaccepteerde medicatieplannen',
     acceptedAt: 'Geaccepteerd op {date}',
     pendingHeading: 'Wacht op antwoord',
     pendingOutgoingIntro:
