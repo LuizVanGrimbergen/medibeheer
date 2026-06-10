@@ -2,22 +2,18 @@
 import { router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import PatientFamilySectionCard from '@/Components/Patient/Family/PatientFamilySectionCard.vue';
-import { buttonVariants } from '@/Components/ui/button';
+import PatientFormWizardFooter from '@/Components/Patient/form/PatientFormWizardFooter.vue';
+import PatientFormWizardFooterButton from '@/Components/Patient/form/PatientFormWizardFooterButton.vue';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
-import {
-    mobileShellSectionBodyTextClass,
-    mobileShellSectionHeadingClass,
-} from '@/lib/shell/mobileShellTypography';
-import {
-    mobileShellActionOutlineButtonClass,
-    mobileShellActionPrimaryButtonClass,
-    mobileShellActionSecondaryOutlineButtonClass,
-} from '@/lib/shell/mobileShellDialogLayout';
 import {
     mobileShellPageSectionInnerRowClass,
 } from '@/lib/shell/mobileShellLayout';
+import {
+    mobileShellSectionBodyTextClass,
+    mobileShellSectionHeadingClass,
+    mobileShellSectionSubHeadingClass,
+} from '@/lib/shell/mobileShellTypography';
 import type { PendingMedicationPlanProposal } from '@/lib/types';
-import { cn } from '@/lib/utils';
 
 const props = withDefaults(
     defineProps<{
@@ -47,7 +43,6 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
     <PatientFamilySectionCard
         v-if="props.pendingMedicationPlans.length > 0"
         id="family-pending-plans"
-        variant="accent"
         scroll-margin
         aria-labelledby="family-action-required-heading"
     >
@@ -67,96 +62,61 @@ function reviewMedicationPlan(proposal: PendingMedicationPlanProposal): void {
                 :key="plan.id"
                 :class="mobileShellPageSectionInnerRowClass"
             >
-                <div
-                    class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
-                >
-                    <div class="min-w-0 space-y-1">
-                        <p
-                            class="text-text-heading text-lg leading-snug font-bold md:text-xl"
-                        >
-                            {{
-                                plan.medication_name ??
-                                t('family.medicationPlans.unnamed')
-                            }}
-                        </p>
-                        <p
-                            v-if="plan.family_member_name !== ''"
-                            :class="mobileShellSectionBodyTextClass"
-                        >
-                            {{
-                                t('patient.family.pendingMedicationPlansFrom', {
-                                    name: plan.family_member_name,
-                                })
-                            }}
-                        </p>
-                        <p
-                            v-if="plan.expires_at !== null"
-                            class="text-text-muted text-sm md:text-base"
-                        >
-                            {{
-                                t('patient.family.expiresAt', {
-                                    date: formatCareTeamExpiry(plan.expires_at),
-                                })
-                            }}
-                        </p>
-                    </div>
-
-                    <div
-                        class="flex w-full min-w-0 flex-col gap-2 sm:flex-row-reverse sm:gap-3"
+                <div class="min-w-0 space-y-1">
+                    <p :class="mobileShellSectionSubHeadingClass">
+                        {{
+                            plan.medication_name ??
+                            t('family.medicationPlans.unnamed')
+                        }}
+                    </p>
+                    <p
+                        v-if="plan.family_member_name !== ''"
+                        :class="mobileShellSectionBodyTextClass"
                     >
-                        <button
-                            type="button"
-                            :class="
-                                cn(
-                                    buttonVariants({
-                                        variant: 'default',
-                                        size: 'lg',
-                                    }),
-                                    mobileShellActionPrimaryButtonClass,
-                                )
-                            "
-                            @click="acceptMedicationPlan(plan)"
-                        >
-                            {{
-                                t('patient.family.pendingMedicationPlansAccept')
-                            }}
-                        </button>
-                        <button
-                            type="button"
-                            :class="
-                                cn(
-                                    buttonVariants({
-                                        variant: 'outline',
-                                        size: 'lg',
-                                    }),
-                                    mobileShellActionOutlineButtonClass,
-                                )
-                            "
-                            @click="reviewMedicationPlan(plan)"
-                        >
-                            {{
-                                t('patient.family.pendingMedicationPlansReview')
-                            }}
-                        </button>
-                        <button
-                            type="button"
-                            :class="
-                                cn(
-                                    buttonVariants({
-                                        variant: 'outline',
-                                        size: 'lg',
-                                    }),
-                                    mobileShellActionSecondaryOutlineButtonClass,
-                                )
-                            "
-                            @click="declineMedicationPlan(plan)"
-                        >
-                            {{
-                                t('patient.family.pendingMedicationPlansDecline')
-                            }}
-                        </button>
-                    </div>
+                        {{
+                            t('patient.family.pendingMedicationPlansFrom', {
+                                name: plan.family_member_name,
+                            })
+                        }}
+                    </p>
+                    <p
+                        v-if="plan.expires_at !== null"
+                        class="text-text-muted text-sm md:text-base"
+                    >
+                        {{
+                            t('patient.family.expiresAt', {
+                                date: formatCareTeamExpiry(plan.expires_at),
+                            })
+                        }}
+                    </p>
                 </div>
+
+                <PatientFormWizardFooter class="pt-4">
+                    <PatientFormWizardFooterButton
+                        variant="primary"
+                        @click="acceptMedicationPlan(plan)"
+                    >
+                        {{
+                            t('patient.family.pendingMedicationPlansAccept')
+                        }}
+                    </PatientFormWizardFooterButton>
+                    <PatientFormWizardFooterButton
+                        variant="outline"
+                        @click="reviewMedicationPlan(plan)"
+                    >
+                        {{
+                            t('patient.family.pendingMedicationPlansReview')
+                        }}
+                    </PatientFormWizardFooterButton>
+                    <PatientFormWizardFooterButton
+                        variant="danger"
+                        @click="declineMedicationPlan(plan)"
+                    >
+                        {{
+                            t('patient.family.pendingMedicationPlansDecline')
+                        }}
+                    </PatientFormWizardFooterButton>
+                </PatientFormWizardFooter>
             </li>
         </ul>
     </PatientFamilySectionCard>
