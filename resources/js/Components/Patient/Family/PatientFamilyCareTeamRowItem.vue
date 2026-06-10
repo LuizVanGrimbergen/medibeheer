@@ -2,7 +2,11 @@
 import { computed, ref } from 'vue';
 import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
 import { Button } from '@/Components/ui/button';
-import { patientSoftDangerActionButtonClass } from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+import { mobileShellPageSectionInnerRowClass } from '@/lib/shell/mobileShellLayout';
+import { mobileShellSoftDangerActionButtonClass } from '@/lib/shell/mobileShellActionButtonClasses';
+import {
+    mobileShellSectionBodyTextClass,
+} from '@/lib/shell/mobileShellTypography';
 import { cn } from '@/lib/utils';
 
 const props = withDefaults(
@@ -34,7 +38,7 @@ const rowClass = computed(() =>
         'flex flex-col bg-surface sm:flex-row sm:items-center sm:justify-between',
         isCompact.value
             ? 'gap-3 rounded-xl border border-border px-4 py-3 md:gap-4 md:px-4 md:py-3'
-            : 'gap-3 rounded-2xl border-2 border-border px-4 py-4 sm:px-5 sm:py-5',
+            : cn('gap-3', mobileShellPageSectionInnerRowClass),
     ),
 );
 
@@ -48,15 +52,12 @@ const titleClass = computed(() =>
 );
 
 const subtitleClass = computed(() =>
-    cn(
-        'mt-1 leading-relaxed text-text-muted',
-        isCompact.value ? 'text-sm' : 'text-base',
-    ),
+    cn('mt-1', mobileShellSectionBodyTextClass, isCompact.value && 'text-sm'),
 );
 
 const buttonClass = computed(() =>
     cn(
-        patientSoftDangerActionButtonClass,
+        mobileShellSoftDangerActionButtonClass,
         'shrink-0 sm:w-auto sm:flex-none',
         isCompact.value ? 'md:min-h-10 md:px-4 md:text-sm' : 'md:px-6',
     ),

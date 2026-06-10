@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientFamilyCareTeamCollapsibleSection from '@/Components/Patient/Family/PatientFamilyCareTeamCollapsibleSection.vue';
+import PatientFamilyCareTeamInviteForm from '@/Components/Patient/Family/PatientFamilyCareTeamInviteForm.vue';
 import PatientFamilyCareTeamRowItem from '@/Components/Patient/Family/PatientFamilyCareTeamRowItem.vue';
-import { Button } from '@/Components/ui/button';
-import { Input } from '@/Components/ui/input';
-import { InputError } from '@/Components/ui/input-error';
-import { Label } from '@/Components/ui/label';
+import PatientFamilySectionCard from '@/Components/Patient/Family/PatientFamilySectionCard.vue';
+import { usePatientFamilyCareTeamEmailInvite } from '@/composables/patient/usePatientFamilyCareTeamEmailInvite';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
+import { mobileShellSectionHeadingClass } from '@/lib/shell/mobileShellTypography';
 import type {
     LinkedCareTeamMember,
     PendingCareTeamInvitation,
 } from '@/lib/types';
-import { cn } from '@/lib/utils';
-import { validatePatientEmailField } from '@/lib/validation/validatePatientEmailField';
 
 const props = withDefaults(
     defineProps<{
@@ -34,43 +32,13 @@ const { t } = useI18n();
 const pendingFamilyInvitationsOpen = ref(false);
 const linkedFamilyMembersOpen = ref(false);
 
-const sectionHeadingClass =
-    'text-xl font-bold leading-snug text-text-heading md:text-2xl';
-
-const labelClass =
-    'mb-2 block text-base font-semibold leading-snug text-text-heading md:text-lg';
-
-const fieldInputClass =
-    'h-12 w-full rounded-2xl border-2 border-border bg-surface px-4 text-base leading-normal text-text placeholder:text-text-muted focus-visible:border-focus focus-visible:ring-2 focus-visible:ring-focus/25 md:h-14 md:text-lg';
-
-const inviteForm = useForm({
-    email: '',
-});
-
-function submitInvite(): void {
-    if (props.familyInvitationStoreUrl === '') {
-        return;
-    }
-
-    const emailError = validatePatientEmailField(inviteForm.email, {
+const { form: inviteForm, submitInvite } = usePatientFamilyCareTeamEmailInvite(
+    () => props.familyInvitationStoreUrl,
+    () => ({
         required: t('patient.family.emailRequired'),
         invalid: t('patient.family.emailInvalid'),
-    });
-
-    if (emailError !== null) {
-        inviteForm.setError('email', emailError);
-
-        return;
-    }
-
-    inviteForm.post(props.familyInvitationStoreUrl, {
-        preserveScroll: true,
-        onSuccess: () => {
-            inviteForm.reset();
-            inviteForm.clearErrors();
-        },
-    });
-}
+    }),
+);
 
 function revokeInvitation(invitation: PendingCareTeamInvitation): void {
     router.delete(invitation.revoke_url, {
@@ -86,53 +54,23 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
 </script>
 
 <template>
-    <section
-        class="border-border bg-surface rounded-2xl border-2 p-6 shadow-sm sm:p-8"
-        aria-labelledby="family-invite-heading"
-    >
-        <h2 id="family-invite-heading" :class="sectionHeadingClass">
+    <PatientFamilySectionCard aria-labelledby="family-invite-heading">
+        <h2 id="family-invite-heading" :class="mobileShellSectionHeadingClass">
             {{ t('patient.family.inviteHeading') }}
         </h2>
 
-        <form class="mt-6 flex flex-col gap-5" @submit.prevent="submitInvite">
-            <div>
-                <Label for="family-invite-email" :class="labelClass">
-                    {{ t('patient.family.emailLabel') }}
-                </Label>
-                <Input
-                    id="family-invite-email"
-                    v-model="inviteForm.email"
-                    type="email"
-                    autocomplete="email"
-                    :class="
-                        cn(
-                            fieldInputClass,
-                            inviteForm.errors.email
-                                ? 'border-danger ring-danger/20 ring-2'
-                                : null,
-                        )
-                    "
-                    :placeholder="t('patient.family.emailPlaceholder')"
-                    :aria-invalid="Boolean(inviteForm.errors.email)"
-                />
-                <InputError
-                    class="mt-2"
-                    :message="inviteForm.errors.email"
-                    variant="inline"
-                />
-            </div>
-
-            <Button
-                type="submit"
-                class="min-h-12 w-full touch-manipulation text-base font-semibold sm:w-auto md:min-h-14 md:text-lg"
-                :disabled="
-                    inviteForm.processing ||
-                    props.familyInvitationStoreUrl === ''
-                "
-            >
-                {{ t('patient.family.sendInvite') }}
-            </Button>
-        </form>
+        <PatientFamilyCareTeamInviteForm
+            input-id="family-invite-email"
+            :email="inviteForm.email"
+            :email-error="inviteForm.errors.email"
+            :processing="inviteForm.processing"
+            :disabled="props.familyInvitationStoreUrl === ''"
+            :email-label="t('patient.family.emailLabel')"
+            :email-placeholder="t('patient.family.emailPlaceholder')"
+            :submit-label="t('patient.family.sendInvite')"
+            @update:email="inviteForm.email = $event"
+            @submit="submitInvite"
+        />
 
         <PatientFamilyCareTeamCollapsibleSection
             v-if="props.familyInvitations.length > 0"
@@ -184,5 +122,5 @@ function unlinkFamilyMember(member: LinkedCareTeamMember): void {
                 @action="unlinkFamilyMember(member)"
             />
         </PatientFamilyCareTeamCollapsibleSection>
-    </section>
+    </PatientFamilySectionCard>
 </template>
