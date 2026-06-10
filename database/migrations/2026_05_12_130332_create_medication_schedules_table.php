@@ -10,8 +10,6 @@ return new class extends Migration
     {
         Schema::create('medication_schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('family_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('medication_id')->constrained()->cascadeOnDelete();
             $table->text('meal_timing');
             $table->text('intake_frequency');
@@ -25,7 +23,6 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index(['medication_id', 'deleted_at']);
-            $table->index(['patient_id', 'deleted_at']);
         });
     }
 
