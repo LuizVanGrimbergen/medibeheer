@@ -9,7 +9,6 @@ import PatientFamilySectionCard from '@/Components/Patient/Family/PatientFamilyS
 import { usePatientFamilyCareTeamEmailInvite } from '@/composables/patient/usePatientFamilyCareTeamEmailInvite';
 import { formatCareTeamExpiry } from '@/lib/patient/careTeam/formatCareTeamExpiry';
 import {
-    mobileShellSectionBodyTextClass,
     mobileShellSectionHeadingClass,
 } from '@/lib/shell/mobileShellTypography';
 import type {
@@ -66,9 +65,6 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
         <h2 id="family-doctors-heading" :class="mobileShellSectionHeadingClass">
             {{ t('patient.doctors.inviteHeading') }}
         </h2>
-        <p class="mt-3" :class="mobileShellSectionBodyTextClass">
-            {{ t('patient.doctors.inviteIntro') }}
-        </p>
 
         <PatientFamilyCareTeamInviteForm
             input-id="doctor-invite-email"
@@ -95,6 +91,7 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
             <PatientFamilyCareTeamRowItem
                 v-for="inv in props.doctorInvitations"
                 :key="inv.public_id"
+                layout="collapsible"
                 :title="inv.invited_email"
                 :subtitle="
                     t('patient.doctors.pendingExpiresAt', {
@@ -122,6 +119,7 @@ function unlinkDoctor(doctor: LinkedCareTeamMember): void {
             <PatientFamilyCareTeamRowItem
                 v-for="doctor in props.linkedDoctors"
                 :key="doctor.public_id"
+                layout="collapsible"
                 :title="doctor.name"
                 :action-label="t('patient.doctors.unlink')"
                 :confirm-title="t('patient.doctors.unlinkConfirmTitle')"
