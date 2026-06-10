@@ -1,7 +1,7 @@
 import type { Ref } from 'vue';
 import { nextTick, watch } from 'vue';
 
-export function scrollPatientShellWizardBodyToTop(
+export function scrollMobileShellWizardBodyToTop(
     scrollElement: HTMLElement | null,
 ): void {
     if (scrollElement === null) {
@@ -11,7 +11,7 @@ export function scrollPatientShellWizardBodyToTop(
     scrollElement.scrollTop = 0;
 }
 
-export function usePatientShellWizardScrollReset(
+export function useMobileShellWizardScrollReset(
     scrollRef: Ref<HTMLElement | null>,
     stepKey: Ref<number | string | undefined>,
     active: Ref<boolean>,
@@ -38,7 +38,7 @@ export function usePatientShellWizardScrollReset(
             }
 
             await nextTick();
-            scrollPatientShellWizardBodyToTop(scrollRef.value);
+            scrollMobileShellWizardBodyToTop(scrollRef.value);
         },
         { flush: 'post' },
     );

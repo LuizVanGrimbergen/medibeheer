@@ -3,7 +3,7 @@ import { nextTick, onUnmounted, ref, watch } from 'vue';
 
 const FOOTER_VISIBILITY_INSET_PX = 8;
 
-export function usePatientShellWizardScrollHint(
+export function useMobileShellWizardScrollHint(
     scrollRef: Ref<HTMLElement | null>,
     footerRef: Ref<HTMLElement | null>,
     active: Ref<boolean>,
