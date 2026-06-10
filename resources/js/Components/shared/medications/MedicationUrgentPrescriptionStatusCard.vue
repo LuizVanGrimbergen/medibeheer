@@ -57,7 +57,7 @@ const expiryLabel = computed((): string =>
                         {{ prescription.medication_name }}
                     </p>
                     <span
-                        class="inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold"
+                        class="hidden shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold md:inline-flex"
                         :class="[toneClasses.pillWrap, toneClasses.pillIcon]"
                     >
                         <Calendar
@@ -67,9 +67,16 @@ const expiryLabel = computed((): string =>
                         {{ expiryLabel }}
                     </span>
                 </div>
+                <span
+                    class="mt-2 flex w-fit max-w-full min-w-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs leading-snug font-semibold md:hidden"
+                    :class="[toneClasses.pillWrap, toneClasses.pillIcon]"
+                >
+                    <Calendar class="size-3.5 shrink-0" aria-hidden="true" />
+                    {{ expiryLabel }}
+                </span>
                 <p
                     v-if="prescription.is_last_in_batch"
-                    class="text-danger mt-2 inline-flex items-center gap-1.5 text-sm font-semibold"
+                    class="text-danger mt-2 flex items-center gap-1.5 text-sm font-semibold"
                 >
                     <FileText class="size-3.5 shrink-0" aria-hidden="true" />
                     {{
