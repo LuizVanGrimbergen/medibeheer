@@ -9,17 +9,17 @@ import {
     Pill,
     UserRound,
 } from 'lucide-vue-next';
-import type { ComponentPublicInstance, ComputedRef } from 'vue';
-import { computed, ref } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import MobileShellSettingsLink from '@/Components/MobileShellSettingsLink.vue';
 import type { FooterNavLinkRefs } from '@/composables/motion/useGsapFooterNavIndicator';
 import { useGsapFooterNavIndicator } from '@/composables/motion/useGsapFooterNavIndicator';
 import { usePatientNavigationAlerts } from '@/composables/patient/usePatientNavigationAlerts';
 import {
-    isPatientShellFooterHidden,
-    usePatientShellMainScrollReset,
-} from '@/composables/patient/usePatientShellDialogChrome';
+    isMobileShellFooterHidden,
+    useMobileShellMainScrollReset,
+} from '@/composables/patient/useMobileShellDialogChrome';
 import { useTailwindBreakpoints } from '@/composables/ui/useTailwindBreakpoints';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { resolveGsapTargetElement } from '@/lib/motion/resolveGsapTargetElement';
@@ -28,33 +28,16 @@ import {
     patientFooterNavAlertAccentClass,
     patientFooterNavAlertTone,
 } from '@/lib/patient/navigation/patientFooterNavClasses';
+import {
+    mobileShellFooterNavClass,
+    mobileShellScrollContentClass,
+} from '@/lib/shell/mobileShellLayout';
 import type { PageProps } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
 const { t } = useI18n();
 const page = usePage<PageProps>();
-const { smAndUp, lgAndUp } = useTailwindBreakpoints();
-
-function horizontalPaddingX(
-    atLg: string,
-    atSm: string,
-    base: string,
-): ComputedRef<string> {
-    return computed(() => {
-        if (lgAndUp.value) {
-            return atLg;
-        }
-
-        if (smAndUp.value) {
-            return atSm;
-        }
-
-        return base;
-    });
-}
-
-const shellPaddingX = horizontalPaddingX('px-8', 'px-6', 'px-4');
-const footerPaddingX = horizontalPaddingX('px-8', 'px-4', 'px-1');
+const { smAndUp } = useTailwindBreakpoints();
 
 type PatientNavItem = {
     routeName: PatientFooterNavRouteName;
@@ -123,6 +106,45 @@ const activePatientNavRoute = computed(
     },
 );
 
+const pendingFooterNavRoute = ref<PatientFooterNavRouteName | undefined>();
+
+const isMobileFooterNav = computed(() => !smAndUp.value);
+
+const footerNavIndicatorRoute = computed(
+    (): PatientFooterNavRouteName | undefined =>
+        pendingFooterNavRoute.value ?? activePatientNavRoute.value,
+);
+
+const footerNavActiveRoute = computed(
+    (): PatientFooterNavRouteName | undefined =>
+        isMobileFooterNav.value
+            ? footerNavIndicatorRoute.value
+            : activePatientNavRoute.value,
+);
+
+watch(isMobileFooterNav, (isMobile) => {
+    if (!isMobile) {
+        pendingFooterNavRoute.value = undefined;
+    }
+});
+
+watch(activePatientNavRoute, (route) => {
+    if (route === pendingFooterNavRoute.value) {
+        pendingFooterNavRoute.value = undefined;
+    }
+});
+
+function onFooterNavNavigate(routeName: PatientFooterNavRouteName): void {
+    if (
+        !isMobileFooterNav.value ||
+        routeName === activePatientNavRoute.value
+    ) {
+        return;
+    }
+
+    pendingFooterNavRoute.value = routeName;
+}
+
 const patientNavigation = usePatientNavigationAlerts();
 
 const mainScrollRef = ref<HTMLElement | null>(null);
@@ -130,13 +152,14 @@ const footerNavRef = ref<HTMLElement | null>(null);
 const footerNavIndicatorRef = ref<HTMLElement | null>(null);
 const footerNavLinkRefs: FooterNavLinkRefs = {};
 
-usePatientShellMainScrollReset(mainScrollRef);
+useMobileShellMainScrollReset(mainScrollRef);
 
 useGsapFooterNavIndicator(
     footerNavRef,
     footerNavIndicatorRef,
-    activePatientNavRoute,
+    footerNavIndicatorRoute,
     footerNavLinkRefs,
+    isMobileFooterNav,
 );
 
 function registerFooterNavLinkRef(
@@ -166,7 +189,7 @@ function footerNavAriaLabel(item: PatientNavItem): string | undefined {
         patientNavigation.value,
     );
 
-    if (alertTone === null || activePatientNavRoute.value === item.routeName) {
+    if (alertTone === null || footerNavActiveRoute.value === item.routeName) {
         return undefined;
     }
 
@@ -185,17 +208,21 @@ function footerNavLinkClass(routeName: PatientNavItem['routeName']): string {
     const density = smAndUp.value ? 'gap-1.5 py-2.5 px-2' : 'gap-1 py-2 px-1';
     const base = `relative z-10 flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl ${density}`;
 
-    if (activePatientNavRoute.value === routeName) {
+    if (footerNavActiveRoute.value !== routeName) {
+        return `${base} text-text-muted`;
+    }
+
+    if (isMobileFooterNav.value) {
         return `${base} text-primary`;
     }
 
-    return `${base} text-text-muted`;
+    return `${base} bg-primary/12 text-primary`;
 }
 
 function footerNavAlertAccentClass(
     routeName: PatientNavItem['routeName'],
 ): string | null {
-    if (activePatientNavRoute.value === routeName) {
+    if (footerNavActiveRoute.value === routeName) {
         return null;
     }
 
@@ -241,29 +268,23 @@ const footerLabelClass = computed(() =>
                 ref="mainScrollRef"
                 class="h-0 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain"
             >
-                <div
-                    class="relative mx-auto flex min-h-full w-full max-w-7xl flex-col pt-4 pb-4 md:pt-6"
-                    :class="shellPaddingX"
-                >
+                <div :class="mobileShellScrollContentClass">
                     <MobileShellSettingsLink />
                     <slot />
                 </div>
             </div>
 
             <nav
-                v-show="!isPatientShellFooterHidden"
+                v-show="!isMobileShellFooterHidden"
                 class="border-border bg-surface z-40 shrink-0 border-t"
                 :aria-label="t('patient.navigation.mobileFooterAriaLabel')"
-                :aria-hidden="isPatientShellFooterHidden"
+                :aria-hidden="isMobileShellFooterHidden"
             >
-                <div
-                    ref="footerNavRef"
-                    class="relative mx-auto flex max-w-7xl items-stretch justify-around pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]"
-                    :class="footerPaddingX"
-                >
+                <div ref="footerNavRef" :class="mobileShellFooterNavClass">
                     <div
+                        v-show="isMobileFooterNav"
                         ref="footerNavIndicatorRef"
-                        class="bg-primary/12 pointer-events-none absolute z-0 rounded-xl opacity-0"
+                        class="bg-primary/12 pointer-events-none absolute left-0 z-0 rounded-xl opacity-0 will-change-transform md:hidden"
                         aria-hidden="true"
                     />
 
@@ -281,7 +302,13 @@ const footerLabelClass = computed(() =>
                                 : (['mount', 'hover'] as const)
                         "
                         :class="footerNavLinkClass(item.routeName)"
+                        :aria-current="
+                            activePatientNavRoute === item.routeName
+                                ? 'page'
+                                : undefined
+                        "
                         :aria-label="footerNavAriaLabel(item)"
+                        @click="onFooterNavNavigate(item.routeName)"
                     >
                         <component
                             :is="item.icon"

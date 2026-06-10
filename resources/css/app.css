@@ -47,8 +47,6 @@
     --color-surface-2: #eef3f8;
     --color-text: #1f334a;
     --color-text-muted: #667d94;
-    --color-text-default: var(--color-text);
-    --color-text-subtle: var(--color-text-muted);
     --color-primary: #2f6fae;
     --color-role-patient: #2f6fae;
     --color-role-doctor: #10b981;
@@ -79,18 +77,10 @@
     --color-disabled-text: #8a9caf;
     --color-surface-hover: #e6edf5;
 
-    /* Text colors */
     --color-text-heading: #1a2b40;
-    --color-text-body: #1f334a;
-    --color-text-strong: var(--color-text-heading);
     --color-text-placeholder: #8aa0b5;
-
-    /* Form elements */
-    --color-input-bg: #ffffff;
-    --color-input-border: #d7e1ec;
     --color-input-border-focus: #2f6fae;
     --color-input-text: #1f334a;
-    --color-input-placeholder: #2f6fae;
 }
 
 @keyframes collapsible-slide-down {
