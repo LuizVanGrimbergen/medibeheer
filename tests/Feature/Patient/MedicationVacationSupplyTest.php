@@ -106,11 +106,10 @@ it('patients can open the vacation supply page from inventory', function () {
     $response->assertOk();
     assertInertiaRootComponent($response, 'Patient/Inventory/Vacation');
     $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Inventory/Vacation')
         ->where('starts_on', '')
         ->where('ends_on', '')
         ->where('result', null)
-        ->has('expiring_prescriptions', 0));
+        ->missing('expiring_prescriptions'));
 });
 
 it('includes expiring prescriptions on vacation results', function () {
@@ -153,7 +152,8 @@ it('includes expiring prescriptions on vacation results', function () {
 
     $response->assertOk();
     $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Inventory/Vacation')
+        ->where('starts_on', '2026-05-15')
+        ->where('ends_on', '2026-05-16')
         ->has('expiring_prescriptions', 1)
         ->where('expiring_prescriptions.0.medication_name', $expiringMedication->name)
         ->where('expiring_prescriptions.0.days_remaining', 5));
@@ -191,13 +191,13 @@ it('patients can calculate vacation supply on a dedicated page', function () {
     $response->assertOk();
     assertInertiaRootComponent($response, 'Patient/Inventory/Vacation');
     $response->assertInertia(fn ($page) => $page
-        ->component('Patient/Inventory/Vacation')
         ->where('starts_on', '2026-05-15')
         ->where('ends_on', '2026-05-16')
         ->where('result.vacation_days', 2)
         ->where('result.items.0.pickup_quantity', '3')
         ->where('result.items.0.stock_pieces_per_package', 12)
-        ->where('result.items.0.name', $medication->name));
+        ->where('result.items.0.name', $medication->name)
+        ->has('expiring_prescriptions', 0));
 });
 
 it('rejects vacation periods longer than 366 days', function () {

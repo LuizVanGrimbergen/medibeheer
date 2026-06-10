@@ -96,7 +96,7 @@ test('signed push mark get redirects to push success page when authenticated', f
         ->get(route('patient.medication-push-mark.success'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
-            ->component('Patient/MedicationPushMarkSuccess')
+            ->component('Patient/Medications/PushMarkSuccess')
             ->where('medication_name', 'Paracetamol'));
 
     CarbonImmutable::setTestNow();
