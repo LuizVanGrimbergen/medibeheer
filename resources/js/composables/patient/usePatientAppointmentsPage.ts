@@ -11,7 +11,7 @@ export function usePatientAppointmentsPage(
     const formDialogs = usePatientAppointmentFormDialogs(props);
     const remoteActions = usePatientAppointmentRemoteActions();
 
-    const plannedAppointments = computed(() => props.appointments.data);
+    const plannedAppointments = computed(() => props.appointments?.data ?? []);
 
     const hasNoAppointmentsAtAll = computed(
         () =>

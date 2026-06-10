@@ -6,10 +6,10 @@ import { Input } from '@/Components/ui/input';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-    patientFormLabelClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+    mobileShellFormLabelClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const {
@@ -28,7 +28,7 @@ const { t } = useI18n();
 <template>
     <div class="space-y-5">
         <div>
-            <Label :for="`${idPrefix}-street`" :class="patientFormLabelClass">
+            <Label :for="`${idPrefix}-street`" :class="mobileShellFormLabelClass">
                 {{ t('patient.appointments.fields.street') }}
                 <span v-if="required" class="text-danger">*</span>
             </Label>
@@ -40,9 +40,9 @@ const { t } = useI18n();
                 autocomplete="address-line1"
                 :class="
                     cn(
-                        patientFormFieldInputClass,
+                        mobileShellFormFieldInputClass,
                         form.errors.street
-                            ? patientFormFieldInvalidClass
+                            ? mobileShellFormFieldInvalidClass
                             : null,
                     )
                 "
@@ -62,7 +62,7 @@ const { t } = useI18n();
         <div>
             <Label
                 :for="`${idPrefix}-house-number`"
-                :class="patientFormLabelClass"
+                :class="mobileShellFormLabelClass"
             >
                 {{ t('patient.appointments.fields.houseNumber') }}
             </Label>
@@ -73,9 +73,9 @@ const { t } = useI18n();
                 autocomplete="off"
                 :class="
                     cn(
-                        patientFormFieldInputClass,
+                        mobileShellFormFieldInputClass,
                         form.errors.house_number
-                            ? patientFormFieldInvalidClass
+                            ? mobileShellFormFieldInvalidClass
                             : null,
                     )
                 "
@@ -98,7 +98,7 @@ const { t } = useI18n();
             <div>
                 <Label
                     :for="`${idPrefix}-postal-code`"
-                    :class="patientFormLabelClass"
+                    :class="mobileShellFormLabelClass"
                 >
                     {{ t('patient.appointments.fields.postalCode') }}
                     <span v-if="required" class="text-danger">*</span>
@@ -113,9 +113,9 @@ const { t } = useI18n();
                     autocomplete="postal-code"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
+                            mobileShellFormFieldInputClass,
                             form.errors.postal_code
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "
@@ -135,7 +135,7 @@ const { t } = useI18n();
                 />
             </div>
             <div>
-                <Label :for="`${idPrefix}-city`" :class="patientFormLabelClass">
+                <Label :for="`${idPrefix}-city`" :class="mobileShellFormLabelClass">
                     {{ t('patient.appointments.fields.city') }}
                     <span v-if="required" class="text-danger">*</span>
                 </Label>
@@ -147,9 +147,9 @@ const { t } = useI18n();
                     autocomplete="address-level2"
                     :class="
                         cn(
-                            patientFormFieldInputClass,
+                            mobileShellFormFieldInputClass,
                             form.errors.city
-                                ? patientFormFieldInvalidClass
+                                ? mobileShellFormFieldInvalidClass
                                 : null,
                         )
                     "

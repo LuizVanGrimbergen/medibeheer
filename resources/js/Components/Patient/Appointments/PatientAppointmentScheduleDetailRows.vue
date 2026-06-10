@@ -2,7 +2,7 @@
 import { Calendar, Clock, MapPin } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import { useAppointmentDisplay } from '@/Components/shared/appointments/useAppointmentDisplay';
 import { formatAppointmentAddress } from '@/lib/appointments/formatAppointmentAddress';
 import type { Appointment } from '@/lib/types';
 

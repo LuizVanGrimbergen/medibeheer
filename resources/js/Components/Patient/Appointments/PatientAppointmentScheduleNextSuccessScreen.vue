@@ -5,9 +5,9 @@ import { useI18n } from 'vue-i18n';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import { Button } from '@/Components/ui/button';
 import {
-    patientAppointmentFormPrimaryPairButtonClass,
-    patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+    mobileShellFormPrimaryPairButtonClass,
+    mobileShellSoftDangerActionButtonClass,
+} from '@/lib/shell/mobileShellActionButtonClasses';
 
 const open = defineModel<boolean>('open', { required: true });
 
@@ -48,7 +48,7 @@ function goToNewAppointment(): void {
                     type="button"
                     variant="default"
                     size="lg"
-                    :class="patientAppointmentFormPrimaryPairButtonClass"
+                    :class="mobileShellFormPrimaryPairButtonClass"
                     @click="goToNewAppointment"
                 >
                     {{ t('patient.appointments.scheduleNext.yes') }}
@@ -57,7 +57,7 @@ function goToNewAppointment(): void {
                     type="button"
                     variant="secondary"
                     size="lg"
-                    :class="patientSoftDangerActionButtonClass"
+                    :class="mobileShellSoftDangerActionButtonClass"
                     @click="goToOverview"
                 >
                     {{ t('patient.appointments.scheduleNext.no') }}

@@ -1,30 +1,42 @@
 <script setup lang="ts">
 import { Head, usePage } from '@inertiajs/vue3';
-import { Trash2 } from 'lucide-vue-next';
+import { CalendarPlus, Trash2 } from 'lucide-vue-next';
 import { computed, nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import AppointmentCard from '@/Components/Appointments/AppointmentCard.vue';
-import AppointmentsPageIntro from '@/Components/Patient/Appointments/AppointmentsPageIntro.vue';
+import AppointmentCard from '@/Components/shared/appointments/AppointmentCard.vue';
 import AppointmentFormDialog from '@/Components/Patient/Appointments/form/AppointmentFormDialog.vue';
 import PatientActionSuccessScreen from '@/Components/Patient/PatientActionSuccessScreen.vue';
 import PatientConfirmDialog from '@/Components/Patient/PatientConfirmDialog.vue';
+import PatientDeferredListSection from '@/Components/Patient/PatientDeferredListSection.vue';
+import PatientPageIntroActionBar from '@/Components/Patient/PatientPageIntroActionBar.vue';
 import PatientPageShell from '@/Components/Patient/PatientPageShell.vue';
-import { Card, CardContent } from '@/Components/ui/card';
+import { Button } from '@/Components/ui/button';
 import NumberedPagination from '@/Components/ui/pagination/NumberedPagination.vue';
 import { usePatientAppointmentsPage } from '@/composables/patient/usePatientAppointmentsPage';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
-import { readFamilyScreenQueryParam } from '@/lib/family/readFamilyScreenQueryParam';
+import { readNumericScreenQueryParam } from '@/lib/inertia/readNumericScreenQueryParam';
+import { areAnyDeferredInertiaPropsLoading } from '@/lib/inertia/isDeferredInertiaPropLoading';
 import type { PatientAppointmentsScreenProps } from '@/lib/patient/appointments/screen/patientAppointmentsScreenProps';
-import { patientPageSectionTitleClass } from '@/lib/patient/patientPageTypography';
+import {
+    mobileShellPageIntroButtonClass,
+    mobileShellPageSectionTitleClass,
+} from '@/lib/shell/mobileShellTypography';
 
 const props = defineProps<PatientAppointmentsScreenProps>();
 
 const { t } = useI18n();
 const page = usePage();
 
+const isAppointmentsLoading = computed(() =>
+    areAnyDeferredInertiaPropsLoading(
+        props.appointments,
+        props.linked_families,
+    ),
+);
+
 const paginationQuery = computed((): Record<string, string | number> => {
     const query: Record<string, string | number> = {};
-    const appointment = readFamilyScreenQueryParam('appointment', page.url);
+    const appointment = readNumericScreenQueryParam('appointment', page.url);
 
     if (appointment !== null) {
         query.appointment = appointment;
@@ -34,7 +46,7 @@ const paginationQuery = computed((): Record<string, string | number> => {
 });
 
 function scrollToDeepLinkedAppointment(): void {
-    const appointmentId = readFamilyScreenQueryParam('appointment', page.url);
+    const appointmentId = readNumericScreenQueryParam('appointment', page.url);
 
     if (appointmentId === null) {
         return;
@@ -42,7 +54,11 @@ function scrollToDeepLinkedAppointment(): void {
 
     const id = Number(appointmentId);
 
-    if (!props.appointments.data.some((appointment) => appointment.id === id)) {
+    if (
+        !props.appointments?.data.some(
+            (appointment) => appointment.id === id,
+        )
+    ) {
         return;
     }
 
@@ -54,7 +70,7 @@ function scrollToDeepLinkedAppointment(): void {
 }
 
 watch(
-    () => [page.url, props.appointments.data] as const,
+    () => [page.url, props.appointments?.data] as const,
     () => {
         scrollToDeepLinkedAppointment();
     },
@@ -87,6 +103,17 @@ const {
     isAppointmentMarkedDoneInUi,
     reopenScheduledAppointmentAfterCompletion,
 } = usePatientAppointmentsPage(props);
+
+const showPlannedAppointmentsEmpty = computed(
+    () =>
+        !isAppointmentsLoading.value && plannedAppointments.value.length === 0,
+);
+
+const plannedAppointmentsEmptyMessage = computed((): string =>
+    hasNoAppointmentsAtAll.value
+        ? t('patient.appointments.empty')
+        : t('patient.appointments.emptyPlanned'),
+);
 </script>
 
 <template>
@@ -106,14 +133,28 @@ const {
         />
 
         <PatientPageShell :title="t('patient.appointments.heading')">
-            <AppointmentsPageIntro
-                @new-appointment-click="createDialogOpen = true"
-            />
+            <PatientPageIntroActionBar>
+                <Button
+                    size="lg"
+                    :class="mobileShellPageIntroButtonClass"
+                    type="button"
+                    @click="createDialogOpen = true"
+                >
+                    <CalendarPlus class="size-6 shrink-0" aria-hidden="true" />
+                    {{ t('patient.appointments.newAppointment') }}
+                </Button>
+            </PatientPageIntroActionBar>
 
-            <section class="space-y-5">
-                <h2 :class="patientPageSectionTitleClass">
-                    {{ t('patient.appointments.plannedHeading') }}
-                </h2>
+            <PatientDeferredListSection
+                :loading="isAppointmentsLoading"
+                :show-empty="showPlannedAppointmentsEmpty"
+                :empty-message="plannedAppointmentsEmptyMessage"
+            >
+                <template #heading>
+                    <h2 :class="mobileShellPageSectionTitleClass">
+                        {{ t('patient.appointments.plannedHeading') }}
+                    </h2>
+                </template>
 
                 <ul
                     v-if="plannedAppointments.length > 0"
@@ -164,31 +205,19 @@ const {
                     </li>
                 </ul>
 
-                <NumberedPagination
-                    v-if="
-                        plannedAppointments.length > 0 &&
-                        props.appointments.meta.last_page > 1
-                    "
-                    route-name="patient.appointments"
-                    :meta="props.appointments.meta"
-                    :query="paginationQuery"
-                />
-
-                <Card
-                    v-if="plannedAppointments.length === 0"
-                    class="border-border bg-surface-2/70 text-text rounded-2xl border-2 border-dashed shadow-none"
-                >
-                    <CardContent
-                        class="text-text-muted px-5 py-14 text-center text-lg leading-relaxed sm:px-8"
-                    >
-                        {{
-                            hasNoAppointmentsAtAll
-                                ? t('patient.appointments.empty')
-                                : t('patient.appointments.emptyPlanned')
-                        }}
-                    </CardContent>
-                </Card>
-            </section>
+                <template #pagination>
+                    <NumberedPagination
+                        v-if="
+                            props.appointments !== undefined &&
+                            plannedAppointments.length > 0 &&
+                            props.appointments.meta.last_page > 1
+                        "
+                        route-name="patient.appointments"
+                        :meta="props.appointments.meta"
+                        :query="paginationQuery"
+                    />
+                </template>
+            </PatientDeferredListSection>
         </PatientPageShell>
 
         <AppointmentFormDialog
@@ -199,7 +228,7 @@ const {
             :doctor-type-values="doctorTypeOptions"
             :show-doctor-type-placeholder="true"
             :form="form"
-            :transport-families="props.linked_families"
+            :transport-families="props.linked_families ?? []"
             :dialog-content-class="dialogContentClass"
             :starts-at-date-input-min-iso="createStartsAtDateMinIso"
             @update:open="(open) => (createDialogOpen = open)"
@@ -237,7 +266,7 @@ const {
             :doctor-type-values="doctorTypeOptions"
             :show-doctor-type-placeholder="false"
             :form="editForm"
-            :transport-families="props.linked_families"
+            :transport-families="props.linked_families ?? []"
             :dialog-content-class="dialogContentClass"
             :schedule-permit-past-starts-at-if-same-instant-ms="
                 editSchedulePermitPastStartsAtIfSameInstantMs

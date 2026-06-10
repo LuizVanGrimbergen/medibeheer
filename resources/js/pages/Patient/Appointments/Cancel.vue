@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import PatientAppointmentOutcomeFieldCard from '@/Components/Patient/Appointments/outcome/PatientAppointmentOutcomeFieldCard.vue';
 import PatientAppointmentOutcomePageLayout from '@/Components/Patient/Appointments/outcome/PatientAppointmentOutcomePageLayout.vue';
@@ -11,6 +11,16 @@ const props = defineProps<PatientAppointmentOutcomePageProps>();
 const { t } = useI18n();
 
 const scheduleNextOpen = ref(props.show_schedule_next_prompt === true);
+
+watch(
+    () => props.show_schedule_next_prompt,
+    (show) => {
+        if (show === true) {
+            scheduleNextOpen.value = true;
+        }
+    },
+    { immediate: true },
+);
 
 const form = useForm({
     cancellation_reason: '',
@@ -24,6 +34,13 @@ function submit(): void {
         cancellation_reason: trimmed === '' ? null : trimmed,
     })).patch(
         `${route('patient.appointments.update', props.appointment.id)}?outcome_follow_up=cancelled`,
+        {
+            preserveScroll: true,
+            preserveState: false,
+            onSuccess: () => {
+                scheduleNextOpen.value = true;
+            },
+        },
     );
 }
 </script>

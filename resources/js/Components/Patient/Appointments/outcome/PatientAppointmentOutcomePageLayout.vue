@@ -3,18 +3,18 @@ import { router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import PatientAppointmentOutcomeSummaryCard from '@/Components/Patient/Appointments/outcome/PatientAppointmentOutcomeSummaryCard.vue';
 import PatientAppointmentScheduleNextSuccessScreen from '@/Components/Patient/Appointments/PatientAppointmentScheduleNextSuccessScreen.vue';
-import PatientShellPageWizard from '@/Components/Patient/form/PatientShellPageWizard.vue';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
+import MobileShellPageWizard from '@/Components/shell/MobileShellPageWizard.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
-    patientFormWizardFooterCancelButtonClass,
-    patientFormWizardFooterPrimaryButtonClass,
-    patientFormWizardFooterRowClass,
-    patientShellPageFillClass,
-    patientShellWizardFormClass,
-    patientShellWizardStepPanelClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellFormWizardFooterCancelButtonClass,
+    mobileShellFormWizardFooterPrimaryButtonClass,
+    mobileShellFormWizardFooterRowClass,
+    mobileShellPageFillClass,
+    mobileShellWizardFormClass,
+    mobileShellWizardStepPanelClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { Appointment } from '@/lib/types';
 
 const props = defineProps<{
@@ -44,16 +44,16 @@ const { t } = useI18n();
             :outcome="props.outcome"
         />
 
-        <div :class="patientShellPageFillClass">
-            <PatientShellPageWizard :title="props.title">
+        <div :class="mobileShellPageFillClass">
+            <MobileShellPageWizard :title="props.title">
                 <form
                     :id="props.formId"
-                    :class="patientShellWizardFormClass"
+                    :class="mobileShellWizardFormClass"
                     novalidate
                     @submit.prevent="emit('submit')"
                 >
-                    <PatientShellWizardScrollBody :active="true">
-                        <div :class="patientShellWizardStepPanelClass">
+                    <MobileShellWizardScrollBody :active="true">
+                        <div :class="mobileShellWizardStepPanelClass">
                             <PatientAppointmentOutcomeSummaryCard
                                 :appointment="props.appointment"
                             />
@@ -62,13 +62,13 @@ const { t } = useI18n();
                         </div>
 
                         <template #footer>
-                            <div :class="patientFormWizardFooterRowClass">
+                            <div :class="mobileShellFormWizardFooterRowClass">
                                 <Button
                                     type="submit"
                                     variant="default"
                                     size="lg"
                                     :class="
-                                        patientFormWizardFooterPrimaryButtonClass
+                                        mobileShellFormWizardFooterPrimaryButtonClass
                                     "
                                     :disabled="props.processing"
                                 >
@@ -79,7 +79,7 @@ const { t } = useI18n();
                                     variant="secondary"
                                     size="lg"
                                     :class="
-                                        patientFormWizardFooterCancelButtonClass
+                                        mobileShellFormWizardFooterCancelButtonClass
                                     "
                                     :disabled="props.processing"
                                     @click="
@@ -94,9 +94,9 @@ const { t } = useI18n();
                                 </Button>
                             </div>
                         </template>
-                    </PatientShellWizardScrollBody>
+                    </MobileShellWizardScrollBody>
                 </form>
-            </PatientShellPageWizard>
+            </MobileShellPageWizard>
         </div>
     </PatientLayout>
 </template>

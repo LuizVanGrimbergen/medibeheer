@@ -8,7 +8,7 @@ import AppointmentNotesStep from '@/Components/Patient/Appointments/steps/Appoin
 import AppointmentProviderStep from '@/Components/Patient/Appointments/steps/AppointmentProviderStep.vue';
 import AppointmentScheduleStep from '@/Components/Patient/Appointments/steps/AppointmentScheduleStep.vue';
 import AppointmentTransportStep from '@/Components/Patient/Appointments/steps/AppointmentTransportStep.vue';
-import PatientShellWizardScrollBody from '@/Components/Patient/form/PatientShellWizardScrollBody.vue';
+import MobileShellWizardScrollBody from '@/Components/shell/MobileShellWizardScrollBody.vue';
 import { Button } from '@/Components/ui/button';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
@@ -19,7 +19,7 @@ import {
     DialogTitle,
 } from '@/Components/ui/dialog';
 import { usePatientFormWizardStepMotion } from '@/composables/motion/usePatientFormWizardStepMotion';
-import { usePatientShellDialogChromeSync } from '@/composables/patient/usePatientShellDialogChrome';
+import { useMobileShellDialogChromeSync } from '@/composables/patient/useMobileShellDialogChrome';
 import { getGoogleMapsApiKey } from '@/lib/google-maps/loadGoogleMapsApi';
 import {
     applyAppointmentAddressFieldErrors,
@@ -36,14 +36,14 @@ import {
 import type { PatientAppointmentFormPermitPastStartsAtOptions } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
 import { getPatientAppointmentDialogFormFieldErrors } from '@/lib/patient/appointments/form-wizard/patientAppointmentDialogFormSchema';
 import {
-    patientAppointmentFormPrimaryPairButtonClass,
-    patientSoftDangerActionButtonClass,
-} from '@/lib/patient/appointments/ui/patientSoftDangerActionButtonClass';
+    mobileShellFormPrimaryPairButtonClass,
+    mobileShellSoftDangerActionButtonClass,
+} from '@/lib/shell/mobileShellActionButtonClasses';
 import { verifyAppointmentAddressGeocode } from '@/lib/patient/appointments/verifyAppointmentAddressGeocode';
 import {
-    patientShellDialogOverlayAboveAppChromeClass,
-    patientShellWizardFormClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellDialogOverlayAboveAppChromeClass,
+    mobileShellWizardFormClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { AppointmentDoctorType } from '@/lib/types';
 
 const props = defineProps<{
@@ -98,7 +98,7 @@ const currentStepIndex = computed(() => stepOrder.value.indexOf(step.value));
 const isOpen = toRef(() => props.open);
 const progressLabelRef = ref<HTMLElement | null>(null);
 
-usePatientShellDialogChromeSync(isOpen);
+useMobileShellDialogChromeSync(isOpen);
 
 const { wizardStepPanelRef } = usePatientFormWizardStepMotion(
     currentStepIndex,
@@ -465,7 +465,7 @@ watch(
     <Dialog :open="props.open" @update:open="emit('update:open', $event)">
         <DialogContent
             :class="props.dialogContentClass"
-            :overlay-class="patientShellDialogOverlayAboveAppChromeClass('sm')"
+            :overlay-class="mobileShellDialogOverlayAboveAppChromeClass('sm')"
         >
             <DialogHeader
                 class="shrink-0 space-y-2 pt-[env(safe-area-inset-top,0)] text-left sm:space-y-1.5 sm:pt-0"
@@ -486,11 +486,11 @@ watch(
 
             <form
                 :id="props.formId"
-                :class="patientShellWizardFormClass"
+                :class="mobileShellWizardFormClass"
                 novalidate
                 @submit.prevent="handlePrimaryAction"
             >
-                <PatientShellWizardScrollBody
+                <MobileShellWizardScrollBody
                     :active="props.open"
                     :step-key="step"
                 >
@@ -576,7 +576,7 @@ watch(
                                 size="lg"
                                 :disabled="isAddressStepBusy"
                                 :class="
-                                    patientAppointmentFormPrimaryPairButtonClass
+                                    mobileShellFormPrimaryPairButtonClass
                                 "
                                 @click.stop.prevent="tryAdvanceFromCurrentStep"
                             >
@@ -590,7 +590,7 @@ watch(
                                 size="lg"
                                 :disabled="props.form.processing"
                                 :class="
-                                    patientAppointmentFormPrimaryPairButtonClass
+                                    mobileShellFormPrimaryPairButtonClass
                                 "
                             >
                                 {{ t('patient.appointments.actions.save') }}
@@ -601,7 +601,7 @@ watch(
                                 variant="secondary"
                                 size="lg"
                                 :disabled="props.form.processing"
-                                :class="patientSoftDangerActionButtonClass"
+                                :class="mobileShellSoftDangerActionButtonClass"
                                 @click.stop.prevent="handleCancelOrBack"
                             >
                                 {{
@@ -614,7 +614,7 @@ watch(
                             </Button>
                         </div>
                     </template>
-                </PatientShellWizardScrollBody>
+                </MobileShellWizardScrollBody>
             </form>
         </DialogContent>
     </Dialog>

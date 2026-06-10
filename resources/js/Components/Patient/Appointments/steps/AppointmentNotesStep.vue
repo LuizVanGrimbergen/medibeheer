@@ -5,9 +5,9 @@ import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointment
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    patientFormFieldInputClass,
-    patientFormFieldInvalidClass,
-} from '@/lib/patient/patientFormFieldClasses';
+    mobileShellFormFieldInputClass,
+    mobileShellFormFieldInvalidClass,
+} from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
 const { form, idPrefix } = defineProps<{
@@ -39,8 +39,8 @@ const { t } = useI18n();
                 rows="4"
                 :class="
                     cn(
-                        patientFormFieldInputClass,
-                        form.errors.notes ? patientFormFieldInvalidClass : null,
+                        mobileShellFormFieldInputClass,
+                        form.errors.notes ? mobileShellFormFieldInvalidClass : null,
                     )
                 "
                 :placeholder="t('patient.appointments.fields.notesPlaceholder')"

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Stethoscope } from 'lucide-vue-next';
-import { useAppointmentDisplay } from '@/Components/Appointments/useAppointmentDisplay';
+import { useAppointmentDisplay } from '@/Components/shared/appointments/useAppointmentDisplay';
 import PatientAppointmentScheduleDetailRows from '@/Components/Patient/Appointments/PatientAppointmentScheduleDetailRows.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
-    patientShellWizardCardClass,
-    patientShellWizardCardInnerClass,
-} from '@/lib/patient/patientShellDialogLayout';
+    mobileShellWizardCardClass,
+    mobileShellWizardCardInnerClass,
+} from '@/lib/shell/mobileShellDialogLayout';
 import type { Appointment } from '@/lib/types';
 
 const props = defineProps<{
@@ -17,9 +17,9 @@ const { doctorTypeLabel } = useAppointmentDisplay();
 </script>
 
 <template>
-    <Card :class="patientShellWizardCardClass">
+    <Card :class="mobileShellWizardCardClass">
         <CardContent class="p-0">
-            <div :class="[patientShellWizardCardInnerClass, 'space-y-5']">
+            <div :class="[mobileShellWizardCardInnerClass, 'space-y-5']">
                 <div class="flex items-start gap-4">
                     <div
                         class="bg-primary/12 flex size-12 shrink-0 items-center justify-center rounded-xl"
