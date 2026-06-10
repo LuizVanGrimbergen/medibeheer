@@ -10,7 +10,6 @@ import PatientLayout from '@/Layouts/PatientLayout.vue';
 import {
     mobileShellFormWizardFooterCancelButtonClass,
     mobileShellFormWizardFooterPrimaryButtonClass,
-    mobileShellFormWizardFooterRowClass,
     mobileShellPageFillClass,
     mobileShellWizardFormClass,
     mobileShellWizardStepPanelClass,
@@ -62,7 +61,9 @@ const { t } = useI18n();
                         </div>
 
                         <template #footer>
-                            <div :class="mobileShellFormWizardFooterRowClass">
+                            <div
+                                class="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:gap-3"
+                            >
                                 <Button
                                     type="submit"
                                     variant="default"
