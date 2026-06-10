@@ -23,7 +23,7 @@ const CHECKMARK_DRAW_DURATION_SECONDS = 0.5;
 const PROGRESS_DURATION_SECONDS = 0.2;
 const SUCCESS_FLASH_DURATION_SECONDS = 0.35;
 const BUTTON_PRESS_DURATION_SECONDS = 0.1;
-const FOOTER_NAV_INDICATOR_DURATION_SECONDS = 0.25;
+const FOOTER_NAV_INDICATOR_DURATION_SECONDS = 0.26;
 const WIZARD_STEP_ENTER_DURATION_SECONDS = 0.22;
 const WIZARD_STEP_ENTER_X_OFFSET_PX = 12;
 const LOADING_SCREEN_EXIT_DURATION_SECONDS = 0.2;
@@ -37,7 +37,7 @@ const LOADING_OVERLAY_PROPS = 'opacity';
 const ATTENTION_PULSE_PROPS = 'opacity';
 const SUCCESS_FLASH_PROPS = 'opacity';
 const PROGRESS_WIDTH_PROPS = 'width';
-const FOOTER_NAV_INDICATOR_PROPS = 'left,top,width,height,opacity';
+const FOOTER_NAV_INDICATOR_PROPS = 'x,width,opacity,top,height,left';
 
 function killTweenProps(
     gsapInstance: typeof gsap,
@@ -404,26 +404,31 @@ export async function animateFooterNavIndicator(
 
     killTweenProps(gsapInstance, target, FOOTER_NAV_INDICATOR_PROPS);
 
-    const properties = {
-        left: metrics.left,
+    gsapInstance.set(target, {
+        left: 0,
         top: metrics.top,
-        width: metrics.width,
         height: metrics.height,
+    });
+
+    const slideProperties = {
+        x: metrics.left,
+        width: metrics.width,
         opacity: metrics.width > 0 ? 1 : 0,
     };
 
     if (duration === 0) {
-        gsapInstance.set(target, properties);
+        gsapInstance.set(target, slideProperties);
 
         return asGsapTween(gsapInstance.to(target, { duration: 0 }));
     }
 
     return asGsapTween(
         gsapInstance.to(target, {
-            ...properties,
+            ...slideProperties,
             duration,
-            ease: 'power2.out',
+            ease: 'power2.inOut',
             overwrite: 'auto',
+            force3D: true,
         }),
     );
 }
