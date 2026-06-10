@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { Bell, BellOff, X } from 'lucide-vue-next';
 import { useI18n } from 'vue-i18n';
 import MedicalDisclaimer from '@/Components/Legal/MedicalDisclaimer.vue';
-import { Button } from '@/Components/ui/button';
+import { Button, buttonVariants } from '@/Components/ui/button';
+import { InputError } from '@/Components/ui/input-error';
 import { usePatientMedicationPushReminders } from '@/composables/patient/usePatientMedicationPushReminders';
+import { mobileShellDashboardPromptCardClass } from '@/lib/shell/mobileShellLayout';
+import {
+    mobileShellPageIntroButtonClass,
+    mobileShellSectionBodyTextClass,
+    mobileShellSectionSubHeadingClass,
+} from '@/lib/shell/mobileShellTypography';
+import { cn } from '@/lib/utils';
 
 const { t } = useI18n();
 
@@ -20,12 +29,20 @@ const {
 const settingsMedicationRemindersUrl = route('settings.edit', {
     section: 'medication-reminders',
 });
+
+const registrationErrorId = 'patient-medication-reminder-registration-error';
+
+const hasRegistrationError = computed(
+    () =>
+        registrationError.value !== null &&
+        registrationError.value.trim() !== '',
+);
 </script>
 
 <template>
     <section
         v-if="shouldShowDashboardPrompt"
-        class="border-border bg-surface relative rounded-xl border p-4 shadow-sm sm:p-5"
+        :class="mobileShellDashboardPromptCardClass"
     >
         <Button
             type="button"
@@ -49,28 +66,26 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
 
             <div class="min-w-0 flex-1 space-y-4">
                 <div class="space-y-2">
-                    <h2
-                        class="text-text-heading text-base font-semibold sm:text-lg"
-                    >
+                    <h2 :class="mobileShellSectionSubHeadingClass">
                         {{ t('patient.medicationReminders.promptTitle') }}
                     </h2>
 
                     <p
                         v-if="cardVariant === 'missing_config'"
-                        class="text-text-muted text-base leading-relaxed"
+                        :class="mobileShellSectionBodyTextClass"
                     >
                         {{ t('patient.medicationReminders.missingConfig') }}
                     </p>
 
                     <p
                         v-else-if="cardVariant === 'denied'"
-                        class="text-text-muted text-base leading-relaxed"
+                        :class="mobileShellSectionBodyTextClass"
                     >
                         {{ t('patient.medicationReminders.deniedDescription') }}
                     </p>
 
                     <template v-else>
-                        <p class="text-text-muted text-base leading-relaxed">
+                        <p :class="mobileShellSectionBodyTextClass">
                             {{
                                 t(
                                     'patient.medicationReminders.promptDescription',
@@ -78,7 +93,7 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
                             }}
                         </p>
 
-                        <p class="text-text-muted text-base leading-relaxed">
+                        <p :class="mobileShellSectionBodyTextClass">
                             {{
                                 t(
                                     'patient.medicationReminders.installRequiredNote',
@@ -116,9 +131,17 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
                 <Button
                     v-if="cardVariant === 'enable'"
                     type="button"
-                    size="lg"
-                    class="min-h-12 w-full text-base font-semibold sm:w-auto"
+                    :class="
+                        cn(
+                            buttonVariants({ variant: 'default', size: 'lg' }),
+                            mobileShellPageIntroButtonClass,
+                            'sm:w-auto',
+                        )
+                    "
                     :disabled="isRegistering"
+                    :aria-describedby="
+                        hasRegistrationError ? registrationErrorId : undefined
+                    "
                     @click="enableReminders"
                 >
                     {{ t('patient.medicationReminders.enableButton') }}
@@ -126,7 +149,7 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
 
                 <MedicalDisclaimer message-key="legal.disclaimer.pushReminder" />
 
-                <p class="text-text-muted text-base leading-relaxed">
+                <p :class="mobileShellSectionBodyTextClass">
                     {{ t('patient.medicationReminders.dismissPromptHint') }}
                     <Link
                         :href="settingsMedicationRemindersUrl"
@@ -137,9 +160,10 @@ const settingsMedicationRemindersUrl = route('settings.edit', {
                     </Link>
                 </p>
 
-                <p v-if="registrationError" class="text-destructive text-base">
-                    {{ registrationError }}
-                </p>
+                <InputError
+                    :id="registrationErrorId"
+                    :message="registrationError ?? undefined"
+                />
             </div>
         </div>
     </section>

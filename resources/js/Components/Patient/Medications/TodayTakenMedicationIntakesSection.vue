@@ -8,10 +8,10 @@ import { Card, CardContent } from '@/Components/ui/card';
 import { Collapsible, CollapsibleContent } from '@/Components/ui/collapsible';
 import { medicationUrgencyToneClasses } from '@/lib/patient/medications/urgency/medicationUrgencyToneClasses';
 import {
-    patientMedicationListCardLeadIconWrapClass,
-    patientMedicationListCardLeadRowClass,
-    patientMedicationListCardLeadTitleClass,
-} from '@/lib/patient/patientPageTypography';
+    mobileShellMedicationListCardLeadIconWrapClass,
+    mobileShellMedicationListCardLeadRowClass,
+    mobileShellMedicationListCardLeadTitleClass,
+} from '@/lib/shell/mobileShellTypography';
 import type { TodayMedicationIntakeSlot } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
@@ -54,11 +54,11 @@ function slotKey(slot: TodayMedicationIntakeSlot): string {
                 class="border-border/80 bg-surface text-text w-full min-w-0 overflow-hidden rounded-3xl border shadow-md shadow-black/[0.04]"
             >
                 <CardContent class="relative p-6 sm:p-7">
-                    <div :class="patientMedicationListCardLeadRowClass">
+                    <div :class="mobileShellMedicationListCardLeadRowClass">
                         <div
                             :class="
                                 cn(
-                                    patientMedicationListCardLeadIconWrapClass,
+                                    mobileShellMedicationListCardLeadIconWrapClass,
                                     collapsedIconToneClasses.pillWrap,
                                 )
                             "
@@ -79,7 +79,7 @@ function slotKey(slot: TodayMedicationIntakeSlot): string {
                         <p
                             :class="
                                 cn(
-                                    patientMedicationListCardLeadTitleClass,
+                                    mobileShellMedicationListCardLeadTitleClass,
                                     'min-w-0 flex-1',
                                 )
                             "

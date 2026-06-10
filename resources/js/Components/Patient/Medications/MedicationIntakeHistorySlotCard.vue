@@ -2,7 +2,7 @@
 import { Check } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import MedicationTypeLeadIcon from '@/Components/Medications/MedicationTypeLeadIcon.vue';
+import MedicationTypeLeadIcon from '@/Components/shared/medications/MedicationTypeLeadIcon.vue';
 import { Card, CardContent } from '@/Components/ui/card';
 import {
     medicationIntakeDoseLine,
