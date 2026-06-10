@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import MobileShellNativeDateTimeInput from '@/Components/shell/MobileShellNativeDateTimeInput.vue';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import {
-    mobileShellFormFieldInvalidClass,
     mobileShellFormLabelClass,
-    mobileShellFormNativeDateTimeInputClass,
 } from '@/lib/shell/mobileShellFormFieldClasses';
 import { cn } from '@/lib/utils';
 
@@ -20,8 +18,6 @@ defineProps<{
 }>();
 
 const { t } = useI18n();
-
-const isEmpty = computed(() => model.value.trim() === '');
 </script>
 
 <template>
@@ -30,34 +26,15 @@ const isEmpty = computed(() => model.value.trim() === '');
             {{ label }} <span class="text-danger">*</span>
         </Label>
 
-        <div class="relative">
-            <span
-                v-if="isEmpty"
-                class="text-text-placeholder pointer-events-none absolute inset-y-0 left-4 flex items-center text-xl leading-normal"
-                aria-hidden="true"
-            >
-                {{ t('patient.inventory.vacationDateFormatHint') }}
-            </span>
-
-            <input
-                :id="id"
-                v-model="model"
-                type="date"
-                :min="min"
-                lang="nl-NL"
-                aria-required="true"
-                autocomplete="off"
-                :placeholder="t('patient.inventory.vacationDateFormatHint')"
-                :class="
-                    cn(
-                        mobileShellFormNativeDateTimeInputClass,
-                        isEmpty ? 'text-transparent' : null,
-                        error ? mobileShellFormFieldInvalidClass : null,
-                    )
-                "
-                :aria-invalid="Boolean(error)"
-            />
-        </div>
+        <MobileShellNativeDateTimeInput
+            :id="id"
+            v-model="model"
+            type="date"
+            :min="min"
+            lang="nl-NL"
+            :placeholder="t('patient.inventory.vacationDateFormatHint')"
+            :invalid="Boolean(error)"
+        />
 
         <InputError :message="error" />
     </div>

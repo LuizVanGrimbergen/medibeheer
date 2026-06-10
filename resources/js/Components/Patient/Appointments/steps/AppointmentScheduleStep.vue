@@ -3,14 +3,10 @@
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { AppointmentFormWithErrors } from '@/Components/Patient/Appointments/form/AppointmentFormTypes';
+import MobileShellNativeDateTimeInput from '@/Components/shell/MobileShellNativeDateTimeInput.vue';
 import { InputError } from '@/Components/ui/input-error';
 import { Label } from '@/Components/ui/label';
 import { localCalendarDateIsoToday } from '@/lib/patient/appointments/validation/appointmentStartsAtLocalValidation';
-import {
-    mobileShellFormFieldInvalidClass,
-    mobileShellFormNativeDateTimeInputClass,
-} from '@/lib/shell/mobileShellFormFieldClasses';
-import { cn } from '@/lib/utils';
 
 const { form, idPrefix, startsAtDateInputMinIso } = defineProps<{
     form: AppointmentFormWithErrors;
@@ -56,23 +52,15 @@ const minStartsAtTimeHm = computed(() => {
                         {{ t('patient.appointments.fields.startsAtDate') }}
                         <span class="text-danger">*</span>
                     </Label>
-                    <input
+                    <MobileShellNativeDateTimeInput
                         :id="`${idPrefix}-starts-at-date`"
                         v-model="form.starts_at_date"
                         type="date"
                         :min="startsAtDateInputMinIso ?? undefined"
-                        aria-required="true"
-                        autocomplete="off"
-                        :class="
-                            cn(
-                                mobileShellFormNativeDateTimeInputClass,
-                                form.errors.starts_at_date ||
-                                    form.errors.starts_at
-                                    ? mobileShellFormFieldInvalidClass
-                                    : null,
-                            )
+                        :placeholder="
+                            t('patient.appointments.fields.startsAtDatePlaceholder')
                         "
-                        :aria-invalid="
+                        :invalid="
                             Boolean(
                                 form.errors.starts_at_date ||
                                     form.errors.starts_at,
@@ -99,24 +87,16 @@ const minStartsAtTimeHm = computed(() => {
                         {{ t('patient.appointments.fields.startsAtTime') }}
                         <span class="text-danger">*</span>
                     </Label>
-                    <input
+                    <MobileShellNativeDateTimeInput
                         :id="`${idPrefix}-starts-at-time`"
                         v-model="form.starts_at_time"
                         type="time"
                         :min="minStartsAtTimeHm"
                         step="60"
-                        aria-required="true"
-                        autocomplete="off"
-                        :class="
-                            cn(
-                                mobileShellFormNativeDateTimeInputClass,
-                                form.errors.starts_at_time ||
-                                    form.errors.starts_at
-                                    ? mobileShellFormFieldInvalidClass
-                                    : null,
-                            )
+                        :placeholder="
+                            t('patient.appointments.fields.startsAtTimePlaceholder')
                         "
-                        :aria-invalid="
+                        :invalid="
                             Boolean(
                                 form.errors.starts_at_time ||
                                     form.errors.starts_at,

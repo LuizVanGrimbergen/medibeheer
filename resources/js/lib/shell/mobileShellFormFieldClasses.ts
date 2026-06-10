@@ -14,6 +14,9 @@ export const mobileShellFormNativeDateTimeInputClass = cn(
     'native-picker-input block min-h-16 py-4 text-xl pr-14 touch-manipulation',
 );
 
+export const mobileShellFormNativeDateTimePlaceholderClass =
+    'text-text-placeholder pointer-events-none absolute inset-y-0 left-4 z-[1] flex items-center text-xl leading-normal';
+
 export const mobileShellFormSelectBaseClass = `${mobileShellFormFieldInputClass} appearance-none bg-[length:1.5rem] bg-[right_1rem_center] bg-no-repeat pr-14 touch-manipulation`;
 
 export const mobileShellFormFieldInvalidClass =

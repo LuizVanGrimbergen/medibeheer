@@ -160,6 +160,13 @@
         margin-inline-end: 0.125rem;
     }
 
+    .native-picker-input.text-transparent::-webkit-datetime-edit,
+    .native-picker-input.text-transparent::-webkit-datetime-edit-fields-wrapper,
+    .native-picker-input.text-transparent::-webkit-datetime-edit-text {
+        color: transparent;
+        -webkit-text-fill-color: transparent;
+    }
+
     .daily-checkin-mood-step-title {
         @apply text-text-heading text-xl leading-snug font-bold sm:text-2xl lg:text-3xl;
     }
