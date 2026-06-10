@@ -38,7 +38,7 @@ class ConfirmablePasswordController extends Controller
             $backUrl = $fallbackHome;
         }
 
-        return Inertia::render('Auth/ConfirmPassword', [
+        return Inertia::render('Auth/ConfirmPassword/Index', [
             'backUrl' => $backUrl,
         ]);
     }

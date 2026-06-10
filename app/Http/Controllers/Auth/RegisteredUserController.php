@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
      */
     public function create(Request $request, ResolveSelectedRole $resolveSelectedRole): Response
     {
-        return Inertia::render('Auth/Register', [
+        return Inertia::render('Auth/Register/Index', [
             'selectedRole' => $resolveSelectedRole($request),
             'roleTokens' => UserRole::encryptedTransportTokens(),
             'privacyPolicyVersion' => config('privacy.policy_version'),

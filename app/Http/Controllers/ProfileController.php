@@ -46,7 +46,7 @@ class ProfileController extends Controller
             $payload['securityActivities'] = $this->userSecurityActivityScreenService->paginatedForUser($user);
         }
 
-        return Inertia::render('Settings/Edit', $payload);
+        return Inertia::render('Settings/Edit/Index', $payload);
     }
 
     /**

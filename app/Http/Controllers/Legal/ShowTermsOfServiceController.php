@@ -11,6 +11,6 @@ class ShowTermsOfServiceController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        return Inertia::render('Legal/Terms', LegalPageProps::forInertia($request));
+        return Inertia::render('Legal/Terms/Index', LegalPageProps::forInertia($request));
     }
 }

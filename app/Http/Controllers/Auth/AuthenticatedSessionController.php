@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(Request $request, ResolveSelectedRole $resolveSelectedRole): Response
     {
-        return Inertia::render('Auth/Login', [
+        return Inertia::render('Auth/Login/Index', [
             'canResetPassword' => Route::has('password.request'),
             'selectedRole' => $resolveSelectedRole($request),
             'roleTokens' => UserRole::encryptedTransportTokens(),
