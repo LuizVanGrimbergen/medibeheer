@@ -8,7 +8,7 @@ test('patients receive the patient dashboard inertia page from the patient route
     $response = $this->actingAs($user)->get(route('patient.dashboard'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Patient/Dashboard');
+    assertInertiaRootComponent($response, 'Patient/Dashboard/Index');
 });
 
 test('doctors receive the doctor dashboard inertia page from the doctor dashboard route', function () {
@@ -17,8 +17,8 @@ test('doctors receive the doctor dashboard inertia page from the doctor dashboar
     $response = $this->actingAs($user)->get(route('doctor.dashboard'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Doctor/Dashboard');
-    $response->assertInertia(fn ($page) => $page->has('patients'));
+    assertInertiaRootComponent($response, 'Doctor/Dashboard/Index');
+    $response->assertInertia(loadAllDeferredInertiaProps(fn ($page) => $page->has('patients')));
 });
 
 test('family members receive the family overview inertia page from the family overview route', function () {
@@ -27,5 +27,5 @@ test('family members receive the family overview inertia page from the family ov
     $response = $this->actingAs($user)->get(route('family.overview'));
 
     $response->assertOk();
-    assertInertiaRootComponent($response, 'Family/Overview');
+    assertInertiaRootComponent($response, 'Family/Overview/Index');
 });

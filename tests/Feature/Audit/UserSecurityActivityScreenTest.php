@@ -17,7 +17,7 @@ test('settings security activity section shows the users security log entries', 
         ->get(route('settings.edit', ['section' => 'security-activity']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Settings/Edit')
+            ->component('Settings/Edit/Index')
             ->has('securityActivities.data', 1)
             ->where('securityActivities.data.0.description', SecurityActivityDescription::AUTH_LOGIN_SUCCEEDED->value));
 });
@@ -35,6 +35,6 @@ test('settings security activity section does not show other users entries', fun
         ->get(route('settings.edit', ['section' => 'security-activity']))
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Settings/Edit')
+            ->component('Settings/Edit/Index')
             ->where('securityActivities.data', []));
 });

@@ -9,7 +9,7 @@ test('homepage shows the public landing page when not authenticated', function (
     $response = $this->get('/');
 
     $response->assertOk();
-    $response->assertInertia(fn ($page) => $page->component('Guest/Home'));
+    $response->assertInertia(fn ($page) => $page->component('Guest/Home/Index'));
 });
 
 test('homepage ships a minimal ziggy route payload', function () {
