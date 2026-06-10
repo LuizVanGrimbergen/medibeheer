@@ -124,7 +124,7 @@ class RouteServiceProvider extends ServiceProvider
 
         $familyMemberUser = User::query()
             ->where('public_id', $value)
-            ->where('role', UserRole::FAMILY_MEMBER)
+            ->withRole(UserRole::FAMILY_MEMBER)
             ->firstOrFail();
 
         $family = $familyMemberUser->family;

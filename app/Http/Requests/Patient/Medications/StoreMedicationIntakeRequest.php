@@ -28,7 +28,18 @@ class StoreMedicationIntakeRequest extends FormRequest
                 'required',
                 'integer',
                 Rule::exists((new MedicationSchedule)->getTable(), 'id')
-                    ->where('patient_id', $patient?->id),
+                    ->where(function ($query) use ($patient): void {
+                        if ($patient === null) {
+                            $query->whereRaw('0 = 1');
+
+                            return;
+                        }
+
+                        $query->whereIn(
+                            'medication_id',
+                            $patient->medications()->select('medications.id'),
+                        );
+                    }),
             ],
             'dose_time' => ['required', 'string', 'max:5', 'regex:/^\d{1,2}:\d{2}$/'],
             'late_intake' => ['sometimes', 'boolean'],
@@ -53,9 +64,11 @@ class StoreMedicationIntakeRequest extends FormRequest
                 return;
             }
 
-            $schedule = MedicationSchedule::query()->find($this->integer('medication_schedule_id'));
+            $schedule = MedicationSchedule::query()
+                ->with('medication')
+                ->find($this->integer('medication_schedule_id'));
 
-            if ($schedule === null || $schedule->patient_id !== $patient->id) {
+            if ($schedule === null || $schedule->medication?->patient_id !== $patient->id) {
                 return;
             }
 
